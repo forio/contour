@@ -66,14 +66,14 @@
             return this;
         },
 
-        expose: function (name, functionality) {
+        expose: function (ctorName, functionality) {
             var ctorObj = {};
             var ctor = _.bind(function () {
                 // extend the --instance-- we don't want all charts to be overriten...
                 _.extend(this, functionality);
             }, this);
 
-            ctorObj[name] = ctor;
+            ctorObj[ctorName] = ctor;
 
             _.extend(this, ctorObj);
 
