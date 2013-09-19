@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../examples/js/vendor/d3.min.js"></script>
+    <script src="../examples/js/vendor/jquery.js"></script>
+    <script src="../examples/js/vendor/lodash.js"></script>
+
+    <script src="../src/scripts/core/narwhal.js"></script>
+    <script src="../src/scripts/core/cartesian.js"></script>
+
+    <style>
+        .container {
+            border: solid 1px red;
+            width: 400px;
+            height: 280px;
+            margin: 30px auto;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container"></div>
+
+    <script>
+        var chart = new Narwhal({ el: '.container' })
+            .render();
+
+    </script>
+</body>
+
+</html>
