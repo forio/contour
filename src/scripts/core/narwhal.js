@@ -98,6 +98,12 @@
             _.extend(this, ctorObj);
 
             return this;
+        },
+
+        compose: function(ctorName, funcArray) {
+            // compose differnt functional objects into this instance...
+            // this way we can do something like new Narwhal().BarChart(...) and it includes
+            // cartesia, xAxis, yAxis, tooltip, highliter, etc...
         }
 
     });
