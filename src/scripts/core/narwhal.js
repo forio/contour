@@ -2,7 +2,9 @@
 
     var defaults = {
         chart: {
-            width: '100%',      // by default take the size of the parent container
+            defaultWidth: '100%',      // by default take the size of the parent container
+            defaultAspect: 1 / 1.61803398875,       // height = width * ratio
+            width: undefined, // calculated at render time based on the options & container
             height: undefined,  // if defined, height takes precedence over aspect
             // aspect: 1.61,       // height = width / 1.61
             /* margin between the container and the chart (ie labels or axis title) */
@@ -35,8 +37,24 @@
             return this;
         },
 
+        calculateWidth: function () {
+            // return '100%';
+            return parseInt($(this.options.el).width(), 10) || '100%';
+        },
+
+        calculateHeight: function () {
+            var containerHeight = parseInt($(this.options.el).height(), 10);
+            var calcWidth = this.options.chart.width;
+            var ratio = this.options.chart.aspect || this.options.chart.defaultAspect;
+
+            return !!containerHeight ?  containerHeight : _.isNaN(+calcWidth) ? '100%' : calcWidth * ratio;
+        },
+
         calcMetrics: function () {
             var options = this.options;
+
+            options.chart.width = options.chart.width || this.calculateWidth();
+            options.chart.height = options.chart.height || this.calculateHeight();
 
             this.options = $.extend(true, options, {
                 plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.padding.left - options.chart.padding.right,

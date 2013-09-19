@@ -70,11 +70,49 @@ describe('Narwhal', function () {
             expect(height).toEqual(200);
         });
 
-        it('should default to width=100% if no option is given', function () {
+        it('should default to width=100% if no option is given and no container has no width', function () {
             createNarwhal().render();
 
             var width = $el.find('svg').attr('width');
             expect(width).toEqual('100%');
+        });
+
+        it('should default to height=100% if no option is given and no container has no height', function () {
+            createNarwhal().render();
+
+            var width = $el.find('svg').attr('height');
+            expect(width).toEqual('100%');
+        });
+
+        it('should get the container width if it has it', function () {
+            $el.css({width: '120px', height: '30px '});
+            createNarwhal().render();
+
+            var width = +$el.find('svg').attr('width');
+            expect(width).toEqual(120);
+        });
+
+        it('should get the container height if it has it', function () {
+            $el.css({width: '120px', height: '30px '});
+            createNarwhal().render();
+
+            var height = +$el.find('svg').attr('height');
+            expect(height).toEqual(30);
+        });
+
+        it('should calculate height if width & aspect are specificed', function () {
+            createNarwhal({ chart: { width: 100, aspect: 2 }}).render();
+
+            var height = +$el.find('svg').attr('height');
+            expect(height).toEqual(200);
+        });
+
+        it('should calculate height from container width & aspect are specificed', function () {
+            $el.css({ width: '100px' });
+            createNarwhal({ chart: { aspect: 1.5 }}).render();
+
+            var height = +$el.find('svg').attr('height');
+            expect(height).toEqual(150);
         });
 
         it('should position chart area using the provided margins', function () {
