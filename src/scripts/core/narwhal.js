@@ -2,7 +2,7 @@
 
     var defaults = {
         chart: {
-            defaultWidth: '100%',      // by default take the size of the parent container
+            defaultWidth: 400,      // by default take the size of the parent container
             defaultAspect: 1 / 1.61803398875,       // height = width * ratio
             width: undefined, // calculated at render time based on the options & container
             height: undefined,  // if defined, height takes precedence over aspect
@@ -33,12 +33,13 @@
         init: function (options) {
             this.options = $.extend(true, {}, defaults, options);
 
+            this.calcMetrics();
+
             return this;
         },
 
         calculateWidth: function () {
-            // return '100%';
-            return parseInt($(this.options.el).width(), 10) || '100%';
+            return parseInt($(this.options.el).width(), 10) || this.options.chart.defaultWidth;
         },
 
         calculateHeight: function () {
@@ -46,7 +47,7 @@
             var calcWidth = this.options.chart.width;
             var ratio = this.options.chart.aspect || this.options.chart.defaultAspect;
 
-            return !!containerHeight ?  containerHeight : _.isNaN(+calcWidth) ? '100%' : calcWidth * ratio;
+            return !!containerHeight ?  containerHeight : Math.round(calcWidth * ratio);
         },
 
         calcMetrics: function () {
@@ -56,13 +57,14 @@
             options.chart.height = options.chart.height || this.calculateHeight();
 
             this.options = $.extend(true, options, {
-                plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.padding.left - options.chart.padding.right,
-                plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom
+                chart: {
+                    plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.padding.left - options.chart.padding.right,
+                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom
+                }
             });
         },
 
         plotArea: function () {
-            this.calcMetrics();
 
             var chartOpt = this.options.chart;
 
@@ -78,8 +80,14 @@
             return this;
         },
 
-        render: function () {
+        baseRender: function () {
             this.plotArea();
+
+            return this;
+        },
+
+        render: function () {
+            this.baseRender();
 
             return this;
         },
@@ -88,7 +96,9 @@
             var ctorObj = {};
             var ctor = function () {
                 // extend the --instance-- we don't want all charts to be overriten...
-                _.extend(this, functionality);
+                _.extend(this, _.omit(functionality, 'init'));
+
+                functionality.init && functionality.init.call(this);
 
                 return this;
             };
