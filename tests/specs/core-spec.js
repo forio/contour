@@ -42,6 +42,13 @@ describe('Narwhal', function () {
             target.expose('myTest', { someFunction: $.noop });
             expect(other.myTest).not.toBeDefined();
         });
+
+        it('should return the instance (this) after calling the constructor', function () {
+            var target = createNarwhal();
+            target.expose('myTest', { some: $.noop });
+            var result = target.myTest();
+            expect(result).toEqual(target);
+        });
     });
 
     describe('render', function () {
@@ -55,12 +62,19 @@ describe('Narwhal', function () {
         });
 
         it('should take the dimensions from the options', function () {
-            createNarwhal({ chart: { width: 100, height: 100 } }).render();
+            createNarwhal({ chart: { width: 100, height: 200 } }).render();
 
             var width = +$el.find('svg').attr('width');
             var height = +$el.find('svg').attr('height');
             expect(width).toEqual(100);
-            expect(height).toEqual(100);
+            expect(height).toEqual(200);
+        });
+
+        it('should default to width=100% if no option is given', function () {
+            createNarwhal().render();
+
+            var width = $el.find('svg').attr('width');
+            expect(width).toEqual('100%');
         });
 
         it('should position chart area using the provided margins', function () {

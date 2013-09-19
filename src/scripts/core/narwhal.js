@@ -4,7 +4,7 @@
         chart: {
             width: '100%',      // by default take the size of the parent container
             height: undefined,  // if defined, height takes precedence over aspect
-            aspect: 1.61,       // height = width / 1.61
+            // aspect: 1.61,       // height = width / 1.61
             /* margin between the container and the chart (ie labels or axis title) */
             margin: {
                 top: 0,
@@ -50,6 +50,7 @@
             var chartOpt = this.options.chart;
 
             this.container = d3.select(this.options.el);
+
             this.svg = this.container
                 .append('svg')
                     .attr('width', chartOpt.width)
@@ -68,10 +69,12 @@
 
         expose: function (ctorName, functionality) {
             var ctorObj = {};
-            var ctor = _.bind(function () {
+            var ctor = function () {
                 // extend the --instance-- we don't want all charts to be overriten...
                 _.extend(this, functionality);
-            }, this);
+
+                return this;
+            };
 
             ctorObj[ctorName] = ctor;
 
