@@ -70,18 +70,18 @@ describe('Narwhal', function () {
             expect(height).toEqual(200);
         });
 
-        it('should default to width=100% if no option is given and no container has no width', function () {
+        it('should default to width=400 if no option is given and no container has no width', function () {
             createNarwhal().render();
 
-            var width = $el.find('svg').attr('width');
-            expect(width).toEqual('100%');
+            var width = +$el.find('svg').attr('width');
+            expect(width).toEqual(400);
         });
 
-        it('should default to height=100% if no option is given and no container has no height', function () {
+        it('should default to height=247 if no option is given and no container has no height', function () {
             createNarwhal().render();
 
-            var width = $el.find('svg').attr('height');
-            expect(width).toEqual('100%');
+            var width = +$el.find('svg').attr('height');
+            expect(width).toEqual(247);
         });
 
         it('should get the container width if it has it', function () {
