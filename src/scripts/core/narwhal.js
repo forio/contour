@@ -6,7 +6,6 @@
             defaultAspect: 1 / 1.61803398875,       // height = width * ratio
             width: undefined, // calculated at render time based on the options & container
             height: undefined,  // if defined, height takes precedence over aspect
-            // aspect: 1.61,       // height = width / 1.61
             /* margin between the container and the chart (ie labels or axis title) */
             margin: {
                 top: 0,
