@@ -13,6 +13,13 @@ describe('Narwhal', function () {
         return narwhal;
     }
 
+    describe('constructor', function () {
+        it('should provide a visualizations array in the options', function () {
+            createNarwhal();
+            expect(narwhal.options.visualizations).toBeDefined();
+        });
+    });
+
     describe('expose', function () {
         it('should not expose passed in object, until the constructor is called', function () {
             var target = createNarwhal();
