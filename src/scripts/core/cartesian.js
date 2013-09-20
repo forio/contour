@@ -8,16 +8,13 @@
 
     var cartesian = {
 
-        init: function () {
-            _.extend(this.options, defaults);
+        init: function (options) {
+            _.extend(this.options, defaults, options);
             return this;
         },
 
-        // to be overriden when coputing scales
-        // xScale: function (x) { return x; },
-        yScale: function (y) { return y; },
         computeXScale: function () {
-            if (!this.xDomain) throw new Error('You are trying to render without setting data.');
+            if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
             this.xScale = d3.scale.ordinal()
                 .domain(this.xDomain)
@@ -25,7 +22,13 @@
         },
 
         computeYScale: function () {
+            if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
+            var yScaleDomain = this.globalMax ? [0, this.globalMax] : this.yDomain;
+
+            this.yScale = d3.scale.linear()
+                .domain(yScaleDomain)
+                .range([this.options.chart.plotHeight, 0]);
         },
 
         computeScales: function () {
@@ -55,6 +58,9 @@
 
                 // this has to be the same for all series?
                 this.xDomain = _.pluck(datums, 'x');
+
+                var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
+                this.yDomain = [0, max];
             }
 
             return this;

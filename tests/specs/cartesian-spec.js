@@ -49,7 +49,21 @@ describe('Cartesian frame', function () {
             expect(narwhal.xScale(2)).toEqual(200);
             expect(narwhal.xScale(3)).toEqual(300);
         });
+    });
 
+    describe('default yScale', function () {
+        beforeEach(function () {
+            narwhal = createNarwhal();
+        });
+
+        it('should be an inverted linear scaling', function () {
+            narwhal.data([0,10,20,30,40]).render();
+            var h = narwhal.options.chart.plotHeight;
+
+            expect(narwhal.yScale(0)).toEqual(h);
+            expect(narwhal.yScale(20)).toEqual(h/2);
+            expect(narwhal.yScale(40)).toEqual(0);
+        });
     });
 
 });
