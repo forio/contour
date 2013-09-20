@@ -89,6 +89,7 @@
 
         render: function () {
             this.computeScales();
+
             this.baseRender();
 
             this.xAxis()
