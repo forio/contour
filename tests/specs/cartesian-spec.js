@@ -72,9 +72,13 @@ describe('Cartesian frame', function () {
 
             expect(axis.length).toEqual(1);
             expect(axis.attr('transform')).toEqual('translate(0,' + y + ')');
-
         });
 
+        it('should position axis at bottom with some padding to the edge padding to fit the axis', function () {
+            createNarwhal().data([1,2,3]).render();
+
+            expect(narwhal.options.chart.padding.bottom).toBeGreaterThan(0);
+        });
 
         it('should render an yAxis at the left of the chart', function () {
             createNarwhal().data([1,2,3]).render();

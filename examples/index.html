@@ -15,6 +15,20 @@
             height: 280px;
             margin: 30px auto;
         }
+
+        .axis {
+            stroke: #000;
+            stroke-width: 1.5px;
+            fill: none;
+
+        }
+
+        .axis text {
+            font-family: arial;
+            font-size: 13px;
+            stroke: none;
+            fill: #000;
+        }
     </style>
 
 </head>
@@ -24,6 +38,8 @@
 
     <script>
         var chart = new Narwhal({ el: '.container' })
+            .cartesian()
+            .data([1,2,3])
             .render();
 
     </script>

@@ -20,6 +20,12 @@
 
         init: function (options) {
             _.extend(this.options, defaults, options);
+
+            // adjust bottom padding
+            this.options.chart.padding.bottom = 25;
+
+            this.calcMetrics();
+
             return this;
         },
 
