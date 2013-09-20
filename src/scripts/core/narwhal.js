@@ -99,7 +99,7 @@
                 // extend the --instance-- we don't want all charts to be overriten...
                 _.extend(this, _.omit(functionality, 'init'));
 
-                functionality.init && functionality.init.call(this);
+                if(functionality.init) functionality.init.call(this);
 
                 return this;
             };
