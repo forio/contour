@@ -20,18 +20,6 @@ describe('Cartesian frame', function () {
     describe('constructor', function () {
     });
 
-    describe('render', function () {
-        // this should be in the render, because is data dependent
-        it('should provide scaling function (xScale & yScale) for visualizations to use', function () {
-            var target = createNarwhal()
-                .data([1,2,3])
-                .render();
-
-            expect(target.xScale).toBeDefined();
-            expect(target.yScale).toBeDefined();
-        });
-    });
-
     describe('default xScale', function () {
         beforeEach(function () {
             narwhal = createNarwhal();
@@ -64,6 +52,38 @@ describe('Cartesian frame', function () {
             expect(narwhal.yScale(20)).toEqual(h/2);
             expect(narwhal.yScale(40)).toEqual(0);
         });
+    });
+
+    describe('render', function () {
+        // this should be in the render, because is data dependent
+        it('should provide scaling function (xScale & yScale) for visualizations to use', function () {
+            var target = createNarwhal()
+                .data([1,2,3])
+                .render();
+
+            expect(target.xScale).toBeDefined();
+            expect(target.yScale).toBeDefined();
+        });
+
+        it('should render an xAxis at the bottom of the chart', function () {
+            createNarwhal().data([1,2,3]).render();
+            var axis = $el.find('.x.axis');
+            var y = narwhal.options.chart.plotHeight;
+
+            expect(axis.length).toEqual(1);
+            expect(axis.attr('transform')).toEqual('translate(0,' + y + ')');
+
+        });
+
+
+        it('should render an yAxis at the left of the chart', function () {
+            createNarwhal().data([1,2,3]).render();
+
+            expect($el.find('.y.axis').length).toEqual(1);
+
+        });
+
+
     });
 
 });

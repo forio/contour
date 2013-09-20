@@ -8,6 +8,14 @@
         }
     };
 
+    function merge(array1, array2) {
+        if(!array1 || !array1.length) return array2;
+        if(!array2 || !array2.length) return array1;
+
+        return [].concat(array1, array2).sort(function (a,b) { return a-b; });
+    }
+
+
     var cartesian = {
 
         init: function (options) {
@@ -36,11 +44,45 @@
         computeScales: function () {
             this.computeXScale();
             this.computeYScale();
+
+            return this;
+        },
+
+        xAxis: function () {
+
+            var xAxis = d3.svg.axis()
+                .scale(this.xScale)
+                .orient('bottom');
+
+            this.svg
+                .append('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + this.options.chart.plotHeight + ')')
+                .call(xAxis);
+
+            return this;
+        },
+
+        yAxis: function () {
+            var tickValues = this.options.xAxis.max ? merge([this.options.xAxis.max], this.yDomain) : this.yDomain;
+            var yAxis = d3.svg.axis()
+                .scale(this.yScale)
+                .tickValues(tickValues)
+                .orient('left');
+
+            this.svg.append('g')
+                    .attr('class', 'y axis')
+                    .call(yAxis);
+
+            return this;
         },
 
         render: function () {
             this.computeScales();
             this.baseRender();
+
+            this.xAxis()
+                .yAxis();
 
             return this;
         },
