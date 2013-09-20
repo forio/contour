@@ -21,8 +21,11 @@
         init: function (options) {
             _.extend(this.options, defaults, options);
 
-            // adjust bottom padding
+            // adjust padding to fit the axis
             this.options.chart.padding.bottom = 25;
+            this.options.chart.padding.left = 30;
+            this.options.chart.padding.top = 10;
+            this.options.chart.padding.right = 0;
 
             this.calcMetrics();
 
@@ -55,7 +58,7 @@
         },
 
         xAxis: function () {
-
+            var y = this.options.chart.plotHeight + this.options.chart.padding.top;
             var xAxis = d3.svg.axis()
                 .scale(this.xScale)
                 .orient('bottom');
@@ -63,7 +66,7 @@
             this.svg
                 .append('g')
                 .attr('class', 'x axis')
-                .attr('transform', 'translate(0,' + this.options.chart.plotHeight + ')')
+                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')')
                 .call(xAxis);
 
             return this;
@@ -77,8 +80,9 @@
                 .orient('left');
 
             this.svg.append('g')
-                    .attr('class', 'y axis')
-                    .call(yAxis);
+                .attr('class', 'y axis')
+                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')')
+                .call(yAxis);
 
             return this;
         },
