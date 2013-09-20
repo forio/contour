@@ -2,7 +2,9 @@
 
     var defaults = {
         xAxis: {
-            rangePadding: 0
+            rangePadding: 0,
+
+            max: undefined
         }
     };
 
@@ -18,13 +20,13 @@
 
             this.xScale = d3.scale.ordinal()
                 .domain(this.xDomain)
-                .rangeRoundBands([0, this.options.chart.plotWidth]);
+                .rangeRoundBands([0, this.options.chart.plotWidth], this.options.xAxis.rangePadding);
         },
 
         computeYScale: function () {
             if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
-            var yScaleDomain = this.globalMax ? [0, this.globalMax] : this.yDomain;
+            var yScaleDomain = this.options.xAxis.max ? [0, this.options.xAxis.max] : this.yDomain;
 
             this.yScale = d3.scale.linear()
                 .domain(yScaleDomain)
