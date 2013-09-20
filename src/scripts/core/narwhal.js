@@ -65,6 +65,18 @@
             });
         },
 
+        baseRender: function () {
+            this.plotArea();
+
+            return this;
+        },
+
+        render: function () {
+            this.baseRender();
+
+            return this;
+        },
+
         plotArea: function () {
 
             var chartOpt = this.options.chart;
@@ -77,18 +89,6 @@
                     .attr('height', chartOpt.height)
                 .append('g')
                     .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
-
-            return this;
-        },
-
-        baseRender: function () {
-            this.plotArea();
-
-            return this;
-        },
-
-        render: function () {
-            this.baseRender();
 
             return this;
         },
