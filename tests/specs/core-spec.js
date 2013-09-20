@@ -138,4 +138,16 @@ describe('Narwhal', function () {
 
     });
 
+    describe('visualizations', function () {
+        it('should call each visualization on the list', function () {
+            var target = createNarwhal();
+            var called = false;
+
+            target.options.visualizations.push(function () { called = true; } );
+            target.visualizations();
+            expect(called).toBe(true);
+
+        });
+    });
+
 });

@@ -93,6 +93,14 @@
             return this;
         },
 
+        visualizations: function () {
+            _.each(this.options.visualizations, function (visualization) {
+                visualization.call(this);
+            }, this);
+
+            return this;
+        },
+
         expose: function (ctorName, functionality) {
             var ctorObj = {};
             var ctor = function () {
