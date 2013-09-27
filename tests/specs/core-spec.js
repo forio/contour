@@ -13,10 +13,25 @@ describe('Narwhal', function () {
         return narwhal;
     }
 
+    it('should add expose functionality to global object', function () {
+        createNarwhal();
+        expect(window.expose).toBeDefined();
+    });
+
     describe('constructor', function () {
         it('should provide a visualizations array in the options', function () {
             createNarwhal();
             expect(narwhal.options.visualizations).toBeDefined();
+        });
+    });
+
+    describe('expose', function () {
+        it('should add functionality to Narwal\'s prototype', function () {
+            var someFunc = function () {};
+            window.expose('someFunc', someFunc);
+
+            expect(Narwhal.prototype.someFunc).toBeDefined();
+            expect(Narwhal.prototype.someFunc).toEqual(someFunc);
         });
     });
 
@@ -143,11 +158,22 @@ describe('Narwhal', function () {
             var target = createNarwhal();
             var called = false;
 
-            target.options.visualizations.push(function () { called = true; } );
+            target.options.visualizations.push(function () { called = true && this === target; } );
             target.visualizations();
             expect(called).toBe(true);
-
         });
+
+        it('should call each visualization with the context of the narwhal instance', function () {
+            var target = createNarwhal();
+            var context;
+
+            target.options.visualizations.push(function () { context = this; } );
+            target.visualizations();
+            expect(context).toEqual(target);
+        });
+
     });
+
+
 
 });

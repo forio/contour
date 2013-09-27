@@ -29,6 +29,10 @@
         return this;
     }
 
+    window.expose = function (ctorName, ctor) {
+        Narwhal.prototype[ctorName] = ctor;
+    };
+
     Narwhal.prototype = _.extend(Narwhal.prototype, {
 
         init: function (options) {
