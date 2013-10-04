@@ -13,9 +13,41 @@ describe('Narwhal', function () {
         return narwhal;
     }
 
-    it('should add expose functionality to global object', function () {
-        createNarwhal();
-        expect(window.expose).toBeDefined();
+    it('should add export functionality to Narwha function object (static method)', function () {
+        expect(Narwhal.export).toBeDefined();
+    });
+
+    describe('export', function () {
+        var exportedVis;
+        beforeEach(function () {
+            exportedVis = function () {};
+            exportedVis.prototype.render = function () {};
+        });
+
+        it('should throw if passed and invalid constructor', function () {
+            expect(_.bind(Narwhal.export, Narwhal, 'some', 'thing')).toThrow();
+            expect(_.bind(Narwhal.export, Narwhal, 'some')).toThrow();
+            expect(_.bind(Narwhal.export, Narwhal, 'some', exportedVis)).not.toThrow();
+        });
+
+        it('should validate that exported functionality implements proper interface', function () {
+            var someFunc = function () {};
+
+            expect(_.bind(Narwhal.export, Narwhal, 'someFunc', someFunc)).toThrow();
+
+            someFunc.prototype.render = function () {};
+
+            expect(_.bind(Narwhal.export, Narwhal, 'someFunc', someFunc)).not.toThrow();
+
+        });
+
+        it('should add functionality to Narwal\'s prototype', function () {
+            Narwhal.export('someFunc', exportedVis);
+
+            expect(Narwhal.prototype.someFunc).toBeDefined();
+            expect(Narwhal.prototype.someFunc).toEqual(exportedVis);
+        });
+
     });
 
     describe('constructor', function () {
@@ -25,15 +57,6 @@ describe('Narwhal', function () {
         });
     });
 
-    describe('expose', function () {
-        it('should add functionality to Narwal\'s prototype', function () {
-            var someFunc = function () {};
-            window.expose('someFunc', someFunc);
-
-            expect(Narwhal.prototype.someFunc).toBeDefined();
-            expect(Narwhal.prototype.someFunc).toEqual(someFunc);
-        });
-    });
 
     describe('expose', function () {
         it('should not expose passed in object, until the constructor is called', function () {

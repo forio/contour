@@ -29,7 +29,10 @@
         return this;
     }
 
-    window.expose = function (ctorName, ctor) {
+    Narwhal.export = function (ctorName, ctor) {
+
+        if (typeof ctor !== 'function') throw new Error('Invalid constructor for ' + ctorName + ' visualization');
+        if (!ctor.prototype.render || !_.isFunction(ctor.prototype.render)) throw new Error('Exported visualizations "' + ctorName + '" should implement render() method (maybe is not a funciton)');
         Narwhal.prototype[ctorName] = ctor;
     };
 
