@@ -4,12 +4,25 @@
 
         this.data(data);
 
-        var renderer = function (svg) {
-            var g = svg.append('g')
-                .attr('vis-id', renderer.id);
+        var datum = _.map(data, this.datum);
 
-            // svg.append('text')
-            //     .text('hello world!');
+        var renderer = function (svg) {
+            var x = _.bind(function (d) { return this.xScale(d.x) + this.xScale.rangeBand() / 2; }, this);
+            var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+
+            var line = d3.svg.line()
+                .x(function (d) { return x(d); })
+                .y(function (d) { return y(d); });
+
+            var g = svg.append('g')
+                .attr('vis-id', renderer.id)
+                .attr('type', 'line-chart');
+
+            g.append('path')
+                .datum(datum)
+                .attr('class', 'line')
+                .attr('d', line);
+
             return this;
         };
 

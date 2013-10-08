@@ -7,6 +7,7 @@
 
     <script src="../src/scripts/core/narwhal.js"></script>
     <script src="../src/scripts/core/cartesian.js"></script>
+    <script src="../src/scripts/visualizations/line.js"></script>
 
     <style>
         .container {
@@ -39,6 +40,7 @@
         var chart = new Narwhal({ el: '.container' })
             .cartesian()
             .data([1,2,3])
+            .line([1,2,3])
             .render();
 
     </script>

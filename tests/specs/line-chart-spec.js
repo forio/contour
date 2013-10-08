@@ -41,8 +41,15 @@ describe('Visualizations', function () {
 
             });
 
-            xit('should add a text elemenet to the svg', function (){
-                expect($el.find('text').length).toBe(1);
+            it('should add a path per series', function (){
+                var g = $el.find('g [vis-id="1"]');
+                expect(g.find('path').length).toBe(1);
+            });
+
+            it('should add the class line to the path element', function () {
+                var path = $el.find('g[vis-id="1"] path');
+                expect(path.attr('class')).toBe('line');
+
             });
         });
 
