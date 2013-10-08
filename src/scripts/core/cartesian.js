@@ -92,6 +92,8 @@
 
             this.baseRender();
 
+            this.renderVisualizations();
+
             this.xAxis()
                 .yAxis();
 

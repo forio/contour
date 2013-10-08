@@ -30,17 +30,6 @@ describe('Narwhal', function () {
             expect(_.bind(Narwhal.export, Narwhal, 'some', exportedVis)).not.toThrow();
         });
 
-        it('should validate that exported functionality implements proper interface', function () {
-            var someFunc = function () {};
-
-            expect(_.bind(Narwhal.export, Narwhal, 'someFunc', someFunc)).toThrow();
-
-            someFunc.prototype.render = function () {};
-
-            expect(_.bind(Narwhal.export, Narwhal, 'someFunc', someFunc)).not.toThrow();
-
-        });
-
         it('should add functionality to Narwal\'s prototype', function () {
             Narwhal.export('someFunc', exportedVis);
 
@@ -182,7 +171,7 @@ describe('Narwhal', function () {
             var called = false;
 
             target.options.visualizations.push(function () { called = true && this === target; } );
-            target.visualizations();
+            target.renderVisualizations();
             expect(called).toBe(true);
         });
 
@@ -191,7 +180,7 @@ describe('Narwhal', function () {
             var context;
 
             target.options.visualizations.push(function () { context = this; } );
-            target.visualizations();
+            target.renderVisualizations();
             expect(context).toEqual(target);
         });
 

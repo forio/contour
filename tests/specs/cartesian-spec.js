@@ -67,6 +67,17 @@ describe('Cartesian frame', function () {
             expect(target.yScale).toBeDefined();
         });
 
+        it('should call visualizations!', function () {
+            var mock = { render: function () { }};
+            var target = createNarwhal();
+            spyOn(mock, 'render');
+
+            target.options.visualizations.push(mock.render);
+            target.data([]).render();
+
+            expect(mock.render).toHaveBeenCalled();
+        });
+
         it('should render an xAxis at the bottom of the chart', function () {
             createNarwhal().data([1,2,3]).render();
             var axis = $el.find('.x.axis');

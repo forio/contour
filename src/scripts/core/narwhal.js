@@ -32,7 +32,7 @@
     Narwhal.export = function (ctorName, ctor) {
 
         if (typeof ctor !== 'function') throw new Error('Invalid constructor for ' + ctorName + ' visualization');
-        if (!ctor.prototype.render || !_.isFunction(ctor.prototype.render)) throw new Error('Exported visualizations "' + ctorName + '" should implement render() method (maybe is not a funciton)');
+
         Narwhal.prototype[ctorName] = ctor;
     };
 
@@ -81,6 +81,8 @@
         render: function () {
             this.baseRender();
 
+            this.renderVisualizations();
+
             return this;
         },
 
@@ -100,9 +102,9 @@
             return this;
         },
 
-        visualizations: function () {
+        renderVisualizations: function () {
             _.each(this.options.visualizations, function (visualization) {
-                visualization.call(this);
+                visualization.call(this, this.svg);
             }, this);
 
             return this;
