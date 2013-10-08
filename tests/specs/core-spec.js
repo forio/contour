@@ -163,6 +163,17 @@ describe('Narwhal', function () {
             expect(transform).toEqual('translate(20,10)');
         });
 
+        it('should call visualizations to render!', function () {
+            var mock = { render: function () { }};
+            var target = createNarwhal();
+            spyOn(mock, 'render');
+
+            target.options.visualizations.push(mock.render);
+            target.render();
+
+            expect(mock.render).toHaveBeenCalled();
+        });
+
     });
 
     describe('visualizations', function () {

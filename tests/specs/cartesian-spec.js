@@ -67,7 +67,7 @@ describe('Cartesian frame', function () {
             expect(target.yScale).toBeDefined();
         });
 
-        it('should call visualizations!', function () {
+        it('should call visualizations to render!', function () {
             var mock = { render: function () { }};
             var target = createNarwhal();
             spyOn(mock, 'render');
