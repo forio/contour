@@ -1,14 +1,22 @@
 (function (ns, d3, _, $, undefined) {
 
-    function ctor() {
+    function ctor(data) {
+
+        this.data(data);
+
+        var renderer = function (svg) {
+            var g = svg.append('g')
+                .attr('vis-id', renderer.id);
+
+            // svg.append('text')
+            //     .text('hello world!');
+            return this;
+        };
+
+        this.options.visualizations.push(renderer);
+
         return this;
     }
-
-    ctor.prototype = {
-        render: function () {
-
-        }
-    };
 
     Narwhal.export('line', ctor);
 
