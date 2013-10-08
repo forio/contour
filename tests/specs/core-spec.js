@@ -176,7 +176,7 @@ describe('Narwhal', function () {
 
     });
 
-    describe('visualizations', function () {
+    describe('renderVisualizations', function () {
         it('should call each visualization on the list', function () {
             var target = createNarwhal();
             var called = false;
@@ -193,6 +193,17 @@ describe('Narwhal', function () {
             target.options.visualizations.push(function () { context = this; } );
             target.renderVisualizations();
             expect(context).toEqual(target);
+        });
+
+        it('should set a visualization id before calling it', function () {
+            var target = createNarwhal();
+            var mock = { render: function () {}};
+
+            target.options.visualizations.push(mock.render);
+
+            target.renderVisualizations();
+
+            expect(mock.render.id).toBe(1);
         });
 
     });

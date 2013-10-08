@@ -103,7 +103,8 @@
         },
 
         renderVisualizations: function () {
-            _.each(this.options.visualizations, function (visualization) {
+            _.each(this.options.visualizations, function (visualization, index) {
+                visualization.id = index + 1;
                 visualization.call(this, this.svg);
             }, this);
 
