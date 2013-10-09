@@ -114,6 +114,13 @@ describe('Cartesian frame', function () {
             expect(narwhal.options.chart.plotWidth).toEqual(x);
         });
 
+        describe('rangeBand (width of each x axis band)', function () {
+            it('should be set default to 0 (rangePoint)', function () {
+                createNarwhal().data([1,2,3]).render();
+                expect(narwhal.rangeBand).toBe(0);
+            });
+        });
+
 
     });
 
