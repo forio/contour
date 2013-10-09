@@ -38,7 +38,11 @@ describe('Visualizations', function () {
 
             it('should add a group with the visualization id', function () {
                 expect($el.find('g [vis-id="1"]').length).toBe(1);
+            });
 
+            it('should be translated to the plot area', function () {
+                var padding = nw.options.chart.padding;
+                expect($el.find('g[vis-id="1"]').attr('transform')).toEqual('translate(' + padding.left +',' + padding.top +')');
             });
 
             it('should add a path per series', function (){
@@ -49,8 +53,9 @@ describe('Visualizations', function () {
             it('should add the class line to the path element', function () {
                 var path = $el.find('g[vis-id="1"] path');
                 expect(path.attr('class')).toBe('line');
-
             });
+
+
         });
 
     });

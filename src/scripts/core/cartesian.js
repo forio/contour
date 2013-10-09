@@ -37,7 +37,9 @@
 
             this.xScale = d3.scale.ordinal()
                 .domain(this.xDomain)
-                .rangeRoundBands([0, this.options.chart.plotWidth], this.options.xAxis.rangePadding);
+                .rangePoints([0, this.options.chart.plotWidth]);
+
+            this.rangeBand = this.xScale.rangeBand();
         },
 
         computeYScale: function () {

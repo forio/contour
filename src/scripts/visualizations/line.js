@@ -7,7 +7,7 @@
         var datum = _.map(data, this.datum);
 
         var renderer = function (svg) {
-            var x = _.bind(function (d) { return this.xScale(d.x) + this.xScale.rangeBand() / 2; }, this);
+            var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
             var y = _.bind(function (d) { return this.yScale(d.y); }, this);
 
             var line = d3.svg.line()
@@ -16,7 +16,8 @@
 
             var g = svg.append('g')
                 .attr('vis-id', renderer.id)
-                .attr('type', 'line-chart');
+                .attr('type', 'line-chart')
+                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
 
             g.append('path')
                 .datum(datum)
