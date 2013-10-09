@@ -29,6 +29,12 @@
             stroke: none;
             fill: #000;
         }
+
+        .line {
+            stroke: #ddd;
+            strole-width: 1px;
+            fill: none;
+        }
     </style>
 
 </head>
@@ -39,8 +45,7 @@
     <script>
         var chart = new Narwhal({ el: '.container' })
             .cartesian()
-            .data([1,2,3])
-            .line([1,2,3])
+            .line([0, 1,2,3,4, 5])
             .render();
 
     </script>
