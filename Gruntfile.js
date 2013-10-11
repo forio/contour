@@ -21,7 +21,8 @@ module.exports = function (grunt) {
         less: {
             dev: {
                 files: {
-                    'dist/css/narwhal.css': 'src/styles/narwhal.less'
+                    'dist/css/narwhal.css': 'src/styles/narwhal.less',
+                    'examples/css/narwhal.css': 'src/styles/narwhal.less'
                 }
             },
             production: {
@@ -31,6 +32,7 @@ module.exports = function (grunt) {
                     yuicompress: false // Off until calc() bug is addressed.  https://github.com/yui/yuicompressor/issues/59
                 },
                 files: {
+                    'examples/css/narwhal.css': 'src/styles/narwhal.less',
                     'dist/narwhal.min.css': 'src/styles/narwhal.less'
                 }
             }
