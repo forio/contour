@@ -30,16 +30,18 @@
             if(data[0].data) {
                 _.each(data, function (d) {
                     var set = _.map(d.data, this.datum, this);
-                    appendPath.call(this, set, this);
+                    appendPath.call(this, set, d.name);
                 }, this);
             } else {
                 appendPath.call(this, this.datum(data));
             }
 
-            function appendPath(data) {
+            function appendPath(data, seriesName) {
+                seriesName = seriesName || 'not-specified';
+                className = seriesName.replace(' ', '_');
                 g.append('path')
                     .datum(data)
-                    .attr('class', 'line')
+                    .attr('class', 'line series-' + className)
                     .attr('d', line);
 
                 if (this.options.line.marker.enable) {
@@ -47,7 +49,7 @@
                         .selectAll('dot')
                             .data(data)
                         .enter().append('circle')
-                            .attr('class', 'dot tooltip-tracker')
+                            .attr('class', 'dot tooltip-tracker series-' + className)
                             .attr('r', 3)
                             .attr('cx', x)
                             .attr('cy', y);
