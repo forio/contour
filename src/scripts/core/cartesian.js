@@ -23,9 +23,9 @@
 
             // adjust padding to fit the axis
             this.options.chart.padding.bottom = 25;
-            this.options.chart.padding.left = 30;
+            this.options.chart.padding.left = 50;
             this.options.chart.padding.top = 10;
-            this.options.chart.padding.right = 0;
+            this.options.chart.padding.right = 10;
 
             this.calcMetrics();
 
@@ -76,9 +76,11 @@
 
         yAxis: function () {
             var tickValues = this.options.xAxis.max ? merge([this.options.xAxis.max], this.yDomain) : this.yDomain;
+            var format = d3.format('.3s');
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
                 .tickValues(tickValues)
+                .tickFormat(format)
                 .orient('left');
 
             this.svg.append('g')
@@ -111,7 +113,7 @@
 
         data: function (series) {
 
-            if (series instanceof Array) {
+            if (series instanceof Array && !series[0].data) {
                 var datums = _.map(series, this.datum);
                 this.dataSrc = datums;
 
@@ -120,6 +122,9 @@
 
                 var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
                 this.yDomain = [0, max];
+            } else if (series instanceof Array && series[0].data) {
+                // we have an array of series
+                _.each(series, function (set) { this.data(set.data); }, this);
             }
 
             return this;

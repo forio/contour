@@ -96,6 +96,7 @@
                 .append('svg')
                     .attr('width', chartOpt.width)
                     .attr('height', chartOpt.height)
+                    .attr('class', 'narwhal-chart')
                 .append('g')
                     .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
 

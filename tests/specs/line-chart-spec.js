@@ -1,6 +1,7 @@
 describe('Visualizations', function () {
     var nw;
     var el, $el;
+    var data = [1,2,3];
 
     beforeEach(function () {
         $el = $('<div>');
@@ -17,23 +18,37 @@ describe('Visualizations', function () {
         describe('constructor', function () {
 
             it('should return this (Narwhal instance)', function () {
-                expect(nw.line([])).toEqual(nw);
+                expect(nw.line(data)).toEqual(nw);
             });
 
             it('should add a visualization renderer to the visualizations array', function () {
                 expect(nw.options.visualizations.length).toBe(0);
-                nw.line([]);
+                nw.line(data);
                 expect(nw.options.visualizations.length).toBe(1);
             });
 
             it('should accept an 1-dimension array as data set', function () {
 
+
+            });
+
+
+            it('should render more than 1 series if passed in', function () {
+                nw.line([{
+                    name: 's1',
+                    data: [1,2,3]
+                },{
+                    name: 's1',
+                    data: [1,2,3]
+                }]).render();
+
+                expect($el.find('g[vis-id="1"] path').length).toBe(2);
             });
         });
 
         describe('render visualization', function () {
             beforeEach(function () {
-                nw.line([]).render();
+                nw.line(data).render();
             });
 
             it('should add a group with the visualization id', function () {

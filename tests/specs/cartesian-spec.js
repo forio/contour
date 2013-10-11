@@ -73,7 +73,7 @@ describe('Cartesian frame', function () {
             spyOn(mock, 'render');
 
             target.options.visualizations.push(mock.render);
-            target.data([]).render();
+            target.data([1,2]).render();
 
             expect(mock.render).toHaveBeenCalled();
         });

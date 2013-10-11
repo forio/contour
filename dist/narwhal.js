@@ -309,7 +309,10 @@
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
 
             if(data[0].data) {
-                _.each(data, function (d) { appendPath.call(this, this.datum(d.data)); }, this);
+                _.each(data, function (d) {
+                    var set = _.map(d.data, this.datum, this);
+                    appendPath.call(this, set, this);
+                }, this);
             } else {
                 appendPath.call(this, this.datum(data));
             }

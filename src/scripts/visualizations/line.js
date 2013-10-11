@@ -1,12 +1,20 @@
 (function (ns, d3, _, $, undefined) {
 
-    function ctor(data) {
+    var defaults = {
+        line: {
+            marker: {
+                enable: true,
+            }
+        }
+    };
+
+    function ctor(data, options) {
+
+        $.extend(true, this.options, defaults, { line: options });
 
         this.data(data);
 
-        var datum = _.map(data, this.datum);
-
-        var renderer = function (svg) {
+        var renderer = function (svg, series) {
             var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
             var y = _.bind(function (d) { return this.yScale(d.y); }, this);
 
@@ -19,10 +27,32 @@
                 .attr('type', 'line-chart')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
 
-            g.append('path')
-                .datum(datum)
-                .attr('class', 'line')
-                .attr('d', line);
+            if(data[0].data) {
+                _.each(data, function (d) {
+                    var set = _.map(d.data, this.datum, this);
+                    appendPath.call(this, set, this);
+                }, this);
+            } else {
+                appendPath.call(this, this.datum(data));
+            }
+
+            function appendPath(data) {
+                g.append('path')
+                    .datum(data)
+                    .attr('class', 'line')
+                    .attr('d', line);
+
+                if (this.options.line.marker.enable) {
+                    g.append('g').attr('class', 'line-chart-markers')
+                        .selectAll('dot')
+                            .data(data)
+                        .enter().append('circle')
+                            .attr('class', 'dot tooltip-tracker')
+                            .attr('r', 3)
+                            .attr('cx', x)
+                            .attr('cy', y);
+                }
+            }
 
             return this;
         };
