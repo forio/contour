@@ -3,7 +3,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
     grunt.loadNpmTasks('grunt-contrib-copy');
 
     // Project configuration.
@@ -16,7 +15,7 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['src/scripts/**/*.js'],
-                tasks: ['concat', 'include']
+                tasks: ['concat', 'uglify']
             }
         },
         less: {
@@ -27,10 +26,12 @@ module.exports = function (grunt) {
             },
             production: {
                 options: {
+                    compress: true,
+                    ieCompat: true,
                     yuicompress: false // Off until calc() bug is addressed.  https://github.com/yui/yuicompressor/issues/59
                 },
                 files: {
-                    'dist/css/narwhal.min.css': 'src/styles/narwhal.less'
+                    'dist/narwhal.min.css': 'src/styles/narwhal.less'
                 }
             }
         },
@@ -38,18 +39,24 @@ module.exports = function (grunt) {
             libs: [
             ],
             core: [
+                'src/scripts/core/narwhal.js',
+                'src/scripts/core/cartesian.js',
+                'src/scripts/core/**/*.js'
+            ],
+            vis: [
+                'src/scripts/visualizations/**/*.js'
             ]
         },
         include: {
             core: {
-                src: ['<%= scripts.lib %>', '<%= scripts.core %>'],
+                src: ['<%= scripts.core %>'],
                 dest: 'web/include/login/scripts.html'
             }
         },
         concat: {
-            faculty: {
-                src: ['<%= scripts.lib %>', '<%= scripts.core %>'],
-                dest: 'dist/narwal.js'
+            all: {
+                src: ['<%= scripts.core %>', '<%= scripts.vis %>'],
+                dest: 'dist/narwhal.js'
             }
         },
         uglify: {
@@ -67,6 +74,11 @@ module.exports = function (grunt) {
             }
         }
     });
+
+    // Default task.
+    grunt.registerTask('default', ['less:dev', 'watch']);
+    grunt.registerTask('production', ['concat', 'uglify', 'less:production']);
+    grunt.registerTask('linked', ['concat', 'uglify', 'less:production', 'watch']);
 
     grunt.registerMultiTask('templates', 'Compiles underscore templates', function () {
         var _ = require('lodash');
@@ -181,7 +193,4 @@ module.exports = function (grunt) {
     });
 
 
-    // Default task.
-    grunt.registerTask('default', ['less:dev', 'watch']);
-    grunt.registerTask('production', ['concat', 'uglify', 'less:production']);
 };
