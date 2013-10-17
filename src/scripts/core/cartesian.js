@@ -18,6 +18,35 @@
         return [].concat(array1, array2).sort(function (a,b) { return a-b; });
     }
 
+    function extractTickValues(domain, min, max) {
+        if (min === undefined && max === undefined)
+            return domain;
+
+        if (min === undefined) {
+            return merge([max], domain);
+        }
+
+        if (max === undefined) {
+            return merge([min], domain);
+        }
+
+        return merge([min, max], domain);
+    }
+
+    function extractScaleDomain(domain, min, max) {
+        if (min === undefined && max === undefined)
+            return domain;
+
+        if (min === undefined) {
+            return [domain[0], max];
+        }
+
+        if (max === undefined) {
+            return [min, domain[1]];
+        }
+
+        return [min, max];
+    }
 
     var cartesian = {
 
@@ -47,8 +76,7 @@
 
         computeYScale: function () {
             if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
-
-            var yScaleDomain = this.options.yAxis.max ? [0, this.options.yAxis.max] : this.yDomain;
+            var yScaleDomain = extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
 
             this.yScale = d3.scale.linear()
                 .domain(yScaleDomain)
@@ -78,8 +106,7 @@
         },
 
         yAxis: function () {
-            var tickValues = this.options.yAxis.max && this.options.yAxis.max > _.last(this.yDomain) ?
-                    merge([this.options.yAxis.max], this.yDomain) : this.yDomain;
+            var tickValues = extractTickValues(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
             var format = d3.format('.3s');
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
@@ -125,7 +152,8 @@
                 this.xDomain = _.pluck(datums, 'x');
 
                 var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
-                this.yDomain = [0, max];
+                var min = this.yDomain ? Math.max(this.yDomain[0], _.min(_.pluck(datums, 'y'))) : _.min(_.pluck(datums, 'y'));
+                this.yDomain = [min, max];
             } else if (series instanceof Array && series[0].data) {
                 // we have an array of series
                 _.each(series, function (set) { this.data(set.data); }, this);

@@ -87,6 +87,23 @@ describe('Cartesian frame', function () {
         });
 
         describe('with options.yAxis.min set', function () {
+            beforeEach(function () {
+                narwhal = createNarwhal({ yAxis: { min: 3 }});
+            });
+
+            it('should merge options.yAxis.min as the first tick', function () {
+                narwhal.data([10,20,30]).render();
+                var topTick = $el.find('.y.axis .tick.major').first();
+                expect(topTick.find('text').text()).toBe('3.00');
+            });
+
+            it('should use it as the abs min of the domain', function () {
+                narwhal.data([10,20,30]).render();
+                // a value equals to the min should be at the bottom of the chart
+                // so it should be equal plotHeight (y grows down)
+                expect(narwhal.yScale(3)).toBe(narwhal.options.chart.plotHeight);
+            });
+
         });
 
     });
