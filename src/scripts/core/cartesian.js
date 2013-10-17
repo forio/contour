@@ -3,7 +3,10 @@
     var defaults = {
         xAxis: {
             rangePadding: 0,
+            max: undefined
+        },
 
+        yAxis: {
             max: undefined
         }
     };
@@ -18,8 +21,8 @@
 
     var cartesian = {
 
-        init: function (options) {
-            _.extend(this.options, defaults, options);
+        init: function () {
+            this.options = $.extend({}, defaults, this.options);
 
             // adjust padding to fit the axis
             this.options.chart.padding.bottom = 25;
@@ -75,7 +78,8 @@
         },
 
         yAxis: function () {
-            var tickValues = this.options.xAxis.max ? merge([this.options.xAxis.max], this.yDomain) : this.yDomain;
+            var tickValues = this.options.yAxis.max && this.options.yAxis.max > _.last(this.yDomain) ?
+                    merge([this.options.yAxis.max], this.yDomain) : this.yDomain;
             var format = d3.format('.3s');
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)

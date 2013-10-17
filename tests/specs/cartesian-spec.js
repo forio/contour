@@ -54,6 +54,26 @@ describe('Cartesian frame', function () {
             expect(narwhal.yScale(20)).toEqual(h/2);
             expect(narwhal.yScale(40)).toEqual(0);
         });
+
+    });
+
+    describe('default yAxis', function () {
+        beforeEach(function () {
+            narwhal = createNarwhal();
+        });
+
+        it('should show only first and last ticks', function () {
+            narwhal.data([0,10,20,30]).render();
+            expect($el.find('.y.axis .tick.major').length).toBe(2);
+        });
+
+        it('should merge options.yAxis.max as a tick', function () {
+            narwhal = createNarwhal({ yAxis: { max: 100 }});
+            narwhal.data([0,10,20,30]).render();
+            var ticks = $el.find('.y.axis .tick.major');
+            expect(ticks.length).toBe(3);
+
+        });
     });
 
     describe('render', function () {
