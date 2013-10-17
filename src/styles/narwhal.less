@@ -1,16 +1,20 @@
+@import 'mixins.less';
+
 .narwhal-chart {
     .axis {
-        stroke: #000;
+        stroke: #dbdbdb;
         stroke-width: 1.5px;
         fill: none;
 
-    }
+        text {
+            .mono-font();
+            stroke: none;
+            fill: #999;
+        }
 
-    .axis text {
-        font-family: arial;
-        font-size: 13px;
-        stroke: none;
-        fill: #000;
+        &.x .tick.major line {
+            stroke: none;
+        }
     }
 
     .line {
