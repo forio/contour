@@ -67,7 +67,7 @@ describe('Visualizations', function () {
 
             it('should add the class line to the path element', function () {
                 var path = $el.find('g[vis-id="1"] path');
-                expect(path.attr('class')).toBe('line');
+                expect(path.attr('class')).toContain('line');
             });
 
 
