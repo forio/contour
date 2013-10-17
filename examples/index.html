@@ -25,12 +25,9 @@
     <div class="container"></div>
 
     <script>
-        var chart = new Narwhal({ el: '.container' })
+        var chart = new Narwhal({ el: '.container', yAxis: { max: 8 }})
             .cartesian()
-            .line([
-                { data: [0,1,2,3,4,5] },
-                 {data: [5,4,3,2,1,0]}
-                ])
+            .line([{ data: [0,1,2,3,4,5] }, {data: [5,4,3,2,1,0]} ])
             .render();
 
     </script>
