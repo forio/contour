@@ -48,7 +48,7 @@
         computeYScale: function () {
             if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
-            var yScaleDomain = this.options.xAxis.max ? [0, this.options.xAxis.max] : this.yDomain;
+            var yScaleDomain = this.options.yAxis.max ? [0, this.options.yAxis.max] : this.yDomain;
 
             this.yScale = d3.scale.linear()
                 .domain(yScaleDomain)

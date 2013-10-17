@@ -35,7 +35,6 @@ describe('Visualizations', function () {
                 expect(paths.eq(0).attr('d').length).toBeGreaterThan(0);
             });
 
-
             it('should render more than 1 series if passed in', function () {
                 nw.line([{
                     name: 's1',
@@ -48,6 +47,7 @@ describe('Visualizations', function () {
                 var paths = $el.find('g[vis-id="1"] path');
                 expect(paths.length).toBe(2);
                 expect(paths.eq(0).attr('d').length).toBeGreaterThan(0);
+                expect(paths.eq(1).attr('d').length).toBeGreaterThan(0);
             });
 
             it('should add the name of the series as a class series-name to each path', function () {
