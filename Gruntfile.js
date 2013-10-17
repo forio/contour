@@ -21,7 +21,7 @@ module.exports = function (grunt) {
         less: {
             dev: {
                 files: {
-                    'dist/css/narwhal.css': 'src/styles/narwhal.less',
+                    'dist/narwhal.css': 'src/styles/narwhal.less',
                     'examples/css/narwhal.css': 'src/styles/narwhal.less'
                 }
             },
