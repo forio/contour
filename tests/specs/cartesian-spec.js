@@ -74,15 +74,16 @@ describe('Cartesian frame', function () {
 
             it('should use the options.yAxis.max as the max of the domain', function () {
                 narwhal.data([0,10,20,30]).render();
+                // a value equal to the max should be scaled at the top of the chart (y=0)
+                expect(narwhal.yScale(100)).toBe(0);
+            });
+
+            it('should merge options.yAxis.min as the last tick', function () {
+                narwhal.data([0,10,20,30]).render();
                 var topTick = $el.find('.y.axis .tick.major').last();
                 expect(topTick.find('text').text()).toBe('100');
                 expect(topTick.attr('transform')).toBe('translate(0,0)');
-            });
 
-            it('should merge options.yAxis.max as a tick', function () {
-                narwhal.data([0,10,20,30]).render();
-                var ticks = $el.find('.y.axis .tick.major');
-                expect(ticks.length).toBe(3);
             });
         });
 
@@ -95,6 +96,7 @@ describe('Cartesian frame', function () {
                 narwhal.data([10,20,30]).render();
                 var topTick = $el.find('.y.axis .tick.major').first();
                 expect(topTick.find('text').text()).toBe('3.00');
+                expect(topTick.attr('transform')).toBe('translate(0,' + narwhal.options.chart.plotHeight + ')');
             });
 
             it('should use it as the abs min of the domain', function () {
@@ -103,7 +105,19 @@ describe('Cartesian frame', function () {
                 // so it should be equal plotHeight (y grows down)
                 expect(narwhal.yScale(3)).toBe(narwhal.options.chart.plotHeight);
             });
+        });
 
+        describe('with both min and max set', function () {
+            beforeEach(function () {
+                narwhal = createNarwhal({yAxis: { min: -2, max: 500 }});
+            });
+
+            it('should set the domain to be [min, max]', function () {
+                narwhal.data([1,2,3]).render();
+
+                expect(narwhal.yScale(500)).toBe(0);
+                expect(narwhal.yScale(-2)).toBe(narwhal.options.chart.plotHeight);
+            });
         });
 
     });
