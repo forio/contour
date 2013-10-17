@@ -38,11 +38,26 @@ describe('Visualizations', function () {
                     name: 's1',
                     data: [1,2,3]
                 },{
-                    name: 's1',
+                    name: 's2',
                     data: [1,2,3]
                 }]).render();
 
                 expect($el.find('g[vis-id="1"] path').length).toBe(2);
+            });
+
+            it('should add the name of the series as a class series-name to each path', function () {
+                nw.line([{
+                    name: 's1',
+                    data: [1,2,3]
+                },{
+                    name: 's2',
+                    data: [1,2,3]
+                }]).render();
+
+                var paths = $el.find('g[vis-id="1"] path');
+
+                expect(paths.eq(0).attr('class')).toContain('series-s1');
+                expect(paths.eq(1).attr('class')).toContain('series-s2');
             });
         });
 
