@@ -67,22 +67,25 @@ describe('Cartesian frame', function () {
             expect($el.find('.y.axis .tick.major').length).toBe(2);
         });
 
-        it('should use the options.yAxis.max as the max of the domain', function () {
-            narwhal = createNarwhal({ yAxis: { max: 100 }});
-            narwhal.data([0,10,20,30]).render();
+        describe('with options.yAxis.max set', function () {
+            it('should use the options.yAxis.max as the max of the domain', function () {
+                narwhal = createNarwhal({ yAxis: { max: 100 }});
+                narwhal.data([0,10,20,30]).render();
 
-            var topTick = $el.find('.y.axis .tick.major').last();
-            expect(topTick.find('text').text()).toBe('100');
-            expect(topTick.attr('transform')).toBe('translate(0,0)');
+                var topTick = $el.find('.y.axis .tick.major').last();
+                expect(topTick.find('text').text()).toBe('100');
+                expect(topTick.attr('transform')).toBe('translate(0,0)');
+            });
+
+            it('should merge options.yAxis.max as a tick', function () {
+                narwhal = createNarwhal({ yAxis: { max: 100 }});
+                narwhal.data([0,10,20,30]).render();
+                var ticks = $el.find('.y.axis .tick.major');
+                expect(ticks.length).toBe(3);
+
+            });
         });
 
-        it('should merge options.yAxis.max as a tick', function () {
-            narwhal = createNarwhal({ yAxis: { max: 100 }});
-            narwhal.data([0,10,20,30]).render();
-            var ticks = $el.find('.y.axis .tick.major');
-            expect(ticks.length).toBe(3);
-
-        });
     });
 
     describe('render', function () {
