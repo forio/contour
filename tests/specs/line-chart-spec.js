@@ -28,8 +28,11 @@ describe('Visualizations', function () {
             });
 
             it('should accept an 1-dimension array as data set', function () {
+                nw.line([1,2,3]).render();
+                var paths = $el.find('g[vis-id="1"] path');
 
-
+                expect(paths.length).toBe(1);
+                expect(paths.eq(0).attr('d').length).toBeGreaterThan(0);
             });
 
 
@@ -42,7 +45,9 @@ describe('Visualizations', function () {
                     data: [1,2,3]
                 }]).render();
 
-                expect($el.find('g[vis-id="1"] path').length).toBe(2);
+                var paths = $el.find('g[vis-id="1"] path');
+                expect(paths.length).toBe(2);
+                expect(paths.eq(0).attr('d').length).toBeGreaterThan(0);
             });
 
             it('should add the name of the series as a class series-name to each path', function () {

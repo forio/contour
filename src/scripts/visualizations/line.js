@@ -33,7 +33,7 @@
                     appendPath.call(this, set, d.name);
                 }, this);
             } else {
-                appendPath.call(this, this.datum(data));
+                appendPath.call(this, _.map(data, this.datum));
             }
 
             function appendPath(data, seriesName) {
