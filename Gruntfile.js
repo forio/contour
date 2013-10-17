@@ -33,7 +33,7 @@ module.exports = function (grunt) {
                 },
                 files: {
                     'dist/narwhal.min.css': 'src/styles/narwhal.less',
-                    'examples/css/narwhal.css': 'src/styles/narwhal.less'
+                    'examples/css/narwhal.min.css': 'src/styles/narwhal.less'
                 }
             }
         },
