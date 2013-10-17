@@ -1,0 +1,22 @@
+.narwhal-chart .axis {
+  stroke: #dbdbdb;
+  stroke-width: 1.5px;
+  fill: none;
+}
+.narwhal-chart .axis text {
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 13px;
+  stroke: none;
+  fill: #999;
+}
+.narwhal-chart .axis.x .tick.major line {
+  stroke: none;
+}
+.narwhal-chart .line {
+  stroke: #ddd;
+  stroke-width: 1px;
+  fill: none;
+}
+.narwhal-chart .line-chart-markers .dot {
+  fill: #aaa;
+}

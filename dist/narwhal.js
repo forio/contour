@@ -147,7 +147,10 @@
     var defaults = {
         xAxis: {
             rangePadding: 0,
+            max: undefined
+        },
 
+        yAxis: {
             max: undefined
         }
     };
@@ -159,11 +162,40 @@
         return [].concat(array1, array2).sort(function (a,b) { return a-b; });
     }
 
+    function extractTickValues(domain, min, max) {
+        if (min === undefined && max === undefined)
+            return domain;
+
+        if (min === undefined) {
+            return max > domain[0] ? merge([max], domain) : [max];
+        }
+
+        if (max === undefined) {
+            return min < domain[domain.length-1] ? merge([min], domain) : [min];
+        }
+
+        return merge([min, max], domain);
+    }
+
+    function extractScaleDomain(domain, min, max) {
+        if (min === undefined && max === undefined)
+            return domain;
+
+        if (min === undefined) {
+            return [Math.min(domain[0], max), max];
+        }
+
+        if (max === undefined) {
+            return [min, Math.max(min, domain[domain.length-1])];
+        }
+
+        return [min, max];
+    }
 
     var cartesian = {
 
-        init: function (options) {
-            _.extend(this.options, defaults, options);
+        init: function () {
+            this.options = $.extend({}, defaults, this.options);
 
             // adjust padding to fit the axis
             this.options.chart.padding.bottom = 25;
@@ -179,8 +211,10 @@
         computeXScale: function () {
             if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
+            var xScaleDomain = extractScaleDomain(this.xDomain, this.options.xAxis.min, this.options.xAxis.max);
+
             this.xScale = d3.scale.ordinal()
-                .domain(this.xDomain)
+                .domain(xScaleDomain)
                 .rangePoints([0, this.options.chart.plotWidth]);
 
             this.rangeBand = this.xScale.rangeBand();
@@ -188,8 +222,7 @@
 
         computeYScale: function () {
             if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
-
-            var yScaleDomain = this.options.xAxis.max ? [0, this.options.xAxis.max] : this.yDomain;
+            var yScaleDomain = extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
 
             this.yScale = d3.scale.linear()
                 .domain(yScaleDomain)
@@ -219,7 +252,7 @@
         },
 
         yAxis: function () {
-            var tickValues = this.options.xAxis.max ? merge([this.options.xAxis.max], this.yDomain) : this.yDomain;
+            var tickValues = extractTickValues(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
             var format = d3.format('.3s');
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
@@ -230,7 +263,9 @@
             this.svg.append('g')
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')')
-                .call(yAxis);
+                .call(yAxis)
+                .selectAll('text')
+                    .attr('dy', '.9em');
 
             return this;
         },
@@ -265,7 +300,8 @@
                 this.xDomain = _.pluck(datums, 'x');
 
                 var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
-                this.yDomain = [0, max];
+                var min = this.yDomain ? Math.max(this.yDomain[0], _.min(_.pluck(datums, 'y'))) : _.min(_.pluck(datums, 'y'));
+                this.yDomain = [min, max];
             } else if (series instanceof Array && series[0].data) {
                 // we have an array of series
                 _.each(series, function (set) { this.data(set.data); }, this);
@@ -314,7 +350,7 @@
                     appendPath.call(this, set, d.name);
                 }, this);
             } else {
-                appendPath.call(this, this.datum(data));
+                appendPath.call(this, _.map(data, this.datum));
             }
 
             function appendPath(data, seriesName) {
