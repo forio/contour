@@ -57,6 +57,50 @@ describe('Cartesian frame', function () {
 
     });
 
+    describe('default xAxis', function () {
+        beforeEach(function () {
+            narwhal = createNarwhal();
+        });
+
+        describe('with options.xAxis.min set', function () {
+            beforeEach(function () {
+                narwhal = createNarwhal({ xAxis: { min: 5 }});
+            });
+
+            it('should use the options.xAxis.min as the min of the domain', function () {
+                narwhal.data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
+                // a value equal to the max should be scaled at the top of the chart (y=0)
+                expect(narwhal.xScale(5)).toBe(0);
+            });
+
+            it('should merge options.xAxis.min as the first tick', function () {
+                // narwhal.data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
+
+                // var ticks = $el.find('.x.axis .tick.major');
+                // var topTick = ticks.first();
+                // var correctOrder = true;
+
+                // expect(topTick.find('text').text()).toBe('5');
+                // expect(topTick.attr('transform')).toBe('translate(0,0)');
+                // ticks.each(function (t, i) { correctOrder = correctOrder && $(t).find('text').text() === (i + 5) + ''; });
+                // expect(correctOrder).toBe(true);
+            });
+        });
+
+        describe('with options.xAxis.max set', function () {
+            beforeEach(function () {
+                narwhal = createNarwhal({ xAxis: { max: 7 }});
+            });
+
+            it('should use the options.xAxis.max as the max of the domain', function () {
+                narwhal.data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
+                // a value equal to the max should be scaled at the top of the chart (y=0)
+                expect(narwhal.xScale(7)).toBe(narwhal.options.chart.plotWidth);
+            });
+        });
+
+    });
+
     describe('default yAxis', function () {
         beforeEach(function () {
             narwhal = createNarwhal();
@@ -65,6 +109,12 @@ describe('Cartesian frame', function () {
         it('should show only first and last ticks', function () {
             narwhal.data([0,10,20,30]).render();
             expect($el.find('.y.axis .tick.major').length).toBe(2);
+        });
+
+        it('should align the top of the label to the tick', function () {
+            narwhal.data([0,10,20,30]).render();
+            var ticks = $el.find('.y.axis .tick.major text');
+            expect(_.all(ticks, function (t) { return $(t).attr('dy') === '.9em'; })).toBe(true);
         });
 
         describe('with options.yAxis.max set', function () {
@@ -83,7 +133,13 @@ describe('Cartesian frame', function () {
                 var topTick = $el.find('.y.axis .tick.major').last();
                 expect(topTick.find('text').text()).toBe('100');
                 expect(topTick.attr('transform')).toBe('translate(0,0)');
+            });
 
+            it('should handle the case where max is less than the data set\'s min', function () {
+                narwhal.data([200, 300, 400]).render();
+                var ticks = $el.find('.y.axis .tick.major');
+
+                expect(ticks.length).toBe(1);
             });
         });
 
@@ -104,6 +160,13 @@ describe('Cartesian frame', function () {
                 // a value equals to the min should be at the bottom of the chart
                 // so it should be equal plotHeight (y grows down)
                 expect(narwhal.yScale(3)).toBe(narwhal.options.chart.plotHeight);
+            });
+
+            it('should handle the case where min is greater than the data set\'s max', function () {
+                narwhal.data([1,2,3]).render();
+                var ticks = $el.find('.y.axis .tick.major');
+
+                expect(ticks.length).toBe(1);
             });
         });
 

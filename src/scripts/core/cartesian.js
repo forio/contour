@@ -23,11 +23,11 @@
             return domain;
 
         if (min === undefined) {
-            return merge([max], domain);
+            return max > domain[0] ? merge([max], domain) : [max];
         }
 
         if (max === undefined) {
-            return merge([min], domain);
+            return min < domain[domain.length-1] ? merge([min], domain) : [min];
         }
 
         return merge([min, max], domain);
@@ -38,11 +38,11 @@
             return domain;
 
         if (min === undefined) {
-            return [domain[0], max];
+            return [Math.min(domain[0], max), max];
         }
 
         if (max === undefined) {
-            return [min, domain[1]];
+            return [min, Math.max(min, domain[domain.length-1])];
         }
 
         return [min, max];
@@ -67,8 +67,10 @@
         computeXScale: function () {
             if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
+            var xScaleDomain = extractScaleDomain(this.xDomain, this.options.xAxis.min, this.options.xAxis.max);
+
             this.xScale = d3.scale.ordinal()
-                .domain(this.xDomain)
+                .domain(xScaleDomain)
                 .rangePoints([0, this.options.chart.plotWidth]);
 
             this.rangeBand = this.xScale.rangeBand();
@@ -117,7 +119,9 @@
             this.svg.append('g')
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')')
-                .call(yAxis);
+                .call(yAxis)
+                .selectAll('text')
+                    .attr('dy', '.9em');
 
             return this;
         },
