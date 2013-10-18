@@ -9,13 +9,17 @@
                 right: 10
             }
         },
+
         xAxis: {
             rangePadding: 0,
-            max: undefined
         },
 
         yAxis: {
-            max: undefined
+            min: undefined,
+            max: undefined,
+            labels: {
+                format: '.0f' // d3 formats
+            }
         }
     };
 
@@ -116,7 +120,7 @@
 
         yAxis: function () {
             var tickValues = extractTickValues(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
-            var format = d3.format('.3s');
+            var format = d3.format(this.options.yAxis.labels.format);
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
                 .tickValues(tickValues)

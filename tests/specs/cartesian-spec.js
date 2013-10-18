@@ -151,7 +151,7 @@ describe('Cartesian frame', function () {
             it('should merge options.yAxis.min as the first tick', function () {
                 narwhal.data([10,20,30]).render();
                 var topTick = $el.find('.y.axis .tick.major').first();
-                expect(topTick.find('text').text()).toBe('3.00');
+                expect(topTick.find('text').text()).toBe('3');
                 expect(topTick.attr('transform')).toBe('translate(0,' + narwhal.options.chart.plotHeight + ')');
             });
 
