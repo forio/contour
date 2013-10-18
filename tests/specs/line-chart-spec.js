@@ -22,9 +22,9 @@ describe('Visualizations', function () {
             });
 
             it('should add a visualization renderer to the visualizations array', function () {
-                expect(nw.options.visualizations.length).toBe(0);
+                expect(nw.visualizations.length).toBe(0);
                 nw.line(data);
-                expect(nw.options.visualizations.length).toBe(1);
+                expect(nw.visualizations.length).toBe(1);
             });
 
             it('should accept an 1-dimension array as data set', function () {

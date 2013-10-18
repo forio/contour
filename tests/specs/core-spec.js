@@ -42,7 +42,7 @@ describe('Narwhal', function () {
     describe('constructor', function () {
         it('should provide a visualizations array in the options', function () {
             createNarwhal();
-            expect(narwhal.options.visualizations).toBeDefined();
+            expect(narwhal.visualizations).toBeDefined();
         });
     });
 
@@ -168,7 +168,7 @@ describe('Narwhal', function () {
             var target = createNarwhal();
             spyOn(mock, 'render');
 
-            target.options.visualizations.push(mock.render);
+            target.visualizations.push(mock.render);
             target.render();
 
             expect(mock.render).toHaveBeenCalled();
@@ -181,7 +181,7 @@ describe('Narwhal', function () {
             var target = createNarwhal();
             var called = false;
 
-            target.options.visualizations.push(function () { called = true && this === target; } );
+            target.visualizations.push(function () { called = true && this === target; } );
             target.renderVisualizations();
             expect(called).toBe(true);
         });
@@ -190,7 +190,7 @@ describe('Narwhal', function () {
             var target = createNarwhal();
             var context;
 
-            target.options.visualizations.push(function () { context = this; } );
+            target.visualizations.push(function () { context = this; } );
             target.renderVisualizations();
             expect(context).toEqual(target);
         });
@@ -199,7 +199,7 @@ describe('Narwhal', function () {
             var target = createNarwhal();
             var mock = { render: function () {}};
 
-            target.options.visualizations.push(mock.render);
+            target.visualizations.push(mock.render);
 
             target.renderVisualizations();
 

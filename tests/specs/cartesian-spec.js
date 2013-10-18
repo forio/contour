@@ -201,7 +201,7 @@ describe('Cartesian frame', function () {
             var target = createNarwhal();
             spyOn(mock, 'render');
 
-            target.options.visualizations.push(mock.render);
+            target.visualizations.push(mock.render);
             target.data([1,2]).render();
 
             expect(mock.render).toHaveBeenCalled();

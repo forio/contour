@@ -1,6 +1,14 @@
 (function (ns, d3, _, $, undefined) {
 
     var defaults = {
+        chart: {
+            padding: {
+                top: 10,
+                bottom: 25,
+                left: 50,
+                right: 10
+            }
+        },
         xAxis: {
             rangePadding: 0,
             max: undefined
@@ -50,16 +58,15 @@
 
     var cartesian = {
 
-        init: function () {
-            this.options = $.extend({}, defaults, this.options);
+        init: function (options) {
+            this.options = $.extend(true, {}, defaults, options);
 
-            // adjust padding to fit the axis
-            this.options.chart.padding.bottom = 25;
-            this.options.chart.padding.left = 50;
-            this.options.chart.padding.top = 10;
-            this.options.chart.padding.right = 10;
+            // // adjust padding to fit the axis
+            // this.options.chart.padding.bottom = 25;
+            // this.options.chart.padding.left = 50;
+            // this.options.chart.padding.top = 10;
+            // this.options.chart.padding.right = 10;
 
-            this.calcMetrics();
 
             return this;
         },
@@ -127,6 +134,10 @@
         },
 
         render: function () {
+            this.composeOptions();
+
+            this.calcMetrics();
+
             this.computeScales();
 
             this.baseRender();

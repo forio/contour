@@ -20,8 +20,7 @@
                 bottom: 0,
                 left: 0
             }
-        },
-        visualizations: []
+        }
     };
 
     function Narwhal(options) {
@@ -34,14 +33,21 @@
         if (typeof ctor !== 'function') throw new Error('Invalid constructor for ' + ctorName + ' visualization');
 
         Narwhal.prototype[ctorName] = ctor;
+        // Narwhal.prototype[ctorName] = function () {
+        //     // this.visualizations.add(renderer);
+        //     return ctor.apply(this, arguments);
+        // };
     };
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
 
         init: function (options) {
-            this.options = $.extend(true, {}, defaults, options);
+            // for now, just  store this options here...
+            // the final set of options will be composed before rendering
+            // after all components/visualizations have been added
+            this.options = options;
 
-            this.calcMetrics();
+            this.visualizations = [];
 
             return this;
         },
@@ -72,6 +78,11 @@
             });
         },
 
+        composeOptions: function () {
+            // compise the final list of options right before start rendering
+            this.options = $.extend(true, {}, defaults, this.options);
+        },
+
         baseRender: function () {
             this.plotArea();
 
@@ -79,6 +90,10 @@
         },
 
         render: function () {
+            this.composeOptions();
+
+            this.calcMetrics();
+
             this.baseRender();
 
             this.renderVisualizations();
@@ -104,7 +119,7 @@
         },
 
         renderVisualizations: function () {
-            _.each(this.options.visualizations, function (visualization, index) {
+            _.each(this.visualizations, function (visualization, index) {
                 visualization.id = index + 1;
                 visualization.call(this, this.svg);
             }, this);
@@ -118,7 +133,7 @@
                 // extend the --instance-- we don't want all charts to be overriten...
                 _.extend(this, _.omit(functionality, 'init'));
 
-                if(functionality.init) functionality.init.call(this);
+                if(functionality.init) functionality.init.call(this, this.options);
 
                 return this;
             };

@@ -59,7 +59,7 @@
             return this;
         };
 
-        this.options.visualizations.push(renderer);
+        this.visualizations.push(renderer);
 
         return this;
     }
