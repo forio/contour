@@ -62,6 +62,13 @@ describe('Cartesian frame', function () {
             narwhal = createNarwhal();
         });
 
+        it('should not have anyTicks', function () {
+            narwhal.data([0,10,20,30]).render();
+            var ticks = $el.find('.x.axis ');
+            expect(_.all(ticks.find('.tick.major line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '0'; })).toBe(true);
+            expect(ticks.find('.domain').attr('d')).toContain('M0');
+        });
+
         describe('with options.xAxis.min set', function () {
             beforeEach(function () {
                 narwhal = createNarwhal({ xAxis: { min: 5 }});

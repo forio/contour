@@ -12,6 +12,9 @@
 
         xAxis: {
             rangePadding: 0,
+            innerTickSize: 0,
+            outerTickSize: 0,
+            tickPadding: 8,
         },
 
         yAxis: {
@@ -19,7 +22,7 @@
             max: undefined,
             innerTickSize: 0,
             outerTickSize: 6,
-            tickPadding: 6,
+            tickPadding: 8,
             labels: {
                 format: '.0f' // d3 formats
             }
@@ -108,8 +111,11 @@
 
         xAxis: function () {
             var y = this.options.chart.plotHeight + this.options.chart.padding.top;
+            var options = this.options.xAxis;
             var xAxis = d3.svg.axis()
                 .scale(this.xScale)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding)
                 .orient('bottom');
 
             this.svg
