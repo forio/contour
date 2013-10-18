@@ -106,9 +106,16 @@ describe('Cartesian frame', function () {
             narwhal = createNarwhal();
         });
 
-        it('should show only first and last ticks', function () {
+        it('should not have innerTick', function () {
             narwhal.data([0,10,20,30]).render();
-            expect($el.find('.y.axis .tick.major').length).toBe(2);
+            var ticks = $el.find('.y.axis .tick.major');
+            expect(_.all(ticks.find('line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '0'; })).toBe(true);
+        });
+
+        it('should have outerTick', function () {
+            narwhal.data([0,10,20,30]).render();
+            // the actual axis path should start at -6 (the default outerTickSize)
+            expect($el.find('.y.axis .domain').attr('d')).toContain('M-6');
         });
 
         it('should align the top of the label to the tick', function () {

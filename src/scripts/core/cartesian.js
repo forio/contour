@@ -17,6 +17,9 @@
         yAxis: {
             min: undefined,
             max: undefined,
+            innerTickSize: 0,
+            outerTickSize: 6,
+            tickPadding: 6,
             labels: {
                 format: '.0f' // d3 formats
             }
@@ -119,12 +122,15 @@
         },
 
         yAxis: function () {
-            var tickValues = extractTickValues(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
-            var format = d3.format(this.options.yAxis.labels.format);
+            var options = this.options.yAxis;
+            var tickValues = extractTickValues(this.yDomain, options.min, options.max);
+            var format = d3.format(options.labels.format);
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
                 .tickValues(tickValues)
                 .tickFormat(format)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding)
                 .orient('left');
 
             this.svg.append('g')
