@@ -4,8 +4,8 @@
         chart: {
             padding: {
                 top: 10,
-                bottom: 25,
-                left: 50,
+                bottom: 20,
+                left: 20,
                 right: 10
             }
         },
@@ -15,6 +15,7 @@
             innerTickSize: 0,
             outerTickSize: 0,
             tickPadding: 8,
+            titlePadding: 6
         },
 
         yAxis: {
@@ -23,6 +24,7 @@
             innerTickSize: 0,
             outerTickSize: 6,
             tickPadding: 8,
+            titlePadding: 10,
             labels: {
                 format: '.0f' // d3 formats
             }
@@ -69,8 +71,19 @@
     var cartesian = {
 
         init: function (options) {
+
             this.options = $.extend(true, {}, defaults, options);
 
+            if(this.options.xAxis.title || this.options.yAxis.title) {
+                var oneEm = Narwhal.utils.textBounds('ABCD', 'axis-title').height;
+                if(this.options.xAxis.title) {
+                    this.options.chart.padding.bottom += oneEm; // should be 1em
+                }
+
+                if(this.options.yAxis.title) {
+                    this.options.chart.padding.left += oneEm; // should be 1em
+                }
+            }
             // // adjust padding to fit the axis
             // this.options.chart.padding.bottom = 25;
             // this.options.chart.padding.left = 50;
@@ -149,6 +162,32 @@
             return this;
         },
 
+        axisLabels: function () {
+            if (this.options.xAxis.title) {
+                this.svg.append('text')
+                    .attr('class', 'x axis-title')
+                    .attr('text-anchor', 'end')
+                    .attr('x', this.options.chart.width)
+                    .attr('y', this.options.chart.height)
+                    .attr('dx', -this.options.chart.padding.right + 4) // dunno why we need the +4
+                    .attr('dy', -this.options.xAxis.titlePadding)
+                    .text(this.options.xAxis.title);
+            }
+
+            if (this.options.yAxis.title) {
+                this.svg.append('text')
+                    .attr('class', 'y axis-title')
+                    .attr('text-anchor', 'end')
+                    .attr('transform', 'rotate(-90)')
+                    // .attr('x', '-10em')
+                    .attr('y', '1em')
+                    .attr('dx', -this.options.yAxis.titlePadding)
+                    .attr('dy', 0)
+                    .text(this.options.yAxis.title);
+            }
+
+        },
+
         render: function () {
             this.composeOptions();
 
@@ -161,7 +200,8 @@
             this.renderVisualizations();
 
             this.xAxis()
-                .yAxis();
+                .yAxis()
+                .axisLabels();
 
             return this;
         },

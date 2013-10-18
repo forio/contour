@@ -80,7 +80,7 @@ describe('Cartesian frame', function () {
                 expect(narwhal.xScale(5)).toBe(0);
             });
 
-            it('should merge options.xAxis.min as the first tick', function () {
+            xit('should merge options.xAxis.min as the first tick', function () {
                 // narwhal.data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
 
                 // var ticks = $el.find('.x.axis .tick.major');
@@ -197,6 +197,52 @@ describe('Cartesian frame', function () {
             });
         });
 
+    });
+
+    describe('default', function () {
+        describe('xAxis title', function () {
+            it('should be included if specificed in the options', function () {
+                narwhal = createNarwhal({ xAxis: { title: 'xAxis' } });
+                narwhal.data([1,2,3]).render();
+                titles = $el.find('.axis-title');
+                expect(titles.length).toBe(1);
+                expect(titles.text()).toBe('xAxis');
+            });
+
+            it('should NOT be included if NOT specificed in the options', function () {
+                narwhal = createNarwhal({ xAxis: { title: '' } });
+                narwhal.data([1,2,3]).render();
+                titles = $el.find('.x.axis-title');
+                expect(titles.length).toBe(0);
+            });
+
+            it('should adjust bottom padding and plot height to fit the title', function () {
+                createNarwhal({ xAxis: { title: 'hello world' }}).data([1,2,3]).render();
+                var y = narwhal.options.chart.height - narwhal.options.chart.padding.bottom - narwhal.options.chart.padding.top;
+
+                expect(narwhal.options.chart.padding.bottom).toBeGreaterThan(0);
+                expect(narwhal.options.chart.plotHeight).toEqual(y);
+            });
+
+        });
+
+        describe('yAxis title', function () {
+            it('should be included if specificed in the options', function () {
+                narwhal = createNarwhal({ yAxis: { title: 'yAxis' } });
+                narwhal.data([1,2,3]).render();
+                titles = $el.find('.y.axis-title');
+                expect(titles.length).toBe(1);
+                expect(titles.text()).toBe('yAxis');
+            });
+
+            it('should NOT be included if NOT specificed in the options', function () {
+                narwhal = createNarwhal({ yAxis: { title: '' } });
+                narwhal.data([1,2,3]).render();
+                titles = $el.find('.axis-title');
+                expect(titles.length).toBe(0);
+            });
+
+        });
     });
 
     describe('render', function () {
