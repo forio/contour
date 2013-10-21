@@ -106,7 +106,23 @@ describe('Cartesian frame', function () {
             });
         });
 
+
+
+        it('should render category labels if xAxis.categories is defined', function () {
+
+            narwhal = createNarwhal({ xAxis: { categories: ['one', 'two', 'three']} })
+                .data([10, 20, 30])
+                .render();
+
+            var xLabels = narwhal.svg.selectAll('.x.axis .tick.major text')[0];
+            expect(xLabels.length).toBe(3);
+            expect($(xLabels[0]).text()).toBe('one');
+
+        });
+
     });
+
+
 
     describe('default yAxis', function () {
         beforeEach(function () {
@@ -323,8 +339,6 @@ describe('Cartesian frame', function () {
             var dummy = $(narwhal.svg[0]).children().last();
             expect(dummy.attr('name')).toBe('myDummyVisualization');
         });
-
-
     });
 
 });

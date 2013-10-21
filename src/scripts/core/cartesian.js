@@ -123,6 +123,7 @@
                 .scale(this.xScale)
                 .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
+                .tickValues(this.options.xAxis.categories)
                 .orient('bottom');
 
             this._xAxisGroup = this.svg
@@ -131,11 +132,11 @@
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')');
 
             this._xAxisGroup.call(xAxis)
-                .select('text')
+
+                .select('text:first-child')
                     .attr('text-anchor', 'start')
                 .select('text:last-child')
-                    .attr('text-anchor', 'end')
-                    ;
+                    .attr('text-anchor', 'end');
 
             return this;
         },
