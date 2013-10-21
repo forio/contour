@@ -97,6 +97,12 @@
                 .domain(xScaleDomain)
                 .rangePoints([0, this.options.chart.plotWidth]);
 
+            if(_.isArray(this.options.xAxis.categories)) {
+                this.xScale.rangeRoundBands([0, this.options.chart.plotWidth]);
+            } else {
+                this.xScale.rangePoints([0, this.options.chart.plotWidth]);
+            }
+
             this.rangeBand = this.xScale.rangeBand();
         },
 
@@ -131,12 +137,7 @@
                 .attr('class', 'x axis')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')');
 
-            this._xAxisGroup.call(xAxis)
-
-                .select('text:first-child')
-                    .attr('text-anchor', 'start')
-                .select('text:last-child')
-                    .attr('text-anchor', 'end');
+            this._xAxisGroup.call(xAxis);
 
             return this;
         },
