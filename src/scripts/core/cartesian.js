@@ -202,11 +202,11 @@
 
             this.baseRender();
 
-            this.renderVisualizations();
-
             this.xAxis()
                 .yAxis()
                 .axisLabels();
+
+            this.renderVisualizations();
 
             return this;
         },

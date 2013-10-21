@@ -310,6 +310,20 @@ describe('Cartesian frame', function () {
             });
         });
 
+        it('should render visualizations after all axis and other elements (zindex)', function () {
+            createNarwhal().data([1,2,3]);
+            narwhal.visualizations.push(function (svg) {
+                // add a dummy svg element
+                svg.append('g')
+                    .attr('name', 'myDummyVisualization');
+            });
+
+            narwhal.render();
+
+            var dummy = $(narwhal.svg[0]).children().last();
+            expect(dummy.attr('name')).toBe('myDummyVisualization');
+        });
+
 
     });
 
