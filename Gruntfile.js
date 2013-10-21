@@ -11,7 +11,7 @@ module.exports = function (grunt) {
         watch: {
             less: {
                 files: ['src/styles/**/*.less'],
-                tasks: ['less']
+                tasks: ['less:dev']
             },
             js: {
                 files: ['src/scripts/**/*.js'],
@@ -89,7 +89,7 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['less:dev', 'watch']);
+    grunt.registerTask('default', ['less:dev', 'watch:less']);
     grunt.registerTask('production', ['concat', 'uglify', 'less:production']);
     grunt.registerTask('linked', ['concat', 'uglify', 'less:uncompressed', 'less:production', 'watch']);
 
