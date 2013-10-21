@@ -5,7 +5,7 @@
             padding: {
                 top: 10,
                 bottom: 20,
-                left: 20,
+                left: 35,
                 right: 3
             }
         },
@@ -15,7 +15,7 @@
             innerTickSize: 0,
             outerTickSize: 0,
             tickPadding: 8,
-            titlePadding: 6
+            titlePadding: 0
         },
 
         yAxis: {
@@ -24,7 +24,7 @@
             innerTickSize: 0,
             outerTickSize: 6,
             tickPadding: 8,
-            titlePadding: 10,
+            titlePadding: 0,
             labels: {
                 format: '.0f' // d3 formats
             }
@@ -75,13 +75,13 @@
             this.options = $.extend(true, {}, defaults, options);
 
             if(this.options.xAxis.title || this.options.yAxis.title) {
-                var oneEm = Narwhal.utils.textBounds('ABCD', 'axis-title').height;
+                this.titleOneEm = Narwhal.utils.textBounds('ABCD', 'axis-title').height;
                 if(this.options.xAxis.title) {
-                    this.options.chart.padding.bottom += oneEm; // should be 1em
+                    this.options.chart.padding.bottom += this.titleOneEm; // should be 1em
                 }
 
                 if(this.options.yAxis.title) {
-                    this.options.chart.padding.left += oneEm; // should be 1em
+                    this.options.chart.padding.left += this.titleOneEm; // should be 1em
                 }
             }
             // // adjust padding to fit the axis
@@ -131,11 +131,12 @@
                 .tickPadding(options.tickPadding)
                 .orient('bottom');
 
-            this.svg
+            this._xAxisGroup = this.svg
                 .append('g')
                 .attr('class', 'x axis')
-                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')')
-                .call(xAxis)
+                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')');
+
+            this._xAxisGroup.call(xAxis)
                 .select('text')
                     .attr('text-anchor', 'start')
                 .select('text:last-child')
@@ -157,10 +158,11 @@
                 .tickPadding(options.tickPadding)
                 .orient('left');
 
-            this.svg.append('g')
+            this._yAxisGroup = this.svg.append('g')
                 .attr('class', 'y axis')
-                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')')
-                .call(yAxis)
+                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
+
+            this._yAxisGroup.call(yAxis)
                 .selectAll('text')
                     .attr('dy', '.9em');
 
@@ -169,25 +171,24 @@
 
         axisLabels: function () {
             if (this.options.xAxis.title) {
-                this.svg.append('text')
+                var xLineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
+                this._xAxisGroup.append('text')
                     .attr('class', 'x axis-title')
                     .attr('text-anchor', 'end')
-                    .attr('x', this.options.chart.width)
-                    .attr('y', this.options.chart.height)
-                    .attr('dx', -this.options.chart.padding.right)
+                    .attr('y', this.options.chart.padding.bottom - xLineHeightAdjustment)
+                    .attr('dx', this.options.chart.plotWidth)
                     .attr('dy', -this.options.xAxis.titlePadding)
                     .text(this.options.xAxis.title);
             }
 
             if (this.options.yAxis.title) {
-                this.svg.append('text')
+                this._yAxisGroup.append('text')
                     .attr('class', 'y axis-title')
                     .attr('text-anchor', 'end')
                     .attr('transform', 'rotate(-90)')
-                    .attr('x', 0)
-                    .attr('y', '1em')
-                    .attr('dx', -this.options.yAxis.titlePadding)
-                    .attr('dy', 0)
+                    .attr('y', -this.options.chart.padding.left + this.titleOneEm)
+                    .attr('dx', 0)
+                    .attr('dy', this.options.yAxis.titlePadding)
                     .text(this.options.yAxis.title);
             }
 
