@@ -3,9 +3,9 @@
     var defaults = {
         chart: {
             padding: {
-                top: 10,
+                top: 0,
                 bottom: 20,
-                left: 35,
+                left: 25,
                 right: 3
             }
         },
@@ -84,12 +84,6 @@
                     this.options.chart.padding.left += this.titleOneEm; // should be 1em
                 }
             }
-            // // adjust padding to fit the axis
-            // this.options.chart.padding.bottom = 25;
-            // this.options.chart.padding.left = 50;
-            // this.options.chart.padding.top = 10;
-            // this.options.chart.padding.right = 10;
-
 
             return this;
         },
@@ -170,12 +164,13 @@
         },
 
         axisLabels: function () {
+            var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
+
             if (this.options.xAxis.title) {
-                var xLineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
                 this._xAxisGroup.append('text')
                     .attr('class', 'x axis-title')
                     .attr('text-anchor', 'end')
-                    .attr('y', this.options.chart.padding.bottom - xLineHeightAdjustment)
+                    .attr('y', this.options.chart.padding.bottom - lineHeightAdjustment)
                     .attr('dx', this.options.chart.plotWidth)
                     .attr('dy', -this.options.xAxis.titlePadding)
                     .text(this.options.xAxis.title);
@@ -186,7 +181,7 @@
                     .attr('class', 'y axis-title')
                     .attr('text-anchor', 'end')
                     .attr('transform', 'rotate(-90)')
-                    .attr('y', -this.options.chart.padding.left + this.titleOneEm)
+                    .attr('y', -this.options.chart.padding.left + this.titleOneEm - lineHeightAdjustment)
                     .attr('dx', 0)
                     .attr('dy', this.options.yAxis.titlePadding)
                     .text(this.options.yAxis.title);
