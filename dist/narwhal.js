@@ -20,8 +20,7 @@
                 bottom: 0,
                 left: 0
             }
-        },
-        visualizations: []
+        }
     };
 
     function Narwhal(options) {
@@ -34,14 +33,41 @@
         if (typeof ctor !== 'function') throw new Error('Invalid constructor for ' + ctorName + ' visualization');
 
         Narwhal.prototype[ctorName] = ctor;
+        // Narwhal.prototype[ctorName] = function () {
+        //     // this.visualizations.add(renderer);
+        //     return ctor.apply(this, arguments);
+        // };
+    };
+
+    Narwhal.utils = {
+        // measure text inside a narwhal chart container
+        textBounds: function (text, css) {
+            var body = document.getElementsByTagName('body')[0];
+            var wrapper = document.createElement('span');
+            var dummy = document.createElement('span');
+            wrapper.className = 'narwhal-chart';
+            dummy.style.position = 'absolute';
+            dummy.style.left =  -9999;
+            dummy.innerHTML = text;
+            dummy.className = css;
+            wrapper.appendChild(dummy);
+            body.appendChild(wrapper);
+            var res = { width: dummy.clientWidth, height: dummy.clientHeight };
+            dummy.remove();
+            wrapper.remove();
+            return res;
+        }
     };
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
 
         init: function (options) {
-            this.options = $.extend(true, {}, defaults, options);
+            // for now, just  store this options here...
+            // the final set of options will be composed before rendering
+            // after all components/visualizations have been added
+            this.options = options;
 
-            this.calcMetrics();
+            this.visualizations = [];
 
             return this;
         },
@@ -72,6 +98,11 @@
             });
         },
 
+        composeOptions: function () {
+            // compise the final list of options right before start rendering
+            this.options = $.extend(true, {}, defaults, this.options);
+        },
+
         baseRender: function () {
             this.plotArea();
 
@@ -79,6 +110,10 @@
         },
 
         render: function () {
+            this.composeOptions();
+
+            this.calcMetrics();
+
             this.baseRender();
 
             this.renderVisualizations();
@@ -104,7 +139,7 @@
         },
 
         renderVisualizations: function () {
-            _.each(this.options.visualizations, function (visualization, index) {
+            _.each(this.visualizations, function (visualization, index) {
                 visualization.id = index + 1;
                 visualization.call(this, this.svg);
             }, this);
@@ -118,7 +153,7 @@
                 // extend the --instance-- we don't want all charts to be overriten...
                 _.extend(this, _.omit(functionality, 'init'));
 
-                if(functionality.init) functionality.init.call(this);
+                if(functionality.init) functionality.init.call(this, this.options);
 
                 return this;
             };
@@ -145,13 +180,33 @@
 (function (ns, d3, _, $, undefined) {
 
     var defaults = {
+        chart: {
+            padding: {
+                top: 10,
+                bottom: 20,
+                left: 20,
+                right: 2
+            }
+        },
+
         xAxis: {
             rangePadding: 0,
-            max: undefined
+            innerTickSize: 0,
+            outerTickSize: 0,
+            tickPadding: 8,
+            titlePadding: 6
         },
 
         yAxis: {
-            max: undefined
+            min: undefined,
+            max: undefined,
+            innerTickSize: 0,
+            outerTickSize: 6,
+            tickPadding: 8,
+            titlePadding: 10,
+            labels: {
+                format: '.0f' // d3 formats
+            }
         }
     };
 
@@ -194,16 +249,26 @@
 
     var cartesian = {
 
-        init: function () {
-            this.options = $.extend({}, defaults, this.options);
+        init: function (options) {
 
-            // adjust padding to fit the axis
-            this.options.chart.padding.bottom = 25;
-            this.options.chart.padding.left = 50;
-            this.options.chart.padding.top = 10;
-            this.options.chart.padding.right = 10;
+            this.options = $.extend(true, {}, defaults, options);
 
-            this.calcMetrics();
+            if(this.options.xAxis.title || this.options.yAxis.title) {
+                var oneEm = Narwhal.utils.textBounds('ABCD', 'axis-title').height;
+                if(this.options.xAxis.title) {
+                    this.options.chart.padding.bottom += oneEm; // should be 1em
+                }
+
+                if(this.options.yAxis.title) {
+                    this.options.chart.padding.left += oneEm; // should be 1em
+                }
+            }
+            // // adjust padding to fit the axis
+            // this.options.chart.padding.bottom = 25;
+            // this.options.chart.padding.left = 50;
+            // this.options.chart.padding.top = 10;
+            // this.options.chart.padding.right = 10;
+
 
             return this;
         },
@@ -238,26 +303,37 @@
 
         xAxis: function () {
             var y = this.options.chart.plotHeight + this.options.chart.padding.top;
+            var options = this.options.xAxis;
             var xAxis = d3.svg.axis()
                 .scale(this.xScale)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding)
                 .orient('bottom');
 
             this.svg
                 .append('g')
                 .attr('class', 'x axis')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')')
-                .call(xAxis);
+                .call(xAxis)
+                .select('text')
+                    .attr('text-anchor', 'start')
+                .select('text:last-child')
+                    .attr('text-anchor', 'end')
+                    ;
 
             return this;
         },
 
         yAxis: function () {
-            var tickValues = extractTickValues(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
-            var format = d3.format('.3s');
+            var options = this.options.yAxis;
+            var tickValues = extractTickValues(this.yDomain, options.min, options.max);
+            var format = d3.format(options.labels.format);
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
                 .tickValues(tickValues)
                 .tickFormat(format)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding)
                 .orient('left');
 
             this.svg.append('g')
@@ -270,7 +346,37 @@
             return this;
         },
 
+        axisLabels: function () {
+            if (this.options.xAxis.title) {
+                this.svg.append('text')
+                    .attr('class', 'x axis-title')
+                    .attr('text-anchor', 'end')
+                    .attr('x', this.options.chart.width)
+                    .attr('y', this.options.chart.height)
+                    .attr('dx', -this.options.chart.padding.right)
+                    .attr('dy', -this.options.xAxis.titlePadding)
+                    .text(this.options.xAxis.title);
+            }
+
+            if (this.options.yAxis.title) {
+                this.svg.append('text')
+                    .attr('class', 'y axis-title')
+                    .attr('text-anchor', 'end')
+                    .attr('transform', 'rotate(-90)')
+                    .attr('x', 0)
+                    .attr('y', '1em')
+                    .attr('dx', -this.options.yAxis.titlePadding)
+                    .attr('dy', 0)
+                    .text(this.options.yAxis.title);
+            }
+
+        },
+
         render: function () {
+            this.composeOptions();
+
+            this.calcMetrics();
+
             this.computeScales();
 
             this.baseRender();
@@ -278,7 +384,8 @@
             this.renderVisualizations();
 
             this.xAxis()
-                .yAxis();
+                .yAxis()
+                .axisLabels();
 
             return this;
         },
@@ -376,7 +483,7 @@
             return this;
         };
 
-        this.options.visualizations.push(renderer);
+        this.visualizations.push(renderer);
 
         return this;
     }
