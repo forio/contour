@@ -6,7 +6,7 @@
                 top: 10,
                 bottom: 20,
                 left: 20,
-                right: 10
+                right: 2
             }
         },
 
@@ -135,7 +135,12 @@
                 .append('g')
                 .attr('class', 'x axis')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')')
-                .call(xAxis);
+                .call(xAxis)
+                .select('text')
+                    .attr('text-anchor', 'start')
+                .select('text:last-child')
+                    .attr('text-anchor', 'end')
+                    ;
 
             return this;
         },
@@ -169,7 +174,7 @@
                     .attr('text-anchor', 'end')
                     .attr('x', this.options.chart.width)
                     .attr('y', this.options.chart.height)
-                    .attr('dx', -this.options.chart.padding.right + 4) // dunno why we need the +4
+                    .attr('dx', -this.options.chart.padding.right)
                     .attr('dy', -this.options.xAxis.titlePadding)
                     .text(this.options.xAxis.title);
             }
@@ -179,7 +184,7 @@
                     .attr('class', 'y axis-title')
                     .attr('text-anchor', 'end')
                     .attr('transform', 'rotate(-90)')
-                    // .attr('x', '-10em')
+                    .attr('x', 0)
                     .attr('y', '1em')
                     .attr('dx', -this.options.yAxis.titlePadding)
                     .attr('dy', 0)
