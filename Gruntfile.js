@@ -21,6 +21,17 @@ module.exports = function (grunt) {
         less: {
             dev: {
                 files: {
+                    'examples/css/narwhal.css': 'src/styles/narwhal.less'
+                }
+            },
+            // to generate distribution uncompressed versions
+            uncompressed: {
+                options: {
+                    compress: false,
+                    ieCompat: true,
+                    yuicompress: false // Off until calc() bug is addressed.  https://github.com/yui/yuicompressor/issues/59
+                },
+                files: {
                     'dist/narwhal.css': 'src/styles/narwhal.less',
                     'examples/css/narwhal.css': 'src/styles/narwhal.less'
                 }
@@ -80,7 +91,7 @@ module.exports = function (grunt) {
     // Default task.
     grunt.registerTask('default', ['less:dev', 'watch']);
     grunt.registerTask('production', ['concat', 'uglify', 'less:production']);
-    grunt.registerTask('linked', ['concat', 'uglify', 'less:production', 'watch']);
+    grunt.registerTask('linked', ['concat', 'uglify', 'less:uncompressed', 'less:production', 'watch']);
 
     grunt.registerMultiTask('templates', 'Compiles underscore templates', function () {
         var _ = require('lodash');
