@@ -6,7 +6,9 @@
     <script src="../examples/js/vendor/jquery.js"></script>
     <script src="../examples/js/vendor/lodash.js"></script>
 
-    <script src="../src/scripts/core/scale-helpers.js"></script>
+    <script src="../src/scripts/core/axis/ordinal-scale-axis.js" ></script>
+    <script src="../src/scripts/core/axis/time-scale-axis.js" ></script>
+    <script src="../src/scripts/core/axis/axis-scale-factory.js" ></script>
     <script src="../src/scripts/core/narwhal.js"></script>
     <script src="../src/scripts/core/cartesian.js"></script>
     <script src="../src/scripts/visualizations/line.js"></script>
@@ -34,10 +36,7 @@
     var config = {
         el: '.container',
         yAxis: {
-            max: 6,
             title: 'Quantity'
-
-
         },
 
         xAxis: {
@@ -53,9 +52,14 @@
         .line([{ data: [0,1,2,3,4,5] }, {data: [5,4,3,2,1,0]} ])
         .render();
 
+    var timeData = [
+        {x: new Date('10/10/2013'), y: 50},
+        {x: new Date('10/11/2013'), y: 70},
+        {x: new Date('10/12/2013'), y: 30}
+    ];
     var chart2 = new Narwhal(_.extend(config, {el: '.container2', xAxis: {title: 'time'}}))
         .cartesian()
-        .line([{ data: [0,1,2,3,4,5] }, {data: [5,4,3,2,1,0]} ])
+        .line(timeData)
         .render();
     </script>
 </body>

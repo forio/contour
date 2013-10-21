@@ -55,7 +55,7 @@
 
     function extractScaleDomain(domain, min, max) {
         if (min === undefined && max === undefined)
-            return domain;
+            return d3.extent(domain);
 
         if (min === undefined) {
             return [Math.min(domain[0], max), max];
@@ -91,15 +91,9 @@
         computeXScale: function () {
             if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
-            var xScaleDomain = extractScaleDomain(this.xDomain, this.options.xAxis.min, this.options.xAxis.max);
-            var scaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
-
-            this.xScale = scaleGenerator.scale()
-                .domain(xScaleDomain);
-
-            scaleGenerator.range();
-
-            this.rangeBand = scaleGenerator.rangeBand();
+            this.scaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
+            this.xScale = this.scaleGenerator.scale(this.xDomain);
+            this.rangeBand = this.scaleGenerator.rangeBand();
         },
 
         computeYScale: function () {
@@ -120,20 +114,13 @@
 
         xAxis: function () {
             var y = this.options.chart.plotHeight + this.options.chart.padding.top;
-            var options = this.options.xAxis;
-            var xAxis = d3.svg.axis()
-                .scale(this.xScale)
-                .tickSize(options.innerTickSize, options.outerTickSize)
-                .tickPadding(options.tickPadding)
-                .tickValues(this.options.xAxis.categories)
-                .orient('bottom');
+            var xAxis = this.scaleGenerator.axis().orient('bottom');
 
             this._xAxisGroup = this.svg
                 .append('g')
                 .attr('class', 'x axis')
-                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')');
-
-            this._xAxisGroup.call(xAxis);
+                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')')
+                .call(xAxis);
 
             return this;
         },

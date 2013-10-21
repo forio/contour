@@ -39,7 +39,24 @@
 
         rangeBand: function () {
             return this._scale.rangeBand();
+        },
+
+        extractDomain: function (domain, min, max) {
+            if (min === undefined && max === undefined)
+                return domain;
+
+            if (min === undefined) {
+                return [Math.min(domain[0], max), max];
+            }
+
+            if (max === undefined) {
+                return [min, Math.max(min, domain[domain.length-1])];
+            }
+
+            return [min, max];
         }
+
+
 
     };
 
@@ -62,12 +79,28 @@
         },
 
         range: function () {
-            return this._scale.rangeRound([0, this.options.plotWidth]);
+            return this._scale.range([0, this.options.chart.plotWidth]);
         },
 
         rangeBand: function () {
             return 0;
+        },
+
+        extractDomain: function (domain, min, max) {
+            if (min === undefined && max === undefined)
+                return d3.extent(domain);
+
+            if (min === undefined) {
+                return [Math.min(domain[0], max), max];
+            }
+
+            if (max === undefined) {
+                return [min, Math.max(min, domain[domain.length-1])];
+            }
+
+            return [min, max];
         }
+
     };
 
     var helpers = {
