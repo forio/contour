@@ -92,18 +92,14 @@
             if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
             var xScaleDomain = extractScaleDomain(this.xDomain, this.options.xAxis.min, this.options.xAxis.max);
+            var scaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
 
-            this.xScale = d3.scale.ordinal()
-                .domain(xScaleDomain)
-                .rangePoints([0, this.options.chart.plotWidth]);
+            this.xScale = scaleGenerator.scale()
+                .domain(xScaleDomain);
 
-            if(_.isArray(this.options.xAxis.categories)) {
-                this.xScale.rangeRoundBands([0, this.options.chart.plotWidth]);
-            } else {
-                this.xScale.rangePoints([0, this.options.chart.plotWidth]);
-            }
+            scaleGenerator.range();
 
-            this.rangeBand = this.xScale.rangeBand();
+            this.rangeBand = scaleGenerator.rangeBand();
         },
 
         computeYScale: function () {

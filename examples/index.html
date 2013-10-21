@@ -6,6 +6,7 @@
     <script src="../examples/js/vendor/jquery.js"></script>
     <script src="../examples/js/vendor/lodash.js"></script>
 
+    <script src="../src/scripts/core/scale-helpers.js"></script>
     <script src="../src/scripts/core/narwhal.js"></script>
     <script src="../src/scripts/core/cartesian.js"></script>
     <script src="../src/scripts/visualizations/line.js"></script>
@@ -14,7 +15,7 @@
         body {
             width: 960px;
         }
-        .container {
+        .container, .container2 {
             border: solid 1px red;
             width: 600px;
             margin: 30px;
@@ -25,6 +26,7 @@
 </head>
 <body>
 
+    <div class="container2"></div>
     <div class="container"></div>
 
     <script>
@@ -51,6 +53,10 @@
         .line([{ data: [0,1,2,3,4,5] }, {data: [5,4,3,2,1,0]} ])
         .render();
 
+    var chart2 = new Narwhal(_.extend(config, {el: '.container2', xAxis: {title: 'time'}}))
+        .cartesian()
+        .line([{ data: [0,1,2,3,4,5] }, {data: [5,4,3,2,1,0]} ])
+        .render();
     </script>
 </body>
 

@@ -108,8 +108,8 @@ describe('Cartesian frame', function () {
 
 
 
-        it('should render category labels if xAxis.categories is defined', function () {
 
+        it('should render category labels if xAxis.categories is defined', function () {
             narwhal = createNarwhal({ xAxis: { categories: ['one', 'two', 'three']} })
                 .data([10, 20, 30])
                 .render();
@@ -117,6 +117,20 @@ describe('Cartesian frame', function () {
             var xLabels = narwhal.svg.selectAll('.x.axis .tick.major text')[0];
             expect(xLabels.length).toBe(3);
             expect($(xLabels[0]).text()).toBe('one');
+        });
+
+        it('should be time scale if data has x field as date/time', function () {
+            var now = new Date();
+            var data = [
+                {x: now, y: 1},
+                {x: now, y: 2},
+                {x: now, y: 3}
+            ];
+
+            narwhal = createNarwhal()
+                .data(data).render();
+
+
 
         });
 
