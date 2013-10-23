@@ -11,6 +11,10 @@
     }
     */
 
+    function firstAndLast(ar) {
+        return [ar[0], ar[ar.length-1]];
+    }
+
     function OrdinalScale(data, options) {
         this.options = options;
         this.data = data;
@@ -25,6 +29,7 @@
         },
 
         scale: function (domain) {
+            this._domain = domain;
             if(!this._scale) {
                 this._scale = new d3.scale.ordinal().domain(domain);
 
@@ -43,9 +48,9 @@
                 .tickPadding(options.tickPadding)
                 .tickValues(this.options.xAxis.categories);
 
-            if (this.isCategorized & this.options.xAxis.firstAndLast) {
+            if (this.options.xAxis.firstAndLast) {
                 // show only first and last tick
-                axis.tickValues([_.first(this.options.xAxis.categories), _.last(this.options.xAxis.categories)]);
+                axis.tickValues(firstAndLast(this._domain));
             }
 
             return axis;

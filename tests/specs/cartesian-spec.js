@@ -106,17 +106,41 @@ describe('Cartesian frame', function () {
             });
         });
 
-
-
-
-        it('should render category labels if xAxis.categories is defined', function () {
-            narwhal = createNarwhal({ xAxis: { categories: ['one', 'two', 'three']} })
+        it('should only show first and last category labels by default', function () {
+           // var config = { xAxis: { firstAndLast: true } };
+            narwhal = createNarwhal()
                 .data([10, 20, 30])
                 .render();
 
-            var xLabels = narwhal.svg.selectAll('.x.axis .tick.major text')[0];
+            var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
+            expect(xLabels.length).toBe(2);
+            expect($(xLabels[0]).text()).toBe('0');
+            expect($(xLabels[1]).text()).toBe('2');
+        });
+
+        it('should show all category labels if firstAndLast is set to false', function () {
+            var config = { xAxis: { firstAndLast: false } };
+            narwhal = createNarwhal(config)
+                .data([10, 20, 30])
+                .render();
+
+            var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
+            expect(xLabels.length).toBe(3);
+            expect($(xLabels[0]).text()).toBe('0');
+            expect($(xLabels[1]).text()).toBe('1');
+            expect($(xLabels[2]).text()).toBe('2');
+        });
+
+        it('should render category labels if xAxis.categories is defined', function () {
+            narwhal = createNarwhal({ xAxis: { categories: ['one', 'two', 'three'], firstAndLast: false }})
+                .data([10, 20, 30])
+                .render();
+
+            var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
             expect(xLabels.length).toBe(3);
             expect($(xLabels[0]).text()).toBe('one');
+            expect($(xLabels[1]).text()).toBe('two');
+            expect($(xLabels[2]).text()).toBe('three');
         });
 
         it('should be time scale if data has x field as date/time', function () {
@@ -145,7 +169,7 @@ describe('Cartesian frame', function () {
 
         it('should not have innerTick', function () {
             narwhal.data([0,10,20,30]).render();
-            var ticks = $el.find('.y.axis .tick.major');
+            var ticks = $el.find('.y.axis .tick');
             expect(_.all(ticks.find('line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '0'; })).toBe(true);
         });
 
@@ -174,14 +198,14 @@ describe('Cartesian frame', function () {
 
             it('should merge options.yAxis.min as the last tick', function () {
                 narwhal.data([0,10,20,30]).render();
-                var topTick = $el.find('.y.axis .tick.major').last();
+                var topTick = $el.find('.y.axis .tick').last();
                 expect(topTick.find('text').text()).toBe('100');
                 expect(topTick.attr('transform')).toBe('translate(0,0)');
             });
 
             it('should handle the case where max is less than the data set\'s min', function () {
                 narwhal.data([200, 300, 400]).render();
-                var ticks = $el.find('.y.axis .tick.major');
+                var ticks = $el.find('.y.axis .tick');
 
                 expect(ticks.length).toBe(1);
             });
@@ -194,7 +218,7 @@ describe('Cartesian frame', function () {
 
             it('should merge options.yAxis.min as the first tick', function () {
                 narwhal.data([10,20,30]).render();
-                var topTick = $el.find('.y.axis .tick.major').first();
+                var topTick = $el.find('.y.axis .tick').first();
                 expect(topTick.find('text').text()).toBe('3');
                 expect(topTick.attr('transform')).toBe('translate(0,' + narwhal.options.chart.plotHeight + ')');
             });
@@ -208,7 +232,7 @@ describe('Cartesian frame', function () {
 
             it('should handle the case where min is greater than the data set\'s max', function () {
                 narwhal.data([1,2,3]).render();
-                var ticks = $el.find('.y.axis .tick.major');
+                var ticks = $el.find('.y.axis .tick');
 
                 expect(ticks.length).toBe(1);
             });

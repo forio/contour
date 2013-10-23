@@ -27,13 +27,14 @@
                 .attr('type', 'line-chart')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
 
+            var normalizeData = _.bind(this.datum, this);
             if(data[0].data) {
                 _.each(data, function (d) {
-                    var set = _.map(d.data, this.datum, this);
+                    var set = _.map(d.data, normalizeData);
                     appendPath.call(this, set, d.name);
                 }, this);
             } else {
-                appendPath.call(this, _.map(data, this.datum));
+                appendPath.call(this, _.map(data, normalizeData));
             }
 
             function appendPath(data, seriesName) {

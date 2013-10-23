@@ -17,7 +17,6 @@
             tickPadding: 6,
             titlePadding: 0,
             firstAndLast: true
-
         },
 
         yAxis: {
