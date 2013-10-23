@@ -206,7 +206,7 @@
                 this.dataSrc = datums;
 
                 // this has to be the same for all series?
-                this.xDomain = _.pluck(datums, 'x');
+                this.xDomain = this.options.xAxis.categories ? this.options.xAxis.categories : _.pluck(datums, 'x');
 
                 var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
                 var min = this.yDomain ? Math.max(this.yDomain[0], _.min(_.pluck(datums, 'y'))) : _.min(_.pluck(datums, 'y'));

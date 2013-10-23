@@ -26,8 +26,7 @@
 
         scale: function (domain) {
             if(!this._scale) {
-                this._scale = new d3.scale.ordinal()
-                    .domain(this.extractDomain(domain, this.options.xAxis.min, this.options.xAxis.max));
+                this._scale = new d3.scale.ordinal().domain(domain);
 
                 this.range();
             }
@@ -37,12 +36,18 @@
 
         axis: function () {
             var options = this.options.xAxis;
-            return d3.svg.axis()
+            var axis = d3.svg.axis()
                 .scale(this._scale)
                 .innerTickSize(options.innerTickSize)
                 .outerTickSize(options.outerTickSize)
-                .tickPadding(options.tickPadding)
-                .tickValues(this.options.xAxis.categories);
+                .tickPadding(options.tickPadding);
+
+            if (this.isCategorized) {
+                // show only first and last tick
+                axis.tickValues([_.first(this.options.xAxis.categories), _.last(this.options.xAxis.categories)]);
+            }
+
+            return axis;
         },
 
         rangeBand: function () {
@@ -54,22 +59,6 @@
             return this.isCategorized ?
                 this._scale.rangeRoundBands(range) :
                 this._scale.rangePoints(range);
-        },
-
-        extractDomain: function (domain, min, max) {
-
-            if (min === undefined && max === undefined)
-                return domain;
-
-            if (min === undefined) {
-                return [Math.min(domain[0], max), max];
-            }
-
-            if (max === undefined) {
-                return [min, Math.max(min, domain[domain.length-1])];
-            }
-
-            return [min, max];
         }
     };
 
