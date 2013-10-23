@@ -50,12 +50,13 @@
     var config = {
         el: '.container',
         yAxis: {
+            min: 0,
             title: 'Quantity'
         },
 
         xAxis: {
             title: 'Sample',
-            categories: ['one', 'two', 'three']
+            categories: ['one', 'two', 'three', 'four', 'five']
 
         }
     }
@@ -63,7 +64,7 @@
 
     var chart = new Narwhal(config)
         .cartesian()
-        .line([{ data: [0,1,2,3,4,5] }, {data: [5,4,3,2,1,0]} ])
+        .line([{ data: [1,2,3,4, 3.5] }, {data: [4,3,2,1]} ])
         .render();
 
 
