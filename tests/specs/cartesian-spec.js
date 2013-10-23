@@ -74,7 +74,7 @@ describe('Cartesian frame', function () {
                 narwhal = createNarwhal({ xAxis: { min: 5 }});
             });
 
-            it('should use the options.xAxis.min as the min of the domain', function () {
+            xit('should use the options.xAxis.min as the min of the domain', function () {
                 narwhal.data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
                 // a value equal to the max should be scaled at the top of the chart (y=0)
                 expect(narwhal.xScale(5)).toBe(0);
@@ -99,7 +99,7 @@ describe('Cartesian frame', function () {
                 narwhal = createNarwhal({ xAxis: { max: 7 }});
             });
 
-            it('should use the options.xAxis.max as the max of the domain', function () {
+            xit('should use the options.xAxis.max as the max of the domain', function () {
                 narwhal.data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
                 // a value equal to the max should be scaled at the top of the chart (y=0)
                 expect(narwhal.xScale(7)).toBe(narwhal.options.chart.plotWidth);
