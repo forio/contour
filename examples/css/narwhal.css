@@ -10,7 +10,7 @@
   stroke: none;
   fill: #666666;
 }
-.narwhal-chart .axis.x .tick.major line {
+.narwhal-chart .axis.x .tick line {
   stroke: none;
 }
 .narwhal-chart text.axis-title {
