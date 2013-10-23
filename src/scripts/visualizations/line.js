@@ -4,6 +4,7 @@
         line: {
             marker: {
                 enable: true,
+                size: 2.5
             }
         }
     };
@@ -38,6 +39,7 @@
             }
 
             function appendPath(data, seriesName) {
+                var markerSize = this.options.line.marker.size;
                 seriesName = seriesName || 'not-specified';
                 className = seriesName.replace(' ', '_');
                 g.append('path')
@@ -51,7 +53,7 @@
                             .data(data)
                         .enter().append('circle')
                             .attr('class', 'dot tooltip-tracker series-' + className)
-                            .attr('r', 3)
+                            .attr('r', markerSize)
                             .attr('cx', x)
                             .attr('cy', y);
                 }
