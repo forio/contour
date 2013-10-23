@@ -4,8 +4,8 @@
         chart: {
             padding: {
                 top: 3,
-                bottom: 20,
-                left: 25,
+                bottom: 25,
+                left: 30,
                 right: 3
             }
         },
@@ -22,9 +22,9 @@
         yAxis: {
             min: undefined,
             max: undefined,
-            innerTickSize: 0,
+            innerTickSize: 6,
             outerTickSize: 6,
-            tickPadding: 8,
+            tickPadding: 4,
             titlePadding: 0,
             labels: {
                 format: '.0f' // d3 formats
