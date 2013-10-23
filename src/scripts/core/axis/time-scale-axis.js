@@ -21,9 +21,10 @@
         },
 
         scale: function (domain) {
+            this._domain = domain;
             if(!this._scale) {
                 this._scale = new d3.time.scale()
-                    .domain(this.extractDomain(domain, this.options.xAxis.min, this.options.xAxis.max));
+                    .domain(d3.extent(domain));
 
                 this.range();
             }
@@ -35,12 +36,20 @@
             var options = this.options.xAxis;
             var tickFormat = this.getOptimalTickFormat();
 
-            return d3.svg.axis()
+            var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickFormat(tickFormat)
-                .tickSize(options.innerTickSize, options.outerTickSize)
+                .innerTickSize(options.innerTickSize)
+                .outerTickSize(options.outerTickSize)
                 .tickPadding(options.tickPadding)
-                .tickValues(this.options.xAxis.categories);
+                .tickValues(this._domain);
+
+            if (this.options.xAxis.firstAndLast) {
+                // show only first and last tick
+                axis.tickValues(_.nw.firstAndLast(this._domain));
+            }
+
+            return axis;
         },
 
         rangeBand: function () {

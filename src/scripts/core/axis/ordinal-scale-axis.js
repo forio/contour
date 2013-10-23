@@ -11,10 +11,6 @@
     }
     */
 
-    function firstAndLast(ar) {
-        return [ar[0], ar[ar.length-1]];
-    }
-
     function OrdinalScale(data, options) {
         this.options = options;
         this.data = data;
@@ -50,7 +46,7 @@
 
             if (this.options.xAxis.firstAndLast) {
                 // show only first and last tick
-                axis.tickValues(firstAndLast(this._domain));
+                axis.tickValues(_.nw.firstAndLast(this._domain));
             }
 
             return axis;
