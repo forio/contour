@@ -167,12 +167,6 @@ describe('Cartesian frame', function () {
             narwhal = createNarwhal();
         });
 
-        it('should not have innerTick', function () {
-            narwhal.data([0,10,20,30]).render();
-            var ticks = $el.find('.y.axis .tick');
-            expect(_.all(ticks.find('line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '0'; })).toBe(true);
-        });
-
         it('should have outerTick', function () {
             narwhal.data([0,10,20,30]).render();
             // the actual axis path should start at -6 (the default outerTickSize)
