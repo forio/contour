@@ -123,6 +123,8 @@
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')')
                 .call(xAxis);
 
+            this.scaleGenerator.postProcessAxis(this._xAxisGroup);
+
             return this;
         },
 

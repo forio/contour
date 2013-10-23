@@ -131,6 +131,17 @@ describe('Cartesian frame', function () {
                 expect($(xLabels[1]).text()).toBe('1');
                 expect($(xLabels[2]).text()).toBe('2');
             });
+
+            it('should set text-anchor:middle for all labels', function () {
+                narwhal = createNarwhal({ xAxis: { categories: ['one', 'two', 'three'], firstAndLast: false }})
+                    .data([10, 20, 30])
+                    .render();
+
+                var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+                expect(xLabels.eq(0).css('text-anchor')).toBe('middle');
+                expect(xLabels.eq(2).css('text-anchor')).toBe('middle');
+            });
+
         });
 
         describe('with time data', function () {
@@ -146,6 +157,21 @@ describe('Cartesian frame', function () {
                 var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
                 expect(xLabels.length).toBe(2);
             });
+
+            it('should set text-anchor:left to first label and text-anchor:end to last label', function () {
+                narwhal = createNarwhal({ xAxis: { firstAndLast: false }})
+                    .data([
+                        { x: new Date('10/11/2013'), y: 10 },
+                        { x: new Date('10/12/2013'), y: 20 },
+                        { x: new Date('10/13/2013'), y: 30 }
+                    ])
+                    .render();
+
+                var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+                expect(xLabels.eq(0).css('text-anchor')).toBe('start');
+                expect(xLabels.eq(2).css('text-anchor')).toBe('end');
+            });
+
         });
 
         describe('with axis categories defined', function () {
@@ -162,6 +188,8 @@ describe('Cartesian frame', function () {
                 expect($(xLabels[2]).text()).toBe('three');
             });
         });
+
+
     });
 
 

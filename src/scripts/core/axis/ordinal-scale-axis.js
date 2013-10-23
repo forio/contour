@@ -52,6 +52,9 @@
             return axis;
         },
 
+        postProcessAxis: function (axisGroup) {
+        },
+
         rangeBand: function () {
             return this._scale.rangeBand();
         },

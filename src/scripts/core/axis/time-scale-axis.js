@@ -52,9 +52,17 @@
             return axis;
         },
 
+        postProcessAxis: function (axisGroup) {
+            var labels = axisGroup.selectAll('.tick text')[0];
+            $(labels[0]).attr('style', 'text-anchor: start');
+            $(labels[labels.length - 1]).attr('style', 'text-anchor: end');
+        },
+
         rangeBand: function () {
             return 0;
         },
+
+
 
         getOptimalTickFormat: function () {
             return d3.time.format('%d %b');
