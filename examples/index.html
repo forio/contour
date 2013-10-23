@@ -47,30 +47,7 @@
         return x - Math.floor(x);
     }
 
-    var config = {
-        el: '.container',
-        yAxis: {
-            min: 0,
-            title: 'Quantity'
-        },
-
-        xAxis: {
-            title: 'Sample',
-            categories: ['one', 'two', 'three', 'four', 'five']
-
-        }
-    }
-
-
-    var chart = new Narwhal(config)
-        .cartesian()
-        .line([{ data: [1,2,3,4, 3.5] }, {data: [4,3,2,1]} ])
-        .render();
-
-
     var baseDate = new Date(2013, 10, 10);
-
-
     var timeData = [];
 
     for (var j=0; j<100; j++) {
@@ -79,8 +56,32 @@
         timeData.push({ x: d, y: random() * 40 + 10});
     }
 
+    /* CHART CONFIGURATION */
+    var baseConfig = {
+        yAxis: {
+            min: 0,
+            title: 'Quantity'
+        }
+    }
 
-    var chart2 = new Narwhal(_.extend(config, {el: '.container2', xAxis: {title: 'time'}}))
+
+    var chart = new Narwhal(_.extend(baseConfig, {
+            el: '.container',
+            xAxis: {
+                title: 'Sample',
+                categories: ['one', 'two', 'three', 'four', 'five']
+            }
+        }))
+        .cartesian()
+        .line([{ data: [1,2,3,4, 3.5] }, {data: [4,3,2,1]} ])
+        .render();
+
+    var chart2 = new Narwhal(_.extend(baseConfig, {
+            el: '.container2',
+            xAxis: {
+                title: 'Time'
+            }
+        }))
         .cartesian()
         .line(timeData)
         .render();
