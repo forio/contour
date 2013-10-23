@@ -1,15 +1,19 @@
 @import 'mixins.less';
 
+@text-color: #666;
+@axis-line-color: #666;
+
 .narwhal-chart {
     .axis {
-        stroke: #dbdbdb;
-        stroke-width: 1.5px;
+        stroke: @axis-line-color;
+        stroke-width: 1px;
         fill: none;
+        shape-rendering: crispEdges;
 
         text {
             .mono-font();
             stroke: none;
-            fill: #999;
+            fill: @text-color;
         }
 
         &.x .tick.major line {
@@ -17,11 +21,11 @@
         }
     }
 
-    .axis-title {
+    text.axis-title {
         .sans-serif();
         font-size: 12px;
         stroke: none;
-        fill: #999;
+        fill: @text-color;
     }
 
     .line {
@@ -34,3 +38,4 @@
         fill: #aaa;
     }
 }
+

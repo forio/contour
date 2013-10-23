@@ -1,23 +1,24 @@
 .narwhal-chart .axis {
-  stroke: #dbdbdb;
-  stroke-width: 1.5px;
+  stroke: #666666;
+  stroke-width: 1px;
   fill: none;
+  shape-rendering: crispEdges;
 }
 .narwhal-chart .axis text {
   font-family: "Consolas", "Monaco", monospace;
   font-size: 13px;
   stroke: none;
-  fill: #999;
+  fill: #666666;
 }
 .narwhal-chart .axis.x .tick.major line {
   stroke: none;
 }
-.narwhal-chart .axis-title {
+.narwhal-chart text.axis-title {
   font-family: "Helvetica Neue", arial, sans-serif;
   font-size: 16px;
   font-size: 12px;
   stroke: none;
-  fill: #999;
+  fill: #666666;
 }
 .narwhal-chart .line {
   stroke: #ddd;

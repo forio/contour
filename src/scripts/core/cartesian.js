@@ -3,7 +3,7 @@
     var defaults = {
         chart: {
             padding: {
-                top: 0,
+                top: 3,
                 bottom: 20,
                 left: 25,
                 right: 3
@@ -14,7 +14,7 @@
             rangePadding: 0,
             innerTickSize: 0,
             outerTickSize: 0,
-            tickPadding: 8,
+            tickPadding: 6,
             titlePadding: 0
         },
 
