@@ -15,7 +15,9 @@
             innerTickSize: 0,
             outerTickSize: 0,
             tickPadding: 6,
-            titlePadding: 0
+            titlePadding: 0,
+            firstAndLast: true
+
         },
 
         yAxis: {

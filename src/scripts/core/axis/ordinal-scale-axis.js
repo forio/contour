@@ -40,9 +40,10 @@
                 .scale(this._scale)
                 .innerTickSize(options.innerTickSize)
                 .outerTickSize(options.outerTickSize)
-                .tickPadding(options.tickPadding);
+                .tickPadding(options.tickPadding)
+                .tickValues(this.options.xAxis.categories);
 
-            if (this.isCategorized) {
+            if (this.isCategorized & this.options.xAxis.firstAndLast) {
                 // show only first and last tick
                 axis.tickValues([_.first(this.options.xAxis.categories), _.last(this.options.xAxis.categories)]);
             }
