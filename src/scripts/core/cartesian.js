@@ -195,14 +195,14 @@
         datum: function (d, index) {
             return {
                 y: _.isObject(d) ? d.y : d,
-                x: _.isObject(d) ? d.x : index
+                x: _.isObject(d) ? d.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
             };
         },
 
         data: function (series) {
 
             if (series instanceof Array && !series[0].data) {
-                var datums = _.map(series, this.datum);
+                var datums = _.map(series, _.bind(this.datum, this));
                 this.dataSrc = datums;
 
                 // this has to be the same for all series?

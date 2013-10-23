@@ -34,11 +34,10 @@
         axis: function () {
             var options = this.options.xAxis;
             var tickFormat = this.getOptimalTickFormat();
-            var ticks = this.getOptimalTicks();
+
             return d3.svg.axis()
                 .scale(this._scale)
                 .tickFormat(tickFormat)
-                .ticks(ticks)
                 .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickValues(this.options.xAxis.categories);

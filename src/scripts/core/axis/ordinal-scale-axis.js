@@ -5,6 +5,8 @@
     {
         scale: returns the d3 scale for the type
 
+        axis: returns the d3 axis
+
         range: returns the d3 range for the type
     }
     */
@@ -37,7 +39,8 @@
             var options = this.options.xAxis;
             return d3.svg.axis()
                 .scale(this._scale)
-                .tickSize(options.innerTickSize, options.outerTickSize)
+                .innerTickSize(options.innerTickSize)
+                .outerTickSize(options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickValues(this.options.xAxis.categories);
         },
