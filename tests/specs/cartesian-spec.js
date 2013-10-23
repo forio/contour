@@ -106,7 +106,7 @@ describe('Cartesian frame', function () {
             });
         });
 
-        it('should only show first and last category labels by default', function () {
+        it('should only show first and last tick labels by default', function () {
            // var config = { xAxis: { firstAndLast: true } };
             narwhal = createNarwhal()
                 .data([10, 20, 30])
