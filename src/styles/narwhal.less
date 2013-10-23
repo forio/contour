@@ -2,6 +2,11 @@
 
 @text-color: #666;
 @axis-line-color: #666;
+@data-line-width: 2px;
+@data-line-color: #5097fc;
+@data-line-marker-color: @data-line-color
+
+@axis-title-font-size: 12px
 
 .narwhal-chart {
     .axis {
@@ -23,19 +28,19 @@
 
     text.axis-title {
         .sans-serif();
-        font-size: 12px;
+        font-size: @axis-title-font-size;
         stroke: none;
         fill: @text-color;
     }
 
     .line {
-        stroke: #5097fc;
-        stroke-width: 2px;
+        stroke: @data-line-color;
+        stroke-width: @data-line-width;
         fill: none;
     }
 
     .line-chart-markers .dot {
-        fill: #5097fc;
+        fill: @data-line-marker-color;
     }
 }
 
