@@ -33,37 +33,44 @@
     };
 
     function merge(array1, array2) {
+        if(typeof(array1) === 'number') array1 = [array1];
+        if(typeof(array2) === 'number') array2 = [array2];
         if(!array1 || !array1.length) return array2;
         if(!array2 || !array2.length) return array1;
 
         return [].concat(array1, array2).sort(function (a,b) { return a-b; });
     }
 
-    function extractTickValues(domain, min, max) {
-        if (min === undefined && max === undefined)
-            return domain;
 
-        if (min === undefined) {
-            return max > domain[0] ? merge([max], domain) : [max];
-        }
+    function roundToNearest(number, multiple){
+        return Math.ceil(number / multiple) * multiple;
+    }
 
-        if (max === undefined) {
-            return min < domain[domain.length-1] ? merge([min], domain) : [min];
-        }
+    function niceRound(val) {
+        var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
+        var fac = Math.pow(10, digits);
 
-        return merge([min, max], domain);
+        if(val < 1) return roundToNearest(val, 1);
+
+        if(val < fac / 2) return roundToNearest(val, fac / 2);
+
+        return roundToNearest(val, fac);
     }
 
     function extractScaleDomain(domain, min, max) {
-        if (min === undefined && max === undefined)
-            return d3.extent(domain);
+        var dataMax = _.max(domain);
+        var dataMin = _.min(domain);
+
+        if (min === undefined && max === undefined) {
+            return [dataMin, dataMax];
+        }
 
         if (min === undefined) {
-            return [Math.min(domain[0], max), max];
+            return [Math.min(dataMin, max), max];
         }
 
         if (max === undefined) {
-            return [min, Math.max(min, domain[domain.length-1])];
+            return [min, Math.max(min, dataMax)];
         }
 
         return [min, max];
@@ -86,6 +93,7 @@
                 }
             }
 
+
             return this;
         },
 
@@ -107,6 +115,7 @@
         },
 
         computeScales: function () {
+            this.adjustYDomain();
             this.computeXScale();
             this.computeYScale();
 
@@ -130,7 +139,7 @@
 
         yAxis: function () {
             var options = this.options.yAxis;
-            var tickValues = extractTickValues(this.yDomain, options.min, options.max);
+            var tickValues = this._extractTickValues(this.yDomain, options.min, options.max);
             var format = d3.format(options.labels.format);
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
@@ -203,24 +212,63 @@
         },
 
         data: function (series) {
-
             if (series instanceof Array && !series[0].data) {
-                var datums = _.map(series, _.bind(this.datum, this));
-                this.dataSrc = datums;
-
-                // this has to be the same for all series?
-                this.xDomain = this.options.xAxis.categories ? this.options.xAxis.categories : _.pluck(datums, 'x');
-
-                var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
-                var min = this.yDomain ? Math.max(this.yDomain[0], _.min(_.pluck(datums, 'y'))) : _.min(_.pluck(datums, 'y'));
-                this.yDomain = [min, max];
+                this.dataSrc = _.map(series, _.bind(this.datum, this));
+                this.xDomain = this.extractXDomain(this.dataSrc);
+                this.yDomain = this.extractYDomain(this.dataSrc);
+                this.yMax = this.getYAxisDataMax(this.dataSrc);
+                this.yMin = this.getYAxisDataMin(this.dataSrc);
             } else if (series instanceof Array && series[0].data) {
                 // we have an array of series
                 _.each(series, function (set) { this.data(set.data); }, this);
             }
 
             return this;
+        },
+
+        getYAxisDataMax: function (datums) {
+            return Math.max(this.yMax || 0, _.max(_.pluck(datums, 'y')));
+        },
+
+        getYAxisDataMin: function (datums) {
+            return Math.min(this.yMin || 0, _.min(_.pluck(datums, 'y')));
+        },
+
+        extractXDomain: function(datums) {
+            return  this.options.xAxis.categories ? this.options.xAxis.categories : _.pluck(datums, 'x');
+        },
+
+        extractYDomain: function (datums) {
+            var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
+            var min = this.yDomain ? Math.max(this.yDomain[0], _.min(_.pluck(datums, 'y'))) : _.min(_.pluck(datums, 'y'));
+
+            return [min, max];
+        },
+
+        adjustYDomain: function () {
+            this.yDomain = [this.yDomain[0], niceRound(this.yDomain[1])];
+        },
+
+        _extractTickValues: function (domain, min, max) {
+            var adjustedDomain = merge(domain, this.yMax);
+
+            if (min === undefined && max === undefined)
+                return adjustedDomain;
+
+            if (min === undefined) {
+                return max > this.yMin ? merge([max], adjustedDomain) : [max];
+            }
+
+            if (max === undefined) {
+                if (min >= this.yMax) return [min];
+                adjustedDomain[0] = min;
+
+                return adjustedDomain;
+            }
+
+            return merge([min, max], adjustedDomain);
         }
+
     };
 
     window[ns].prototype.expose('cartesian', cartesian);

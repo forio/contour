@@ -210,6 +210,14 @@ describe('Cartesian frame', function () {
             expect(_.all(ticks, function (t) { return $(t).attr('dy') === '.9em'; })).toBe(true);
         });
 
+        it('should round the max tick value to a nice value', function () {
+            narwhal.data([1,2,3,4]).render();
+
+            var lastTicks = $el.find('.y.axis .tick text').last();
+
+            expect(lastTicks.text()).toBe('5');
+        });
+
         describe('with options.yAxis.max set', function () {
             beforeEach(function () {
                 narwhal = createNarwhal({ yAxis: { max: 100 }});
@@ -246,6 +254,15 @@ describe('Cartesian frame', function () {
                 var topTick = $el.find('.y.axis .tick').first();
                 expect(topTick.find('text').text()).toBe('3');
                 expect(topTick.attr('transform')).toBe('translate(0,' + narwhal.options.chart.plotHeight + ')');
+            });
+
+            it('should not show data min as a tick', function () {
+                // we should end with ticks at min, yMax and niceRoundMax
+                narwhal.data([10,20,30]).render();
+                var ticks = $el.find('.y.axis .tick text');
+                expect(ticks.eq(0).text()).toBe('3');
+                expect(ticks.eq(1).text()).toBe('30');
+                expect(ticks.eq(2).text()).toBe('50'); // data yMax is 30 so nice round should give us 50
             });
 
             it('should use it as the abs min of the domain', function () {
