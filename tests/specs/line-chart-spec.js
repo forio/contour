@@ -6,7 +6,7 @@ describe('Visualizations', function () {
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
-        nw = new Narwhal({ el: el }).cartesian();
+        nw = new Narwhal({ el: el, animations: false }).cartesian();
     });
 
     describe('Line chart', function () {
@@ -61,8 +61,8 @@ describe('Visualizations', function () {
 
                 var paths = $el.find('g[vis-id="1"] path');
 
-                expect(paths.eq(0).attr('class')).toContain('series-s1');
-                expect(paths.eq(1).attr('class')).toContain('series-s2');
+                expect(paths.eq(0).attr('class')).toContain('s1');
+                expect(paths.eq(1).attr('class')).toContain('s2');
             });
         });
 
