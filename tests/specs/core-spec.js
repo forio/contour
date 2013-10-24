@@ -18,25 +18,28 @@ describe('Narwhal', function () {
     });
 
     describe('export', function () {
-        var exportedVis;
+        var exportedVisRenderer;
         beforeEach(function () {
-            exportedVis = function () {};
-            exportedVis.prototype.render = function () {};
+            exportedVisRenderer = function () {};
         });
 
         it('should throw if passed and invalid constructor', function () {
             expect(_.bind(Narwhal.export, Narwhal, 'some', 'thing')).toThrow();
             expect(_.bind(Narwhal.export, Narwhal, 'some')).toThrow();
-            expect(_.bind(Narwhal.export, Narwhal, 'some', exportedVis)).not.toThrow();
+            expect(_.bind(Narwhal.export, Narwhal, 'some', exportedVisRenderer)).not.toThrow();
         });
 
         it('should add functionality to Narwal\'s prototype', function () {
-            Narwhal.export('someFunc', exportedVis);
+            Narwhal.export('someFunc', exportedVisRenderer);
 
             expect(Narwhal.prototype.someFunc).toBeDefined();
-            expect(Narwhal.prototype.someFunc).toEqual(exportedVis);
         });
 
+        it('should generate an chainable constructor for the visualization', function () {
+            Narwhal.export('somethingElse', exportedVisRenderer);
+            var target = createNarwhal();
+            expect(target.somethingElse()).toBe(target);
+        });
     });
 
     describe('constructor', function () {
@@ -195,15 +198,16 @@ describe('Narwhal', function () {
             expect(context).toEqual(target);
         });
 
-        it('should set a visualization id before calling it', function () {
+        it('should pass the visualization id as parameter', function () {
             var target = createNarwhal();
-            var mock = { render: function () {}};
+            var theId = 0;
+            var mock = { render: function (svg, options, id) { theId = id; }};
 
             target.visualizations.push(mock.render);
 
             target.renderVisualizations();
 
-            expect(mock.render.id).toBe(1);
+            expect(theId).toBe(1);
         });
 
     });

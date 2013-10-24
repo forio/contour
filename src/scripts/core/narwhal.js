@@ -29,15 +29,21 @@
         return this;
     }
 
-    Narwhal.export = function (ctorName, ctor) {
+    Narwhal.export = function (ctorName, renderer) {
 
-        if (typeof ctor !== 'function') throw new Error('Invalid constructor for ' + ctorName + ' visualization');
+        if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
 
-        Narwhal.prototype[ctorName] = ctor;
-        // Narwhal.prototype[ctorName] = function () {
-        //     // this.visualizations.add(renderer);
-        //     return ctor.apply(this, arguments);
-        // };
+        Narwhal.prototype[ctorName] = function (data, options) {
+            renderer.defaults = renderer.defaults || {};
+            var opt = {};
+            opt[ctorName] = options;
+            $.extend(true, this.options, renderer.defaults, opt);
+
+            this.data(data);
+            this.visualizations.push(_.partial(renderer, data));
+
+            return this;
+        };
     };
 
     Narwhal.utils = {
@@ -141,8 +147,7 @@
 
         renderVisualizations: function () {
             _.each(this.visualizations, function (visualization, index) {
-                visualization.id = index + 1;
-                visualization.call(this, this.svg);
+                visualization.call(this, this.svg, this.options, (index + 1));
             }, this);
 
             return this;
@@ -170,6 +175,11 @@
             // compose differnt functional objects into this instance...
             // this way we can do something like new Narwhal().BarChart(...) and it includes
             // cartesia, xAxis, yAxis, tooltip, highliter, etc...
+        },
+
+        // place holder function for now
+        data: function () {
+
         }
 
     });

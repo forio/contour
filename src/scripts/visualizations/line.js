@@ -9,82 +9,73 @@
         }
     };
 
-    function ctor(data, options) {
 
-        $.extend(true, this.options, defaults, { line: options });
+    function render(data, svg, options, id) {
 
-        this.data(data);
+        var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
+        var y = _.bind(function (d) { return this.yScale(d.y); }, this);
 
-        var renderer = function (svg, series) {
-            var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
-            var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+        var line = d3.svg.line()
+            .x(function (d) { return x(d); })
+            .y(function (d) { return y(d); });
 
-            var line = d3.svg.line()
-                .x(function (d) { return x(d); })
-                .y(function (d) { return y(d); });
+        var g = svg.append('g')
+            .attr('vis-id', id)
+            .attr('type', 'line-chart')
+            .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
 
-            var g = svg.append('g')
-                .attr('vis-id', renderer.id)
-                .attr('type', 'line-chart')
-                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
+        var normalizeData = _.bind(this.datum, this);
+        if(data[0].data) {
+            _.each(data, function (d, i) {
+                var set = _.map(d.data, normalizeData);
+                appendPath.call(this, set, d.name, i+1);
+            }, this);
+        } else {
+            appendPath.call(this, _.map(data, normalizeData), data.name, 1);
+        }
 
-            var normalizeData = _.bind(this.datum, this);
-            if(data[0].data) {
-                _.each(data, function (d, i) {
-                    var set = _.map(d.data, normalizeData);
-                    appendPath.call(this, set, d.name, i+1);
-                }, this);
+        function appendPath(data, seriesName, seriesIndex) {
+            var markerSize = this.options.line.marker.size;
+            seriesName = seriesName || 'series-' + seriesIndex;
+            className = seriesName.replace(' ', '_');
+            var path = g.append('path')
+                .datum(data)
+                .attr('class', 'line ' + className);
+            if(this.options.chart.animations) {
+                path.attr('d', line(data[0]))
+                    .transition()
+                        .duration(600)
+                        .attrTween('d', pathTween);
             } else {
-                appendPath.call(this, _.map(data, normalizeData), data.name, 1);
+                path.attr('d', line);
             }
 
-            function appendPath(data, seriesName, seriesIndex) {
-                var markerSize = this.options.line.marker.size;
-                seriesName = seriesName || 'series-' + seriesIndex;
-                className = seriesName.replace(' ', '_');
-                var path = g.append('path')
-                    .datum(data)
-                    .attr('class', 'line ' + className);
-                if(this.options.chart.animations) {
-                    path.attr('d', line(data[0]))
-                        .transition()
-                            .duration(600)
-                            .attrTween('d', pathTween);
-                } else {
-                    path.attr('d', line);
-                }
-
-                if (this.options.line.marker.enable) {
-                    g.append('g').attr('class', 'line-chart-markers')
-                        .selectAll('dot')
-                            .data(data)
-                        .enter().append('circle')
-                            .attr('class', 'dot tooltip-tracker series-' + className)
-                            .attr('r', markerSize)
-                            .attr('cx', x)
-                            .attr('cy', y);
-                }
-
-
-                function pathTween() {
-                    var _data = data;
-                    var interpolate = d3.scale.quantile().domain([0,1])
-                            .range(d3.range(1, _data.length + 1));
-                    return function(t) {
-                        return line(_data.slice(0, interpolate(t)));
-                    };
-                }
-
+            if (this.options.line.marker.enable) {
+                g.append('g').attr('class', 'line-chart-markers')
+                    .selectAll('dot')
+                        .data(data)
+                    .enter().append('circle')
+                        .attr('class', 'dot tooltip-tracker series-' + className)
+                        .attr('r', markerSize)
+                        .attr('cx', x)
+                        .attr('cy', y);
             }
 
-            return this;
-        };
-
-        this.visualizations.push(renderer);
+            function pathTween() {
+                var _data = data;
+                var interpolate = d3.scale.quantile().domain([0,1])
+                        .range(d3.range(1, _data.length + 1));
+                return function(t) {
+                    return line(_data.slice(0, interpolate(t)));
+                };
+            }
+        }
 
         return this;
-    }
+    };
 
-    Narwhal.export('line', ctor);
+    render.defaults = defaults;
+
+    Narwhal.export('line', render);
 
 })('Narwhal', window.d3, window._, window.jQuery);

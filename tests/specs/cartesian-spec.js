@@ -47,12 +47,14 @@ describe('Cartesian frame', function () {
         });
 
         it('should be an inverted linear scaling', function () {
-            narwhal.data([0,10,20,30,40]).render();
+            // the 'nice rounding' for the max y value, makes it
+            // that the top value of the chart is 50 for the following data
+            narwhal.data([0,10,20,30,40,49]).render();
             var h = narwhal.options.chart.plotHeight;
 
             expect(narwhal.yScale(0)).toEqual(h);
-            expect(narwhal.yScale(20)).toEqual(h/2);
-            expect(narwhal.yScale(40)).toEqual(0);
+            expect(narwhal.yScale(25)).toEqual(h/2);
+            expect(narwhal.yScale(50)).toEqual(0);
         });
 
     });
