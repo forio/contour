@@ -30,21 +30,21 @@
 
             var normalizeData = _.bind(this.datum, this);
             if(data[0].data) {
-                _.each(data, function (d) {
+                _.each(data, function (d, i) {
                     var set = _.map(d.data, normalizeData);
-                    appendPath.call(this, set, d.name);
+                    appendPath.call(this, set, d.name, i+1);
                 }, this);
             } else {
-                appendPath.call(this, _.map(data, normalizeData));
+                appendPath.call(this, _.map(data, normalizeData), data.name, 1);
             }
 
-            function appendPath(data, seriesName) {
+            function appendPath(data, seriesName, seriesIndex) {
                 var markerSize = this.options.line.marker.size;
-                seriesName = seriesName || 'not-specified';
+                seriesName = seriesName || 'series-' + seriesIndex;
                 className = seriesName.replace(' ', '_');
                 g.append('path')
                     .datum(data)
-                    .attr('class', 'line series-' + className)
+                    .attr('class', 'line ' + className)
                     .attr('d', line);
 
                 if (this.options.line.marker.enable) {
