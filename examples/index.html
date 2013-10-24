@@ -43,7 +43,7 @@
 
     <script>
 
-    var seed = 10;
+    var seed = 1;
     function random() {
         var x = Math.sin(seed++) * 10000;
         return x - Math.floor(x);
@@ -52,10 +52,10 @@
     var baseDate = new Date(2013, 10, 10);
     var timeData = [];
 
-    for (var j=0; j<3; j++) {
+    for (var j=0; j<100; j++) {
         var d = new Date();
         d.setDate(baseDate.getDate() + j);
-        timeData.push({ x: d, y: random() * 40 + 10});
+        timeData.push({ x: d, y: random() * 40 + 5});
     }
 
     /* CHART CONFIGURATION */
