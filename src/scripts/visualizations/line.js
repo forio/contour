@@ -42,10 +42,17 @@
                 var markerSize = this.options.line.marker.size;
                 seriesName = seriesName || 'series-' + seriesIndex;
                 className = seriesName.replace(' ', '_');
-                g.append('path')
+                var path = g.append('path')
                     .datum(data)
-                    .attr('class', 'line ' + className)
-                    .attr('d', line);
+                    .attr('class', 'line ' + className);
+                if(this.options.chart.animations) {
+                    path.attr('d', line(data[0]))
+                        .transition()
+                            .duration(600)
+                            .attrTween('d', pathTween);
+                } else {
+                    path.attr('d', line);
+                }
 
                 if (this.options.line.marker.enable) {
                     g.append('g').attr('class', 'line-chart-markers')
@@ -57,6 +64,17 @@
                             .attr('cx', x)
                             .attr('cy', y);
                 }
+
+
+                function pathTween() {
+                    var _data = data;
+                    var interpolate = d3.scale.quantile().domain([0,1])
+                            .range(d3.range(1, _data.length + 1));
+                    return function(t) {
+                        return line(_data.slice(0, interpolate(t)));
+                    };
+                }
+
             }
 
             return this;

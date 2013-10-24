@@ -6,7 +6,7 @@ describe('Visualizations', function () {
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
-        nw = new Narwhal({ el: el, animations: false }).cartesian();
+        nw = new Narwhal({ el: el, chart: { animations: false }}).cartesian();
     });
 
     describe('Line chart', function () {
