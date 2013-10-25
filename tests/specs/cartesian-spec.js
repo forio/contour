@@ -293,7 +293,7 @@ describe('Cartesian frame', function () {
                 var ticks = $el.find('.y.axis .tick text');
                 expect(ticks.eq(0).text()).toBe('3');
                 expect(ticks.eq(1).text()).toBe('30');
-                expect(ticks.eq(2).text()).toBe('50'); // data yMax is 30 so nice round should give us 50
+                expect(ticks.eq(2).text()).toBe('33'); // data yMax is 30 so nice round will give us 10% more
             });
 
             it('should use it as the abs min of the domain', function () {
