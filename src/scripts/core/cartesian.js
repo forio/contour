@@ -245,7 +245,7 @@
 
         extractYDomain: function (datums) {
             var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
-            var min = this.yDomain ? Math.max(this.yDomain[0], _.min(_.pluck(datums, 'y'))) : _.min(_.pluck(datums, 'y'));
+            var min = this.yDomain ? Math.min(this.yDomain[0], _.min(_.pluck(datums, 'y'))) : _.min(_.pluck(datums, 'y'));
 
             return [min, max];
         },
@@ -272,7 +272,7 @@
                 return adjustedDomain;
             }
 
-            return merge([min, max], adjustedDomain);
+            return merge([min, max], this.yMax);
         }
 
     };
