@@ -210,7 +210,7 @@ describe('Narwhal', function () {
             var called = false;
 
             target.visualizations.push(function () { called = true && this === target; } );
-            target.renderVisualizations();
+            target.render();
             expect(called).toBe(true);
         });
 
@@ -219,7 +219,7 @@ describe('Narwhal', function () {
             var context;
 
             target.visualizations.push(function () { context = this; } );
-            target.renderVisualizations();
+            target.render();
             expect(context).toEqual(target);
         });
 
@@ -230,7 +230,7 @@ describe('Narwhal', function () {
 
             target.visualizations.push(mock.render);
 
-            target.renderVisualizations();
+            target.render();
 
             expect(theId).toBe(1);
         });

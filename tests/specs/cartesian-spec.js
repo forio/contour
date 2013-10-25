@@ -441,10 +441,9 @@ describe('Cartesian frame', function () {
 
         it('should render visualizations after all axis and other elements (zindex)', function () {
             createNarwhal().data([1,2,3]);
-            narwhal.visualizations.push(function (svg) {
+            narwhal.visualizations.push(function (layer) {
                 // add a dummy svg element
-                svg.append('g')
-                    .attr('name', 'myDummyVisualization');
+                layer.attr('name', 'myDummyVisualization');
             });
 
             narwhal.render();

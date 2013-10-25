@@ -148,9 +148,17 @@
             return this;
         },
 
+        createVisualizationLayer: function (id) {
+            return this.svg.append('g')
+                .attr('vis-id', id)
+                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
+        },
+
         renderVisualizations: function () {
             _.each(this.visualizations, function (visualization, index) {
-                visualization.call(this, this.svg, this.options, (index + 1));
+                var id = index + 1;
+                var layer = this.createVisualizationLayer(id);
+                visualization.call(this, layer, this.options, id);
             }, this);
 
             return this;

@@ -10,7 +10,7 @@
     };
 
 
-    function render(data, svg, options, id) {
+    function render(data, layer, options, id) {
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
@@ -18,11 +18,6 @@
         var line = d3.svg.line()
             .x(function (d) { return x(d); })
             .y(function (d) { return y(d); });
-
-        var g = svg.append('g')
-            .attr('vis-id', id)
-            .attr('type', 'line-chart')
-            .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
 
         var normalizeData = _.bind(this.datum, this);
         if(data[0].data) {
@@ -38,7 +33,7 @@
             var markerSize = this.options.line.marker.size;
             seriesName = seriesName || 's-' + seriesIndex;
             className = seriesName.replace(' ', '_') + ' v-' + id;
-            var path = g.append('path')
+            var path = layer.append('path')
                 .datum(data)
                 .attr('class', 'line ' + className);
             if(this.options.chart.animations) {
@@ -51,7 +46,7 @@
             }
 
             if (this.options.line.marker.enable) {
-                g.append('g').attr('class', 'line-chart-markers')
+                layer.append('g').attr('class', 'line-chart-markers')
                     .selectAll('dot')
                         .data(data)
                     .enter().append('circle')

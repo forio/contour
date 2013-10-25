@@ -3,20 +3,14 @@
     var defaults = {
     };
 
-    function render(data, svg, options, id) {
+    function render(data, layer, options, id) {
         var h = this.options.chart.plotHeight;
         var x = this.xScale;
         var y = this.yScale;
         var colWidth = this.rangeBand;
         var min = this.options.yAxis.min || this.yMin;
 
-
-        var g = svg.append('g')
-            .attr('vis-id', id)
-            .attr('type', 'column-chart')
-            .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
-
-        var col = g.selectAll('.column')
+        var col = layer.selectAll('.column')
             .data(data);
 
         col.enter().append('rect')
