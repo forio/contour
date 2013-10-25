@@ -2,7 +2,7 @@
 
     var defaults = {
         chart: {
-            animations: true,
+            animations: false,
             defaultWidth: 400,      // by default take the size of the parent container
             defaultAspect: 1 / 1.61803398875,       // height = width * ratio
             width: undefined, // calculated at render time based on the options & container
