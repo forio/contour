@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Example on How to User Narwhal</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="../examples/css/narwhal.css">
     <script src="../examples/js/vendor/d3.js"></script>
     <script src="../examples/js/vendor/jquery.js"></script>
@@ -18,17 +19,6 @@
     <script src="../src/scripts/visualizations/line.js"></script>
     <script src="../src/scripts/visualizations/column.js"></script>
 
-    <style>
-        body {
-            width: 960px;
-        }
-        .chart {
-            border: none;
-            width: 600px;
-            margin: 30px;
-        }
-
-    </style>
 
     <style>
 
@@ -36,13 +26,30 @@
       font: 10px sans-serif;
     }
 
+    .chart {
+        width: 70%;
+        margin: 30px;
+    }
+
     </style>
 </head>
 <body>
 
-    <div class="chart container3"></div>
-    <div class="chart container2"></div>
-    <div class="chart container"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+    <div class="chart ch3 "></div>
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="chart ch2 col-xs-12"></div>
+        </div>
+        <div class="row">
+            <div class="chart ch col-xs-5"></div>
+        </div>
+    </div>
 
     <script>
 
@@ -73,7 +80,7 @@
 
 
     // var chart = new Narwhal(_.extend(baseConfig, {
-    //         el: '.container',
+    //         el: '.ch',
     //         xAxis: {
     //             title: 'Sample',
     //             categories: ['one', 'two', 'three', 'four', 'five']
@@ -84,7 +91,7 @@
     //     .render();
 
     // var chart2 = new Narwhal(_.extend(baseConfig, {
-    //         el: '.container2',
+    //         el: '.ch2',
     //         xAxis: {
 
     //             title: 'Time'
@@ -99,7 +106,7 @@
     var csv = new Narwhal.connectors.Csv(csvData);
 
     var chart3 = new Narwhal(_.extend(baseConfig, {
-                    el: '.container3',
+                    el: '.ch3',
                     chart: {
                         padding: {
                             left: 40
