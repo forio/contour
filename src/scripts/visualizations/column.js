@@ -17,10 +17,10 @@
             .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
 
         var col = g.selectAll('.column')
-            .data(this.dataSrc);
+            .data(data);
 
         col.enter().append('rect')
-                .attr('class', 'bar')
+                .attr('class', 'bar vis-'+id)
                 .attr('x', function (d) { return x(d.x); })
                 .attr('y', function () { return y(min); })
                 .attr('height', 0)
@@ -34,7 +34,9 @@
                 .attr('y', function (d) { return y(d.y); });
 
         } else {
-            col.attr('height', function (d) { return h - y(d.y); });
+            col.attr('height', function (d) { return h - y(d.y); })
+                .attr('y', function (d) { return y(d.y); });
+
         }
     }
 
