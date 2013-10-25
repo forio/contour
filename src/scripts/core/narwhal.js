@@ -137,9 +137,10 @@
 
             this.svg = this.container
                 .append('svg')
-                    .attr('width', chartOpt.width)
-                    .attr('height', chartOpt.height)
+                    // .attr('width', chartOpt.width)
+                    // .attr('height', chartOpt.height)
                     .attr('viewBox', '0 0 ' + chartOpt.width + ' ' + chartOpt.height)
+                    .attr('preserveAspectRatio', 'xMinYMin')
                     .attr('class', 'narwhal-chart')
                 .append('g')
                     .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');

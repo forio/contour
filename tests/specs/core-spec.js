@@ -90,6 +90,19 @@ describe('Narwhal', function () {
 
     describe('render', function () {
 
+        function getBounds() {
+            var svg = d3.select($el.find('svg').get(0));
+            var viewBox = svg.attr('viewBox').split(' ');
+            if (viewBox.length !== 4) throw new Error('the SVG does not have a viewbox to get the dimensions');
+
+            return {
+                left: +viewBox[0],
+                top: +viewBox[1],
+                width: +viewBox[2],
+                height: +viewBox[3]
+            }
+        }
+
         beforeEach(function () {
         });
 
@@ -101,67 +114,67 @@ describe('Narwhal', function () {
         it('should take the dimensions from the options', function () {
             createNarwhal({ chart: { width: 100, height: 200 } }).render();
 
-            var width = +$el.find('svg').attr('width');
-            var height = +$el.find('svg').attr('height');
-            expect(width).toEqual(100);
-            expect(height).toEqual(200);
+            var bounds = getBounds();
+            expect(bounds.width).toEqual(100);
+            expect(bounds.height).toEqual(200);
         });
 
         it('should default to width=400 if no option is given and no container has no width', function () {
             createNarwhal().render();
 
-            var width = +$el.find('svg').attr('width');
-            expect(width).toEqual(400);
+            var bounds = getBounds();
+            expect(bounds.width).toEqual(400);
         });
 
         it('should default to height=247 if no option is given and no container has no height', function () {
             createNarwhal().render();
 
-            var width = +$el.find('svg').attr('height');
-            expect(width).toEqual(247);
+            var bounds = getBounds();
+            expect(bounds.height).toEqual(247);
         });
 
         it('should get the container width if it has it', function () {
             $el.css({width: '120px', height: '30px '});
             createNarwhal().render();
 
-            var width = +$el.find('svg').attr('width');
-            expect(width).toEqual(120);
+            var bounds = getBounds();
+            expect(bounds.width).toEqual(120);
         });
 
         it('should get the container height if it has it', function () {
             $el.css({width: '120px', height: '30px '});
             createNarwhal().render();
 
-            var height = +$el.find('svg').attr('height');
-            expect(height).toEqual(30);
+            var bounds = getBounds();
+            expect(bounds.height).toEqual(30);
         });
 
         it('should calculate height if width & aspect are specificed', function () {
             createNarwhal({ chart: { width: 100, aspect: 2 }}).render();
 
-            var height = +$el.find('svg').attr('height');
-            expect(height).toEqual(200);
+            var bounds = getBounds();
+            expect(bounds.height).toEqual(200);
         });
 
         it('should calculate height from container width & aspect are specificed', function () {
             $el.css({ width: '100px' });
             createNarwhal({ chart: { aspect: 1.5 }}).render();
 
-            var height = +$el.find('svg').attr('height');
-            expect(height).toEqual(150);
+            var bounds = getBounds();
+            expect(bounds.height).toEqual(150);
         });
 
-        it('should include a viewbox attribute for the svg', function () {
+        it('should include a viewbox & preserveAspectRatio attributes for the svg', function () {
             createNarwhal({ chart: { width: 100, height: 200 } }).render();
 
             // cant use jquery to get the viewBox... svg is not supposed to be supported in jquery
             // http://bugs.jquery.com/ticket/11166
             var svg = d3.select($el.find('svg').get(0));
-            var width = +svg.attr('width');
-            var height = +svg.attr('height');
             var viewBox = svg.attr('viewBox');
-            expect(viewBox).toBe('0 0 ' + width + ' ' + height);
+            var preserve = svg.attr('preserveAspectRatio');
+
+            expect(viewBox).toBe('0 0 100 200');    // form the width&hegiht passed in the options
+            expect(preserve).toBe('xMinYMin');
         });
 
         it('should position chart area using the provided margins', function () {
