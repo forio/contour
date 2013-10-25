@@ -152,6 +152,18 @@ describe('Narwhal', function () {
             expect(height).toEqual(150);
         });
 
+        it('should include a viewbox attribute for the svg', function () {
+            createNarwhal({ chart: { width: 100, height: 200 } }).render();
+
+            // cant use jquery to get the viewBox... svg is not supposed to be supported in jquery
+            // http://bugs.jquery.com/ticket/11166
+            var svg = d3.select($el.find('svg').get(0));
+            var width = +svg.attr('width');
+            var height = +svg.attr('height');
+            var viewBox = svg.attr('viewBox');
+            expect(viewBox).toBe('0 0 ' + width + ' ' + height);
+        });
+
         it('should position chart area using the provided margins', function () {
             createNarwhal({
                 chart: {
