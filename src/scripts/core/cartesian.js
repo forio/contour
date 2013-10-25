@@ -47,6 +47,7 @@
     }
 
     function niceRound(val) {
+        return Math.ceil(val * 1.10);
         var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
         var fac = Math.pow(10, digits);
 
