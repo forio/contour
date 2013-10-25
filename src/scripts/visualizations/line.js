@@ -36,8 +36,8 @@
 
         function appendPath(data, seriesName, seriesIndex) {
             var markerSize = this.options.line.marker.size;
-            seriesName = seriesName || 'series-' + seriesIndex;
-            className = seriesName.replace(' ', '_');
+            seriesName = seriesName || 's-' + seriesIndex;
+            className = seriesName.replace(' ', '_') + ' v-' + id;
             var path = g.append('path')
                 .datum(data)
                 .attr('class', 'line ' + className);
