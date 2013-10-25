@@ -20,7 +20,7 @@
 
     OrdinalScale.prototype = {
         init: function () {
-            this.isCategorized = _.isArray(this.options.xAxis.categories);
+            this.isCategorized = true;// _.isArray(this.options.xAxis.categories);
             delete this._scale;
         },
 
@@ -42,7 +42,10 @@
                 .innerTickSize(options.innerTickSize)
                 .outerTickSize(options.outerTickSize)
                 .tickPadding(options.tickPadding)
-                .tickValues(this.options.xAxis.categories);
+                .tickValues(this.options.xAxis.categories)
+                .tickFormat(function (d ,i) {
+                    return _.isDate(d) ? d.getDate() : d;
+                });
 
             if (this.options.xAxis.firstAndLast) {
                 // show only first and last tick
@@ -62,7 +65,7 @@
         range: function () {
             var range = [0, this.options.chart.plotWidth];
             return this.isCategorized ?
-                this._scale.rangeRoundBands(range) :
+                this._scale.rangeRoundBands(range, 0.1) :
                 this._scale.rangePoints(range);
         }
     };

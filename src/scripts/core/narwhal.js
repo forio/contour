@@ -34,6 +34,7 @@
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
 
         Narwhal.prototype[ctorName] = function (data, options) {
+            data = data || [];
             renderer.defaults = renderer.defaults || {};
             var opt = {};
             opt[ctorName] = options;

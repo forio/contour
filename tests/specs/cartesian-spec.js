@@ -41,6 +41,34 @@ describe('Cartesian frame', function () {
         });
     });
 
+    describe('without data', function () {
+        it('should provide default axis', function () {
+            var narwhal = createNarwhal().render();
+
+            var h = narwhal.options.chart.plotHeight;
+            var w = narwhal.options.chart.plotWidth;
+
+            expect(narwhal.yScale(0)).toEqual(h);
+            expect(narwhal.yScale(10)).toEqual(0);
+
+            // expect(narwhal.xScale(0)).toEqual(0);
+            // expect(narwhal.xScale(10)).toEqual(w);
+        });
+    });
+
+    describe('with simple array data', function () {
+        it('should auto generate categories', function () {
+            var narwhal = createNarwhal();
+            narwhal.data([10,20,30]).render();
+
+            expect(narwhal.dataSrc).toBeDefined();
+            expect(narwhal.dataSrc[0].x).toBe(0);
+            expect(narwhal.dataSrc[1].x).toBe(1);
+            expect(narwhal.dataSrc[2].x).toBe(2);
+
+        });
+    });
+
     describe('default yScale', function () {
         beforeEach(function () {
             narwhal = createNarwhal();
@@ -402,7 +430,9 @@ describe('Cartesian frame', function () {
         });
 
         describe('rangeBand (width of each x axis band)', function () {
-            it('should be set default to 0 (rangePoint)', function () {
+            // not sure what it should be the default...
+            // changed the defult to be a ordinal with rangeBands...
+            xit('should be set default to 0 (rangePoint)', function () {
                 createNarwhal().data([1,2,3]).render();
                 expect(narwhal.rangeBand).toBe(0);
             });

@@ -77,6 +77,7 @@
     }
 
     var cartesian = {
+        dataSrc: [],
 
         init: function (options) {
 
@@ -115,7 +116,7 @@
         },
 
         computeScales: function () {
-            this.adjustYDomain();
+            this.adjustDomain();
             this.computeXScale();
             this.computeYScale();
 
@@ -212,7 +213,10 @@
         },
 
         data: function (series) {
-            if (series instanceof Array && !series[0].data) {
+
+            if (series instanceof Array && !series.length) {
+                return this;
+            } else if (series instanceof Array && !series[0].data) {
                 this.dataSrc = _.map(series, _.bind(this.datum, this));
                 this.xDomain = this.extractXDomain(this.dataSrc);
                 this.yDomain = this.extractYDomain(this.dataSrc);
@@ -245,8 +249,9 @@
             return [min, max];
         },
 
-        adjustYDomain: function () {
-            this.yDomain = [this.yDomain[0], niceRound(this.yDomain[1])];
+        adjustDomain: function () {
+            this.yDomain = this.yDomain ? [this.yDomain[0], niceRound(this.yDomain[1])] : [0, 10];
+            this.xDomain = this.xDomain ? this.xDomain : [];
         },
 
         _extractTickValues: function (domain, min, max) {
