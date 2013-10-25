@@ -28,3 +28,6 @@
 .narwhal-chart .line-chart-markers .dot {
   fill: #5097fc;
 }
+.narwhal-chart .bar {
+  fill: #4682b4;
+}

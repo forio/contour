@@ -15,13 +15,14 @@
     <script src="../src/scripts/core/narwhal.js"></script>
     <script src="../src/scripts/core/cartesian.js"></script>
     <script src="../src/scripts/visualizations/line.js"></script>
+    <script src="../src/scripts/visualizations/column.js"></script>
 
     <style>
         body {
             width: 960px;
         }
-        .container, .container2 {
-            border: solid 1px red;
+        .chart {
+            border: none;
             width: 600px;
             margin: 30px;
         }
@@ -38,8 +39,9 @@
 </head>
 <body>
 
-    <div class="container"></div>
-    <div class="container2"></div>
+    <div class="chart container3"></div>
+    <div class="chart container2"></div>
+    <div class="chart container"></div>
 
     <script>
 
@@ -52,7 +54,7 @@
     var baseDate = new Date(2013, 10, 10);
     var timeData = [];
 
-    for (var j=0; j<100; j++) {
+    for (var j=0; j<5; j++) {
         var d = new Date();
         d.setDate(baseDate.getDate() + j);
         timeData.push({ x: d, y: random() * 40 + 5});
@@ -67,26 +69,44 @@
     }
 
 
-    var chart = new Narwhal(_.extend(baseConfig, {
-            el: '.container',
-            xAxis: {
-                title: 'Sample',
-                categories: ['one', 'two', 'three', 'four', 'five']
-            }
-        }))
-        .cartesian()
-        .line([{ data: [1,2,3,4, 3.5] }, {data: [4,3,2,1]} ])
-        .render();
+    // var chart = new Narwhal(_.extend(baseConfig, {
+    //         el: '.container',
+    //         xAxis: {
+    //             title: 'Sample',
+    //             categories: ['one', 'two', 'three', 'four', 'five']
+    //         }
+    //     }))
+    //     .cartesian()
+    //     .line([{ data: [1,2,3,4, 3.5] }, {data: [4,3,2,1]} ])
+    //     .render();
 
-    var chart2 = new Narwhal(_.extend(baseConfig, {
-            el: '.container2',
-            xAxis: {
-                title: 'Time'
-            }
-        }))
-        .cartesian()
-        .line(timeData)
-        .render();
+    // var chart2 = new Narwhal(_.extend(baseConfig, {
+    //         el: '.container2',
+    //         xAxis: {
+
+    //             title: 'Time'
+
+    //         }
+    //     }))
+    //     .cartesian()
+    //     .line(timeData)
+    //     .render();
+
+    var chart3 = new Narwhal(_.extend(baseConfig, {
+                    el: '.container3',
+                    xAxis: {
+                        type: 'ordinal',
+                        title: 'Time',
+                        firstAndLast: false
+                        // categories: ['one', 'two', 'three', 'four', 'five']
+                    }
+                }))
+                .cartesian()
+                .column(timeData)
+                // .column([1,2,3,4,5])
+                // .column()
+                .render();
+
     </script>
 </body>
 

@@ -59,7 +59,7 @@
         },
 
         rangeBand: function () {
-            return 0;
+            return 4;
         },
 
 
@@ -73,7 +73,7 @@
         },
 
         range: function () {
-            return this._scale.range([0, this.options.chart.plotWidth]);
+            return this._scale.rangeRound([0, this.options.chart.plotWidth], 0.1);
         },
 
         extractDomain: function (domain, min, max) {

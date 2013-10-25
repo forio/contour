@@ -5,6 +5,7 @@
 @data-line-width: 2px;
 @data-line-color: #5097fc;
 @data-line-marker-color: @data-line-color;
+@data-bar-color: steelblue; //@data-line-color;
 
 @axis-title-font-size: 12px;
 
@@ -43,6 +44,10 @@
 
     .line-chart-markers .dot {
         fill: @data-line-marker-color;
+    }
+
+    .bar {
+        fill: @data-bar-color;
     }
 }
 
