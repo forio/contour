@@ -13,6 +13,7 @@
     <script src="../src/scripts/core/axis/time-scale-axis.js" ></script>
     <script src="../src/scripts/core/axis/axis-scale-factory.js" ></script>
     <script src="../src/scripts/core/narwhal.js"></script>
+    <script src="../src/scripts/core/connectors/csv.js" ></script>
     <script src="../src/scripts/core/cartesian.js"></script>
     <script src="../src/scripts/visualizations/line.js"></script>
     <script src="../src/scripts/visualizations/column.js"></script>
@@ -60,6 +61,8 @@
         timeData.push({ x: d, y: random() * 40 + 5});
     }
 
+    var csvData = 'quarter,cost,revenue,profit\n2013Q1,100,150,50\n2013Q2,110,150,40\n2013Q3,90,180,90\n2013Q4,105,190,85'
+
     /* CHART CONFIGURATION */
     var baseConfig = {
         yAxis: {
@@ -92,18 +95,34 @@
     //     .line(timeData)
     //     .render();
 
+    var measure = 'Profit'
+    var csv = new Narwhal.connectors.Csv(csvData);
+
     var chart3 = new Narwhal(_.extend(baseConfig, {
                     el: '.container3',
+                    chart: {
+                        padding: {
+                            left: 40
+                        }
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 200,
+                        title: measure + ' ($)'
+                    },
                     xAxis: {
+
                         type: 'ordinal',
-                        title: 'Time',
-                        firstAndLast: false
+                        title: 'Quarter',
+                        // firstAndLast: false
                         // categories: ['one', 'two', 'three', 'four', 'five']
                     }
                 }))
                 .cartesian()
-                .column(timeData)
+                .column(csv.measure('revenue'))
+                .line(csv.measure('cost'))
                 // .column([1,2,3,4,5])
+                // .line([4,2,3,1,5])
                 // .column()
                 .render();
 
