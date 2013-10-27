@@ -41,7 +41,8 @@
             $.extend(true, this.options, renderer.defaults, opt);
 
             this.data(data);
-            this.visualizations.push(_.partial(renderer, data));
+            var datums = _.map(data, _.bind(this.datum, this));
+            this.visualizations.push(_.partial(renderer, datums));
 
             return this;
         };
