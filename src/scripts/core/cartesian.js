@@ -5,7 +5,7 @@
             padding: {
                 top: 3,
                 bottom: 25,
-                left: 30,
+                left: 40,
                 right: 3
             }
         },
@@ -20,14 +20,14 @@
         },
 
         yAxis: {
-            min: undefined,
+            min: 0,
             max: undefined,
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
             titlePadding: 0,
             labels: {
-                format: '.0f' // d3 formats
+                format: 's' // d3 formats
             }
         }
     };
