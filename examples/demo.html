@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Example on How to User Narwhal</title>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../dist/narwhal.min.css">
+    <script src="../examples/js/vendor/d3.js"></script>
+    <script src="../examples/js/vendor/jquery.js"></script>
+    <script src="../examples/js/vendor/lodash.js"></script>
+
+    <script src="../dist/narwhal.js"></script>
+
+    <style>
+        .chart {
+            width: 70%;
+            margin: 10px auto;
+        }
+
+        .dot {
+            fill: red;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+    <h2>Narwhal</h2>
+
+    <div class="chart"></div>
+
+
+</div>
+<script>
+
+Narwhal.export('scatter', function (data, layer) {
+
+    var x = _.bind(function (d) { return this.xScale(d.x); }, this);
+    var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+
+    layer.selectAll('dot')
+        .data(data)
+        .enter().append('circle')
+            .attr('r', 4)
+            .attr('cx', x)
+            .attr('cy', y);
+});
+
+Narwhal.export('title', function (data, layer) {
+    layer.append('text')
+        .attr('style', 'font-family: arial')
+        .attr('x', 100)
+        .attr('y', 100)
+        .text('Hello');
+});
+
+
+var data = 'month,cost,revenue,profit\njan,165,346,181\nfeb,93,340,247\nmar,64,321,257\napr,54,317,263\nmay,189,357,168\njun,80,303,223\njul,196,308,112\naug,165,352,187\nsep,80,359,279\noct,166,335,169\nnov,82,290,208\ndec,177,273,96';
+
+
+var connector = new Narwhal.connectors.Csv(data);
+
+
+connector.dimension('month');
+
+var chart = new Narwhal({
+    el: '.chart',
+    chart: {
+
+    },
+
+    xAxis: {
+        firstAndLast: false,
+        title: 'Cost'
+    },
+
+    yAxis: {
+        title: 'Profit'
+    }
+})
+.cartesian()
+// .column(connector.measure('profit'))
+.line(connector.measure('cost'))
+.column(connector.measure('profit'))
+.title()
+.render();
+
+</script>
+
+
+</body>
+</html>
