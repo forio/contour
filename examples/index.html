@@ -27,7 +27,8 @@
     }
 
     .chart {
-        width: 80%;
+        width: 650px;
+        height: 400px;
         margin: 10px;
     }
 
@@ -35,19 +36,9 @@
 </head>
 <body>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-    <div class="chart ch3 "></div>
-
-            </div>
-
-        </div>
-        <div class="row">
-            <div class="chart ch2 col-xs-12"></div>
-        </div>
-        <div class="row">
-            <div class="chart ch col-xs-5"></div>
+            <div class="chart ch3"></div>
+            <div class="chart ch2"></div>
+            <div class="chart ch"></div>
         </div>
     </div>
 
@@ -79,28 +70,27 @@
     }
 
 
-    // var chart = new Narwhal(_.extend(baseConfig, {
-    //         el: '.ch',
-    //         xAxis: {
-    //             title: 'Sample',
-    //             categories: ['one', 'two', 'three', 'four', 'five']
-    //         }
-    //     }))
-    //     .cartesian()
-    //     .line([{ data: [1,2,3,4, 3.5] }, {data: [4,3,2,1]} ])
-    //     .render();
+    var chart = new Narwhal(_.extend(baseConfig, {
+            el: '.ch',
+            xAxis: {
+                title: 'Sample',
+            }
+        }))
+        .cartesian()
+        .column([1,2,3,4])
+        .render();
 
-    // var chart2 = new Narwhal(_.extend(baseConfig, {
-    //         el: '.ch2',
-    //         xAxis: {
+    var chart2 = new Narwhal(_.extend(baseConfig, {
+            el: '.ch2',
+            xAxis: {
 
-    //             title: 'Time'
+                title: 'Time'
 
-    //         }
-    //     }))
-    //     .cartesian()
-    //     .line(timeData)
-    //     .render();
+            }
+        }))
+        .cartesian()
+        .line(timeData)
+        .render();
 
     var measure = 'Profit'
     var csv = new Narwhal.connectors.Csv(csvData);
@@ -121,16 +111,12 @@
 
                         type: 'ordinal',
                         title: 'Quarter',
-                        // firstAndLast: false
-                        // categories: ['one', 'two', 'three', 'four', 'five']
+                        firstAndLast: false
                     }
                 }))
                 .cartesian()
                 .column(csv.measure('revenue'))
                 .line(csv.measure('cost'))
-                // .column([1,2,3,4,5])
-                // .line([4,2,3,1,5])
-                // .column()
                 .render();
 
     </script>
