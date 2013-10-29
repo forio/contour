@@ -8,3 +8,29 @@
     font-family: "Helvetica Neue", arial, sans-serif;
     font-size: 16px;
 }
+
+
+.make-series-colors() {
+    .make-color(@index, @list) when (@index < 6) {
+        @{list} {
+            @color: 's@{index}-color';
+            &.line {
+                stroke: @@color;
+                stroke-width: @data-line-width;
+                fill: none;
+            }
+
+            &.bar,
+            &.dot {
+                fill: @@color;
+            }
+        }
+    }
+
+    .make-color(1, ~'.s-1');
+    .make-color(2, ~'.s-2');
+    .make-color(3, ~'.s-3');
+    .make-color(4, ~'.s-4');
+    .make-color(5, ~'.s-5');
+
+}

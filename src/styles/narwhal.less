@@ -9,6 +9,13 @@
 
 @axis-title-font-size: 12px;
 
+@s1-color: #5097fc;
+@s2-color: #fc4e51;
+@s3-color: #7decbb;
+@s4-color: #33363b;
+@s5-color: #999b9d;
+
+
 .narwhal-chart {
     .axis {
         stroke: @axis-line-color;
@@ -35,19 +42,7 @@
         stroke: none;
         fill: @text-color;
     }
-
-    .line {
-        stroke: @data-line-color;
-        stroke-width: @data-line-width;
-        fill: none;
-    }
-
-    .line-chart-markers .dot {
-        fill: @data-line-marker-color;
-    }
-
-    .bar {
-        fill: @data-bar-color;
-    }
 }
 
+
+.make-series-colors();
