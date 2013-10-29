@@ -40,6 +40,30 @@ describe('Narwhal', function () {
             var target = createNarwhal();
             expect(target.somethingElse()).toBe(target);
         });
+
+        // the datum functionality is in catesian, so we need to move this there
+        xit('should bind normalized constructor data when data is an array', function () {
+            var dataParam;
+            Narwhal.export('something', function (data) {
+                dataParam = data;
+            });
+
+            var target = createNarwhal();
+            target.something([1,2,3]).render();
+            expect(dataParam[0].x).toBe(0);
+            expect(dataParam[0].y).toBe(1);
+        });
+
+        it('should bind unmodified constructor data when data is not an array', function () {
+            var dataParam;
+            Narwhal.export('something', function (data) {
+                dataParam = data;
+            });
+
+            var target = createNarwhal();
+            target.something('some parameter').render();
+            expect(dataParam).toBe('some parameter');
+        });
     });
 
     describe('constructor', function () {

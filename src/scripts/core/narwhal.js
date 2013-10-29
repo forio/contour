@@ -55,9 +55,16 @@
             opt[ctorName] = options;
             $.extend(true, this.options, renderer.defaults, opt);
 
-            this.data(data);
-            var datums = normalizeSeries.call(this, data);
-            this.visualizations.push(_.partial(renderer, datums));
+            var renderFunc;
+            if (_.isArray(data)) {
+                this.data(data);
+                var datums = normalizeSeries.call(this, data);
+                renderFunc = _.partial(renderer, datums);
+            } else {
+                renderFunc = _.partial(renderer, data);
+            }
+
+            this.visualizations.push(renderFunc);
 
             return this;
         };
