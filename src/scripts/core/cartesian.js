@@ -207,6 +207,9 @@
         },
 
         datum: function (d, index) {
+            if(_.isObject(d) && _.isArray(d.data))
+                return _.map(d.data, _.bind(this.datum, this));
+
             return {
                 y: _.isObject(d) ? d.y : d,
                 x: _.isObject(d) ? d.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index

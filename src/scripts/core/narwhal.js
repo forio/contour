@@ -33,6 +33,21 @@
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
 
+        function normalizeSeries(data) {
+            if(!data || !data.length) return data;
+
+            if(data[0].data) {
+                return _.map(data, _.bind(function (series, index) {
+                    return {
+                        name: series.name || 's' + index,
+                        data: _.map(series.data, _.bind(this.datum, this))
+                    };
+                }, this));
+            }
+
+            return  _.map(data, _.bind(this.datum, this));
+        }
+
         Narwhal.prototype[ctorName] = function (data, options) {
             data = data || [];
             renderer.defaults = renderer.defaults || {};
@@ -41,7 +56,7 @@
             $.extend(true, this.options, renderer.defaults, opt);
 
             this.data(data);
-            var datums = _.map(data, _.bind(this.datum, this));
+            var datums = normalizeSeries.call(this, data);
             this.visualizations.push(_.partial(renderer, datums));
 
             return this;
