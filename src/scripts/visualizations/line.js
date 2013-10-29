@@ -31,8 +31,8 @@
 
         function appendPath(data, seriesName, seriesIndex) {
             var markerSize = this.options.line.marker.size;
-            seriesName = seriesName || 's' + seriesIndex;
-            className = seriesName.replace(' ', '_') + ' v-' + id;
+            seriesName = seriesName || '';
+            className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
             var path = layer.append('path')
                 .datum(data)
                 .attr('class', 'line ' + className);
@@ -50,7 +50,7 @@
                     .selectAll('dot')
                         .data(data)
                     .enter().append('circle')
-                        .attr('class', 'dot tooltip-tracker series-' + className)
+                        .attr('class', 'dot tooltip-tracker ' + className)
                         .attr('r', markerSize)
                         .attr('cx', x)
                         .attr('cy', y);
