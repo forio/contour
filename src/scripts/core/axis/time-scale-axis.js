@@ -9,6 +9,11 @@
     }
     */
 
+    function dateDiff(d1, d2) {
+        var diff = d1.getTime() - d2.getTime();
+        return diff / (24*60*60*1000);
+    }
+
 
     function TimeScale(data, options) {
         this.options = options;
@@ -62,9 +67,9 @@
             return 4;
         },
 
-
-
         getOptimalTickFormat: function () {
+            var spanDays = dateDiff(this._domain[this._domain.length-1], this._domain[0]);
+            if (spanDays < 1) return d3.time.format('%H:%M');
             return d3.time.format('%d %b');
         },
 

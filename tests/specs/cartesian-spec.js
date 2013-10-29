@@ -203,6 +203,21 @@ describe('Cartesian frame', function () {
                 expect(xLabels.eq(2).css('text-anchor')).toBe('end');
             });
 
+            it('should print hrs, when xDomain is all in the same day', function () {
+                narwhal = createNarwhal({ xAxis: { firstAndLast: false }})
+                    .data([
+                        { x: new Date('10/11/2013 10:00'), y: 10 },
+                        { x: new Date('10/11/2013 11:00'), y: 20 },
+                        { x: new Date('10/11/2013 12:00'), y: 30 }
+                    ])
+                    .render();
+
+                var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+                expect(xLabels.eq(0).text()).toBe('10:00');
+                expect(xLabels.eq(1).text()).toBe('11:00');
+                expect(xLabels.eq(2).text()).toBe('12:00');
+            });
+
         });
 
         describe('with axis categories defined', function () {
@@ -267,7 +282,7 @@ describe('Cartesian frame', function () {
                 expect(topTick.attr('transform')).toBe('translate(0,0)');
             });
 
-            it('should handle the case where max is less than the data set\'s min', function () {
+            xit('should handle the case where max is less than the data set\'s min', function () {
                 narwhal.data([200, 300, 400]).render();
                 var ticks = $el.find('.y.axis .tick');
 
