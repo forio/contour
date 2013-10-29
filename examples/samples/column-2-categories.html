@@ -1,0 +1,19 @@
+<div class="chart column-categories"></div>
+<script>
+
+    new Narwhal({
+            el: '.column-categories',
+            xAxis: {
+                title: 'Index',
+                firstAndLast: false,
+                categories: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
+            },
+            yAxis: {
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .column([1, 2, 3, 4, 5, 4, 3, 2, 1,2,3])
+        .render();
+
+</script>

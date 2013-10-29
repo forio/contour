@@ -21,12 +21,12 @@
   fill: #666666;
 }
 .narwhal-chart .line {
-  stroke: #73acdb;
+  stroke: #f47a5f;
   stroke-width: 2px;
   fill: none;
 }
 .narwhal-chart .line-chart-markers .dot {
-  fill: #73acdb;
+  fill: #f47a5f;
 }
 .narwhal-chart .bar {
   fill: #4682b4;

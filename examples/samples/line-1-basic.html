@@ -1,0 +1,17 @@
+<div class="chart line-basic"></div>
+<script>
+
+    new Narwhal({
+            el: '.line-basic',
+            xAxis: {
+                title: 'Index',
+            },
+            yAxis: {
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .line([1, 2, 3, 4, 5, 4, 3, 2, 1])
+        .render();
+
+</script>

@@ -58,13 +58,7 @@ Narwhal.export('title', function (data, layer) {
 
 var data = 'month,cost,revenue,profit\njan,165,346,181\nfeb,93,340,247\nmar,64,321,257\napr,54,317,263\nmay,189,357,168\njun,80,303,223\njul,196,308,112\naug,165,352,187\nsep,80,359,279\noct,166,335,169\nnov,82,290,208\ndec,177,273,96';
 
-
-var connector = new Narwhal.connectors.Csv(data);
-
-
-connector.dimension('month');
-
-var chart = new Narwhal({
+var config = {
     el: '.chart',
     chart: {
 
@@ -78,12 +72,17 @@ var chart = new Narwhal({
     yAxis: {
         title: 'Profit'
     }
-})
+};
+var timeData = [
+{ x: new Date('1/1/1 10:00'), y: 10},
+{ x: new Date('1/1/1 11:00'), y: 20}
+];
+var connector = new Narwhal.connectors.Csv(data);
+connector.dimension('month');
+
+var chart = new Narwhal(config)
 .cartesian()
-// .column(connector.measure('profit'))
-.line(connector.measure('cost'))
-.column(connector.measure('profit'))
-.title()
+.line(timeData)
 .render();
 
 </script>

@@ -14,110 +14,61 @@
     <script src="../src/scripts/core/axis/time-scale-axis.js" ></script>
     <script src="../src/scripts/core/axis/axis-scale-factory.js" ></script>
     <script src="../src/scripts/core/narwhal.js"></script>
-    <script src="../src/scripts/core/connectors/csv.js" ></script>
     <script src="../src/scripts/core/cartesian.js"></script>
     <script src="../src/scripts/visualizations/line.js"></script>
     <script src="../src/scripts/visualizations/column.js"></script>
+    <script src="../src/scripts/connectors/csv.js" ></script>
 
 
     <style>
+    *, *:before, *:after {
+      -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+     }
 
     body {
       font: 10px sans-serif;
     }
 
     .chart {
-        width: 650px;
-        height: 400px;
+        width: 400px;
+        height: 240px;
         margin: 10px;
+    }
+
+    .sample-container {
+        box-sizing: border-box;
+        display: inline-block;
+        margin: 10px;
+        padding: 5px;
+        background-color: #efefef;
+        border-radius: 4px;
     }
 
     </style>
 </head>
 <body>
-
-            <div class="chart ch3"></div>
-            <div class="chart ch2"></div>
-            <div class="chart ch"></div>
+    <div class="container">
+        <h3>Narwhal Examples</h3>
+        <div class="samples">
         </div>
     </div>
 
     <script>
 
-    var seed = 1;
-    function random() {
-        var x = Math.sin(seed++) * 10000;
-        return x - Math.floor(x);
-    }
+        var samplesFolder = 'samples/'
+        var sampleFiles = ['line-1-basic', 'line-2-time-dates','line-3-time-hours', 'column-1-basic', 'column-2-categories', 'connector-csv']
 
-    var baseDate = new Date(2013, 10, 10);
-    var timeData = [];
+        var samples = $('.samples');
+        _.each(sampleFiles, function (file) {
+            var div = $('<div>').attr('id', file).attr('class', 'sample-container');
+            var ext = /\.html/.test(file) ? '' : '.html'
+            var title = $('<h4>').text(file);
+            div.load((samplesFolder || '') + file + ext, function () {
+                $(this).prepend(title);
+            });
+            samples.append(div)
 
-    for (var j=0; j<5; j++) {
-        var d = new Date();
-        d.setDate(baseDate.getDate() + j);
-        timeData.push({ x: d, y: random() * 40 + 5});
-    }
-
-    var csvData = 'quarter,cost,revenue,profit\n2013Q1,100,150,50\n2013Q2,110,150,40\n2013Q3,90,180,90\n2013Q4,105,190,85'
-
-    /* CHART CONFIGURATION */
-    var baseConfig = {
-        yAxis: {
-            min: 0,
-            title: 'Quantity'
-        }
-    }
-
-
-    var chart = new Narwhal(_.extend(baseConfig, {
-            el: '.ch',
-            xAxis: {
-                title: 'Sample',
-            }
-        }))
-        .cartesian()
-        .column([1,2,3,4])
-        .render();
-
-    var chart2 = new Narwhal(_.extend(baseConfig, {
-            el: '.ch2',
-            xAxis: {
-
-                title: 'Time'
-
-            }
-        }))
-        .cartesian()
-        .line(timeData)
-        .render();
-
-    var measure = 'Profit'
-    var csv = new Narwhal.connectors.Csv(csvData);
-
-    var chart3 = new Narwhal(_.extend(baseConfig, {
-                    el: '.ch3',
-                    chart: {
-                        padding: {
-                            left: 40
-                        }
-                    },
-                    yAxis: {
-                        min: 0,
-                        max: 200,
-                        title: measure + ' ($)'
-                    },
-                    xAxis: {
-
-                        type: 'ordinal',
-                        title: 'Quarter',
-                        firstAndLast: false
-                    }
-                }))
-                .cartesian()
-                .column(csv.measure('revenue'))
-                .line(csv.measure('cost'))
-                .render();
+        }, this);
 
     </script>
 </body>
