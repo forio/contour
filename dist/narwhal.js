@@ -33,6 +33,21 @@
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
 
+        function normalizeSeries(data) {
+            if(!data || !data.length) return data;
+
+            if(data[0].data) {
+                return _.map(data, _.bind(function (series, index) {
+                    return {
+                        name: series.name || 's' + index,
+                        data: _.map(series.data, _.bind(this.datum, this))
+                    };
+                }, this));
+            }
+
+            return  _.map(data, _.bind(this.datum, this));
+        }
+
         Narwhal.prototype[ctorName] = function (data, options) {
             data = data || [];
             renderer.defaults = renderer.defaults || {};
@@ -40,9 +55,16 @@
             opt[ctorName] = options;
             $.extend(true, this.options, renderer.defaults, opt);
 
-            this.data(data);
-            var datums = _.map(data, _.bind(this.datum, this));
-            this.visualizations.push(_.partial(renderer, datums));
+            var renderFunc;
+            if (_.isArray(data)) {
+                this.data(data);
+                var datums = normalizeSeries.call(this, data);
+                renderFunc = _.partial(renderer, datums);
+            } else {
+                renderFunc = _.partial(renderer, data);
+            }
+
+            this.visualizations.push(renderFunc);
 
             return this;
         };
@@ -407,6 +429,9 @@
         },
 
         datum: function (d, index) {
+            if(_.isObject(d) && _.isArray(d.data))
+                return _.map(d.data, _.bind(this.datum, this));
+
             return {
                 y: _.isObject(d) ? d.y : d,
                 x: _.isObject(d) ? d.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
@@ -591,6 +616,11 @@
     }
     */
 
+    function dateDiff(d1, d2) {
+        var diff = d1.getTime() - d2.getTime();
+        return diff / (24*60*60*1000);
+    }
+
 
     function TimeScale(data, options) {
         this.options = options;
@@ -644,9 +674,9 @@
             return 4;
         },
 
-
-
         getOptimalTickFormat: function () {
+            var spanDays = dateDiff(this._domain[this._domain.length-1], this._domain[0]);
+            if (spanDays < 1) return d3.time.format('%H:%M');
             return d3.time.format('%d %b');
         },
 
@@ -706,7 +736,7 @@
             .data(data);
 
         col.enter().append('rect')
-                .attr('class', 'bar vis-'+id)
+                .attr('class', 'bar v-'+ id + ' s-1')
                 .attr('x', function (d) { return x(d.x); })
                 .attr('y', function () { return y(min); })
                 .attr('height', 0)
@@ -747,12 +777,12 @@
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+        var normalizeData = _.bind(this.datum, this);
 
         var line = d3.svg.line()
             .x(function (d) { return x(d); })
             .y(function (d) { return y(d); });
 
-        var normalizeData = _.bind(this.datum, this);
         if(data[0].data) {
             _.each(data, function (d, i) {
                 var set = _.map(d.data, normalizeData);
@@ -764,8 +794,8 @@
 
         function appendPath(data, seriesName, seriesIndex) {
             var markerSize = this.options.line.marker.size;
-            seriesName = seriesName || 's-' + seriesIndex;
-            className = seriesName.replace(' ', '_') + ' v-' + id;
+            seriesName = seriesName || '';
+            className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
             var path = layer.append('path')
                 .datum(data)
                 .attr('class', 'line ' + className);
@@ -783,7 +813,7 @@
                     .selectAll('dot')
                         .data(data)
                     .enter().append('circle')
-                        .attr('class', 'dot tooltip-tracker series-' + className)
+                        .attr('class', 'dot tooltip-tracker ' + className)
                         .attr('r', markerSize)
                         .attr('cx', x)
                         .attr('cy', y);
