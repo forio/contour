@@ -20,14 +20,48 @@
   stroke: none;
   fill: #666666;
 }
-.narwhal-chart .line {
-  stroke: #f47a5f;
+.s-1.line {
+  stroke: #5097fc;
   stroke-width: 2px;
   fill: none;
 }
-.narwhal-chart .line-chart-markers .dot {
-  fill: #f47a5f;
+.s-1.bar,
+.s-1.dot {
+  fill: #5097fc;
 }
-.narwhal-chart .bar {
-  fill: #4682b4;
+.s-2.line {
+  stroke: #fc4e51;
+  stroke-width: 2px;
+  fill: none;
+}
+.s-2.bar,
+.s-2.dot {
+  fill: #fc4e51;
+}
+.s-3.line {
+  stroke: #7decbb;
+  stroke-width: 2px;
+  fill: none;
+}
+.s-3.bar,
+.s-3.dot {
+  fill: #7decbb;
+}
+.s-4.line {
+  stroke: #33363b;
+  stroke-width: 2px;
+  fill: none;
+}
+.s-4.bar,
+.s-4.dot {
+  fill: #33363b;
+}
+.s-5.line {
+  stroke: #999b9d;
+  stroke-width: 2px;
+  fill: none;
+}
+.s-5.bar,
+.s-5.dot {
+  fill: #999b9d;
 }
