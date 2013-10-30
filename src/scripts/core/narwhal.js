@@ -84,8 +84,8 @@
             wrapper.appendChild(dummy);
             body.appendChild(wrapper);
             var res = { width: dummy.clientWidth, height: dummy.clientHeight };
-            dummy.remove();
-            wrapper.remove();
+            wrapper.removeChild(dummy);
+            body.removeChild(wrapper);
             return res;
         }
     };
