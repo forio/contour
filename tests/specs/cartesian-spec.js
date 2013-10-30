@@ -18,26 +18,9 @@ describe('Cartesian frame', function () {
     });
 
     describe('constructor', function () {
-    });
-
-    describe('default xScale', function () {
-        beforeEach(function () {
-            narwhal = createNarwhal();
-        });
-
         it('should throw if no data is set', function () {
+            var narwhal = createNarwhal();
             expect(narwhal.render).toThrow();
-        });
-
-        it('should be an ordinal scaling', function () {
-            narwhal.data([0,10,20,30]).render();
-
-            // TODO: NEED TO FIX THIS TEST
-
-            // expect(narwhal.xScale(0)).toEqual(0);
-            // expect(narwhal.xScale(1)).toEqual(100);
-            // expect(narwhal.xScale(2)).toEqual(200);
-            // expect(narwhal.xScale(3)).toEqual(300);
         });
     });
 
@@ -69,6 +52,24 @@ describe('Cartesian frame', function () {
         });
     });
 
+
+    describe('default xScale', function () {
+        beforeEach(function () {
+            narwhal = createNarwhal();
+        });
+
+        it('should be an ordinal scaling', function () {
+            narwhal.data([0,10,20,30]).render();
+
+            // TODO: NEED TO FIX THIS TEST
+
+            // expect(narwhal.xScale(0)).toEqual(0);
+            // expect(narwhal.xScale(1)).toEqual(100);
+            // expect(narwhal.xScale(2)).toEqual(200);
+            // expect(narwhal.xScale(3)).toEqual(300);
+        });
+    });
+
     describe('default yScale', function () {
         beforeEach(function () {
             narwhal = createNarwhal();
@@ -85,15 +86,15 @@ describe('Cartesian frame', function () {
             expect(narwhal.yScale(25)).toEqual(h/2);
             expect(narwhal.yScale(50)).toEqual(0);
         });
-
     });
+
 
     describe('default xAxis', function () {
         beforeEach(function () {
             narwhal = createNarwhal();
         });
 
-        it('should not have anyTicks', function () {
+        it('should not have any Tick marks', function () {
             narwhal.data([0,10,20,30]).render();
             var ticks = $el.find('.x.axis ');
             expect(_.all(ticks.find('.tick.major line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '0'; })).toBe(true);
@@ -238,21 +239,35 @@ describe('Cartesian frame', function () {
 
     });
 
-
     describe('default yAxis', function () {
         beforeEach(function () {
             narwhal = createNarwhal();
         });
 
-        it('should have outerTick', function () {
+        it('should have outer Tick marks (ticks at the begining and end of the axis line)', function () {
             narwhal.data([0,10,20,30]).render();
             // the actual axis path should start at -6 (the default outerTickSize)
             expect($el.find('.y.axis .domain').attr('d')).toContain('M-6');
         });
 
+        it('with smartAxis=true should only show 3 ticks (min, max + max rounded up)', function () {
+            narwhal.data([0,10,20,30]).render();
+            var ticks = $el.find('.y.axis .tick text');
+
+            expect(ticks.length).toBe(3);
+        });
+
+        it('with smartAxis=false should only show 3 ticks (min, max + max rounded up)', function () {
+            var nw = createNarwhal({ yAxis: {smartAxis: false }});
+            nw.data([0,10,20,30]).render();
+            var ticks = $el.find('.y.axis .tick text');
+
+            expect(ticks.length).toBe(4);
+        });
+
         it('should align the top of the label to the tick', function () {
             narwhal.data([0,10,20,30]).render();
-            var ticks = $el.find('.y.axis .tick.major text');
+            var ticks = $el.find('.y.axis .tick text');
             expect(_.all(ticks, function (t) { return $(t).attr('dy') === '.9em'; })).toBe(true);
         });
 

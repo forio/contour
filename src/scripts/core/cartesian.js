@@ -22,6 +22,7 @@
         yAxis: {
             min: 0,
             max: undefined,
+            smartAxis: true,
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
@@ -141,10 +142,12 @@
 
         yAxis: function () {
             var options = this.options.yAxis;
-            var tickValues = this._extractTickValues(this.yDomain, options.min, options.max);
+            var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
+            var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
             var format = d3.format(options.labels.format);
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
+                .ticks(numTicks)
                 .tickValues(tickValues)
                 .tickFormat(format)
                 .tickSize(options.innerTickSize, options.outerTickSize)
@@ -258,24 +261,42 @@
             this.xDomain = this.xDomain ? this.xDomain : [];
         },
 
-        _extractTickValues: function (domain, min, max) {
-            var adjustedDomain = merge(domain, this.yMax);
+        _extractYTickValues: function (domain, min, max) {
 
-            if (min === undefined && max === undefined)
-                return adjustedDomain;
+            function smartAxisValues() {
+                var adjustedDomain = merge(domain, this.yMax);
 
-            if (min === undefined) {
-                return max > this.yMin ? merge([max], adjustedDomain) : [max];
+                if (min === undefined && max === undefined)
+                    return adjustedDomain;
+
+                if (min === undefined) {
+                    return max > this.yMin ? merge([max], adjustedDomain) : [max];
+                }
+
+                if (max === undefined) {
+                    if (min >= this.yMax) return [min];
+                    adjustedDomain[0] = min;
+
+                    return adjustedDomain;
+                }
+
+                return merge([min, max], this.yMax);
             }
 
-            if (max === undefined) {
-                if (min >= this.yMax) return [min];
-                adjustedDomain[0] = min;
+            return this.options.yAxis.smartAxis ? smartAxisValues.call(this) : undefined;
+        },
 
-                return adjustedDomain;
+        _numYTicks: function (domain, min, max) {
+            function regularAxisisValues() {
+                var dmin = typeof min !== 'undefined' ? min : d3.min(domain);
+                var dmax = typeof max !== 'undefined' ? max : d3.max(domain);
+                var span = dmax - dmin;
+                if (span < 10) return span;
+
+                return Math.ceil(span / 10);
             }
 
-            return merge([min, max], this.yMax);
+            return this.options.yAxis.smartAxis ? 3 : regularAxisisValues.call();
         }
 
     };
