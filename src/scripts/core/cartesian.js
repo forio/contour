@@ -33,30 +33,19 @@
         }
     };
 
-    function merge(array1, array2) {
-        if(typeof(array1) === 'number') array1 = [array1];
-        if(typeof(array2) === 'number') array2 = [array2];
-        if(!array1 || !array1.length) return array2;
-        if(!array2 || !array2.length) return array1;
-
-        return [].concat(array1, array2).sort(function (a,b) { return a-b; });
-    }
 
 
-    function roundToNearest(number, multiple){
-        return Math.ceil(number / multiple) * multiple;
-    }
 
     function niceRound(val) {
         return Math.ceil(val * 1.10);
         var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
         var fac = Math.pow(10, digits);
 
-        if(val < 1) return roundToNearest(val, 1);
+        if(val < 1) return _.nw.roundToNearest(val, 1);
 
-        if(val < fac / 2) return roundToNearest(val, fac / 2);
+        if(val < fac / 2) return _.nw.roundToNearest(val, fac / 2);
 
-        return roundToNearest(val, fac);
+        return _.nw.roundToNearest(val, fac);
     }
 
     function extractScaleDomain(domain, min, max) {
@@ -264,13 +253,13 @@
         _extractYTickValues: function (domain, min, max) {
 
             function smartAxisValues() {
-                var adjustedDomain = merge(domain, this.yMax);
+                var adjustedDomain = _.nw.merge(domain, this.yMax);
 
                 if (min === undefined && max === undefined)
                     return adjustedDomain;
 
                 if (min === undefined) {
-                    return max > this.yMin ? merge([max], adjustedDomain) : [max];
+                    return max > this.yMin ? _.nw.merge([max], adjustedDomain) : [max];
                 }
 
                 if (max === undefined) {
@@ -280,7 +269,7 @@
                     return adjustedDomain;
                 }
 
-                return merge([min, max], this.yMax);
+                return _.nw.merge([min, max], this.yMax);
             }
 
             return this.options.yAxis.smartAxis ? smartAxisValues.call(this) : undefined;
