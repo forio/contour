@@ -18,6 +18,8 @@
     function TimeScale(data, options) {
         this.options = options;
         this.data = data;
+
+        this.init();
     }
 
     TimeScale.prototype = {
@@ -73,27 +75,8 @@
             return d3.time.format('%d %b');
         },
 
-        getOptimalTicks: function () {
-            return d3.time.days;
-        },
-
         range: function () {
             return this._scale.rangeRound([0, this.options.chart.plotWidth], 0.1);
-        },
-
-        extractDomain: function (domain, min, max) {
-            if (min === undefined && max === undefined)
-                return d3.extent(domain);
-
-            if (min === undefined) {
-                return [Math.min(domain[0], max), max];
-            }
-
-            if (max === undefined) {
-                return [min, Math.max(min, domain[domain.length-1])];
-            }
-
-            return [min, max];
         }
     };
 
