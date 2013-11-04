@@ -38,15 +38,17 @@
         var dataMax = _.max(domain);
         var dataMin = _.min(domain);
 
-        if (min === undefined && max === undefined) {
+        // we want null || undefined for all this comparasons
+        // that == null gives us
+        if (min == null && max == null) {
             return [dataMin, dataMax];
         }
 
-        if (min === undefined) {
+        if (min == null) {
             return [Math.min(dataMin, max), max];
         }
 
-        if (max === undefined) {
+        if (max == null) {
             return [min, Math.max(min, dataMax)];
         }
 
@@ -240,15 +242,17 @@
 
             function smartAxisValues() {
                 var adjustedDomain = _.nw.merge(domain, this.yMax);
-
-                if (min === undefined && max === undefined)
+                // we want to be able to remove parameters with default values
+                // so to remove the default yAxis.min: 0, you pass yAxis.min: null
+                // and for that we need to to a truely comparison here (to get null or undefined)
+                if (min == null && max == null)
                     return adjustedDomain;
 
-                if (min === undefined) {
+                if (min == null) {
                     return max > this.yMin ? _.nw.merge([max], adjustedDomain) : [max];
                 }
 
-                if (max === undefined) {
+                if (max == null) {
                     if (min >= this.yMax) return [min];
                     adjustedDomain[0] = min;
 
