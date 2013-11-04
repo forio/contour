@@ -34,20 +34,6 @@
     };
 
 
-
-
-    function niceRound(val) {
-        return Math.ceil(val * 1.10);
-        var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
-        var fac = Math.pow(10, digits);
-
-        if(val < 1) return _.nw.roundToNearest(val, 1);
-
-        if(val < fac / 2) return _.nw.roundToNearest(val, fac / 2);
-
-        return _.nw.roundToNearest(val, fac);
-    }
-
     function extractScaleDomain(domain, min, max) {
         var dataMax = _.max(domain);
         var dataMin = _.min(domain);
@@ -246,7 +232,7 @@
         },
 
         adjustDomain: function () {
-            this.yDomain = this.yDomain ? [this.yDomain[0], niceRound(this.yDomain[1])] : [0, 10];
+            this.yDomain = this.yDomain ? [this.yDomain[0], _.nw.niceRound(this.yDomain[1])] : [0, 10];
             this.xDomain = this.xDomain ? this.xDomain : [];
         },
 

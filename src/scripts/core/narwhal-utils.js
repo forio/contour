@@ -7,7 +7,22 @@
 
         roundToNearest: function (number, multiple){
             return Math.ceil(number / multiple) * multiple;
+        },
+
+        niceRound: function (val) {
+            // for now just round(10% above the value)
+            return Math.ceil(val * 1.10);
+
+            // var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
+            // var fac = Math.pow(10, digits);
+
+            // if(val < 1) return _.nw.roundToNearest(val, 1);
+
+            // if(val < fac / 2) return _.nw.roundToNearest(val, fac / 2);
+
+            // return _.nw.roundToNearest(val, fac);
         }
+
     };
 
     var arrayHelpers = {
