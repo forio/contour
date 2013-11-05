@@ -21,6 +21,9 @@
                 bottom: 0,
                 left: 0
             }
+        },
+
+        tooltip: {
         }
     };
 

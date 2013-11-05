@@ -9,6 +9,10 @@
 
 @axis-title-font-size: 12px;
 
+@tooltip-background-color: #555;
+@tooltip-border-color: #fff;
+@tooltip-text-color: #fff;
+
 @s1-color: #5097fc;
 @s2-color: #fc4e51;
 @s3-color: #7decbb;
@@ -44,5 +48,22 @@
     }
 }
 
+.nw-tooltip {
+    position: absolute;
+    text-align: left;
+    min-width: 1.5em;
+    min-height: 1em;
+    padding: 4px 8px;
+    font: 10px sans-serif;
+    line-height: 16px;
+    background: @tooltip-background-color;
+    border: solid 1px @tooltip-border-color;
+    border-radius: 8px;
+    pointer-events: none;
+    .text {
+        opacity: 1;
+        color: @tooltip-text-color;
+    }
+}
 
 .make-series-colors();

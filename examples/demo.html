@@ -78,7 +78,7 @@ var config = {
         labels: {
             formatter: function (d) {
                 // d is a date object
-                return d.getHours() + ':' + d.getMinutes();
+                return d.toTimeString().match(/\d\d:\d\d/)[0];
             }
         }
     },
@@ -89,6 +89,12 @@ var config = {
         labels: {
             format: '.0f'
         }
+    },
+
+    tooltip: {
+        formatter: function (d) {
+            return 'Time: ' + new Date(d.x).toTimeString().match(/\d\d:\d\d/)[0] + '<br>' + 'Measure: ' + d.y.toFixed(4);
+         }
     }
 };
 
@@ -103,6 +109,7 @@ var data = _.map(coq2, function (d) {
 new Narwhal(config)
     .cartesian()
     .line(data)
+    .tooltip()
     .render();
 
 </script>
