@@ -6,7 +6,7 @@
                 top: 3,
                 bottom: 25,
                 left: 40,
-                right: 3
+                right: 5
             }
         },
 
@@ -62,7 +62,7 @@
 
             this.options = $.extend(true, {}, defaults, options);
 
-            if(this.options.xAxis.title || this.options.yAxis.title) {
+            if (this.options.xAxis.title || this.options.yAxis.title) {
                 this.titleOneEm = Narwhal.utils.textBounds('ABCD', 'axis-title').height;
                 if(this.options.xAxis.title) {
                     this.options.chart.padding.bottom += this.titleOneEm; // should be 1em
@@ -73,6 +73,9 @@
                 }
             }
 
+            if (!this.options.xAxis.firstAndLast) {
+                this.options.chart.padding.right += 15;
+            }
 
             return this;
         },
