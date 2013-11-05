@@ -21,6 +21,9 @@
                 bottom: 0,
                 left: 0
             }
+        },
+
+        tooltip: {
         }
     };
 
@@ -245,7 +248,7 @@
                 top: 3,
                 bottom: 25,
                 left: 40,
-                right: 3
+                right: 5
             }
         },
 
@@ -255,7 +258,9 @@
             outerTickSize: 0,
             tickPadding: 6,
             titlePadding: 0,
-            firstAndLast: true
+            firstAndLast: true,
+            labels: {
+            }
         },
 
         yAxis: {
@@ -301,7 +306,7 @@
 
             this.options = $.extend(true, {}, defaults, options);
 
-            if(this.options.xAxis.title || this.options.yAxis.title) {
+            if (this.options.xAxis.title || this.options.yAxis.title) {
                 this.titleOneEm = Narwhal.utils.textBounds('ABCD', 'axis-title').height;
                 if(this.options.xAxis.title) {
                     this.options.chart.padding.bottom += this.titleOneEm; // should be 1em
@@ -312,6 +317,9 @@
                 }
             }
 
+            if (!this.options.xAxis.firstAndLast) {
+                this.options.chart.padding.right += 15;
+            }
 
             return this;
         },
@@ -699,6 +707,7 @@
         },
 
         postProcessAxis: function (axisGroup) {
+            if (!this.options.xAxis.firstAndLast) return;
             var labels = axisGroup.selectAll('.tick text')[0];
             $(labels[0]).attr('style', 'text-anchor: start');
             $(labels[labels.length - 1]).attr('style', 'text-anchor: end');
@@ -709,8 +718,10 @@
         },
 
         getOptimalTickFormat: function () {
+            if (this.options.xAxis.labels.formatter) return this.options.xAxis.labels.formatter;
             var spanDays = dateDiff(this._domain[this._domain.length-1], this._domain[0]);
-            if (spanDays < 1) return d3.time.format('%H:%M');
+            var daysThreshold = this.options.xAxis.maxTicks || 5;
+            if (spanDays < daysThreshold) return d3.time.format('%H:%M');
             return d3.time.format('%d %b');
         },
 
@@ -884,6 +895,67 @@
     Narwhal.export('line', render);
 
 })('Narwhal', window.d3, window._, window.jQuery);
+
+
+Narwhal.export('tooltip', function (data, layer) {
+
+    var visibleOpacity = 0.75;
+
+    var clearHideTimer = function () {
+        clearTimeout(this.tooltip.hideTimer);
+    };
+
+    var positionTooltip = function (ev) {
+        return { x: ev.pageX + 10, y: ev.pageY - 10 };
+    };
+
+    var onMouseOver = function (d) {
+        var ev = d3.event;
+        var pos = positionTooltip(ev);
+
+        show.call(this, d, pos);
+    };
+
+    var onMouseOut = function () {
+
+        this.tooltipElement
+            .transition().duration(500)
+                .style('opacity', 0);
+    };
+
+    var getTooltipText = function (d) {
+        if(this.options.tooltip.formatter) return this.options.tooltip.formatter.call(this, d);
+
+        return  'x: ' + d.x + '<br>' + 'y: ' + d.y;
+    };
+
+    var show = function (d, pos) {
+        clearHideTimer.call(this);
+        var text = getTooltipText.call(this, d);
+
+        this.tooltipElement.select('.text').html(text);
+
+        this.tooltipElement
+            .style('top', pos.y + 'px')
+            .style('left', pos.x + 'px')
+            .transition().duration(300)
+                .style('opacity', visibleOpacity);
+    };
+
+    this.tooltipElement = this.container
+        .append('div');
+
+    this.tooltipElement
+        .attr('class', 'nw-tooltip')
+        .style('opacity', visibleOpacity)
+        .append('div')
+            .attr('class', 'text');
+
+    this.svg.selectAll('.tooltip-tracker')
+        .on('mouseover.tooltip', onMouseOver.bind(this))
+        .on('mouseout.tooltip',  onMouseOut.bind(this));
+});
+
 
 (function (ns, d3, _, $, undefined) {
 

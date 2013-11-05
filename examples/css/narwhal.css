@@ -11,7 +11,7 @@
   fill: #666666;
 }
 .narwhal-chart .axis.x .tick line {
-  stroke: none;
+  stroke: #666666;
 }
 .narwhal-chart text.axis-title {
   font-family: "Helvetica Neue", arial, sans-serif;
@@ -19,6 +19,23 @@
   font-size: 12px;
   stroke: none;
   fill: #666666;
+}
+.nw-tooltip {
+  position: absolute;
+  text-align: left;
+  min-width: 1.5em;
+  min-height: 1em;
+  padding: 4px 8px;
+  font: 10px sans-serif;
+  line-height: 16px;
+  background: #555555;
+  border: solid 1px #ffffff;
+  border-radius: 8px;
+  pointer-events: none;
+}
+.nw-tooltip .text {
+  opacity: 1;
+  color: #ffffff;
 }
 .s-1.line {
   stroke: #5097fc;
