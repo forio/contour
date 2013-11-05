@@ -31,6 +31,7 @@
 
         function appendPath(data, seriesName, seriesIndex) {
             var markerSize = this.options.line.marker.size;
+            var trackerSize = 10;
             seriesName = seriesName || '';
             className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
             var path = layer.append('path')
@@ -45,12 +46,23 @@
                 path.attr('d', line);
             }
 
+            // add the tooltip trackers regardless
+            layer.append('g').attr('class', 'tooltip-trackers')
+                .selectAll('tooltip-tracker')
+                    .data(data)
+                .enter().append('circle')
+                    .attr('class', 'tooltip-tracker')
+                    .attr('opacity', 0)
+                    .attr('r', trackerSize)
+                    .attr('cx', x)
+                    .attr('cy', y);
+
             if (this.options.line.marker.enable) {
                 layer.append('g').attr('class', 'line-chart-markers')
                     .selectAll('dot')
                         .data(data)
                     .enter().append('circle')
-                        .attr('class', 'dot tooltip-tracker ' + className)
+                        .attr('class', 'dot ' + className)
                         .attr('r', markerSize)
                         .attr('cx', x)
                         .attr('cy', y);

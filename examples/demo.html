@@ -108,7 +108,7 @@ var data = _.map(coq2, function (d) {
 
 new Narwhal(config)
     .cartesian()
-    .line(data)
+    .line(data, { marker: { size: 0 }})
     .tooltip()
     .render();
 
