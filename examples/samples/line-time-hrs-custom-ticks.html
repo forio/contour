@@ -9,13 +9,14 @@
         { x: new Date('1/1/2000 13:00'), y: 7},
         { x: new Date('1/1/2000 14:00'), y: 4},
         { x: new Date('1/1/2000 15:00'), y: 2}
+        // { x: new Date('1/1/2000 16:00'), y: 2}
     ];
     new Narwhal({
             el: '.line-time-custom-ticks',
             xAxis: {
                 firstAndLast:false,
                 title: 'Time',
-                ticks: 2    // only show for ticks with labels
+                maxTicks: 4    // only show for ticks with labels
             },
             yAxis: {
                 title: 'Value'
