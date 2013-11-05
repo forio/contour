@@ -86,7 +86,8 @@
 
         getOptimalTickFormat: function () {
             var spanDays = dateDiff(this._domain[this._domain.length-1], this._domain[0]);
-            if (spanDays < 1) return d3.time.format('%H:%M');
+            var daysThreshold = this.options.xAxis.maxTicks || 5;
+            if (spanDays < daysThreshold) return d3.time.format('%H:%M');
             return d3.time.format('%d %b');
         },
 
