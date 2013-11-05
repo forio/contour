@@ -31,7 +31,7 @@
             this._domain = domain;
             if(!this._scale) {
                 this._scale = new d3.time.scale()
-                    .domain(d3.extent(domain));
+                    .domain(d3.extent(this._domain));
 
                 this.range();
             }
