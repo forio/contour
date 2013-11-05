@@ -74,6 +74,7 @@
         },
 
         postProcessAxis: function (axisGroup) {
+            if (!this.options.xAxis.firstAndLast) return;
             var labels = axisGroup.selectAll('.tick text')[0];
             $(labels[0]).attr('style', 'text-anchor: start');
             $(labels[labels.length - 1]).attr('style', 'text-anchor: end');
