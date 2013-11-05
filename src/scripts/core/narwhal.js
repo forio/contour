@@ -48,8 +48,25 @@
             return  _.map(data, _.bind(this.datum, this));
         }
 
+        function sortSeries(data) {
+            if(!data || !data.length) return [];
+
+            if(data[0].data) {
+                _.each(data, sortSeries);
+            }
+
+            var shouldSort = _.isObject(data[0]) && _.isDate(data[0].x);
+            var sortFunc = function (a, b) { return a.x - b.x; };
+            if(shouldSort) {
+                data.sort(sortFunc);
+            }
+
+            return data;
+        }
+
         Narwhal.prototype[ctorName] = function (data, options) {
             data = data || [];
+            sortSeries(data);
             renderer.defaults = renderer.defaults || {};
             var opt = {};
             opt[ctorName] = options;
