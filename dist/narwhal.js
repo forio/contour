@@ -255,45 +255,22 @@
         }
     };
 
-    function merge(array1, array2) {
-        if(typeof(array1) === 'number') array1 = [array1];
-        if(typeof(array2) === 'number') array2 = [array2];
-        if(!array1 || !array1.length) return array2;
-        if(!array2 || !array2.length) return array1;
-
-        return [].concat(array1, array2).sort(function (a,b) { return a-b; });
-    }
-
-
-    function roundToNearest(number, multiple){
-        return Math.ceil(number / multiple) * multiple;
-    }
-
-    function niceRound(val) {
-        return Math.ceil(val * 1.10);
-        var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
-        var fac = Math.pow(10, digits);
-
-        if(val < 1) return roundToNearest(val, 1);
-
-        if(val < fac / 2) return roundToNearest(val, fac / 2);
-
-        return roundToNearest(val, fac);
-    }
 
     function extractScaleDomain(domain, min, max) {
         var dataMax = _.max(domain);
         var dataMin = _.min(domain);
 
-        if (min === undefined && max === undefined) {
+        // we want null || undefined for all this comparasons
+        // that == null gives us
+        if (min == null && max == null) {
             return [dataMin, dataMax];
         }
 
-        if (min === undefined) {
+        if (min == null) {
             return [Math.min(dataMin, max), max];
         }
 
-        if (max === undefined) {
+        if (max == null) {
             return [min, Math.max(min, dataMax)];
         }
 
@@ -479,30 +456,32 @@
         },
 
         adjustDomain: function () {
-            this.yDomain = this.yDomain ? [this.yDomain[0], niceRound(this.yDomain[1])] : [0, 10];
+            this.yDomain = this.yDomain ? [this.yDomain[0], _.nw.niceRound(this.yDomain[1])] : [0, 10];
             this.xDomain = this.xDomain ? this.xDomain : [];
         },
 
         _extractYTickValues: function (domain, min, max) {
 
             function smartAxisValues() {
-                var adjustedDomain = merge(domain, this.yMax);
-
-                if (min === undefined && max === undefined)
+                var adjustedDomain = _.nw.merge(domain, this.yMax);
+                // we want to be able to remove parameters with default values
+                // so to remove the default yAxis.min: 0, you pass yAxis.min: null
+                // and for that we need to to a truely comparison here (to get null or undefined)
+                if (min == null && max == null)
                     return adjustedDomain;
 
-                if (min === undefined) {
-                    return max > this.yMin ? merge([max], adjustedDomain) : [max];
+                if (min == null) {
+                    return max > this.yMin ? _.nw.merge([max], adjustedDomain) : [max];
                 }
 
-                if (max === undefined) {
+                if (max == null) {
                     if (min >= this.yMax) return [min];
                     adjustedDomain[0] = min;
 
                     return adjustedDomain;
                 }
 
-                return merge([min, max], this.yMax);
+                return _.nw.merge([min, max], this.yMax);
             }
 
             return this.options.yAxis.smartAxis ? smartAxisValues.call(this) : undefined;
@@ -646,6 +625,8 @@
     function TimeScale(data, options) {
         this.options = options;
         this.data = data;
+
+        this.init();
     }
 
     TimeScale.prototype = {
@@ -677,7 +658,21 @@
                 .tickPadding(options.tickPadding)
                 .tickValues(this._domain);
 
-            if (this.options.xAxis.firstAndLast) {
+            if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
+                // override the tickValues with custom array based on number of ticks
+                // we don't use D3 ticks() because you cannot force it to show a specific number of ticks
+                var customValues = [];
+                var len = this._domain.length;
+                var step = (len + 1) / this.options.xAxis.maxTicks;
+
+                // for (var j=0, index = 0; j<this.options.xAxis.ticks; j++, index += step) {
+                for (var j=0, index = 0; j<len; j += step, index += step) {
+                    customValues.push(this._domain[Math.min(Math.ceil(index), len-1)]);
+                }
+
+                axis.tickValues(customValues);
+
+            } else if (this.options.xAxis.firstAndLast) {
                 // show only first and last tick
                 axis.tickValues(_.nw.firstAndLast(this._domain));
             }
@@ -701,27 +696,8 @@
             return d3.time.format('%d %b');
         },
 
-        getOptimalTicks: function () {
-            return d3.time.days;
-        },
-
         range: function () {
             return this._scale.rangeRound([0, this.options.chart.plotWidth], 0.1);
-        },
-
-        extractDomain: function (domain, min, max) {
-            if (min === undefined && max === undefined)
-                return d3.extent(domain);
-
-            if (min === undefined) {
-                return [Math.min(domain[0], max), max];
-            }
-
-            if (max === undefined) {
-                return [min, Math.max(min, domain[domain.length-1])];
-            }
-
-            return [min, max];
         }
     };
 
@@ -731,13 +707,45 @@
 
 (function (ns, d3, _, $, undefined) {
 
-    var helpers = {
+    var numberHelpers = {
         firstAndLast: function (ar) {
             return [ar[0], ar[ar.length-1]];
+        },
+
+        roundToNearest: function (number, multiple){
+            return Math.ceil(number / multiple) * multiple;
+        },
+
+        niceRound: function (val) {
+            // for now just round(10% above the value)
+            return Math.ceil(val * 1.10);
+
+            // var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
+            // var fac = Math.pow(10, digits);
+
+            // if(val < 1) return _.nw.roundToNearest(val, 1);
+
+            // if(val < fac / 2) return _.nw.roundToNearest(val, fac / 2);
+
+            // return _.nw.roundToNearest(val, fac);
+        }
+
+    };
+
+    var arrayHelpers = {
+        // concatenate and sort two arrays to the resulting array
+        // is sorted ie. merge [2,4,6] and [1,3,5] = [1,2,3,4,5,6]
+        merge: function (array1, array2) {
+            if(typeof(array1) === 'number') array1 = [array1];
+            if(typeof(array2) === 'number') array2 = [array2];
+            if(!array1 || !array1.length) return array2;
+            if(!array2 || !array2.length) return array1;
+
+            return [].concat(array1, array2).sort(function (a,b) { return a-b; });
         }
     };
 
-    _.nw = _.extend({}, _.nw, helpers);
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers);
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
