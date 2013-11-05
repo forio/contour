@@ -313,7 +313,8 @@
 
             this.yScale = d3.scale.linear()
                 .domain(yScaleDomain)
-                .range([this.options.chart.plotHeight, 0]);
+                .range([this.options.chart.plotHeight, 0])
+                .nice();
         },
 
         computeScales: function () {
@@ -346,12 +347,12 @@
             var format = d3.format(options.labels.format);
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
-                .ticks(numTicks)
-                .tickValues(tickValues)
                 .tickFormat(format)
                 .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
-                .orient('left');
+                .orient('left')
+                .ticks(numTicks)
+                .tickValues(tickValues);
 
             this._yAxisGroup = this.svg.append('g')
                 .attr('class', 'y axis')
@@ -494,7 +495,7 @@
                 var span = dmax - dmin;
                 if (span < 10) return span;
 
-                return Math.ceil(span / 10);
+                return Math.ceil(span / 10) + 1;
             }
 
             return this.options.yAxis.smartAxis ? 3 : regularAxisisValues.call();

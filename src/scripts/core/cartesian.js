@@ -91,7 +91,8 @@
 
             this.yScale = d3.scale.linear()
                 .domain(yScaleDomain)
-                .range([this.options.chart.plotHeight, 0]);
+                .range([this.options.chart.plotHeight, 0])
+                .nice();
         },
 
         computeScales: function () {
@@ -272,7 +273,7 @@
                 var span = dmax - dmin;
                 if (span < 10) return span;
 
-                return Math.ceil(span / 10);
+                return Math.ceil(span / 10) + 1;
             }
 
             return this.options.yAxis.smartAxis ? 3 : regularAxisisValues.call();
