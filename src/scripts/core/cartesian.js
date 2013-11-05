@@ -124,12 +124,12 @@
             var format = d3.format(options.labels.format);
             var yAxis = d3.svg.axis()
                 .scale(this.yScale)
-                .ticks(numTicks)
-                .tickValues(tickValues)
                 .tickFormat(format)
                 .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
-                .orient('left');
+                .orient('left')
+                .ticks(numTicks)
+                .tickValues(tickValues);
 
             this._yAxisGroup = this.svg.append('g')
                 .attr('class', 'y axis')
