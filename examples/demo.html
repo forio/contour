@@ -56,7 +56,13 @@ Narwhal.export('title', function (data, layer) {
 });
 
 
-var data = 'month,cost,revenue,profit\njan,165,346,181\nfeb,93,340,247\nmar,64,321,257\napr,54,317,263\nmay,189,357,168\njun,80,303,223\njul,196,308,112\naug,165,352,187\nsep,80,359,279\noct,166,335,169\nnov,82,290,208\ndec,177,273,96';
+// var data = 'month,cost,revenue,profit\njan,165,346,181\nfeb,93,340,247\nmar,64,321,257\napr,54,317,263\nmay,189,357,168\njun,80,303,223\njul,196,308,112\naug,165,352,187\nsep,80,359,279\noct,166,335,169\nnov,82,290,208\ndec,177,273,96';
+
+// var connector = new Narwhal.connectors.Csv(data);
+// connector.dimension('month');
+
+
+var coq = [8.877229334883914, 10.783384850945296, 4.332175262500847, 6.662234548502575, 10.802369242607323, 11.178307622432083, 12.300187748538832, 11.105081957734004, 8.975524868133746, 4.950736986038699, 9.116999513566796, 6.591728472240433, 6.0693564474308985, 10.068724198644574, 5.766987410390534, 16.612737672349063, 6.696035672504031, 4.02996791998234, 4.572144793099248, 10.424319446755845, 6.429215979507994];
 
 var config = {
     el: '.chart',
@@ -66,24 +72,21 @@ var config = {
 
     xAxis: {
         firstAndLast: false,
-        title: 'Cost'
     },
 
     yAxis: {
-        title: 'Profit'
+        smartAxis: false,
+        min: Math.floor(_.min(coq) * 0.8),
+        labels: {
+            format: '.0f'
+        }
     }
 };
-var timeData = [
-{ x: new Date('1/1/1 10:00'), y: 10},
-{ x: new Date('1/1/1 11:00'), y: 20}
-];
-var connector = new Narwhal.connectors.Csv(data);
-connector.dimension('month');
 
-var chart = new Narwhal(config)
-.cartesian()
-.line(timeData)
-.render();
+new Narwhal(config)
+    .cartesian()
+    .line(coq)
+    .render();
 
 </script>
 
