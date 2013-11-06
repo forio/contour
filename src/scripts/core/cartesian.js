@@ -272,16 +272,15 @@
         },
 
         _numYTicks: function (domain, min, max) {
-            function regularAxisisValues() {
-                var dmin = typeof min !== 'undefined' ? min : d3.min(domain);
-                var dmax = typeof max !== 'undefined' ? max : d3.max(domain);
-                var span = dmax - dmin;
-                if (span < 10) return span;
-
-                return Math.ceil(span / 10) + 1;
+            function regularAxisYTicks() {
+                return this.options.yAxis.ticks != null ? this.options.yAxis.ticks : undefined;
             }
 
-            return this.options.yAxis.smartAxis ? 3 : regularAxisisValues.call();
+            function smartAxisYTicks() {
+                return 3; // 0, dataMax and niceMax
+            }
+
+            return this.options.yAxis.smartAxis ? smartAxisYTicks.call(this) : regularAxisYTicks.call(this);
         }
 
     };
