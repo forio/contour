@@ -93,7 +93,7 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['less:dev', 'watch:less']);
+    grunt.registerTask('default', ['less:dev', 'concat', 'watch']);
     grunt.registerTask('production', ['concat', 'uglify', 'less:production']);
     grunt.registerTask('linked', ['concat', 'uglify', 'less:uncompressed', 'less:production', 'watch']);
 
