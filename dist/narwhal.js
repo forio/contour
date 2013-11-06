@@ -256,7 +256,7 @@
             rangePadding: 0,
             innerTickSize: 0,
             outerTickSize: 0,
-            tickPadding: 6,
+            tickPadding: 10,
             titlePadding: 0,
             firstAndLast: true,
             labels: {
