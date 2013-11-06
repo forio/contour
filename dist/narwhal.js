@@ -338,8 +338,11 @@
 
             this.yScale = d3.scale.linear()
                 .domain(yScaleDomain)
-                .range([this.options.chart.plotHeight, 0])
-                .nice();
+                .range([this.options.chart.plotHeight, 0]);
+
+            // if we are not using smartAxis we use d3's nice() domain
+            if (!this.options.yAxis.smartAxis)
+                this.yScale.nice();
         },
 
         computeScales: function () {
@@ -482,7 +485,7 @@
         },
 
         adjustDomain: function () {
-            this.yDomain = this.yDomain ? [this.yDomain[0], _.nw.niceRound(this.yDomain[1])] : [0, 10];
+            this.yDomain = this.yDomain ? this.options.yAxis.smartAxis ? [this.yDomain[0], _.nw.niceRound(this.yDomain[1])] : this.yDomain : [0, 10];
             this.xDomain = this.xDomain ? this.xDomain : [];
         },
 

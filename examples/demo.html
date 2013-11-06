@@ -77,15 +77,13 @@ var config = {
         outerTickSize: 0,
         labels: {
             formatter: function (d) {
-                // d is a date object
-                return d.toTimeString().match(/\d\d:\d\d/)[0];
+                return _.isDate(d) ? d.toTimeString().match(/\d\d:\d\d/)[0] : d;
             }
         }
     },
 
     yAxis: {
         smartAxis: false,
-        min: 0,
         labels: {
             format: '.0f'
         }
@@ -93,7 +91,8 @@ var config = {
 
     tooltip: {
         formatter: function (d) {
-            return 'Time: ' + new Date(d.x).toTimeString().match(/\d\d:\d\d/)[0] + '<br>' + 'Measure: ' + d.y.toFixed(4);
+            return _.isDate(d) ? 'Time: ' + new Date(d.x).toTimeString().match(/\d\d:\d\d/)[0] + '<br>' + 'Measure: ' + d.y.toFixed(4) :
+                'X: ' + d.x + '<br>' + 'Y: ' + d.y;
          }
     }
 };

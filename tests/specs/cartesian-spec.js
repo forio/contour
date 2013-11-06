@@ -272,12 +272,21 @@ describe('Cartesian frame', function () {
             expect(ticks.length).toBe(3);
         });
 
-        it('with smartAxis=false should only show 3 ticks (min, max + max rounded up)', function () {
-            var nw = createNarwhal({ yAxis: {smartAxis: false }});
+        it('with smartAxis=false should use the options.yAxis.ticks override if present', function () {
+            var nw = createNarwhal({ yAxis: {smartAxis: false, ticks: 4 }});
             nw.data([0,10,20,30]).render();
             var ticks = $el.find('.y.axis .tick text');
 
             expect(ticks.length).toBe(4);
+        });
+
+        it('with smartAxis=false should delegate to d3 if options.yAxis.ticks override is not present', function () {
+            var nw = createNarwhal({ yAxis: {smartAxis: false, ticks: null }});
+            nw.data([0,10,20,30]).render();
+            var ticks = $el.find('.y.axis .tick text');
+
+            // with the given values, d3 would do ticks every 5 so we would get 7 ticks: 0,5,10, 15, 20, 25, 30
+            expect(ticks.length).toBe(7);
         });
 
         it('should align the top of the label to the tick', function () {
@@ -314,13 +323,13 @@ describe('Cartesian frame', function () {
                 nw = createNarwhal({
                     yAxis: {
                         min: null, // the default is 0, so wee need to remove it
-                        smartAxis: false
+                        smartAxis: false,
                     }
-                }).data([10,20,30]).render(); // we should get and axis with ticks at 10, 15, 20, 25, 30
+                }).data([10,20,30]).render(); // d3 generates ticks every 2 so we get 10, 12, 14, 16 .... 30 (11 ticks total)
 
                 var ticks = $el.find('.y.axis .tick text');
                 expect(+ticks.eq(0).text()).toBe(10);
-                expect(+ticks.eq(4).text()).toBe(30);
+                expect(+ticks.eq(10).text()).toBe(30);
             });
 
             it('should use domain min when no options.min is defined', function () {
@@ -330,11 +339,11 @@ describe('Cartesian frame', function () {
                         max: 50,
                         smartAxis: false
                     }
-                }).data([10,20,30]).render(); // we should get and axis with ticks at 10, 20, 30, 40, 50
+                }).data([10,20,30]).render(); // we should get and axis with ticks every 5 at 10, 15, 20, 25 .. 50 (9 total)
 
                 var ticks = $el.find('.y.axis .tick text');
                 expect(+ticks.eq(0).text()).toBe(10);
-                expect(+ticks.eq(4).text()).toBe(50);
+                expect(+ticks.eq(8).text()).toBe(50);
             });
         });
 
