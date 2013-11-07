@@ -24,19 +24,23 @@ describe('Cartesian frame', function () {
         });
     });
 
-    describe('without data', function () {
-        it('should provide default axis', function () {
-            var narwhal = createNarwhal().render();
+    function assert_hasDefaultEmptyYScale(narwhal) {
+        var h = narwhal.options.chart.plotHeight;
 
-            var h = narwhal.options.chart.plotHeight;
-            var w = narwhal.options.chart.plotWidth;
+        expect(narwhal.yScale(0)).toEqual(h);
+        expect(narwhal.yScale(10)).toEqual(0);
+    }
 
-            expect(narwhal.yScale(0)).toEqual(h);
-            expect(narwhal.yScale(10)).toEqual(0);
+    it('without data should provide default axis', function () {
+        var narwhal = createNarwhal().render();
 
-            // expect(narwhal.xScale(0)).toEqual(0);
-            // expect(narwhal.xScale(10)).toEqual(w);
-        });
+        assert_hasDefaultEmptyYScale(narwhal);
+    });
+
+    it('with empty array data should provide default axis', function () {
+        var narwhal = createNarwhal().data([]).render();
+
+        assert_hasDefaultEmptyYScale(narwhal);
     });
 
     describe('with simple array data', function () {
@@ -48,7 +52,14 @@ describe('Cartesian frame', function () {
             expect(narwhal.dataSrc[0].x).toBe(0);
             expect(narwhal.dataSrc[1].x).toBe(1);
             expect(narwhal.dataSrc[2].x).toBe(2);
+        });
+    });
 
+    describe('datum', function () {
+        it('should handle the case of normalzing an array of data', function () {
+            var narwhal = createNarwhal();
+            var datums = narwhal.datum({ name: 'series name', data: [1,2,3]});
+            expect(datums[0]).toEqual({y:1, x: 0});
         });
     });
 
@@ -172,66 +183,6 @@ describe('Cartesian frame', function () {
                 var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
                 expect(xLabels.eq(0).css('text-anchor')).toBe('middle');
                 expect(xLabels.eq(2).css('text-anchor')).toBe('middle');
-            });
-
-        });
-
-        describe('with time data', function () {
-            it('should only show first and last tick labels by default', function () {
-                narwhal = createNarwhal()
-                    .data([
-                        { x: new Date('10/11/2013'), y: 10 },
-                        { x: new Date('10/12/2013'), y: 20 },
-                        { x: new Date('10/13/2013'), y: 30 }
-                    ])
-                    .render();
-
-                var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
-                expect(xLabels.length).toBe(2);
-            });
-
-            it('should set text-anchor:left to first label and text-anchor:end to last label only when firstAndLast is set to true', function () {
-                narwhal = createNarwhal({ xAxis: { firstAndLast: true }})
-                    .data([
-                        { x: new Date('10/11/2013'), y: 10 },
-                        { x: new Date('10/12/2013'), y: 20 },
-                        { x: new Date('10/13/2013'), y: 30 }
-                    ])
-                    .render();
-
-                var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
-                expect(xLabels.eq(0).css('text-anchor')).toBe('start');
-                expect(xLabels.eq(1).css('text-anchor')).toBe('end');
-            });
-
-            it('should set text-anchor:middle on first and last labels only when firstAndLast is set to false', function () {
-                narwhal = createNarwhal({ xAxis: { firstAndLast: false }})
-                    .data([
-                        { x: new Date('10/11/2013'), y: 10 },
-                        { x: new Date('10/12/2013'), y: 20 },
-                        { x: new Date('10/13/2013'), y: 30 }
-                    ])
-                    .render();
-
-                var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
-                expect(xLabels.eq(0).css('text-anchor')).toBe('middle');
-                expect(xLabels.eq(2).css('text-anchor')).toBe('middle');
-            });
-
-
-            it('should print hrs, when xDomain is all in the same day', function () {
-                narwhal = createNarwhal({ xAxis: { firstAndLast: false }})
-                    .data([
-                        { x: new Date('10/11/2013 10:00'), y: 10 },
-                        { x: new Date('10/11/2013 11:00'), y: 20 },
-                        { x: new Date('10/11/2013 12:00'), y: 30 }
-                    ])
-                    .render();
-
-                var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
-                expect(xLabels.eq(0).text()).toBe('10:00');
-                expect(xLabels.eq(1).text()).toBe('11:00');
-                expect(xLabels.eq(2).text()).toBe('12:00');
             });
 
         });
