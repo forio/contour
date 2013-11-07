@@ -669,15 +669,17 @@
 
         scale: function (domain) {
             this._domain = domain;
+            var axisDomain = this._getAxisDomain(domain);
             if(!this._scale) {
                 this._scale = new d3.time.scale()
-                    .domain(d3.extent(this._domain));
+                    .domain(axisDomain);
 
                 this.range();
             }
 
             return this._scale;
         },
+
 
         axis: function () {
             var options = this.options.xAxis;
@@ -686,8 +688,7 @@
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickFormat(tickFormat)
-                .innerTickSize(options.innerTickSize)
-                .outerTickSize(options.outerTickSize)
+                .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickValues(this._domain);
 
@@ -698,7 +699,6 @@
                 var len = this._domain.length;
                 var step = (len + 1) / this.options.xAxis.maxTicks;
 
-                // for (var j=0, index = 0; j<this.options.xAxis.ticks; j++, index += step) {
                 for (var j=0, index = 0; j<len; j += step, index += step) {
                     customValues.push(this._domain[Math.min(Math.ceil(index), len-1)]);
                 }
@@ -733,7 +733,25 @@
         },
 
         range: function () {
-            return this._scale.rangeRound([0, this.options.chart.plotWidth], 0.1);
+            var range = this._getAxisRange(this._domain);
+            return this._scale.rangeRound(range, 0.1);
+        },
+
+
+        _getAxisDomain: function (domain) {
+            if(this.options.xAxis.linearDomain) {
+                return domain;
+            }
+
+            return d3.extent(domain);
+        },
+
+        _getAxisRange: function (domain) {
+            if(this.options.xAxis.linearDomain) {
+                return _.range(0, this.options.chart.plotWidth, this.options.chart.plotWidth / (domain.length - 1)).concat([this.options.chart.plotWidth]);
+            }
+
+            return [0, this.options.chart.plotWidth];
         }
     };
 
