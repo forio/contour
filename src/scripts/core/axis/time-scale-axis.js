@@ -46,8 +46,7 @@
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickFormat(tickFormat)
-                .innerTickSize(options.innerTickSize)
-                .outerTickSize(options.outerTickSize)
+                .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickValues(this._domain);
 
@@ -58,7 +57,6 @@
                 var len = this._domain.length;
                 var step = (len + 1) / this.options.xAxis.maxTicks;
 
-                // for (var j=0, index = 0; j<this.options.xAxis.ticks; j++, index += step) {
                 for (var j=0, index = 0; j<len; j += step, index += step) {
                     customValues.push(this._domain[Math.min(Math.ceil(index), len-1)]);
                 }
