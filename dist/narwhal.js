@@ -245,7 +245,7 @@
     var defaults = {
         chart: {
             padding: {
-                top: 3,
+                top: 6,
                 bottom: 25,
                 left: 40,
                 right: 5
@@ -272,7 +272,9 @@
             tickPadding: 4,
             titlePadding: 0,
             labels: {
+                align: 'middle',
                 format: 's' // d3 formats
+
             }
         }
     };
@@ -369,6 +371,8 @@
         },
 
         yAxis: function () {
+            var _this = this;
+            var alignmentOffset = { top: '.9em', middle: '.3em', bottom: '-.9em' };
             var options = this.options.yAxis;
             var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
             var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
@@ -386,9 +390,10 @@
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
 
+
             this._yAxisGroup.call(yAxis)
                 .selectAll('text')
-                    .attr('dy', '.9em');
+                    .attr('dy', alignmentOffset[options.labels.align]);
 
             return this;
         },
@@ -910,65 +915,89 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-
-Narwhal.export('tooltip', function (data, layer) {
-
-    var visibleOpacity = 0.75;
-
-    var clearHideTimer = function () {
-        clearTimeout(this.tooltip.hideTimer);
+(function () {
+    var defaults = {
+        tooltip: {
+            animate: false,
+            visibleOpacity: 0.75,
+            showTime: 300,
+            hideTime: 500
+        }
     };
 
-    var positionTooltip = function (ev) {
-        return { x: ev.pageX + 10, y: ev.pageY - 10 };
-    };
+    function render(data, layer) {
 
-    var onMouseOver = function (d) {
-        var ev = d3.event;
-        var pos = positionTooltip(ev);
+        var clearHideTimer = function () {
+            clearTimeout(this.tooltip.hideTimer);
+        };
 
-        show.call(this, d, pos);
-    };
+        var changeOpacity = function (opacity, delay) {
+            if(this.options.tooltip.animate) {
+                this.tooltipElement
+                    .transition().duration(delay)
+                        .style('opacity', opacity);
+            } else {
+                this.tooltipElement.style('opacity', opacity);
+            }
+        };
 
-    var onMouseOut = function () {
+        var positionTooltip = function (ev) {
+            return { x: ev.pageX + 10, y: ev.pageY - 10 };
+        };
+
+        var onMouseOver = function (d) {
+            var ev = d3.event;
+            var pos = positionTooltip(ev);
+
+            show.call(this, d, pos);
+        };
+
+        var onMouseOut = function () {
+            changeOpacity.call(this, 0, this.options.tooltip.hideTime);
+        };
+
+        var getTooltipText = function (d) {
+            if(this.options.tooltip.formatter) return this.options.tooltip.formatter.call(this, d);
+
+            return  'x: ' + d.x + '<br>' + 'y: ' + d.y;
+        };
+
+        var show = function (d, pos) {
+            clearHideTimer.call(this);
+            var text = getTooltipText.call(this, d);
+
+            console.log('showing tooltip');
+
+            this.tooltipElement.select('.text').html(text);
+
+            this.tooltipElement
+                .style('top', pos.y + 'px')
+                .style('left', pos.x + 'px');
+
+            changeOpacity.call(this, this.options.tooltip.visibleOpacity, this.options.tooltip.showTime);
+        };
+
+        this.tooltipElement = this.container
+            .append('div');
 
         this.tooltipElement
-            .transition().duration(500)
-                .style('opacity', 0);
-    };
+            .attr('class', 'nw-tooltip')
+            .style('opacity', 0)
+            .append('div')
+                .attr('class', 'text');
 
-    var getTooltipText = function (d) {
-        if(this.options.tooltip.formatter) return this.options.tooltip.formatter.call(this, d);
+        this.svg.selectAll('.tooltip-tracker')
+            .on('mouseover.tooltip', onMouseOver.bind(this))
+            .on('mouseout.tooltip',  onMouseOut.bind(this));
+    }
 
-        return  'x: ' + d.x + '<br>' + 'y: ' + d.y;
-    };
+    render.defaults = defaults;
 
-    var show = function (d, pos) {
-        clearHideTimer.call(this);
-        var text = getTooltipText.call(this, d);
+    Narwhal.export('tooltip', render);
 
-        this.tooltipElement.select('.text').html(text);
 
-        this.tooltipElement
-            .style('top', pos.y + 'px')
-            .style('left', pos.x + 'px')
-            .transition().duration(300)
-                .style('opacity', visibleOpacity);
-    };
+})();
 
-    this.tooltipElement = this.container
-        .append('div');
-
-    this.tooltipElement
-        .attr('class', 'nw-tooltip')
-        .style('opacity', visibleOpacity)
-        .append('div')
-            .attr('class', 'text');
-
-    this.svg.selectAll('.tooltip-tracker')
-        .on('mouseover.tooltip', onMouseOver.bind(this))
-        .on('mouseout.tooltip',  onMouseOut.bind(this));
-});
 
 
 (function (ns, d3, _, $, undefined) {
