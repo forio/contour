@@ -1,7 +1,7 @@
 (function () {
     var defaults = {
         tooltip: {
-            animate: false,
+            animate: true,
             visibleOpacity: 0.75,
             showTime: 300,
             hideTime: 500
