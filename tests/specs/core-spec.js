@@ -96,15 +96,16 @@ describe('Narwhal', function () {
 
     describe('expose', function () {
         it('should not expose passed in object, until the constructor is called', function () {
+            // extend the prototype, exposing a new constructor myTest
+            Narwhal.expose('myTest', { someFunction: $.noop });
+
             var target = createNarwhal();
-            expect(target.myTest).not.toBeDefined();
 
-            // extend the instance, exposing a new constructor myTest
-            target.expose('myTest', { someFunction: $.noop });
-
-            // now we should have it, call the constructor
             expect(target.myTest).toBeDefined();
 
+            expect(target.someFunction).not.toBeDefined();
+
+            // now we should have it, call the constructor
             target.myTest();
 
             // now we should have the actual functionality exposed by myTest
@@ -112,21 +113,26 @@ describe('Narwhal', function () {
         });
 
         it('should make the new object available in the instance', function () {
+            Narwhal.expose('myTest', { someFunction: $.noop });
+
             var target = createNarwhal();
-            target.expose('myTest', { someFunction: $.noop });
             expect(target.myTest).toBeDefined();
         });
 
         it('should NOT affect other instance of Narwhal', function () {
+            Narwhal.expose('myTest', { someFunction: $.noop });
+
             var target = createNarwhal();
+            target.myTest();
             var other = createNarwhal();
-            target.expose('myTest', { someFunction: $.noop });
-            expect(other.myTest).not.toBeDefined();
+            expect(other.someFunction).not.toBeDefined();
+            expect(target.someFunction).toBeDefined();
         });
 
         it('should return the instance (this) after calling the constructor', function () {
+            Narwhal.expose('myTest', { some: $.noop });
+
             var target = createNarwhal();
-            target.expose('myTest', { some: $.noop });
             var result = target.myTest();
             expect(result).toEqual(target);
         });

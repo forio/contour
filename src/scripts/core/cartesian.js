@@ -293,6 +293,6 @@
 
     };
 
-    window[ns].prototype.expose('cartesian', cartesian);
+    Narwhal.expose('cartesian', cartesian);
 
 })('Narwhal', window.d3, window._, window.jQuery);

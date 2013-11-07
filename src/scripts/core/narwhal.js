@@ -32,6 +32,22 @@
         return this;
     }
 
+    Narwhal.expose = function (ctorName, functionality) {
+        var ctorObj = {};
+        var ctor = function () {
+            // extend the --instance-- we don't want all charts to be overriten...
+            _.extend(this, _.omit(functionality, 'init'));
+
+            if(functionality.init) functionality.init.call(this, this.options);
+
+            return this;
+        };
+
+        ctorObj[ctorName] = ctor;
+
+        return _.extend(Narwhal.prototype, ctorObj);
+    },
+
     Narwhal.export = function (ctorName, renderer) {
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
@@ -203,24 +219,6 @@
                 var layer = this.createVisualizationLayer(id);
                 visualization.call(this, layer, this.options, id);
             }, this);
-
-            return this;
-        },
-
-        expose: function (ctorName, functionality) {
-            var ctorObj = {};
-            var ctor = function () {
-                // extend the --instance-- we don't want all charts to be overriten...
-                _.extend(this, _.omit(functionality, 'init'));
-
-                if(functionality.init) functionality.init.call(this, this.options);
-
-                return this;
-            };
-
-            ctorObj[ctorName] = ctor;
-
-            _.extend(this, ctorObj);
 
             return this;
         },
