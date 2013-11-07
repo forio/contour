@@ -3,7 +3,7 @@
     var defaults = {
         chart: {
             padding: {
-                top: 3,
+                top: 6,
                 bottom: 25,
                 left: 40,
                 right: 5
@@ -30,7 +30,9 @@
             tickPadding: 4,
             titlePadding: 0,
             labels: {
+                align: 'middle',
                 format: 's' // d3 formats
+
             }
         }
     };
@@ -127,6 +129,8 @@
         },
 
         yAxis: function () {
+            var _this = this;
+            var alignmentOffset = { top: '.9em', middle: '.3em', bottom: '-.9em' };
             var options = this.options.yAxis;
             var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
             var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
@@ -144,9 +148,10 @@
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
 
+
             this._yAxisGroup.call(yAxis)
                 .selectAll('text')
-                    .attr('dy', '.9em');
+                    .attr('dy', alignmentOffset[options.labels.align]);
 
             return this;
         },
