@@ -49,8 +49,6 @@
             clearHideTimer.call(this);
             var text = getTooltipText.call(this, d);
 
-            console.log('showing tooltip');
-
             this.tooltipElement.select('.text').html(text);
 
             this.tooltipElement
