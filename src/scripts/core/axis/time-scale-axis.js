@@ -29,14 +29,19 @@
 
         scale: function (domain) {
             this._domain = domain;
+            var axisDomain = this._getAxisDomain(domain);
             if(!this._scale) {
                 this._scale = new d3.time.scale()
-                    .domain(d3.extent(this._domain));
+                    .domain(axisDomain);
 
                 this.range();
             }
 
             return this._scale;
+        },
+
+        _getAxisDomain: function (domain) {
+            return d3.extent(domain);
         },
 
         axis: function () {
