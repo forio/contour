@@ -72,7 +72,9 @@
             sortSeries(data);
             renderer.defaults = renderer.defaults || {};
             var opt = {};
-            opt[ctorName] = options;
+            // merge the options passed ito Narwhal's constructore and this vis constructor
+            // into a set of options to be merged with the defaults and back into narwhal global options object
+            opt[ctorName] = $.extend(true, {}, this.options[ctorName], options);
             $.extend(true, this.options, renderer.defaults, opt);
 
             var renderFunc;

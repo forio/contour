@@ -64,6 +64,26 @@ describe('Narwhal', function () {
             target.something('some parameter').render();
             expect(dataParam).toBe('some parameter');
         });
+
+        it('should merge default options defined in render function', function () {
+            function render() {};
+            render.defaults = { vis: { xyz: 10} };
+            Narwhal.export('vis', render);
+
+            nw = new Narwhal({}).vis().render();
+            expect(nw.options.vis).toBeDefined();
+            expect(nw.options.vis.xyz).toBe(10);
+        });
+
+        it('should allow to override default options defined in render function', function () {
+            function render() {};
+            render.defaults = { vis: { xyz: 10} };
+            Narwhal.export('vis', render);
+
+            nw = new Narwhal({ vis: { xyz: 30 } }).vis().render();
+            expect(nw.options.vis).toBeDefined();
+            expect(nw.options.vis.xyz).toBe(30);
+        });
     });
 
     describe('constructor', function () {
