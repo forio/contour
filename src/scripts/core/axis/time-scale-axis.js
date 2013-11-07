@@ -40,9 +40,6 @@
             return this._scale;
         },
 
-        _getAxisDomain: function (domain) {
-            return d3.extent(domain);
-        },
 
         axis: function () {
             var options = this.options.xAxis;
@@ -96,7 +93,25 @@
         },
 
         range: function () {
-            return this._scale.rangeRound([0, this.options.chart.plotWidth], 0.1);
+            var range = this._getAxisRange(this._domain);
+            return this._scale.rangeRound(range, 0.1);
+        },
+
+
+        _getAxisDomain: function (domain) {
+            if(this.options.xAxis.linearDomain) {
+                return domain;
+            }
+
+            return d3.extent(domain);
+        },
+
+        _getAxisRange: function (domain) {
+            if(this.options.xAxis.linearDomain) {
+                return _.range(0, this.options.chart.plotWidth, this.options.chart.plotWidth / (domain.length - 1)).concat([this.options.chart.plotWidth]);
+            }
+
+            return [0, this.options.chart.plotWidth];
         }
     };
 

@@ -83,4 +83,25 @@ describe('time Axis', function () {
         expect(xLabels.eq(2).text()).toBe('12:00');
     });
 
+    describe('with the linearDomain options set to true', function () {
+        it('should partition the x axis in equal steps regardless of the actual date/time', function () {
+            var data = [
+                    { x: new Date('10/11/2013 10:00'), y: 10 },
+                    { x: new Date('10/11/2013 11:00'), y: 20 },
+                    { x: new Date('12/11/2013 10:00'), y: 30 }
+                ];
+            var narwhal = createNarwhal({ chart: { width: 400 }, xAxis: { linearDomain: true, firstAndLast: false }})
+                .data(data)
+                .render();
+
+            var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+            var w = narwhal.options.chart.plotWidth;
+
+            expect(narwhal.xScale(data[0].x)).toBe(0);
+            expect(narwhal.xScale(data[1].x)).toBe(w/2);
+            expect(narwhal.xScale(data[2].x)).toBe(w);
+
+        });
+    });
+
 });
