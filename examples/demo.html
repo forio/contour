@@ -100,7 +100,8 @@ var config = {
 
     tooltip: {
         formatter: function (d) {
-            return _.isDate(d) ? 'Time: ' + new Date(d.x).toTimeString().match(/\d\d:\d\d/)[0] + '<br>' + 'Measure: ' + d.y.toFixed(4) :
+            // this should return the HTML contents for the tooltip
+            return _.isDate(d.x) ? 'Time: ' + new Date(d.x).toTimeString().match(/\d\d:\d\d/)[0] + '<br>' + 'Measure: ' + d.y.toFixed(4) :
                 'X: ' + d.x + '<br>' + 'Y: ' + d.y;
          }
     }
