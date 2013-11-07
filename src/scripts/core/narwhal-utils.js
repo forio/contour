@@ -22,7 +22,13 @@
 
             // return _.nw.roundToNearest(val, fac);
         }
+    };
 
+    var dateHelpers = {
+        dateDiff: function(d1, d2) {
+            var diff = d1.getTime() - d2.getTime();
+            return diff / (24*60*60*1000);
+        }
     };
 
     var arrayHelpers = {
@@ -38,6 +44,6 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers);
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, dateHelpers);
 
 })('Narwhal', window.d3, window._, window.jQuery);
