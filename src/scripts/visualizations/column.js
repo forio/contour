@@ -14,7 +14,7 @@
             .data(data);
 
         col.enter().append('rect')
-                .attr('class', 'bar v-'+ id + ' s-1')
+                .attr('class', 'column v-'+ id + ' s-1')
                 .attr('x', function (d) { return x(d.x); })
                 .attr('y', function () { return y(min); })
                 .attr('height', 0)
