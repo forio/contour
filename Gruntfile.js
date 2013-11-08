@@ -4,6 +4,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-bumpup');
+    grunt.loadNpmTasks('grunt-tagrelease');
 
     // Project configuration.
     grunt.initConfig({
@@ -17,6 +19,12 @@ module.exports = function (grunt) {
                 files: ['src/scripts/**/*.js'],
                 tasks: ['concat', 'uglify']
             }
+        },
+        bumpup: {
+            files: ['package.json']
+        },
+        tagrelease: {
+            file: 'package.json'
         },
         less: {
             dev: {
@@ -94,7 +102,10 @@ module.exports = function (grunt) {
 
     // Default task.
     grunt.registerTask('default', ['less:dev', 'concat', 'watch']);
-    grunt.registerTask('production', ['concat', 'uglify', 'less:production']);
+    grunt.registerTask('production', function (type) {
+        type = type ? type : 'patch';
+        return ['concat', 'uglify', 'less:production', 'bumpup:' + type, 'tagrelease'];
+    });
     grunt.registerTask('linked', ['concat', 'uglify', 'less:uncompressed', 'less:production', 'watch']);
 
     grunt.registerMultiTask('templates', 'Compiles underscore templates', function () {
