@@ -41,6 +41,7 @@
             renderMakers();
             renderTooltipTrackers();
 
+
             function renderAnimatedPath() {
                 path.attr('d', line(data[0]))
                     .transition().duration(600)
@@ -55,7 +56,8 @@
             function renderLineMarkers() {
                 layer.append('g').attr('class', 'line-chart-markers')
                     .selectAll('dot')
-                        .data(data)
+                        .data(_.filter(data, function (d) { return d.y !== null; }))
+                        // .data(data)
                     .enter().append('circle')
                         .attr('class', 'dot ' + className)
                         .attr('r', markerSize)

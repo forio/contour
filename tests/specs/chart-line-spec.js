@@ -3,6 +3,14 @@ describe('Visualizations', function () {
     var el, $el;
     var data = [1,2,3];
 
+
+    function createNarwhal(options) {
+        $el.empty();
+        options = _.extend({ el: el, chart: { animations: false } }, options);
+        var narwhal = new Narwhal(options).cartesian();
+        return narwhal;
+    }
+
     describe('Line Chart', function () {
         beforeEach(function () {
             $el = $('<div>');
@@ -11,7 +19,7 @@ describe('Visualizations', function () {
 
         describe('without animations', function () {
             beforeEach(function () {
-                nw = new Narwhal({ el: el, chart: { animations: false }}).cartesian();
+                nw = createNarwhal();
             });
 
             it('should add a constructor function to the Narwhal prototype', function () {
@@ -105,6 +113,21 @@ describe('Visualizations', function () {
                     expect(groups.eq(1).attr('class')).toContain('tooltip-trackers');
                 });
             });
+
+            describe('render with special case data', function () {
+                it('should not render markers when the data Y is null or undefined', function () {
+                    nw = createNarwhal().line([
+                        { x: 1, y: 10},
+                        { x: 2, y: null},
+                        { x: 3, y: null}
+                    ]).render();
+
+                    var markers = $el.find('g[vis-id="1"] .line-chart-markers circle');
+                    expect(markers.length).toBe(1);
+                });
+
+            });
+
         });
 
         describe('with animations', function () {
