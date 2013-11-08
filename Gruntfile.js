@@ -22,6 +22,11 @@ module.exports = function (grunt) {
             }
         },
         bumpup: {
+            options: {
+                updateProps: {
+                    pkg: 'package.json'
+                }
+            },
             files: ['package.json']
         },
         tagrelease: '<%= pkg.version %>',
