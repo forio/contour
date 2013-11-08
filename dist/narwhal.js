@@ -543,7 +543,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.9';
+Narwhal.version = '0.0.10';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -920,7 +920,7 @@ Narwhal.version = '0.0.9';
             var nonNullData = _.filter(data, function (d) { return d.y != null; });
             var markerSize = this.options.line.marker.size;
             var className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
-            var path = layer.append('path').datum(data).attr('class', 'line ' + className);
+            var path = layer.append('path').datum(nonNullData).attr('class', 'line ' + className);
             var renderPath = this.options.chart.animations ? renderAnimatedPath : renderSimplePath;
             var renderMakers = this.options.line.marker.enable ? renderLineMarkers : $.noop;
 
@@ -930,7 +930,8 @@ Narwhal.version = '0.0.9';
 
 
             function renderAnimatedPath() {
-                path.attr('d', line(data[0]))
+                if(!nonNullData[0]) return ;
+                path.attr('d', line(nonNullData[0]))
                     .transition().duration(600)
                         .attrTween('d', pathTween);
             }
