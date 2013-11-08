@@ -7,6 +7,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-bumpup');
     grunt.loadNpmTasks('grunt-tagrelease');
 
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -24,6 +25,9 @@ module.exports = function (grunt) {
             files: ['package.json']
         },
         tagrelease: '<%= pkg.version %>',
+        ver: {
+            files: ['src/scripts/core/version.js']
+        },
         less: {
             dev: {
                 files: {
@@ -60,7 +64,8 @@ module.exports = function (grunt) {
             core: [
                 'src/scripts/core/narwhal.js',
                 'src/scripts/core/cartesian.js',
-                'src/scripts/core/**/*.js'
+                'src/scripts/core/version.js',
+                'src/scripts/core/**/*.js',
             ],
             vis: [
                 'src/scripts/visualizations/**/*.js'
@@ -103,12 +108,20 @@ module.exports = function (grunt) {
 
     grunt.registerTask('production', function (type) {
         type = type ? type : 'patch';
-        ['concat', 'uglify', 'less:production', 'bumpup:' + type, 'tagrelease'].forEach(function (task) {
+        ['bumpup:' + type, 'ver', 'concat', 'uglify', 'less:production', 'tagrelease'].forEach(function (task) {
             grunt.task.run(task);
         });
     });
 
     grunt.registerTask('linked', ['concat', 'uglify', 'less:uncompressed', 'less:production', 'watch']);
+
+    grunt.registerMultiTask('ver', 'Update version file with what\'s in package.json', function () {
+        var pkg = require('./package.json');
+        this.data.forEach(function (f) {
+            console.log('Updating ' + f + ' to version ' + pkg.version);
+            grunt.file.write(f, "Narwhal.version = '" + pkg.version + "';");
+        });
+    });
 
     grunt.registerMultiTask('templates', 'Compiles underscore templates', function () {
         var _ = require('lodash');
