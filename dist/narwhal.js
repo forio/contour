@@ -543,6 +543,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
+Narwhal.version = '0.0.7';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
