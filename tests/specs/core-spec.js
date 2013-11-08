@@ -65,8 +65,31 @@ describe('Narwhal', function () {
             expect(dataParam).toBe('some parameter');
         });
 
+        it('should sort time based data', function () {
+            var dataParam;
+            Narwhal.export('something', function (data) {
+                dataParam = data;
+            });
+
+            var data = [
+                { x: new Date('2000-01-01 10:00'), y: 10 },
+                { x: new Date('2010-01-01 10:00'), y: 10 },
+                { x: new Date('2003-01-01 10:00'), y: 10 },
+                { x: new Date('2012-01-01 10:00'), y: 10 }
+            ];
+
+            createNarwhal()
+                .something(data)
+                .render();
+
+            expect(dataParam[0].x.getFullYear()).toBe(2000);
+            expect(dataParam[1].x.getFullYear()).toBe(2003);
+            expect(dataParam[2].x.getFullYear()).toBe(2010);
+            expect(dataParam[3].x.getFullYear()).toBe(2012);
+        });
+
         it('should merge default options defined in render function', function () {
-            function render() {};
+            function render() {}
             render.defaults = { vis: { xyz: 10} };
             Narwhal.export('vis', render);
 
