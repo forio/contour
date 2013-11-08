@@ -33,9 +33,8 @@
     }
 
     Narwhal.expose = function (ctorName, functionality) {
-        var ctorObj = {};
         var ctor = function () {
-            // extend the --instance-- we don't want all charts to be overriten...
+            // extend the --instance-- we don't want all charts to be overriden...
             _.extend(this, _.omit(functionality, 'init'));
 
             if(functionality.init) functionality.init.call(this, this.options);
@@ -43,9 +42,9 @@
             return this;
         };
 
-        ctorObj[ctorName] = ctor;
+        Narwhal.prototype[ctorName] = ctor;
 
-        return _.extend(Narwhal.prototype, ctorObj);
+        return this;
     },
 
     Narwhal.export = function (ctorName, renderer) {
@@ -201,6 +200,7 @@
                     .attr('viewBox', '0 0 ' + chartOpt.width + ' ' + chartOpt.height)
                     .attr('preserveAspectRatio', 'xMinYMin')
                     .attr('class', 'narwhal-chart')
+                    .attr('height', chartOpt.height)
                 .append('g')
                     .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
 
@@ -232,6 +232,10 @@
         // place holder function for now
         data: function () {
 
+        },
+
+        datum: function (d) {
+            return d;
         }
 
     });
