@@ -32,6 +32,21 @@
         return this;
     }
 
+    Narwhal.expose = function (ctorName, functionality) {
+        var ctor = function () {
+            // extend the --instance-- we don't want all charts to be overriden...
+            _.extend(this, _.omit(functionality, 'init'));
+
+            if(functionality.init) functionality.init.call(this, this.options);
+
+            return this;
+        };
+
+        Narwhal.prototype[ctorName] = ctor;
+
+        return this;
+    },
+
     Narwhal.export = function (ctorName, renderer) {
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
@@ -185,6 +200,7 @@
                     .attr('viewBox', '0 0 ' + chartOpt.width + ' ' + chartOpt.height)
                     .attr('preserveAspectRatio', 'xMinYMin')
                     .attr('class', 'narwhal-chart')
+                    .attr('height', chartOpt.height)
                 .append('g')
                     .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
 
@@ -207,24 +223,6 @@
             return this;
         },
 
-        expose: function (ctorName, functionality) {
-            var ctorObj = {};
-            var ctor = function () {
-                // extend the --instance-- we don't want all charts to be overriten...
-                _.extend(this, _.omit(functionality, 'init'));
-
-                if(functionality.init) functionality.init.call(this, this.options);
-
-                return this;
-            };
-
-            ctorObj[ctorName] = ctor;
-
-            _.extend(this, ctorObj);
-
-            return this;
-        },
-
         compose: function(ctorName, funcArray) {
             // compose differnt functional objects into this instance...
             // this way we can do something like new Narwhal().BarChart(...) and it includes
@@ -234,6 +232,10 @@
         // place holder function for now
         data: function () {
 
+        },
+
+        datum: function (d) {
+            return d;
         }
 
     });
@@ -374,7 +376,7 @@
 
         yAxis: function () {
             var _this = this;
-            var alignmentOffset = { top: '.9em', middle: '.3em', bottom: '-.9em' };
+            var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
             var options = this.options.yAxis;
             var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
             var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
@@ -537,7 +539,7 @@
 
     };
 
-    window[ns].prototype.expose('cartesian', cartesian);
+    Narwhal.expose('cartesian', cartesian);
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
@@ -813,6 +815,32 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
+(function (window, undefined) {
+
+    Narwhal.export('bar', function barRender(data, layer, options, i) {
+        var values = _.pluck(data, 'y');
+        var barWidth = 20;
+        var w = this.options.chart.plotWidth;
+        var h = barWidth * data.length;// this.options.chart.plotHeight;
+        var xScale = d3.scale.linear().domain([0, d3.max(values)]).range([0, w]).nice();
+        var yScale = d3.scale.ordinal().domain(_.pluck(data, 'x')).rangeBands([0, h], 0.1);
+        var rangeBand = barWidth; //yScale.rangeBand();
+
+        var bar = layer.selectAll('.bar')
+            .data(data);
+
+        bar.enter().append('rect')
+            .attr('class', 'bar')
+            .attr('x', 0)
+            .attr('y', function (d) { return yScale(d.x); })
+            .attr('height', rangeBand - 2)
+                .attr('width', function (d) { return xScale(d.y); });
+
+
+    });
+
+}).call(this);
+
 (function (ns, d3, _, $, undefined) {
 
     var defaults = {
@@ -946,7 +974,7 @@
 (function () {
     var defaults = {
         tooltip: {
-            animate: false,
+            animate: true,
             visibleOpacity: 0.75,
             showTime: 300,
             hideTime: 500
@@ -993,8 +1021,6 @@
         var show = function (d, pos) {
             clearHideTimer.call(this);
             var text = getTooltipText.call(this, d);
-
-            console.log('showing tooltip');
 
             this.tooltipElement.select('.text').html(text);
 

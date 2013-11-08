@@ -13,12 +13,16 @@
 
     <style>
         .chart {
-            width: 961px;
-            margin: 10px auto;
+            width: 960px;
+            margin: 10px 0;
         }
 
         .dot {
             fill: red;
+        }
+
+        .bar {
+            fill: steelblue;
         }
 
     </style>
@@ -67,10 +71,10 @@ var coq2 = [{"x":"2000-01-01T15:20:00.000Z","y":8.750524467985066},{"x":"2000-01
 
 var rand = function () { return Math.random() * 100; };
 var simpleData = [
-    { x: new Date('2000-01-01 10:00'), y: rand() },
-    { x: new Date('2000-01-01 11:00'), y: rand() },
-    { x: new Date('2000-01-02 10:00'), y: rand() },
-    { x: new Date('2000-01-02 11:00'), y: rand() },
+    { x: new Date('2000-01-01 10:00'), y: 10 },
+    { x: new Date('2000-01-01 11:00'), y: 20 },
+    { x: new Date('2000-01-02 10:00'), y: 30 },
+    { x: new Date('2000-01-02 11:00'), y: 40 },
 ];
 
 var config = {
@@ -94,6 +98,7 @@ var config = {
     yAxis: {
         smartAxis: false,
         labels: {
+            align: 'bottom',
             format: '.0f'
         }
     },
@@ -117,7 +122,8 @@ var data = _.map(coq2, function (d) {
 
 new Narwhal(config)
     .cartesian()
-    .line(simpleData, { marker: { size: 0 }})
+    .line(simpleData)
+    // .bar(simpleData, { marker: { size: 0 }})
     .tooltip()
     .render();
 
