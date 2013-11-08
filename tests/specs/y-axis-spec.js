@@ -47,21 +47,28 @@ describe('default yAxis', function () {
     it('should align the middle of the label to the tick by default', function () {
         narwhal.data([0,10,20,30]).render();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.all(ticks, function (t) { return $(t).attr('dy') === '.3em'; })).toBe(true);
+        expect(_.all(ticks, function (t) { return $(t).attr('dy') === '.35em'; })).toBe(true);
     });
 
     it('should align the middle of the label to the tick when set middle in options', function () {
         narwhal = createNarwhal({yAxis: { labels: { align: 'middle' }}});
         narwhal.data([0,10,20,30]).render();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.all(ticks, function (t) { return $(t).attr('dy') === '.3em'; })).toBe(true);
+        expect(_.all(ticks, function (t) { return $(t).attr('dy') === '.35em'; })).toBe(true);
     });
 
     it('should align the top of the label to the tick when set top in options', function () {
         narwhal = createNarwhal({yAxis: { labels: { align: 'top' }}});
         narwhal.data([0,10,20,30]).render();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.all(ticks, function (t) { return $(t).attr('dy') === '.9em'; })).toBe(true);
+        expect(_.all(ticks, function (t) { return $(t).attr('dy') === '.8em'; })).toBe(true);
+    });
+
+    it('should align the bottom of the label to the tick when set bottom in options', function () {
+        narwhal = createNarwhal({yAxis: { labels: { align: 'bottom' }}});
+        narwhal.data([0,10,20,30]).render();
+        var ticks = $el.find('.y.axis .tick text');
+        expect(_.all(ticks, function (t) { return $(t).attr('dy') === '0'; })).toBe(true);
     });
 
     describe('with smart y axis (dafault)', function () {

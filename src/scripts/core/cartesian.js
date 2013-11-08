@@ -130,7 +130,7 @@
 
         yAxis: function () {
             var _this = this;
-            var alignmentOffset = { top: '.9em', middle: '.3em', bottom: '-.9em' };
+            var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
             var options = this.options.yAxis;
             var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
             var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
