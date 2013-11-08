@@ -46,17 +46,6 @@
                 path.attr('d', line);
             }
 
-            // add the tooltip trackers regardless
-            layer.append('g').attr('class', 'tooltip-trackers')
-                .selectAll('tooltip-tracker')
-                    .data(data)
-                .enter().append('circle')
-                    .attr('class', 'tooltip-tracker')
-                    .attr('opacity', 0)
-                    .attr('r', trackerSize)
-                    .attr('cx', x)
-                    .attr('cy', y);
-
             if (this.options.line.marker.enable) {
                 layer.append('g').attr('class', 'line-chart-markers')
                     .selectAll('dot')
@@ -67,6 +56,17 @@
                         .attr('cx', x)
                         .attr('cy', y);
             }
+
+            // add the tooltip trackers regardless
+            layer.append('g').attr('class', 'tooltip-trackers')
+                .selectAll('tooltip-tracker')
+                    .data(data)
+                .enter().append('circle')
+                    .attr('class', 'tooltip-tracker')
+                    .attr('opacity', 0)
+                    .attr('r', trackerSize)
+                    .attr('cx', x)
+                    .attr('cy', y);
 
             function pathTween() {
                 var _data = data;

@@ -93,6 +93,17 @@ describe('Visualizations', function () {
                     var path = $el.find('g[vis-id="1"] path');
                     expect(path.attr('class')).toContain('line');
                 });
+
+                it('should add a marker tooltip target for each data point', function () {
+                    var trackers = $el.find('g[vis-id="1"] .tooltip-tracker');
+                    expect(trackers.length).toBe(data.length);
+                });
+
+                it('should add a tooltip trackers AFTER line markers', function () {
+                    var groups = $el.find('g[vis-id="1"] g');
+                    expect(groups.eq(0).attr('class')).toContain('line-chart-markers');
+                    expect(groups.eq(1).attr('class')).toContain('tooltip-trackers');
+                });
             });
         });
 
