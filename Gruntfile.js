@@ -102,10 +102,14 @@ module.exports = function (grunt) {
 
     // Default task.
     grunt.registerTask('default', ['less:dev', 'concat', 'watch']);
+
     grunt.registerTask('production', function (type) {
         type = type ? type : 'patch';
-        return ['concat', 'uglify', 'less:production', 'bumpup:' + type, 'tagrelease'];
+        ['concat', 'uglify', 'less:production', 'bumpup:' + type, 'tagrelease'].forEach(function (task) {
+            grunt.task.run(task);
+        });
     });
+
     grunt.registerTask('linked', ['concat', 'uglify', 'less:uncompressed', 'less:production', 'watch']);
 
     grunt.registerMultiTask('templates', 'Compiles underscore templates', function () {
