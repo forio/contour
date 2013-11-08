@@ -35,7 +35,7 @@
             var nonNullData = _.filter(data, function (d) { return d.y != null; });
             var markerSize = this.options.line.marker.size;
             var className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
-            var path = layer.append('path').datum(data).attr('class', 'line ' + className);
+            var path = layer.append('path').datum(nonNullData).attr('class', 'line ' + className);
             var renderPath = this.options.chart.animations ? renderAnimatedPath : renderSimplePath;
             var renderMakers = this.options.line.marker.enable ? renderLineMarkers : $.noop;
 
@@ -45,7 +45,8 @@
 
 
             function renderAnimatedPath() {
-                path.attr('d', line(data[0]))
+                if(!nonNullData[0]) return ;
+                path.attr('d', line(nonNullData[0]))
                     .transition().duration(600)
                         .attrTween('d', pathTween);
             }
