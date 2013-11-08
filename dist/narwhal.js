@@ -914,43 +914,55 @@
         }
 
         function appendPath(data, seriesName, seriesIndex) {
-            var markerSize = this.options.line.marker.size;
-            var trackerSize = 10;
             seriesName = seriesName || '';
-            className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
-            var path = layer.append('path')
-                .datum(data)
-                .attr('class', 'line ' + className);
-            if(this.options.chart.animations) {
+            var markerSize = this.options.line.marker.size;
+            var className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
+            var path = layer.append('path').datum(data).attr('class', 'line ' + className);
+            var renderPath = this.options.chart.animations ? renderAnimatedPath : renderSimplePath;
+            var renderMakers = this.options.line.marker.enable ? renderLineMarkers : $.noop;
+
+            renderPath();
+            renderMakers();
+            renderTooltipTrackers();
+
+
+            function renderAnimatedPath() {
                 path.attr('d', line(data[0]))
-                    .transition()
-                        .duration(600)
+                    .transition().duration(600)
                         .attrTween('d', pathTween);
-            } else {
-                path.attr('d', line);
             }
 
-            if (this.options.line.marker.enable) {
+            function renderSimplePath() {
+                path.attr('d', line);
+
+            }
+
+            function renderLineMarkers() {
                 layer.append('g').attr('class', 'line-chart-markers')
                     .selectAll('dot')
-                        .data(data)
+                        .data(_.filter(data, function (d) { return d.y !== null; }))
+                        // .data(data)
                     .enter().append('circle')
                         .attr('class', 'dot ' + className)
                         .attr('r', markerSize)
                         .attr('cx', x)
                         .attr('cy', y);
+
             }
 
-            // add the tooltip trackers regardless
-            layer.append('g').attr('class', 'tooltip-trackers')
-                .selectAll('tooltip-tracker')
-                    .data(data)
-                .enter().append('circle')
-                    .attr('class', 'tooltip-tracker')
-                    .attr('opacity', 0)
-                    .attr('r', trackerSize)
-                    .attr('cx', x)
-                    .attr('cy', y);
+            function renderTooltipTrackers(){
+                var trackerSize = 10;
+                // add the tooltip trackers regardless
+                layer.append('g').attr('class', 'tooltip-trackers')
+                    .selectAll('tooltip-tracker')
+                        .data(data)
+                    .enter().append('circle')
+                        .attr('class', 'tooltip-tracker')
+                        .attr('opacity', 0)
+                        .attr('r', trackerSize)
+                        .attr('cx', x)
+                        .attr('cy', y);
+            }
 
             function pathTween() {
                 var _data = data;
@@ -963,7 +975,7 @@
         }
 
         return this;
-    };
+    }
 
     render.defaults = defaults;
 
