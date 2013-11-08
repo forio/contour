@@ -915,6 +915,8 @@
 
         function appendPath(data, seriesName, seriesIndex) {
             seriesName = seriesName || '';
+
+            var nonNullData = _.filter(data, function (d) { return d.y != null; });
             var markerSize = this.options.line.marker.size;
             var className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
             var path = layer.append('path').datum(data).attr('class', 'line ' + className);
@@ -940,8 +942,7 @@
             function renderLineMarkers() {
                 layer.append('g').attr('class', 'line-chart-markers')
                     .selectAll('dot')
-                        .data(_.filter(data, function (d) { return d.y !== null; }))
-                        // .data(data)
+                        .data(nonNullData)
                     .enter().append('circle')
                         .attr('class', 'dot ' + className)
                         .attr('r', markerSize)
@@ -955,7 +956,7 @@
                 // add the tooltip trackers regardless
                 layer.append('g').attr('class', 'tooltip-trackers')
                     .selectAll('tooltip-tracker')
-                        .data(data)
+                        .data(nonNullData)
                     .enter().append('circle')
                         .attr('class', 'tooltip-tracker')
                         .attr('opacity', 0)
@@ -965,7 +966,7 @@
             }
 
             function pathTween() {
-                var _data = data;
+                var _data = nonNullData;
                 var interpolate = d3.scale.quantile().domain([0,1])
                         .range(d3.range(1, _data.length + 1));
                 return function(t) {
