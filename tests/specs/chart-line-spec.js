@@ -119,7 +119,7 @@ describe('Visualizations', function () {
                     nw = createNarwhal().line([
                         { x: 1, y: 10},
                         { x: 2, y: null},
-                        { x: 3, y: null}
+                        { x: 3}
                     ]).render();
 
                     var markers = $el.find('g[vis-id="1"] .line-chart-markers circle');
