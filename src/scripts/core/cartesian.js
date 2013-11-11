@@ -17,6 +17,7 @@
             tickPadding: 10,
             titlePadding: 0,
             firstAndLast: true,
+            orient: 'bottom',
             labels: {
             }
         },
@@ -29,6 +30,7 @@
             outerTickSize: 6,
             tickPadding: 4,
             titlePadding: 0,
+            orient: 'left',
             labels: {
                 align: 'middle',
                 format: 's' // d3 formats
@@ -95,9 +97,29 @@
         },
 
         xAxis: function () {
-            var y = this.options.chart.plotHeight + this.options.chart.padding.top;
-            var xAxis = this.scaleGenerator.axis().orient('bottom');
+            return this.scaleGenerator.axis().orient(this.options.xAxis.orient);
+        },
 
+        yAxis: function () {
+            var options = this.options.yAxis;
+            var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
+            var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
+            var format = d3.format(options.labels.format);
+            var orient = options.orient;
+
+            return  d3.svg.axis()
+                .scale(this.yScale)
+                .tickFormat(format)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding)
+                .orient(orient)
+                .ticks(numTicks)
+                .tickValues(tickValues);
+        },
+
+        renderXAxis: function () {
+            var xAxis = this.xAxis();
+            var y = this.options.chart.plotHeight + this.options.chart.padding.top;
             this._xAxisGroup = this.svg
                 .append('g')
                 .attr('class', 'x axis')
@@ -109,22 +131,10 @@
             return this;
         },
 
-        yAxis: function () {
-            var _this = this;
-            var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
+        renderYAxis: function () {
             var options = this.options.yAxis;
-            var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
-            var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
-            var format = d3.format(options.labels.format);
-            var yAxis = d3.svg.axis()
-                .scale(this.yScale)
-                .tickFormat(format)
-                .tickSize(options.innerTickSize, options.outerTickSize)
-                .tickPadding(options.tickPadding)
-                .orient('left')
-                .ticks(numTicks)
-                .tickValues(tickValues);
-
+            var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
+            var yAxis = this.yAxis();
             this._yAxisGroup = this.svg.append('g')
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
@@ -137,7 +147,7 @@
             return this;
         },
 
-        axisLabels: function () {
+        renderAxisLabels: function () {
             var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
 
             if (this.options.xAxis.title) {
@@ -160,7 +170,6 @@
                     .attr('dy', this.options.yAxis.titlePadding)
                     .text(this.options.yAxis.title);
             }
-
         },
 
         render: function () {
@@ -172,9 +181,9 @@
 
             this.baseRender();
 
-            this.xAxis()
-                .yAxis()
-                .axisLabels();
+            this.renderXAxis()
+                .renderYAxis()
+                .renderAxisLabels();
 
             this.renderVisualizations();
 
