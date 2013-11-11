@@ -38,27 +38,6 @@
     };
 
 
-    function extractScaleDomain(domain, min, max) {
-        var dataMax = _.max(domain);
-        var dataMin = _.min(domain);
-
-        // we want null || undefined for all this comparasons
-        // that == null gives us
-        if (min == null && max == null) {
-            return [dataMin, dataMax];
-        }
-
-        if (min == null) {
-            return [Math.min(dataMin, max), max];
-        }
-
-        if (max == null) {
-            return [min, Math.max(min, dataMax)];
-        }
-
-        return [min, max];
-    }
-
     var cartesian = {
         dataSrc: [],
 
@@ -94,11 +73,13 @@
 
         computeYScale: function () {
             if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
-            var yScaleDomain = extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
+            var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
+            var rangeSize = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : this.options.chart.plotHeight;
+            var range = this.options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
 
             this.yScale = d3.scale.linear()
                 .domain(yScaleDomain)
-                .range([this.options.chart.plotHeight, 0]);
+                .range(range);
 
             // if we are not using smartAxis we use d3's nice() domain
             if (!this.options.yAxis.smartAxis)

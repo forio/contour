@@ -44,6 +44,30 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, dateHelpers);
+    var axisHelpers = {
+        /*jshint eqnull:true */
+        extractScaleDomain: function (domain, min, max) {
+            var dataMax = _.max(domain);
+            var dataMin = _.min(domain);
+
+            // we want null || undefined for all this comparasons
+            // that == null gives us
+            if (min == null && max == null) {
+                return [dataMin, dataMax];
+            }
+
+            if (min == null) {
+                return [Math.min(dataMin, max), max];
+            }
+
+            if (max == null) {
+                return [min, Math.max(min, dataMax)];
+            }
+
+            return [min, max];
+        }
+    };
+
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, dateHelpers, axisHelpers);
 
 })('Narwhal', window.d3, window._, window.jQuery);

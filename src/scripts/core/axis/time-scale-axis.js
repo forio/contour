@@ -109,11 +109,13 @@
         },
 
         _getAxisRange: function (domain) {
+            var size = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
+
             if(this.options.xAxis.linearDomain) {
-                return _.range(0, this.options.chart.plotWidth, this.options.chart.plotWidth / (domain.length - 1)).concat([this.options.chart.plotWidth]);
+                return _.range(0, size, size / (domain.length - 1)).concat([size]);
             }
 
-            return [0, this.options.chart.plotWidth];
+            return [0, size];
         }
     };
 
