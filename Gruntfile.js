@@ -109,7 +109,7 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['less:dev', 'concat', 'watch']);
+    grunt.registerTask('default', ['less:dev', 'watch:less']);
 
     grunt.registerTask('production', function (type) {
         type = type ? type : 'patch';
