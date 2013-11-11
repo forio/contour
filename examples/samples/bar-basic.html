@@ -1,0 +1,19 @@
+<div class="chart bar-basic"></div>
+<script>
+
+    new Narwhal({
+            el: '.bar-basic',
+            xAxis: {
+                title: 'Index',
+            },
+            yAxis: {
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .horizontal()
+        .bar([1, 2, 3, 4, 5, 4, 3, 2, 1])
+        .tooltip()
+        .render();
+
+</script>

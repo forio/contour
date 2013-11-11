@@ -15,6 +15,7 @@
     <script src="../src/scripts/core/axis/axis-scale-factory.js" ></script>
     <script src="../src/scripts/core/narwhal.js"></script>
     <script src="../src/scripts/core/cartesian.js"></script>
+    <script src="../src/scripts/core/horizontal-frame.js"></script>
     <script src="../src/scripts/visualizations/line.js"></script>
     <script src="../src/scripts/visualizations/tooltip.js"></script>
     <script src="../src/scripts/visualizations/column.js"></script>
@@ -85,9 +86,12 @@ var rand = function () { return Math.random() * 100; };
 var simpleData = [
     { x: new Date('2000-01-01 10:00'), y: 10 },
     { x: new Date('2000-01-01 11:00'), y: 20 },
-    { x: new Date('2000-01-02 10:00'), y: undefined },
-    { x: new Date('2000-01-02 11:00'), y: undefined },
+    { x: new Date('2000-01-02 10:00'), y: 40 },
+    { x: new Date('2000-01-02 11:00'), y: 30 },
 ];
+
+var cats = ['Aasdf', 'Bqer', 'Czcxv', 'Dwreyt', 'Ecb', 'F', 'G', 'H', 'I']
+
 
 var config = {
     el: '.chart',
@@ -99,6 +103,8 @@ var config = {
     xAxis: {
         firstAndLast: false,
         maxTicks: 10,
+        categories: cats,
+
         innerTickSize: 6,
         linearDomain: true,
         labels: {
@@ -109,7 +115,9 @@ var config = {
     },
 
     yAxis: {
-        smartAxis: false,
+        smartAxis: true,
+        min: 0,
+
         labels: {
             format: '.0f'
         }
@@ -132,10 +140,16 @@ var data = _.map(coq3, function (d) {
     }
 })
 
+
+data = [1,2,3,4, 10, 20, 10, 4];
+// data = _.map([1,2,3,4, 10, 20, 10, 4], function ()
+
+
 new Narwhal(config)
     .cartesian()
-    .line(data)
-    // .bar(simpleData, { marker: { size: 0 }})
+    .horizontal()
+    // .line(data)
+    .bar(data)
     .tooltip()
     .render();
 
