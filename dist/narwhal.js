@@ -167,7 +167,7 @@
         },
 
         composeOptions: function () {
-            // compise the final list of options right before start rendering
+            // compose the final list of options right before start rendering
             this.options = $.extend(true, {}, defaults, this.options);
         },
 
@@ -263,6 +263,7 @@
             tickPadding: 10,
             titlePadding: 0,
             firstAndLast: true,
+            orient: 'bottom',
             labels: {
             }
         },
@@ -275,6 +276,7 @@
             outerTickSize: 6,
             tickPadding: 4,
             titlePadding: 0,
+            orient: 'left',
             labels: {
                 align: 'middle',
                 format: 's' // d3 formats
@@ -283,27 +285,6 @@
         }
     };
 
-
-    function extractScaleDomain(domain, min, max) {
-        var dataMax = _.max(domain);
-        var dataMin = _.min(domain);
-
-        // we want null || undefined for all this comparasons
-        // that == null gives us
-        if (min == null && max == null) {
-            return [dataMin, dataMax];
-        }
-
-        if (min == null) {
-            return [Math.min(dataMin, max), max];
-        }
-
-        if (max == null) {
-            return [min, Math.max(min, dataMax)];
-        }
-
-        return [min, max];
-    }
 
     var cartesian = {
         dataSrc: [],
@@ -340,11 +321,13 @@
 
         computeYScale: function () {
             if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
-            var yScaleDomain = extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
+            var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
+            var rangeSize = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : this.options.chart.plotHeight;
+            var range = this.options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
 
             this.yScale = d3.scale.linear()
                 .domain(yScaleDomain)
-                .range([this.options.chart.plotHeight, 0]);
+                .range(range);
 
             // if we are not using smartAxis we use d3's nice() domain
             if (!this.options.yAxis.smartAxis)
@@ -360,9 +343,29 @@
         },
 
         xAxis: function () {
-            var y = this.options.chart.plotHeight + this.options.chart.padding.top;
-            var xAxis = this.scaleGenerator.axis().orient('bottom');
+            return this.scaleGenerator.axis().orient(this.options.xAxis.orient);
+        },
 
+        yAxis: function () {
+            var options = this.options.yAxis;
+            var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
+            var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
+            var format = d3.format(options.labels.format);
+            var orient = options.orient;
+
+            return  d3.svg.axis()
+                .scale(this.yScale)
+                .tickFormat(format)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding)
+                .orient(orient)
+                .ticks(numTicks)
+                .tickValues(tickValues);
+        },
+
+        renderXAxis: function () {
+            var xAxis = this.xAxis();
+            var y = this.options.chart.plotHeight + this.options.chart.padding.top;
             this._xAxisGroup = this.svg
                 .append('g')
                 .attr('class', 'x axis')
@@ -374,22 +377,10 @@
             return this;
         },
 
-        yAxis: function () {
-            var _this = this;
-            var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
+        renderYAxis: function () {
             var options = this.options.yAxis;
-            var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
-            var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
-            var format = d3.format(options.labels.format);
-            var yAxis = d3.svg.axis()
-                .scale(this.yScale)
-                .tickFormat(format)
-                .tickSize(options.innerTickSize, options.outerTickSize)
-                .tickPadding(options.tickPadding)
-                .orient('left')
-                .ticks(numTicks)
-                .tickValues(tickValues);
-
+            var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
+            var yAxis = this.yAxis();
             this._yAxisGroup = this.svg.append('g')
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
@@ -402,7 +393,7 @@
             return this;
         },
 
-        axisLabels: function () {
+        renderAxisLabels: function () {
             var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
 
             if (this.options.xAxis.title) {
@@ -425,7 +416,6 @@
                     .attr('dy', this.options.yAxis.titlePadding)
                     .text(this.options.yAxis.title);
             }
-
         },
 
         render: function () {
@@ -437,9 +427,9 @@
 
             this.baseRender();
 
-            this.xAxis()
-                .yAxis()
-                .axisLabels();
+            this.renderXAxis()
+                .renderYAxis()
+                .renderAxisLabels();
 
             this.renderVisualizations();
 
@@ -543,7 +533,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.10';
+Narwhal.version = '0.0.11';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -632,7 +622,8 @@ Narwhal.version = '0.0.10';
         },
 
         range: function () {
-            var range = [0, this.options.chart.plotWidth];
+            var size = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
+            var range = [0, size];
             return this.isCategorized ?
                 this._scale.rangeRoundBands(range, 0.1) :
                 this._scale.rangePoints(range);
@@ -754,17 +745,77 @@ Narwhal.version = '0.0.10';
         },
 
         _getAxisRange: function (domain) {
+            var size = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
+
             if(this.options.xAxis.linearDomain) {
-                return _.range(0, this.options.chart.plotWidth, this.options.chart.plotWidth / (domain.length - 1)).concat([this.options.chart.plotWidth]);
+                return _.range(0, size, size / (domain.length - 1)).concat([size]);
             }
 
-            return [0, this.options.chart.plotWidth];
+            return [0, size];
         }
     };
 
     _.nw = _.extend({}, _.nw, { TimeScale: TimeScale });
 
 })('Narwhal', window.d3, window._, window.jQuery);
+
+(function (window, undefined) {
+    var d3 = window.d3;
+    var _ = window._;
+
+    var defaults = {
+        chart: {
+            rotatedFrame: true
+        },
+
+        xAxis: {
+            orient: 'left'
+        },
+
+        yAxis: {
+            orient: 'bottom'
+        }
+    };
+
+    var frame = {
+
+        init: function () {
+            $.extend(true, this.options, defaults);
+        },
+
+        renderYAxis: function () {
+            var yAxis = this.yAxis();
+            var x = this.options.chart.padding.left;
+            var y = this.options.chart.padding.top + this.options.chart.plotHeight;
+
+            this._yAxisGroup = this.svg.append('g')
+                .attr('class', 'y axis')
+                .attr('transform', 'translate(' + x+ ',' + y + ')')
+                .call(yAxis);
+
+            return this;
+        },
+
+        renderXAxis: function () {
+            var x = this.options.chart.padding.left;
+            var y = this.options.chart.padding.top;
+            var xAxis = this.xAxis();
+
+            this._xAxisGroup = this.svg
+                .append('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(' + x + ',' + y + ')')
+                .call(xAxis);
+
+            this.scaleGenerator.postProcessAxis(this._xAxisGroup);
+
+            return this;
+        },
+    };
+
+    window.Narwhal.expose('horizontal', frame);
+
+})(window);
 
 (function (ns, d3, _, $, undefined) {
 
@@ -812,30 +863,54 @@ Narwhal.version = '0.0.10';
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, dateHelpers);
+    var axisHelpers = {
+        /*jshint eqnull:true */
+        extractScaleDomain: function (domain, min, max) {
+            var dataMax = _.max(domain);
+            var dataMin = _.min(domain);
+
+            // we want null || undefined for all this comparasons
+            // that == null gives us
+            if (min == null && max == null) {
+                return [dataMin, dataMax];
+            }
+
+            if (min == null) {
+                return [Math.min(dataMin, max), max];
+            }
+
+            if (max == null) {
+                return [min, Math.max(min, dataMax)];
+            }
+
+            return [min, max];
+        }
+    };
+
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, dateHelpers, axisHelpers);
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
 (function (window, undefined) {
 
     Narwhal.export('bar', function barRender(data, layer, options, i) {
-        var values = _.pluck(data, 'y');
-        var barWidth = 20;
-        var w = this.options.chart.plotWidth;
-        var h = barWidth * data.length;// this.options.chart.plotHeight;
-        var xScale = d3.scale.linear().domain([0, d3.max(values)]).range([0, w]).nice();
-        var yScale = d3.scale.ordinal().domain(_.pluck(data, 'x')).rangeBands([0, h], 0.1);
-        var rangeBand = barWidth; //yScale.rangeBand();
+        var xScale = this.xScale;
+        var yScale = this.yScale;
+        var rangeBand = this.rangeBand;
 
         var bar = layer.selectAll('.bar')
             .data(data);
 
         bar.enter().append('rect')
-            .attr('class', 'bar')
+            .attr('class', 'bar tooltip-tracker s-1')
             .attr('x', 0)
-            .attr('y', function (d) { return yScale(d.x); })
-            .attr('height', rangeBand - 2)
-                .attr('width', function (d) { return xScale(d.y); });
+            .attr('y', function (d) {
+                return xScale(d.x);
+            })
+            .attr('height', rangeBand )
+            .attr('width', function (d) {
+                return yScale(d.y);
+            });
 
 
     });
