@@ -1,0 +1,20 @@
+<div class="chart simple-tooltip"></div>
+<script>
+
+    new Narwhal({
+            el: '.simple-tooltip',
+            xAxis: {
+                firstAndLast: false,
+                title: 'Index',
+            },
+            yAxis: {
+                smartAxis: false,
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .line([10, 20, 40, 20, 34, 56])
+        .tooltip()
+        .render();
+
+</script>
