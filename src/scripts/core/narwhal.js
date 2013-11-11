@@ -167,7 +167,7 @@
         },
 
         composeOptions: function () {
-            // compise the final list of options right before start rendering
+            // compose the final list of options right before start rendering
             this.options = $.extend(true, {}, defaults, this.options);
         },
 
