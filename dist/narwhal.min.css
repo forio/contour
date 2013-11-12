@@ -1,6 +1,6 @@
-.narwhal-chart .axis{stroke:#666;stroke-width:1px;fill:none;shape-rendering:crispEdges}.narwhal-chart .axis text{font-family:"Consolas","Monaco",monospace;font-size:13px;stroke:none;fill:#666}
+.narwhal-chart .axis{stroke:#666;stroke-width:1px;fill:none;shape-rendering:crispEdges;font-family:"Consolas","Monaco",monospace;font-size:13px}.narwhal-chart .axis text{stroke:none;fill:#666}
 .narwhal-chart .axis.x .tick line{stroke:#666}
-.narwhal-chart text.axis-title{font-family:"Helvetica Neue",arial,sans-serif;font-size:16px;font-size:12px;stroke:none;fill:#666}
+.narwhal-chart .axis-title{font-family:"Helvetica Neue",arial,sans-serif;font-size:16px;font-size:14px;line-height:100%;stroke:none;fill:#666}
 .nw-tooltip{position:absolute;text-align:left;min-width:1.5em;min-height:1em;padding:4px 8px;font:10px sans-serif;line-height:16px;background:#555;border:solid 1px #fff;border-radius:8px;pointer-events:none}.nw-tooltip .text{opacity:1;color:#fff}
 .s-1.line{stroke:#5097fc;stroke-width:2px;fill:none}
 .s-1.bar,.s-1.column,.s-1.dot{fill:#5097fc}
