@@ -27,7 +27,8 @@
 
         adjustPadding: function () {
 
-            var text = [this.options.xAxis.categories || _.pluck(this.dataSrc, 'x')].join('<br>');
+            var categoryLabels = this.options.xAxis.categories || _.pluck(this.dataSrc, 'x');
+            var text = categoryLabels.join('<br>');
             var xLabel = _.nw.textBounds(text, '.x.axis');
             var yLabel = _.nw.textBounds('ABC', '.y.axis');
             var xTicks = Math.max(this.options.xAxis.outerTickSize, this.options.xAxis.innerTickSize);
