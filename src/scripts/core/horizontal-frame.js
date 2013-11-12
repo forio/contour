@@ -83,7 +83,7 @@
             var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
             var adjustFactor = 40/46.609;
 
-            var bounds, anchor, lineHeight, rotation, tickSize;
+            var bounds, anchor, rotation, tickSize, x, y;
 
             if (this.options.xAxis.title) {
                 bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
