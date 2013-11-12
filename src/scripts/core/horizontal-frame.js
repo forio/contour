@@ -93,12 +93,11 @@
                 rotation = this.options.chart.rotatedFrame ? '-90' : '0';
                 this._xAxisGroup.append('text')
                     .attr('class', 'x axis-title')
-                    .attr('text-anchor', 'end')
                     .attr('x', 0)
                     .attr('y', y)
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .attr('dy', bounds.height * adjustFactor)
-                    .attr('dx', -(this.options.chart.plotHeight - bounds.width) / 2)
+                    .attr('dx', -(this.options.chart.plotHeight + bounds.width) / 2)
                     .text(this.options.xAxis.title);
             }
 
@@ -115,10 +114,9 @@
 
                 this._yAxisGroup.append('text')
                     .attr('class', 'y axis-title')
-                    .attr('text-anchor', anchor)
                     .attr('y', y)
                     .attr('x', x)
-                    .attr('dx', -(this.options.chart.plotWidth - bounds.width) / 2)
+                    .attr('dx', -(this.options.chart.plotWidth + bounds.width) / 2)
                     .attr('dy', -4) // just because
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .text(this.options.yAxis.title);

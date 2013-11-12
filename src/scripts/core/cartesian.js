@@ -14,8 +14,8 @@
             rangePadding: 0,
             innerTickSize: 0,
             outerTickSize: 0,
-            tickPadding: 10,
-            titlePadding: 6,
+            tickPadding: 4,
+            titlePadding: 4,
             firstAndLast: true,
             orient: 'bottom',
             labels: {
@@ -65,18 +65,19 @@
             var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
 
             this.options.chart.padding.left = maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
-            this.options.chart.padding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height;
+            this.options.chart.padding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height - 4;
         },
 
         adjustTitlePadding: function () {
+            var titleBounds;
             if (this.options.xAxis.title || this.options.yAxis.title) {
-                this.titleOneEm = _.nw.textBounds('ABCD', 'axis-title').height;
                 if(this.options.xAxis.title) {
-                    this.options.chart.padding.bottom += this.titleOneEm * 1.5; // should be 1em
+                    titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                    this.options.chart.padding.bottom += titleBounds.height + this.options.xAxis.titlePadding;
                 }
 
                 if(this.options.yAxis.title) {
-                    var titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
                     this.options.chart.padding.left += titleBounds.height + this.options.yAxis.titlePadding;
                 }
             }
@@ -173,26 +174,28 @@
             var bounds, x, y;
 
             if (this.options.xAxis.title) {
+                bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                y = this.options.chart.padding.bottom;
+                x = 0;
                 this._xAxisGroup.append('text')
                     .attr('class', 'x axis-title')
-                    .attr('text-anchor', 'end')
-                    .attr('y', this.options.chart.padding.bottom - lineHeightAdjustment)
-                    .attr('dx', this.options.chart.plotWidth)
-                    .attr('dy', -this.options.xAxis.titlePadding)
+                    .attr('x', x)
+                    .attr('y', y)
+                    .attr('dx', (this.options.chart.plotWidth + bounds.width) / 2)
+                    .attr('dy', -2) // just because
                     .text(this.options.xAxis.title);
             }
 
             if (this.options.yAxis.title) {
-                bounds = _.nw.textBounds('ABC', '.y.axis-title');
+                bounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
                 y = -this.options.chart.padding.left + bounds.height * adjustFactor;
                 x = 0;
                 this._yAxisGroup.append('text')
                     .attr('class', 'y axis-title')
-                    .attr('text-anchor', 'end')
                     .attr('transform', 'rotate(-90)')
                     .attr('x', x)
                     .attr('y', y)
-                    .attr('dx', -(this.options.chart.plotHeight - bounds.width) / 2)
+                    .attr('dx', -(this.options.chart.plotHeight + bounds.width) / 2)
                     .attr('dy', 0)
                     .text(this.options.yAxis.title);
             }

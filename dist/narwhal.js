@@ -137,6 +137,10 @@
         calcMetrics: function () {
             var options = this.options;
 
+            this.adjustPadding();
+
+            this.adjustTitlePadding();
+
             options.chart.width = options.chart.width || this.calculateWidth();
             options.chart.height = options.chart.height || this.calculateHeight();
 
@@ -146,6 +150,16 @@
                     plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom
                 }
             });
+        },
+
+        adjustPadding: function () {
+            // overriden by components that need to adjust padding
+            return this;
+        },
+
+        adjustTitlePadding: function () {
+            // overriden by components that need to adjust padding
+            return this;
         },
 
         composeOptions: function () {
@@ -233,7 +247,7 @@
             padding: {
                 top: 6,
                 bottom: 25,
-                left: 40,
+                left: 0,
                 right: 5
             }
         },
@@ -242,8 +256,8 @@
             rangePadding: 0,
             innerTickSize: 0,
             outerTickSize: 0,
-            tickPadding: 10,
-            titlePadding: 6,
+            tickPadding: 4,
+            titlePadding: 4,
             firstAndLast: true,
             orient: 'bottom',
             labels: {
@@ -261,7 +275,7 @@
             orient: 'left',
             labels: {
                 align: 'middle',
-                format: 's' // d3 formats
+                format: '.1s' // d3 formats
 
             }
         }
@@ -275,10 +289,6 @@
 
             this.options = $.extend(true, {}, defaults, options);
 
-            this.adjustPadding();
-
-            this.adjustTitlePadding();
-
             if (!this.options.xAxis.firstAndLast) {
                 this.options.chart.padding.right += 15;
             }
@@ -287,24 +297,30 @@
         },
 
         adjustPadding: function () {
-            var xLabel = _.nw.textBounds('ABCD', 'axis-title');
-            var yLabel = _.nw.textBounds('abc', 'axis-title');
-            var xTicks = Math.max(this.options.xAxis.outerTickSize, this.options.xAxis.innerTickSize);
-            var yTicks = Math.max(this.options.yAxis.outerTickSize, this.options.yAxis.innerTickSize);
+            var options = this.options.yAxis;
+            var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, options.min, options.max);
+            var yLabels = this._extractYTickValues(yScaleDomain, options.min, options.max);
+            var format = d3.format(options.labels.format);
+            var yAxisText = _.map(yLabels, format).join('<br>');
+            var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
+            var xLabelBounds = _.nw.textBounds('ABC', '.x.axis');
+            var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
 
-            this.options.chart.padding.left = yTicks + yLabel.width;
-            this.options.chart.padding.bottom = xTicks + this.options.xAxis.tickPadding + xLabel.height;
+            this.options.chart.padding.left = maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
+            this.options.chart.padding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height - 4;
         },
 
         adjustTitlePadding: function () {
+            var titleBounds;
             if (this.options.xAxis.title || this.options.yAxis.title) {
-                this.titleOneEm = _.nw.textBounds('ABCD', 'axis-title').height;
                 if(this.options.xAxis.title) {
-                    this.options.chart.padding.bottom += this.titleOneEm * 1.5; // should be 1em
+                    titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                    this.options.chart.padding.bottom += titleBounds.height + this.options.xAxis.titlePadding;
                 }
 
                 if(this.options.yAxis.title) {
-                    this.options.chart.padding.left += this.titleOneEm * 1.5; // should be 1em
+                    titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    this.options.chart.padding.left += titleBounds.height + this.options.yAxis.titlePadding;
                 }
             }
         },
@@ -333,7 +349,6 @@
         },
 
         computeScales: function () {
-            this.adjustDomain();
             this.computeXScale();
             this.computeYScale();
 
@@ -378,13 +393,17 @@
         renderYAxis: function () {
             var options = this.options.yAxis;
             var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
+            var x = this.options.chart.padding.left;
+            var y = this.options.chart.padding.top;
             var yAxis = this.yAxis();
-            this._yAxisGroup = this.svg.append('g')
+
+            this._yAxisGroup = this.svg
+                .append('g')
                 .attr('class', 'y axis')
-                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
+                .attr('transform', 'translate(' + x + ',' + y + ')')
+                .call(yAxis);
 
-
-            this._yAxisGroup.call(yAxis)
+            this._yAxisGroup
                 .selectAll('text')
                     .attr('dy', alignmentOffset[options.labels.align]);
 
@@ -393,31 +412,41 @@
 
         renderAxisLabels: function () {
             var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
+            var adjustFactor = 40/46.609; // this factor is to account for the difference between the actual svg size and what we get from the DOM
+            var bounds, x, y;
 
             if (this.options.xAxis.title) {
+                bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                y = this.options.chart.padding.bottom;
+                x = 0;
                 this._xAxisGroup.append('text')
                     .attr('class', 'x axis-title')
-                    .attr('text-anchor', 'end')
-                    .attr('y', this.options.chart.padding.bottom - lineHeightAdjustment)
-                    .attr('dx', this.options.chart.plotWidth)
-                    .attr('dy', -this.options.xAxis.titlePadding)
+                    .attr('x', x)
+                    .attr('y', y)
+                    .attr('dx', (this.options.chart.plotWidth + bounds.width) / 2)
+                    .attr('dy', -2) // just because
                     .text(this.options.xAxis.title);
             }
 
             if (this.options.yAxis.title) {
+                bounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                y = -this.options.chart.padding.left + bounds.height * adjustFactor;
+                x = 0;
                 this._yAxisGroup.append('text')
                     .attr('class', 'y axis-title')
-                    .attr('text-anchor', 'end')
                     .attr('transform', 'rotate(-90)')
-                    .attr('y', -this.options.chart.padding.left + this.titleOneEm - lineHeightAdjustment)
-                    .attr('dx', 0)
-                    .attr('dy', this.options.yAxis.titlePadding)
+                    .attr('x', x)
+                    .attr('y', y)
+                    .attr('dx', -(this.options.chart.plotHeight + bounds.width) / 2)
+                    .attr('dy', 0)
                     .text(this.options.yAxis.title);
             }
         },
 
         render: function () {
             this.composeOptions();
+
+            this.adjustDomain();
 
             this.calcMetrics();
 
@@ -531,7 +560,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.13';
+Narwhal.version = '0.0.14';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -780,8 +809,6 @@ Narwhal.version = '0.0.13';
 
         init: function () {
             $.extend(true, this.options, defaults);
-            this.adjustPadding();
-            this.adjustTitlePadding();
         },
 
         adjustPadding: function () {
@@ -790,11 +817,10 @@ Narwhal.version = '0.0.13';
             var text = categoryLabels.join('<br>');
             var xLabel = _.nw.textBounds(text, '.x.axis');
             var yLabel = _.nw.textBounds('ABC', '.y.axis');
-            var xTicks = Math.max(this.options.xAxis.outerTickSize, this.options.xAxis.innerTickSize);
-            var yTicks = Math.max(this.options.yAxis.outerTickSize, this.options.yAxis.innerTickSize);
+            var maxTickSize = function (options) { return Math.max(options.outerTickSize, options.innerTickSize); };
 
-            this.options.chart.padding.left = xTicks + this.options.xAxis.tickPadding + xLabel.width;
-            this.options.chart.padding.bottom = yTicks + this.options.yAxis.tickPadding + yLabel.height;
+            this.options.chart.padding.left = maxTickSize(this.options.xAxis) + this.options.xAxis.tickPadding + xLabel.width;
+            this.options.chart.padding.bottom = maxTickSize(this.options.yAxis) + this.options.yAxis.tickPadding + yLabel.height;
         },
 
         adjustTitlePadding: function () {
@@ -845,7 +871,7 @@ Narwhal.version = '0.0.13';
             var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
             var adjustFactor = 40/46.609;
 
-            var bounds, anchor, lineHeight, rotation, tickSize;
+            var bounds, anchor, rotation, tickSize, x, y;
 
             if (this.options.xAxis.title) {
                 bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
@@ -855,13 +881,11 @@ Narwhal.version = '0.0.13';
                 rotation = this.options.chart.rotatedFrame ? '-90' : '0';
                 this._xAxisGroup.append('text')
                     .attr('class', 'x axis-title')
-                    .attr('text-anchor', 'end')
                     .attr('x', 0)
                     .attr('y', y)
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
-                    // .attr('y', this.options.chart.padding.bottom - lineHeightAdjustment)
                     .attr('dy', bounds.height * adjustFactor)
-                    .attr('dx', -(this.options.chart.plotHeight - bounds.width) / 2)
+                    .attr('dx', -(this.options.chart.plotHeight + bounds.width) / 2)
                     .text(this.options.xAxis.title);
             }
 
@@ -878,16 +902,12 @@ Narwhal.version = '0.0.13';
 
                 this._yAxisGroup.append('text')
                     .attr('class', 'y axis-title')
-                    .attr('text-anchor', anchor)
                     .attr('y', y)
                     .attr('x', x)
-                    .attr('dx', -(this.options.chart.plotWidth - bounds.width) / 2)
-                    .attr('dy', -4)
-
+                    .attr('dx', -(this.options.chart.plotWidth + bounds.width) / 2)
+                    .attr('dy', -4) // just because
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .text(this.options.yAxis.title);
-
-
             }
         }
     };

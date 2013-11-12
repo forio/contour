@@ -3,20 +3,21 @@
   stroke-width: 1px;
   fill: none;
   shape-rendering: crispEdges;
-}
-.narwhal-chart .axis text {
   font-family: "Consolas", "Monaco", monospace;
   font-size: 13px;
+}
+.narwhal-chart .axis text {
   stroke: none;
   fill: #666666;
 }
 .narwhal-chart .axis.x .tick line {
   stroke: #666666;
 }
-.narwhal-chart text.axis-title {
+.narwhal-chart .axis-title {
   font-family: "Helvetica Neue", arial, sans-serif;
   font-size: 16px;
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 100%;
   stroke: none;
   fill: #666666;
 }
@@ -43,6 +44,7 @@
   fill: none;
 }
 .s-1.bar,
+.s-1.column,
 .s-1.dot {
   fill: #5097fc;
 }
@@ -52,6 +54,7 @@
   fill: none;
 }
 .s-2.bar,
+.s-2.column,
 .s-2.dot {
   fill: #fc4e51;
 }
@@ -61,6 +64,7 @@
   fill: none;
 }
 .s-3.bar,
+.s-3.column,
 .s-3.dot {
   fill: #7decbb;
 }
@@ -70,6 +74,7 @@
   fill: none;
 }
 .s-4.bar,
+.s-4.column,
 .s-4.dot {
   fill: #33363b;
 }
@@ -79,6 +84,7 @@
   fill: none;
 }
 .s-5.bar,
+.s-5.column,
 .s-5.dot {
   fill: #999b9d;
 }
