@@ -107,25 +107,7 @@
         };
     };
 
-    Narwhal.utils = {
-        // measure text inside a narwhal chart container
-        textBounds: function (text, css) {
-            var body = document.getElementsByTagName('body')[0];
-            var wrapper = document.createElement('span');
-            var dummy = document.createElement('span');
-            wrapper.className = 'narwhal-chart';
-            dummy.style.position = 'absolute';
-            dummy.style.left =  -9999;
-            dummy.innerHTML = text;
-            dummy.className = css;
-            wrapper.appendChild(dummy);
-            body.appendChild(wrapper);
-            var res = { width: dummy.clientWidth, height: dummy.clientHeight };
-            wrapper.removeChild(dummy);
-            body.removeChild(wrapper);
-            return res;
-        }
-    };
+
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
 

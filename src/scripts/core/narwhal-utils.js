@@ -24,6 +24,30 @@
         }
     };
 
+    var stringHelpers = {
+        // measure text inside a narwhal chart container
+        textBounds: function (text, css) {
+            var body = document.getElementsByTagName('body')[0];
+            var wrapper = document.createElement('span');
+            var dummy = document.createElement('span');
+            wrapper.className = 'narwhal-chart';
+            dummy.style.position = 'absolute';
+            dummy.style.width = 'auto';
+            dummy.style.height = 'auto';
+            dummy.style.visibility = 'hidden';
+            dummy.style.lineHeight = '100%';
+
+            dummy.innerHTML = text;
+            dummy.className = css.replace(/\./g, ' ');
+            wrapper.appendChild(dummy);
+            body.appendChild(wrapper);
+            var res = { width: dummy.clientWidth, height: dummy.clientHeight };
+            wrapper.removeChild(dummy);
+            body.removeChild(wrapper);
+            return res;
+        }
+    };
+
     var dateHelpers = {
         dateDiff: function(d1, d2) {
             var diff = d1.getTime() - d2.getTime();
@@ -68,6 +92,6 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, dateHelpers, axisHelpers);
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers);
 
 })('Narwhal', window.d3, window._, window.jQuery);
