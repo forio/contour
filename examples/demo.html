@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Example on How to User Narwhal</title>
     <link rel="stylesheet" href="../examples/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../dist/narwhal.css">
+    <link rel="stylesheet" href="../examples/css/narwhal.css">
     <script src="../examples/js/vendor/d3.js"></script>
     <script src="../examples/js/vendor/jquery.js"></script>
     <script src="../examples/js/vendor/lodash.js"></script>
@@ -28,13 +28,15 @@
             margin: 10px 0;
         }
 
+        .chart svg {
+            border: solid 1px red;
+
+        }
+
         .dot {
             fill: red;
         }
 
-        .bar {
-            fill: steelblue;
-        }
 
     </style>
 
@@ -90,7 +92,7 @@ var simpleData = [
     { x: new Date('2000-01-02 11:00'), y: 30 },
 ];
 
-var cats = ['Aasdf', 'Bqer', 'Czcxv', 'Dwreyt', 'Ecb', 'F', 'G', 'H', 'I']
+var cats = ['XX', 'A', 'B', 'C', 'wer', 'Ecb', 'F', 'G', 'H', 'I']
 
 
 var config = {
@@ -104,7 +106,7 @@ var config = {
         firstAndLast: false,
         maxTicks: 10,
         categories: cats,
-
+        title: 'xAxis',
         innerTickSize: 6,
         linearDomain: true,
         labels: {
@@ -117,6 +119,7 @@ var config = {
     yAxis: {
         smartAxis: true,
         min: 0,
+        title: 'yAxis',
 
         labels: {
             format: '.0f'
