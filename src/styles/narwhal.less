@@ -7,7 +7,7 @@
 @data-line-marker-color: @data-line-color;
 @data-bar-color: steelblue; //@data-line-color;
 
-@axis-title-font-size: 12px;
+@axis-title-font-size: 14px;
 
 @tooltip-background-color: #555;
 @tooltip-border-color: #fff;
@@ -26,9 +26,8 @@
         stroke-width: 1px;
         fill: none;
         shape-rendering: crispEdges;
-
+        .mono-font();
         text {
-            .mono-font();
             stroke: none;
             fill: @text-color;
         }
@@ -40,9 +39,10 @@
         }
     }
 
-    text.axis-title {
+    .axis-title {
         .sans-serif();
         font-size: @axis-title-font-size;
+        line-height: 100%;
         stroke: none;
         fill: @text-color;
     }

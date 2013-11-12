@@ -4,7 +4,8 @@
 
     var defaults = {
         chart: {
-            rotatedFrame: true
+            rotatedFrame: true,
+
         },
 
         xAxis: {
@@ -20,6 +21,35 @@
 
         init: function () {
             $.extend(true, this.options, defaults);
+            this.adjustPadding();
+            this.adjustTitlePadding();
+        },
+
+        adjustPadding: function () {
+
+            var text = [this.options.xAxis.categories || _.pluck(this.dataSrc, 'x')].join('<br>');
+            var xLabel = _.nw.textBounds(text, '.x.axis');
+            var yLabel = _.nw.textBounds('ABC', '.y.axis');
+            var xTicks = Math.max(this.options.xAxis.outerTickSize, this.options.xAxis.innerTickSize);
+            var yTicks = Math.max(this.options.yAxis.outerTickSize, this.options.yAxis.innerTickSize);
+
+            this.options.chart.padding.left = xTicks + this.options.xAxis.tickPadding + xLabel.width;
+            this.options.chart.padding.bottom = yTicks + this.options.yAxis.tickPadding + yLabel.height;
+        },
+
+        adjustTitlePadding: function () {
+            if (this.options.xAxis.title || this.options.yAxis.title) {
+                if(this.options.xAxis.title) {
+                    var titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                    this.options.chart.padding.left += titleBounds.height + this.options.xAxis.titlePadding;
+                }
+
+                if(this.options.yAxis.title) {
+                    var titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    this.options.chart.padding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
+                }
+            }
+
         },
 
         renderYAxis: function () {
@@ -50,6 +80,56 @@
 
             return this;
         },
+
+        renderAxisLabels: function () {
+            var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
+            var adjustFactor = 40/46.609;
+
+            var bounds, anchor, lineHeight, rotation, tickSize;
+
+            if (this.options.xAxis.title) {
+                bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                x = this.options.chart.rotatedFrame ? -bounds.height : this.options.chart.plotWidth;
+                y = this.options.chart.rotatedFrame ? -this.options.chart.padding.left : this.options.chart.padding.bottom - lineHeightAdjustment;
+
+                rotation = this.options.chart.rotatedFrame ? '-90' : '0';
+                this._xAxisGroup.append('text')
+                    .attr('class', 'x axis-title')
+                    .attr('text-anchor', 'end')
+                    .attr('x', 0)
+                    .attr('y', y)
+                    .attr('transform', ['rotate(', rotation, ')'].join(''))
+                    // .attr('y', this.options.chart.padding.bottom - lineHeightAdjustment)
+                    .attr('dy', bounds.height * adjustFactor)
+                    .attr('dx', -(this.options.chart.plotHeight - bounds.width) / 2)
+                    .text(this.options.xAxis.title);
+            }
+
+            if (this.options.yAxis.title) {
+                bounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                tickSize = Math.max(this.options.yAxis.innerTickSize, this.options.yAxis.outerTickSize);
+                anchor = this.options.chart.rotatedFrame ? 'end' : 'middle';
+                x = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : 0;
+                y = this.options.chart.rotatedFrame ?
+                    this.options.chart.padding.bottom:
+                    -this.options.chart.padding.left + this.titleOneEm - lineHeightAdjustment;
+
+                rotation = this.options.chart.rotatedFrame ? '0' : '-90';
+
+                this._yAxisGroup.append('text')
+                    .attr('class', 'y axis-title')
+                    .attr('text-anchor', anchor)
+                    .attr('y', y)
+                    .attr('x', x)
+                    .attr('dx', -(this.options.chart.plotWidth - bounds.width) / 2)
+                    .attr('dy', -4)
+
+                    .attr('transform', ['rotate(', rotation, ')'].join(''))
+                    .text(this.options.yAxis.title);
+
+
+            }
+        }
     };
 
     window.Narwhal.expose('horizontal', frame);

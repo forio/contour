@@ -15,7 +15,7 @@
             innerTickSize: 0,
             outerTickSize: 0,
             tickPadding: 10,
-            titlePadding: 0,
+            titlePadding: 6,
             firstAndLast: true,
             orient: 'bottom',
             labels: {
@@ -29,7 +29,7 @@
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
-            titlePadding: 0,
+            titlePadding: 4,
             orient: 'left',
             labels: {
                 align: 'middle',
@@ -47,22 +47,38 @@
 
             this.options = $.extend(true, {}, defaults, options);
 
-            if (this.options.xAxis.title || this.options.yAxis.title) {
-                this.titleOneEm = Narwhal.utils.textBounds('ABCD', 'axis-title').height;
-                if(this.options.xAxis.title) {
-                    this.options.chart.padding.bottom += this.titleOneEm; // should be 1em
-                }
+            this.adjustPadding();
 
-                if(this.options.yAxis.title) {
-                    this.options.chart.padding.left += this.titleOneEm; // should be 1em
-                }
-            }
+            this.adjustTitlePadding();
 
             if (!this.options.xAxis.firstAndLast) {
                 this.options.chart.padding.right += 15;
             }
 
             return this;
+        },
+
+        adjustPadding: function () {
+            var xLabel = _.nw.textBounds('ABCD', 'axis-title');
+            var yLabel = _.nw.textBounds('abc', 'axis-title');
+            var xTicks = Math.max(this.options.xAxis.outerTickSize, this.options.xAxis.innerTickSize);
+            var yTicks = Math.max(this.options.yAxis.outerTickSize, this.options.yAxis.innerTickSize);
+
+            this.options.chart.padding.left = yTicks + yLabel.width;
+            this.options.chart.padding.bottom = xTicks + this.options.xAxis.tickPadding + xLabel.height;
+        },
+
+        adjustTitlePadding: function () {
+            if (this.options.xAxis.title || this.options.yAxis.title) {
+                this.titleOneEm = _.nw.textBounds('ABCD', 'axis-title').height;
+                if(this.options.xAxis.title) {
+                    this.options.chart.padding.bottom += this.titleOneEm * 1.5; // should be 1em
+                }
+
+                if(this.options.yAxis.title) {
+                    this.options.chart.padding.left += this.titleOneEm * 1.5; // should be 1em
+                }
+            }
         },
 
         computeXScale: function () {
