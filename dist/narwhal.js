@@ -256,7 +256,7 @@
             rangePadding: 0,
             innerTickSize: 0,
             outerTickSize: 0,
-            tickPadding: 4,
+            tickPadding: 6,
             titlePadding: 4,
             firstAndLast: true,
             orient: 'bottom',
@@ -275,7 +275,7 @@
             orient: 'left',
             labels: {
                 align: 'middle',
-                format: '.1s' // d3 formats
+                format: 's' // d3 formats
 
             }
         }
@@ -299,7 +299,7 @@
         adjustPadding: function () {
             var options = this.options.yAxis;
             var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, options.min, options.max);
-            var yLabels = this._extractYTickValues(yScaleDomain, options.min, options.max);
+            var yLabels = this._extractYTickValues(yScaleDomain, options.min, options.max) || [10000];
             var format = d3.format(options.labels.format);
             var yAxisText = _.map(yLabels, format).join('<br>');
             var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
@@ -423,7 +423,7 @@
                     .attr('class', 'x axis-title')
                     .attr('x', x)
                     .attr('y', y)
-                    .attr('dx', (this.options.chart.plotWidth + bounds.width) / 2)
+                    .attr('dx', (this.options.chart.plotWidth - bounds.width) / 2)
                     .attr('dy', -2) // just because
                     .text(this.options.xAxis.title);
             }
@@ -560,7 +560,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.14';
+Narwhal.version = '0.0.15';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
