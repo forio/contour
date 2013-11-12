@@ -137,6 +137,10 @@
         calcMetrics: function () {
             var options = this.options;
 
+            this.adjustPadding();
+
+            this.adjustTitlePadding();
+
             options.chart.width = options.chart.width || this.calculateWidth();
             options.chart.height = options.chart.height || this.calculateHeight();
 
@@ -146,6 +150,16 @@
                     plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom
                 }
             });
+        },
+
+        adjustPadding: function () {
+            // overriden by components that need to adjust padding
+            return this;
+        },
+
+        adjustTitlePadding: function () {
+            // overriden by components that need to adjust padding
+            return this;
         },
 
         composeOptions: function () {

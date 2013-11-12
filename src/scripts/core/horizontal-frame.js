@@ -21,8 +21,6 @@
 
         init: function () {
             $.extend(true, this.options, defaults);
-            this.adjustPadding();
-            this.adjustTitlePadding();
         },
 
         adjustPadding: function () {
@@ -31,11 +29,10 @@
             var text = categoryLabels.join('<br>');
             var xLabel = _.nw.textBounds(text, '.x.axis');
             var yLabel = _.nw.textBounds('ABC', '.y.axis');
-            var xTicks = Math.max(this.options.xAxis.outerTickSize, this.options.xAxis.innerTickSize);
-            var yTicks = Math.max(this.options.yAxis.outerTickSize, this.options.yAxis.innerTickSize);
+            var maxTickSize = function (options) { return Math.max(options.outerTickSize, options.innerTickSize); };
 
-            this.options.chart.padding.left = xTicks + this.options.xAxis.tickPadding + xLabel.width;
-            this.options.chart.padding.bottom = yTicks + this.options.yAxis.tickPadding + yLabel.height;
+            this.options.chart.padding.left = maxTickSize(this.options.xAxis) + this.options.xAxis.tickPadding + xLabel.width;
+            this.options.chart.padding.bottom = maxTickSize(this.options.yAxis) + this.options.yAxis.tickPadding + yLabel.height;
         },
 
         adjustTitlePadding: function () {
@@ -100,7 +97,6 @@
                     .attr('x', 0)
                     .attr('y', y)
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
-                    // .attr('y', this.options.chart.padding.bottom - lineHeightAdjustment)
                     .attr('dy', bounds.height * adjustFactor)
                     .attr('dx', -(this.options.chart.plotHeight - bounds.width) / 2)
                     .text(this.options.xAxis.title);
@@ -123,12 +119,9 @@
                     .attr('y', y)
                     .attr('x', x)
                     .attr('dx', -(this.options.chart.plotWidth - bounds.width) / 2)
-                    .attr('dy', -4)
-
+                    .attr('dy', -4) // just because
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .text(this.options.yAxis.title);
-
-
             }
         }
     };

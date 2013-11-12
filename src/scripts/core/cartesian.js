@@ -5,7 +5,7 @@
             padding: {
                 top: 6,
                 bottom: 25,
-                left: 40,
+                left: 0,
                 right: 5
             }
         },
@@ -29,11 +29,11 @@
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
-            titlePadding: 4,
+            // titlePadding: 4,
             orient: 'left',
             labels: {
                 align: 'middle',
-                format: 's' // d3 formats
+                format: '.1s' // d3 formats
 
             }
         }
@@ -47,10 +47,6 @@
 
             this.options = $.extend(true, {}, defaults, options);
 
-            this.adjustPadding();
-
-            this.adjustTitlePadding();
-
             if (!this.options.xAxis.firstAndLast) {
                 this.options.chart.padding.right += 15;
             }
@@ -59,13 +55,17 @@
         },
 
         adjustPadding: function () {
-            var xLabel = _.nw.textBounds('ABCD', 'axis-title');
-            var yLabel = _.nw.textBounds('abc', 'axis-title');
-            var xTicks = Math.max(this.options.xAxis.outerTickSize, this.options.xAxis.innerTickSize);
-            var yTicks = Math.max(this.options.yAxis.outerTickSize, this.options.yAxis.innerTickSize);
+            var options = this.options.yAxis;
+            var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, options.min, options.max);
+            var yLabels = this._extractYTickValues(yScaleDomain, options.min, options.max);
+            var format = d3.format(options.labels.format);
+            var yAxisText = _.map(yLabels, format).join('<br>');
+            var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
+            var xLabelBounds = _.nw.textBounds('ABC', '.x.axis');
+            var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
 
-            this.options.chart.padding.left = yTicks + yLabel.width;
-            this.options.chart.padding.bottom = xTicks + this.options.xAxis.tickPadding + xLabel.height;
+            this.options.chart.padding.left = maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
+            this.options.chart.padding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height;
         },
 
         adjustTitlePadding: function () {
@@ -105,7 +105,6 @@
         },
 
         computeScales: function () {
-            this.adjustDomain();
             this.computeXScale();
             this.computeYScale();
 
@@ -150,13 +149,17 @@
         renderYAxis: function () {
             var options = this.options.yAxis;
             var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
+            var x = this.options.chart.padding.left;
+            var y = this.options.chart.padding.top;
             var yAxis = this.yAxis();
-            this._yAxisGroup = this.svg.append('g')
+
+            this._yAxisGroup = this.svg
+                .append('g')
                 .attr('class', 'y axis')
-                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
+                .attr('transform', 'translate(' + x + ',' + y + ')')
+                .call(yAxis);
 
-
-            this._yAxisGroup.call(yAxis)
+            this._yAxisGroup
                 .selectAll('text')
                     .attr('dy', alignmentOffset[options.labels.align]);
 
@@ -190,6 +193,8 @@
 
         render: function () {
             this.composeOptions();
+
+            this.adjustDomain();
 
             this.calcMetrics();
 

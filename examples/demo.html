@@ -119,10 +119,10 @@ var config = {
     yAxis: {
         smartAxis: true,
         min: 0,
-        title: 'yAxis',
+        // title: 'yAxis',
 
         labels: {
-            format: '.0f'
+            format: ',d'
         }
     },
 
@@ -144,15 +144,15 @@ var data = _.map(coq3, function (d) {
 })
 
 
-data = [1,2,3,4, 10, 20, 10, 4];
+data = [1,2,3,4, 10, 90, 10, 4];
 // data = _.map([1,2,3,4, 10, 20, 10, 4], function ()
 
 
 new Narwhal(config)
     .cartesian()
-    .horizontal()
-    // .line(data)
-    .bar(data)
+    // .horizontal()
+    .column(data)
+    // .bar(data)
     .tooltip()
     .render();
 
