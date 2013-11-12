@@ -14,7 +14,7 @@
     .make-color(@index, @list) when (@index < 6) {
         @{list} {
             @color: 's@{index}-color';
-            &.line {
+            &.line, .line {
                 stroke: @@color;
                 stroke-width: @data-line-width;
                 fill: none;
@@ -22,7 +22,11 @@
 
             &.bar,
             &.column,
-            &.dot {
+            &.dot,
+            .bar,
+            .column,
+            .dot,
+             {
                 fill: @@color;
             }
         }
