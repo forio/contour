@@ -29,7 +29,7 @@
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
-            // titlePadding: 4,
+            titlePadding: 4,
             orient: 'left',
             labels: {
                 align: 'middle',
@@ -76,7 +76,8 @@
                 }
 
                 if(this.options.yAxis.title) {
-                    this.options.chart.padding.left += this.titleOneEm * 1.5; // should be 1em
+                    var titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    this.options.chart.padding.left += titleBounds.height + this.options.yAxis.titlePadding;
                 }
             }
         },
@@ -168,6 +169,8 @@
 
         renderAxisLabels: function () {
             var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
+            var adjustFactor = 40/46.609; // this factor is to account for the difference between the actual svg size and what we get from the DOM
+            var bounds, x, y;
 
             if (this.options.xAxis.title) {
                 this._xAxisGroup.append('text')
@@ -180,13 +183,17 @@
             }
 
             if (this.options.yAxis.title) {
+                bounds = _.nw.textBounds('ABC', '.y.axis-title');
+                y = -this.options.chart.padding.left + bounds.height * adjustFactor;
+                x = 0;
                 this._yAxisGroup.append('text')
                     .attr('class', 'y axis-title')
                     .attr('text-anchor', 'end')
                     .attr('transform', 'rotate(-90)')
-                    .attr('y', -this.options.chart.padding.left + this.titleOneEm - lineHeightAdjustment)
-                    .attr('dx', 0)
-                    .attr('dy', this.options.yAxis.titlePadding)
+                    .attr('x', x)
+                    .attr('y', y)
+                    .attr('dx', -(this.options.chart.plotHeight - bounds.width) / 2)
+                    .attr('dy', 0)
                     .text(this.options.yAxis.title);
             }
         },
