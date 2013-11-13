@@ -48,14 +48,6 @@ describe('Horizontal frame', function () {
             expect(+title.attr('y')).toBeGreaterThan(textBounds.height);
         });
 
-        it('should render the horizontal axis titles align to the right edge', function () {
-            narwhal.render();
-
-            var title = $el.find('.y.axis-title');
-            expect(+title.attr('x')).toBe(narwhal.options.chart.plotWidth);
-            expect(title.attr('text-anchor')).toBe('end');
-        });
-
         it('should render the vertical axis titles to the left of the axis labels', function () {
             narwhal.render();
 
