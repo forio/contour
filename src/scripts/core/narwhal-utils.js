@@ -65,7 +65,27 @@
             if(!array2 || !array2.length) return array1;
 
             return [].concat(array1, array2).sort(function (a,b) { return a-b; });
+        },
+
+        normalizeSeries: function (data) {
+            function normal(set, name) {
+                return {
+                    name: name,
+                    data: _.map(set, function (d, i) { return d.hasOwnProperty('x') && d.hasOwnProperty('y') ? d : { x: i, y: d }; })
+                };
+            }
+
+            if (_.isArray(data)) {
+                if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
+                    // this would be the shape for multiple series
+                    return _.map(data, function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
+                } else {
+                    // this is just the shape [1,2,3,4] or [{x:0, y:1}, { x: 1, y:2}...]
+                    return [normal(data, 'series 1')];
+                }
+            }
         }
+
     };
 
     var axisHelpers = {
