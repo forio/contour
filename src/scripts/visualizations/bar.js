@@ -24,4 +24,4 @@
             .attr('width', function (d) { return yScale(d.y); });
     });
 
-}).call(this);
+})(window);
