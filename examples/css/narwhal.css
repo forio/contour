@@ -38,9 +38,12 @@
   opacity: 1;
   color: #ffffff;
 }
-.forio-tooltip {
+.stack-tooltip {
   font-family: "Consolas", "Monaco", monospace;
   font-size: 13px;
+}
+.stack-tooltip span {
+  white-space: nowrap;
 }
 .s-1 {
   color: #5097fc;
