@@ -1,7 +1,6 @@
 describe('Bar chart', function () {
 
-    var el, $el;
-    var data = [1,2,3];
+    var el, $el, nw;
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
@@ -13,7 +12,12 @@ describe('Bar chart', function () {
         return narwhal;
     }
 
-    describe('render', function () {
+    describe('given simple data', function () {
+        var data = [];
+        beforeEach(function () {
+            data = [1,2,3];
+        });
+
         it('should create one rect per data point', function () {
             createNarwhal().bar(data).render();
             var rects = $el.find('rect');
@@ -43,7 +47,33 @@ describe('Bar chart', function () {
             expect(+rects.eq(1).attr('width')).toBe(x(data[1]));
             expect(+rects.eq(2).attr('width')).toBe(x(data[2]));
         });
+    });
+
+    describe('given multiple series with simple data arrays', function () {
+        beforeEach(function () {
+            nw = narwhal.bar([
+                    { name: 's1', data: [1,2,3] },
+                    { name: 's2', data: [4,4,4] }
+                ]).render();
+        });
 
     });
+
+    describe('given multiple series with uneven data (ie. null values in some series)', function () {
+        beforeEach(function () {
+            nw = createNarwhal().bar([
+                { name: 's1', data: [1,null,3] },
+                { name: 's2', data: [4,5,3] },
+                { name: 's3', data: [4,null,4] }
+            ]).render();
+        });
+
+        it('should behave correctly', function () {
+            var rects = _.filter($el.find('rect'), function (r) { return +$(r).attr('width') > 0; });
+            expect(rects.length).toBe(7);
+        });
+
+    });
+
 
 });
