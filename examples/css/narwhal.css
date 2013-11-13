@@ -38,6 +38,9 @@
   opacity: 1;
   color: #ffffff;
 }
+.s-1 {
+  color: #5097fc;
+}
 .s-1.line,
 .s-1 .line {
   stroke: #5097fc;
@@ -51,6 +54,9 @@
 .s-1 .column,
 .s-1 .dot {
   fill: #5097fc;
+}
+.s-2 {
+  color: #fc4e51;
 }
 .s-2.line,
 .s-2 .line {
@@ -66,6 +72,9 @@
 .s-2 .dot {
   fill: #fc4e51;
 }
+.s-3 {
+  color: #7decbb;
+}
 .s-3.line,
 .s-3 .line {
   stroke: #7decbb;
@@ -80,6 +89,9 @@
 .s-3 .dot {
   fill: #7decbb;
 }
+.s-4 {
+  color: #33363b;
+}
 .s-4.line,
 .s-4 .line {
   stroke: #33363b;
@@ -93,6 +105,9 @@
 .s-4 .column,
 .s-4 .dot {
   fill: #33363b;
+}
+.s-5 {
+  color: #999b9d;
 }
 .s-5.line,
 .s-5 .line {
