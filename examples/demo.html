@@ -118,12 +118,12 @@ var config = {
 
     yAxis: {
         smartAxis: false,
-        min: 0,
+        // min: null,
         max: 15000,
         title: 'Values',
 
         labels: {
-            format: '$,d'
+            format: ',d'
         }
     },
 
@@ -137,7 +137,7 @@ var config = {
 };
 
 
-var data = _.map(coq3, function (d) {
+var data = _.map(coq2, function (d) {
     return {
         x: new Date(d.x),
         y: d.y
@@ -148,11 +148,11 @@ var data = _.map(coq3, function (d) {
 data = [
     {
         name: 'First Series',
-        data: [1000,2000,3000,4000]
+        data: [1000,0,3000,4000, 6000]
     },
     {
         name: 'Second Series',
-        data: [1000,1000,1000,1000]
+        data: [1000,1000,null,1000, null]
     },
     {
         name: 'More Stuff',
@@ -169,6 +169,8 @@ new Narwhal(config)
     .cartesian()
     .horizontal()
     // .column(data)
+    // .line(data)
+    // .tooltip()
     .bar(data)
     .stackTooltip(data, {el: '.legend'})
     .render();
