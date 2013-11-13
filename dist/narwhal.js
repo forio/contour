@@ -560,7 +560,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.15';
+Narwhal.version = '0.0.16';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -787,13 +787,10 @@ Narwhal.version = '0.0.15';
 })('Narwhal', window.d3, window._, window.jQuery);
 
 (function (window, undefined) {
-    var d3 = window.d3;
     var _ = window._;
-
     var defaults = {
         chart: {
             rotatedFrame: true,
-
         },
 
         xAxis: {
@@ -824,14 +821,15 @@ Narwhal.version = '0.0.15';
         },
 
         adjustTitlePadding: function () {
+            var titleBounds;
             if (this.options.xAxis.title || this.options.yAxis.title) {
                 if(this.options.xAxis.title) {
-                    var titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                    titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
                     this.options.chart.padding.left += titleBounds.height + this.options.xAxis.titlePadding;
                 }
 
                 if(this.options.yAxis.title) {
-                    var titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
                     this.options.chart.padding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
                 }
             }
@@ -1020,22 +1018,24 @@ Narwhal.version = '0.0.15';
         var xScale = this.xScale;
         var yScale = this.yScale;
         var rangeBand = this.rangeBand;
+        data = data[0].data ? data : [{ name: 's1', data:data }];
+        var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
+        var stack = d3.layout.stack().values(function (d) { return d.data; });
 
-        var bar = layer.selectAll('.bar')
-            .data(data);
+        var series = layer.selectAll('g.series')
+                .data(stack(data))
+                .enter().append('svg:g')
+                    .attr('class', classFn);
+
+        var bar = series.selectAll('.bar')
+                .data(function (d) { return d.data; });
 
         bar.enter().append('rect')
-            .attr('class', 'bar tooltip-tracker s-1')
-            .attr('x', 0)
-            .attr('y', function (d) {
-                return xScale(d.x);
-            })
-            .attr('height', rangeBand )
-            .attr('width', function (d) {
-                return yScale(d.y);
-            });
-
-
+            .attr('class', 'bar tooltip-tracker')
+            .attr('y', function (d) { return xScale(d.x); })
+            .attr('height', rangeBand)
+            .attr('x', function (d) { return yScale(d.y0 || 0); })
+            .attr('width', function (d) { return yScale(d.y); });
     });
 
 }).call(this);
@@ -1183,6 +1183,26 @@ Narwhal.version = '0.0.15';
     Narwhal.export('line', render);
 
 })('Narwhal', window.d3, window._, window.jQuery);
+
+Narwhal.export('stackTooltip', function (data, layer, options) {
+
+    var tooltip = $(options.stackTooltip.el);
+    tooltip.addClass('stack-tooltip');
+
+    var onMouseOver = function (d) {
+        var filtered = _.filter(_.map(data, function (p, i) { return p.data[d.x] ? { z: p.name, y: p.data[d.x].y, class: 's-' + (i+1) } : null; }), function (x) { return x; });
+        var text = _.map(filtered, function (t) { return '<span class="' + t.class + '"">' + t.z + ': ' + t.y + '</span>'; }).join(' / ');
+        tooltip.html(text).show();
+    };
+
+    var onMouseOut = function (d) {
+        tooltip.html('');
+    };
+
+    this.svg.selectAll('.tooltip-tracker')
+        .on('mouseover.tooltip', onMouseOver.bind(this))
+        .on('mouseout.tooltip',  onMouseOut.bind(this));
+});
 
 (function () {
     var defaults = {

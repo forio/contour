@@ -1,14 +1,15 @@
 .narwhal-chart .axis{stroke:#666;stroke-width:1px;fill:none;shape-rendering:crispEdges;font-family:"Consolas","Monaco",monospace;font-size:13px}.narwhal-chart .axis text{stroke:none;fill:#666}
 .narwhal-chart .axis.x .tick line{stroke:#666}
-.narwhal-chart .axis-title{font-family:"Helvetica Neue",arial,sans-serif;font-size:16px;font-size:14px;line-height:100%;stroke:none;fill:#666}
-.nw-tooltip{position:absolute;text-align:left;min-width:1.5em;min-height:1em;padding:4px 8px;font:10px sans-serif;line-height:16px;background:#555;border:solid 1px #fff;border-radius:8px;pointer-events:none}.nw-tooltip .text{opacity:1;color:#fff}
-.s-1.line{stroke:#5097fc;stroke-width:2px;fill:none}
-.s-1.bar,.s-1.column,.s-1.dot{fill:#5097fc}
-.s-2.line{stroke:#fc4e51;stroke-width:2px;fill:none}
-.s-2.bar,.s-2.column,.s-2.dot{fill:#fc4e51}
-.s-3.line{stroke:#7decbb;stroke-width:2px;fill:none}
-.s-3.bar,.s-3.column,.s-3.dot{fill:#7decbb}
-.s-4.line{stroke:#33363b;stroke-width:2px;fill:none}
-.s-4.bar,.s-4.column,.s-4.dot{fill:#33363b}
-.s-5.line{stroke:#999b9d;stroke-width:2px;fill:none}
-.s-5.bar,.s-5.column,.s-5.dot{fill:#999b9d}
+.narwhal-chart .axis-title{font-family:"Consolas","Monaco",monospace;font-size:13px;font-size:14px;line-height:100%;stroke:none;fill:#666}
+.nw-tooltip{position:absolute;text-align:left;min-width:1.5em;min-height:1em;padding:4px 8px;font:10px sans-serif;line-height:16px;background:#555;border:solid 1px transparent;border-radius:8px;pointer-events:none}.nw-tooltip .text{opacity:1;color:#fff}
+.stack-tooltip{font-family:"Consolas","Monaco",monospace;font-size:13px}.stack-tooltip span{white-space:nowrap}
+.s-1{color:#5097fc}.s-1.line,.s-1 .line{stroke:#5097fc;stroke-width:2px;fill:none}
+.s-1.bar,.s-1.column,.s-1.dot,.s-1 .bar,.s-1 .column,.s-1 .dot{fill:#5097fc}
+.s-2{color:#fc4e51}.s-2.line,.s-2 .line{stroke:#fc4e51;stroke-width:2px;fill:none}
+.s-2.bar,.s-2.column,.s-2.dot,.s-2 .bar,.s-2 .column,.s-2 .dot{fill:#fc4e51}
+.s-3{color:#7decbb}.s-3.line,.s-3 .line{stroke:#7decbb;stroke-width:2px;fill:none}
+.s-3.bar,.s-3.column,.s-3.dot,.s-3 .bar,.s-3 .column,.s-3 .dot{fill:#7decbb}
+.s-4{color:#33363b}.s-4.line,.s-4 .line{stroke:#33363b;stroke-width:2px;fill:none}
+.s-4.bar,.s-4.column,.s-4.dot,.s-4 .bar,.s-4 .column,.s-4 .dot{fill:#33363b}
+.s-5{color:#999b9d}.s-5.line,.s-5 .line{stroke:#999b9d;stroke-width:2px;fill:none}
+.s-5.bar,.s-5.column,.s-5.dot,.s-5 .bar,.s-5 .column,.s-5 .dot{fill:#999b9d}
