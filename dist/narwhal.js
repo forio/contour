@@ -560,7 +560,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.16';
+Narwhal.version = '0.0.17';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -649,8 +649,7 @@ Narwhal.version = '0.0.16';
         },
 
         range: function () {
-            var size = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
-            var range = [0, size];
+            var range = this.options.chart.rotatedFrame ? [this.options.chart.plotHeight, 0] : [0, this.options.chart.plotWidth];
             return this.isCategorized ?
                 this._scale.rangeRoundBands(range, 0.1) :
                 this._scale.rangePoints(range);
@@ -1186,12 +1185,17 @@ Narwhal.version = '0.0.16';
 
 Narwhal.export('stackTooltip', function (data, layer, options) {
 
+    var valueFormatter = this.yAxis().tickFormat();
     var tooltip = $(options.stackTooltip.el);
+
     tooltip.addClass('stack-tooltip');
 
     var onMouseOver = function (d) {
-        var filtered = _.filter(_.map(data, function (p, i) { return p.data[d.x] ? { z: p.name, y: p.data[d.x].y, class: 's-' + (i+1) } : null; }), function (x) { return x; });
-        var text = _.map(filtered, function (t) { return '<span class="' + t.class + '"">' + t.z + ': ' + t.y + '</span>'; }).join(' / ');
+        var isNull = function (p) {
+            return !(p && p.y != null);
+        };
+        var filtered = _.filter(_.map(data, function (p, i) { return !isNull(p.data[d.x]) ? { seriesName: p.name, value: p.data[d.x].y, cssClass: 's-' + (i+1) } : null; }), function (x) { return x; });
+        var text = _.map(filtered, function (t) { return '<span class="' + t.cssClass + '"">' + t.seriesName + ': ' + valueFormatter(t.value) + '</span>'; }).join(' / ');
         tooltip.html(text).show();
     };
 
