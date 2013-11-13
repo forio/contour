@@ -1,11 +1,8 @@
 (function (window, undefined) {
-    var d3 = window.d3;
     var _ = window._;
-
     var defaults = {
         chart: {
             rotatedFrame: true,
-
         },
 
         xAxis: {
@@ -36,14 +33,15 @@
         },
 
         adjustTitlePadding: function () {
+            var titleBounds;
             if (this.options.xAxis.title || this.options.yAxis.title) {
                 if(this.options.xAxis.title) {
-                    var titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                    titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
                     this.options.chart.padding.left += titleBounds.height + this.options.xAxis.titlePadding;
                 }
 
                 if(this.options.yAxis.title) {
-                    var titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
                     this.options.chart.padding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
                 }
             }
