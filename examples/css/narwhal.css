@@ -14,8 +14,8 @@
   stroke: #666666;
 }
 .narwhal-chart .axis-title {
-  font-family: "Helvetica Neue", arial, sans-serif;
-  font-size: 16px;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 13px;
   font-size: 14px;
   line-height: 100%;
   stroke: none;
@@ -30,13 +30,17 @@
   font: 10px sans-serif;
   line-height: 16px;
   background: #555555;
-  border: solid 1px #ffffff;
+  border: solid 1px transparent;
   border-radius: 8px;
   pointer-events: none;
 }
 .nw-tooltip .text {
   opacity: 1;
   color: #ffffff;
+}
+.forio-tooltip {
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 13px;
 }
 .s-1 {
   color: #5097fc;

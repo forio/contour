@@ -10,7 +10,7 @@
 @axis-title-font-size: 14px;
 
 @tooltip-background-color: #555;
-@tooltip-border-color: #fff;
+@tooltip-border-color: transparent;
 @tooltip-text-color: #fff;
 
 @s1-color: #5097fc;
@@ -40,7 +40,7 @@
     }
 
     .axis-title {
-        .sans-serif();
+        .mono-font();
         font-size: @axis-title-font-size;
         line-height: 100%;
         stroke: none;
@@ -64,6 +64,10 @@
         opacity: 1;
         color: @tooltip-text-color;
     }
+}
+
+.forio-tooltip {
+    .mono-font();
 }
 
 .make-series-colors();
