@@ -18,7 +18,7 @@
     <script src="../src/scripts/core/horizontal-frame.js"></script>
     <script src="../src/scripts/visualizations/line.js"></script>
     <script src="../src/scripts/visualizations/tooltip.js"></script>
-    <script src="../src/scripts/visualizations/forio-tooltip.js"></script>
+    <script src="../src/scripts/visualizations/stack-tooltip.js"></script>
     <script src="../src/scripts/visualizations/column.js"></script>
     <script src="../src/scripts/visualizations/bar.js"></script>
     <script src="../src/scripts/connectors/csv.js" ></script>
@@ -119,11 +119,11 @@ var config = {
     yAxis: {
         smartAxis: false,
         min: 0,
-        max: 10,
+        max: 15000,
         title: 'Values',
 
         labels: {
-            format: ',d'
+            format: '$,d'
         }
     },
 
@@ -148,15 +148,15 @@ var data = _.map(coq3, function (d) {
 data = [
     {
         name: 'First Series',
-        data: [1,2,3,4]
+        data: [1000,2000,3000,4000]
     },
     {
         name: 'Second Series',
-        data: [1,1,1,1]
+        data: [1000,1000,1000,1000]
     },
     {
         name: 'More Stuff',
-        data: [4,4,4,2,3,]
+        data: [4000,4000,4000,2000,3000]
     }
 
 ];
