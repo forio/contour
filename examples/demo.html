@@ -18,6 +18,7 @@
     <script src="../src/scripts/core/horizontal-frame.js"></script>
     <script src="../src/scripts/visualizations/line.js"></script>
     <script src="../src/scripts/visualizations/tooltip.js"></script>
+    <script src="../src/scripts/visualizations/forio-tooltip.js"></script>
     <script src="../src/scripts/visualizations/column.js"></script>
     <script src="../src/scripts/visualizations/bar.js"></script>
     <script src="../src/scripts/connectors/csv.js" ></script>
@@ -37,6 +38,10 @@
             fill: red;
         }
 
+        .legend {
+            height: 1.5em;
+        }
+
 
     </style>
 
@@ -46,6 +51,7 @@
 <div class="container">
     <h2>Narwhal</h2>
 
+    <div class="legend"></div>
     <div class="chart"></div>
 
 
@@ -65,13 +71,6 @@ Narwhal.export('scatter', function (data, layer) {
             .attr('cy', y);
 });
 
-Narwhal.export('title', function (data, layer) {
-    layer.append('text')
-        .attr('style', 'font-family: arial')
-        .attr('x', 100)
-        .attr('y', 100)
-        .text('Hello');
-});
 
 // var csvData = 'month,cost,revenue,profit\njan,165,346,181\nfeb,93,340,247\nmar,64,321,257\napr,54,317,263\nmay,189,357,168\njun,80,303,223\njul,196,308,112\naug,165,352,187\nsep,80,359,279\noct,166,335,169\nnov,82,290,208\ndec,177,273,96';
 
@@ -105,7 +104,8 @@ var config = {
     xAxis: {
         firstAndLast: false,
         maxTicks: 10,
-        categories: cats,
+
+        // categories: cats,
         title: 'Type',
         innerTickSize: 6,
         linearDomain: true,
@@ -117,9 +117,10 @@ var config = {
     },
 
     yAxis: {
-        smartAxis: true,
+        smartAxis: false,
         min: 0,
-        title: 'yAxis',
+        max: 10,
+        title: 'Values',
 
         labels: {
             format: ',d'
@@ -144,16 +145,32 @@ var data = _.map(coq3, function (d) {
 })
 
 
-data = [1,2,3,4, 10, 90, 10, 4];
-// data = _.map([1,2,3,4, 10, 20, 10, 4], function ()
+data = [
+    {
+        name: 'First Series',
+        data: [1,2,3,4]
+    },
+    {
+        name: 'Second Series',
+        data: [1,1,1,1]
+    },
+    {
+        name: 'More Stuff',
+        data: [4,4,4,2,3,]
+    }
+
+];
+
+// data = [1,2,3,4,5]
+
 
 
 new Narwhal(config)
     .cartesian()
-    // .horizontal()
-    .column(data)
-    // .bar(data)
-    .tooltip()
+    .horizontal()
+    // .column(data)
+    .bar(data)
+    .stackTooltip(data, {el: '.legend'})
     .render();
 
 </script>
