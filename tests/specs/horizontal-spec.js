@@ -22,6 +22,7 @@ describe('Horizontal frame', function () {
                 },
 
                 xAxis: {
+                    firstAndLast: false,
                     title: 'B'
                 }
             };
@@ -31,29 +32,44 @@ describe('Horizontal frame', function () {
                 .horizontal();
         });
 
-        it('should use inverted scales', function () {
-            narwhal.data([1,2,3]).render();
-            var w = narwhal.options.chart.plotWidth;
+        describe('yScale', function () {
+            it('should go from 0 to width', function () {
+                narwhal.data([1,2,3]).render();
+                var w = narwhal.options.chart.plotWidth;
 
-            expect(narwhal.yScale(0)).toBe(0);
-            expect(narwhal.yScale(3)).toBe(w);
+                expect(narwhal.yScale(0)).toBe(0);
+                expect(narwhal.yScale(3)).toBe(w);
+            });
 
         });
 
-        it('should render the horizontal axis titles below the axis labels', function () {
-            narwhal.render();
+        describe('xScale', function () {
+            it('should be inverted (first index should be below --greater Y coord-- then the last index)', function () {
+                narwhal.data([1,2,3]).render();
 
-            var textBounds = _.nw.textBounds('ABC', '.y.tick');
-            var title = $el.find('.y.axis-title');
-            expect(+title.attr('y')).toBeGreaterThan(textBounds.height);
+                expect(narwhal.xScale(0)).toBeGreaterThan(narwhal.xScale(2));
+            });
         });
 
-        it('should render the vertical axis titles to the left of the axis labels', function () {
-            narwhal.render();
+        describe('yAxis', function () {
+            it('should render the horizontal axis titles below the axis labels', function () {
+                narwhal.render();
 
-            var textBounds = _.nw.textBounds('ABC', '.x.tick');
-            var title = $el.find('.x.axis-title');
-            expect(+title.attr('x')).toBeLessThan(textBounds.width);
+                var textBounds = _.nw.textBounds('ABC', '.y.tick');
+                var title = $el.find('.y.axis-title');
+                expect(+title.attr('y')).toBeGreaterThan(textBounds.height);
+            });
+        });
+
+
+        describe('xAxis', function () {
+            it('should render the vertical axis titles to the left of the axis labels', function () {
+                narwhal.render();
+
+                var textBounds = _.nw.textBounds('ABC', '.x.tick');
+                var title = $el.find('.x.axis-title');
+                expect(+title.attr('x')).toBeLessThan(textBounds.width);
+            });
         });
     });
 

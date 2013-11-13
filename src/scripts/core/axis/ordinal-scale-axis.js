@@ -63,8 +63,7 @@
         },
 
         range: function () {
-            var size = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
-            var range = [0, size];
+            var range = this.options.chart.rotatedFrame ? [this.options.chart.plotHeight, 0] : [0, this.options.chart.plotWidth];
             return this.isCategorized ?
                 this._scale.rangeRoundBands(range, 0.1) :
                 this._scale.rangePoints(range);
