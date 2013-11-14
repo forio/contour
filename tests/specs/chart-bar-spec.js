@@ -49,12 +49,84 @@ describe('Bar chart', function () {
         });
     });
 
-    describe('given multiple series with simple data arrays', function () {
+    describe('given multiple series', function () {
+        var data;
         beforeEach(function () {
-            nw = narwhal.bar([
+            this.addMatchers({
+                toHaveUniqeYCoord: function (expected) {
+                    var actual = this.actual;
+                    var notText = this.isNot ? '(not) ' : '';
+                    this.message = function () { return 'Expected '+ notText + expected + ' uniq Y corrdinates and got ' + uniq.length + ' different ones: [' + uniq.join() +']'; };
+                    var yCoords = {};
+                    var uniq = [];
+                    actual.each(function () {
+                        var key = $(this).attr('y');
+                        if(!yCoords[key]) {
+                            yCoords[key] = true;
+                            uniq.push(key);
+                        }
+                    });
+
+                    return uniq.length === expected;
+                },
+
+                toAllHaveDifferentYCoord: function () {
+                    var actual = this.actual;
+                    var notText = this.isNot ? ' not' : '';
+                    this.message = function () { return 'Expected all to' + notText + ' have different Y coordinates'; };
+                    var yCoords = {};
+                    var correct = true;
+                    actual.each(function () {
+                        var key = $(this).attr('y');
+                        if(!yCoords[key])
+                            yCoords[key] = true;
+                        else
+                            correct = false;
+                    });
+
+                    return correct;
+                }
+            });
+
+            data = [
+                { name: 's1', data: [1,2,3] },
+                { name: 's2', data: [4,4,4] }
+            ];
+
+
+        });
+
+        describe('without stacking', function () {
+            beforeEach(function () {
+                nw = createNarwhal().bar([
                     { name: 's1', data: [1,2,3] },
                     { name: 's2', data: [4,4,4] }
                 ]).render();
+
+
+            });
+
+            it('should render one bar per data point on different y\'s', function () {
+                var rects = $el.find('rect');
+
+                expect(rects).toAllHaveDifferentYCoord();
+            });
+        });
+
+        describe('with stacking', function () {
+            beforeEach(function () {
+                nw = createNarwhal().bar([
+                    { name: 's1', data: [1,2,3] },
+                    { name: 's2', data: [4,4,4] }
+                ], { stacked: true }).render();
+
+
+            });
+
+            it('should render one bar per category', function () {
+                var rects = $el.find('rect');
+                expect(rects).toHaveUniqeYCoord(3);
+            });
         });
 
     });
