@@ -68,13 +68,14 @@
         },
 
         /*jshint eqnull:true */
+        // we are using != null to get null & undefined but not 0
         normalizeSeries: function (data) {
             function normal(set, name) {
                 return {
                     name: name,
                     data: _.map(set, function (d, i) {
-                        var hasX = d.hasOwnProperty('x');
-                        return hasX ? { x: d.x, y: d.y != null ? d.y : null } : { x: i, y: d };
+                        var hasX = d != null && d.hasOwnProperty('x');
+                        return hasX ? { x: d.x, y: d.y != null ? d.y : null } : { x: i, y: typeof d === 'undefined' ? null : d };
                     })
                 };
             }

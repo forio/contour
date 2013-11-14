@@ -107,4 +107,35 @@ describe('normalizeSeries', function () {
         expect(s1.data[2].y).toBe(null);
     });
 
+    it('should normalize null array values as y=null', function () {
+        var data = [1,2,null,undefined,3];
+        var series = _.nw.normalizeSeries(data);
+        var s1 = series[0];
+        expect(s1.data[0].y).toBe(1);
+        expect(s1.data[1].y).toBe(2);
+        expect(s1.data[2].y).toBe(null);
+        expect(s1.data[3].y).toBe(null);
+        expect(s1.data[4].y).toBe(3);
+    });
+
+    describe('when passing a categories array', function () {
+        it('should use the categories array for normalized x values', function () {
+            var data = [1,2,3,4];
+            var cats = ['a', 'b', 'c', 'd'];
+
+            var series = _.nw.normalizeSeries(data, cats);
+            var s1 = series[0];
+
+            expect(s1.data[0].x).toBe('a');
+            expect(s1.data[1].x).toBe('b');
+            expect(s1.data[2].x).toBe('c');
+            expect(s1.data[3].x).toBe('d');
+
+            expect(s1.data[0].y).toBe(1);
+            expect(s1.data[1].y).toBe(2);
+            expect(s1.data[2].y).toBe(3);
+            expect(s1.data[3].y).toBe(4);
+        });
+    });
+
 });
