@@ -32,6 +32,7 @@
         return this;
     }
 
+    // expose functionality to the core Narwhal object
     Narwhal.expose = function (ctorName, functionality) {
         var ctor = function () {
             // extend the --instance-- we don't want all charts to be overriden...
@@ -47,6 +48,7 @@
         return this;
     },
 
+    // export a visualization to be rendred
     Narwhal.export = function (ctorName, renderer) {
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
@@ -95,7 +97,7 @@
             var renderFunc;
             if (_.isArray(data)) {
                 this.data(data);
-                var datums = normalizeSeries.call(this, data);
+                var datums = _.nw.normalizeSeries(data);
                 renderFunc = _.partial(renderer, datums);
             } else {
                 renderFunc = _.partial(renderer, data);
