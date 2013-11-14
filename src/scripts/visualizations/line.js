@@ -14,23 +14,18 @@
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
-        var normalizeData = _.bind(this.datum, this);
+        var normalizeData = data;
 
         var line = d3.svg.line()
             .x(function (d) { return x(d); })
             .y(function (d) { return y(d); });
 
-        if(data[0].data) {
-            _.each(data, function (d, i) {
-                var set = _.map(d.data, normalizeData);
-                appendPath.call(this, set, d.name, i+1);
-            }, this);
-        } else {
-            appendPath.call(this, _.map(data, normalizeData), data.name, 1);
-        }
+        _.each(data, function (d, i) {
+            appendPath.call(this, d.data, d.name, i+1);
+        }, this);
 
         function appendPath(data, seriesName, seriesIndex) {
-            seriesName = seriesName || '';
+            seriesName = seriesName ? seriesName.replace(/\s/, '_') : '';
 
             var nonNullData = _.filter(data, function (d) { return d.y != null; });
             var markerSize = this.options.line.marker.size;
