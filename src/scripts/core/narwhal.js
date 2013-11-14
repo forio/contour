@@ -59,21 +59,6 @@
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
 
-        function normalizeSeries(data) {
-            if(!data || !data.length) return data;
-
-            if(data[0].data) {
-                return _.map(data, _.bind(function (series, index) {
-                    return {
-                        name: series.name || 's' + index,
-                        data: _.map(series.data, _.bind(this.datum, this))
-                    };
-                }, this));
-            }
-
-            return  _.map(data, _.bind(this.datum, this));
-        }
-
         function sortSeries(data) {
             if(!data || !data.length) return [];
 
@@ -237,12 +222,7 @@
         // place holder function for now
         data: function () {
 
-        },
-
-        datum: function (d) {
-            return d;
         }
-
     });
 
     window[ns] = Narwhal;
