@@ -58,6 +58,26 @@ describe('Narwhal', function () {
                 expect(dataParam[0].data[0].y).toBe(1);
             });
 
+            it('when categories array is givem, should normalize the data with categories', function () {
+                Narwhal.export('something', function (data) {
+                    dataParam = data;
+                });
+
+                var target = createNarwhal({
+                    xAxis: {
+                        categories: ['a', 'b', 'c']
+                    }
+                });
+
+                target.something([1,2,3]).render();
+
+                var s1 = dataParam[0];
+                expect(s1.data[0]).toEqual({ x: 'a', y: 1});
+                expect(s1.data[1]).toEqual({ x: 'b', y: 2});
+                expect(s1.data[2]).toEqual({ x: 'c', y: 3});
+
+            });
+
             it('should bind unmodified constructor data when data is not an array', function () {
                 var dataParam;
                 Narwhal.export('something', function (data) {

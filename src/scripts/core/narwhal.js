@@ -23,6 +23,12 @@
             }
         },
 
+        xAxis: {
+        },
+
+        yAxis: {
+        },
+
         tooltip: {
         }
     };
@@ -88,6 +94,7 @@
             data = data || [];
             sortSeries(data);
             renderer.defaults = renderer.defaults || {};
+            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt = {};
             // merge the options passed ito Narwhal's constructore and this vis constructor
             // into a set of options to be merged with the defaults and back into narwhal global options object
@@ -97,7 +104,7 @@
             var renderFunc;
             if (_.isArray(data)) {
                 this.data(data);
-                var datums = _.nw.normalizeSeries(data);
+                var datums = _.nw.normalizeSeries(data, categories);
                 renderFunc = _.partial(renderer, datums);
             } else {
                 renderFunc = _.partial(renderer, data);
