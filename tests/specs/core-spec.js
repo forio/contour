@@ -41,51 +41,60 @@ describe('Narwhal', function () {
             expect(target.somethingElse()).toBe(target);
         });
 
-        // the datum functionality is in catesian, so we need to move this there
-        xit('should bind normalized constructor data when data is an array', function () {
-            var dataParam;
-            Narwhal.export('something', function (data) {
-                dataParam = data;
+        describe('data', function () {
+
+            it('should always bind normalized data if data is array', function () {
+                var dataParam;
+                Narwhal.export('something', function (data) {
+                    dataParam = data;
+                });
+
+                var target = createNarwhal();
+                target.something([1,2,3]).render();
+
+                expect(dataParam[0].name).toBe('series 1');
+                expect(dataParam[0].data.length).toBe(3);
+                expect(dataParam[0].data[0].x).toBe(0);
+                expect(dataParam[0].data[0].y).toBe(1);
             });
 
-            var target = createNarwhal();
-            target.something([1,2,3]).render();
-            expect(dataParam[0].x).toBe(0);
-            expect(dataParam[0].y).toBe(1);
-        });
+            it('should bind unmodified constructor data when data is not an array', function () {
+                var dataParam;
+                Narwhal.export('something', function (data) {
+                    dataParam = data;
+                });
 
-        it('should bind unmodified constructor data when data is not an array', function () {
-            var dataParam;
-            Narwhal.export('something', function (data) {
-                dataParam = data;
+                var target = createNarwhal();
+                target.something('some parameter').render();
+                expect(dataParam).toBe('some parameter');
             });
 
-            var target = createNarwhal();
-            target.something('some parameter').render();
-            expect(dataParam).toBe('some parameter');
-        });
+            it('should sort time based data', function () {
+                var dataParam;
+                Narwhal.export('something', function (data) {
+                    dataParam = data;
+                });
 
-        it('should sort time based data', function () {
-            var dataParam;
-            Narwhal.export('something', function (data) {
-                dataParam = data;
+                var data = [
+                    { x: new Date('2000-01-01 10:00'), y: 10 },
+                    { x: new Date('2010-01-01 10:00'), y: 10 },
+                    { x: new Date('2003-01-01 10:00'), y: 10 },
+                    { x: new Date('2012-01-01 10:00'), y: 10 }
+                ];
+
+                createNarwhal()
+                    .something(data)
+                    .render();
+
+                expect(dataParam.length).toBe(1);   // 1 series
+
+                var series = dataParam[0];
+                expect(series.data.length).toBe(4); // with 4 points
+                expect(series.data[0].x.getFullYear()).toBe(2000);
+                expect(series.data[1].x.getFullYear()).toBe(2003);
+                expect(series.data[2].x.getFullYear()).toBe(2010);
+                expect(series.data[3].x.getFullYear()).toBe(2012);
             });
-
-            var data = [
-                { x: new Date('2000-01-01 10:00'), y: 10 },
-                { x: new Date('2010-01-01 10:00'), y: 10 },
-                { x: new Date('2003-01-01 10:00'), y: 10 },
-                { x: new Date('2012-01-01 10:00'), y: 10 }
-            ];
-
-            createNarwhal()
-                .something(data)
-                .render();
-
-            expect(dataParam[0].x.getFullYear()).toBe(2000);
-            expect(dataParam[1].x.getFullYear()).toBe(2003);
-            expect(dataParam[2].x.getFullYear()).toBe(2010);
-            expect(dataParam[3].x.getFullYear()).toBe(2012);
         });
 
         it('should merge default options defined in render function', function () {
