@@ -23,6 +23,12 @@
             }
         },
 
+        xAxis: {
+        },
+
+        yAxis: {
+        },
+
         tooltip: {
         }
     };
@@ -32,6 +38,7 @@
         return this;
     }
 
+    // expose functionality to the core Narwhal object
     Narwhal.expose = function (ctorName, functionality) {
         var ctor = function () {
             // extend the --instance-- we don't want all charts to be overriden...
@@ -47,24 +54,10 @@
         return this;
     },
 
+    // export a visualization to be rendred
     Narwhal.export = function (ctorName, renderer) {
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
-
-        function normalizeSeries(data) {
-            if(!data || !data.length) return data;
-
-            if(data[0].data) {
-                return _.map(data, _.bind(function (series, index) {
-                    return {
-                        name: series.name || 's' + index,
-                        data: _.map(series.data, _.bind(this.datum, this))
-                    };
-                }, this));
-            }
-
-            return  _.map(data, _.bind(this.datum, this));
-        }
 
         function sortSeries(data) {
             if(!data || !data.length) return [];
@@ -86,6 +79,7 @@
             data = data || [];
             sortSeries(data);
             renderer.defaults = renderer.defaults || {};
+            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt = {};
             // merge the options passed ito Narwhal's constructore and this vis constructor
             // into a set of options to be merged with the defaults and back into narwhal global options object
@@ -95,7 +89,7 @@
             var renderFunc;
             if (_.isArray(data)) {
                 this.data(data);
-                var datums = normalizeSeries.call(this, data);
+                var datums = _.nw.normalizeSeries(data, categories);
                 renderFunc = _.partial(renderer, datums);
             } else {
                 renderFunc = _.partial(renderer, data);
@@ -228,12 +222,7 @@
         // place holder function for now
         data: function () {
 
-        },
-
-        datum: function (d) {
-            return d;
         }
-
     });
 
     window[ns] = Narwhal;
@@ -560,7 +549,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.17';
+Narwhal.version = '0.0.18';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -980,7 +969,34 @@ Narwhal.version = '0.0.17';
             if(!array2 || !array2.length) return array1;
 
             return [].concat(array1, array2).sort(function (a,b) { return a-b; });
+        },
+
+        /*jshint eqnull:true */
+        // we are using != null to get null & undefined but not 0
+        normalizeSeries: function (data, categories) {
+            function normal(set, name) {
+                return {
+                    name: name,
+                    data: _.map(set, function (d, i) {
+                        var hasX = d != null && d.hasOwnProperty('x');
+                        var hasCategories = categories && _.isArray(categories);
+                        var val = function (v) { return v != null ? v : null; };
+                        return hasX ? { x: d.x, y: val(d.y) } : { x: hasCategories ? categories[i] : i, y: val(d) };
+                    })
+                };
+            }
+
+            if (_.isArray(data)) {
+                if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
+                    // this would be the shape for multiple series
+                    return _.map(data, function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
+                } else {
+                    // this is just the shape [1,2,3,4] or [{x:0, y:1}, { x: 1, y:2}...]
+                    return [normal(data, 'series 1')];
+                }
+            }
         }
+
     };
 
     var axisHelpers = {
@@ -1017,7 +1033,6 @@ Narwhal.version = '0.0.17';
         var xScale = this.xScale;
         var yScale = this.yScale;
         var rangeBand = this.rangeBand;
-        data = data[0].data ? data : [{ name: 's1', data:data }];
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
 
@@ -1037,7 +1052,7 @@ Narwhal.version = '0.0.17';
             .attr('width', function (d) { return yScale(d.y); });
     });
 
-}).call(this);
+})(window);
 
 (function (ns, d3, _, $, undefined) {
 
@@ -1051,11 +1066,15 @@ Narwhal.version = '0.0.17';
         var colWidth = this.rangeBand;
         var min = this.options.yAxis.min || this.yMin;
 
+        // for now just user the first series
+        var series = data[0];
+        var seriesName = seriesName;
+
         var col = layer.selectAll('.column')
-            .data(data);
+            .data(series.data);
 
         col.enter().append('rect')
-                .attr('class', 'column v-'+ id + ' s-1')
+                .attr('class', 'column v-'+ id + ' s-1 ' + seriesName)
                 .attr('x', function (d) { return x(d.x); })
                 .attr('y', function () { return y(min); })
                 .attr('height', 0)
@@ -1096,23 +1115,18 @@ Narwhal.version = '0.0.17';
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
-        var normalizeData = _.bind(this.datum, this);
+        var normalizeData = data;
 
         var line = d3.svg.line()
             .x(function (d) { return x(d); })
             .y(function (d) { return y(d); });
 
-        if(data[0].data) {
-            _.each(data, function (d, i) {
-                var set = _.map(d.data, normalizeData);
-                appendPath.call(this, set, d.name, i+1);
-            }, this);
-        } else {
-            appendPath.call(this, _.map(data, normalizeData), data.name, 1);
-        }
+        _.each(data, function (d, i) {
+            appendPath.call(this, d.data, d.name, i+1);
+        }, this);
 
         function appendPath(data, seriesName, seriesIndex) {
-            seriesName = seriesName || '';
+            seriesName = seriesName ? seriesName.replace(/\s/, '_') : '';
 
             var nonNullData = _.filter(data, function (d) { return d.y != null; });
             var markerSize = this.options.line.marker.size;
