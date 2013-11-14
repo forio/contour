@@ -93,8 +93,17 @@ describe('Visualizations', function () {
                 });
 
                 it('should add a path per series', function (){
+                    nw = createNarwhal();
+                    nw.line([{
+                        name: 's1',
+                        data: [1,2,3]
+                    },{
+                        name: 's2',
+                        data: [1,2,3]
+                    }]).render();
+
                     var g = $el.find('g [vis-id="1"]');
-                    expect(g.find('path').length).toBe(1);
+                    expect(g.find('path').length).toBe(2);
                 });
 
                 it('should add the class line to the path element', function () {
