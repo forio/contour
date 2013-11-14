@@ -4,7 +4,6 @@
         var xScale = this.xScale;
         var yScale = this.yScale;
         var rangeBand = this.rangeBand;
-        data = data[0].data ? data : [{ name: 's1', data:data }];
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
 
