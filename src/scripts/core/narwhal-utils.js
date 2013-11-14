@@ -75,7 +75,9 @@
                     name: name,
                     data: _.map(set, function (d, i) {
                         var hasX = d != null && d.hasOwnProperty('x');
-                        return hasX ? { x: d.x, y: d.y != null ? d.y : null } : { x: categories && _.isArray(categories) ? categories[i] : i, y: typeof d === 'undefined' ? null : d };
+                        var hasCategories = categories && _.isArray(categories);
+                        var val = function (v) { return v != null ? v : null; };
+                        return hasX ? { x: d.x, y: val(d.y) } : { x: hasCategories ? categories[i] : i, y: val(d) };
                     })
                 };
             }

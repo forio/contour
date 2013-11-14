@@ -136,6 +136,26 @@ describe('normalizeSeries', function () {
             expect(s1.data[2].y).toBe(3);
             expect(s1.data[3].y).toBe(4);
         });
+
+        it('individual point X values should take presendence over the categories array (we may need to change this assumption later based on usage??)', function () {
+            var data = [
+                { x: 'x', y: 1 },
+                { x: 'y', y: 2 },
+                { x: 'z', y: 3 }
+            ];
+            var cats = ['a', 'b', 'c'];
+
+            var series = _.nw.normalizeSeries(data, cats);
+            var s1 = series[0];
+
+            expect(s1.data[0].x).toBe('x');
+            expect(s1.data[1].x).toBe('y');
+            expect(s1.data[2].x).toBe('z');
+
+            expect(s1.data[0].y).toBe(1);
+            expect(s1.data[1].y).toBe(2);
+            expect(s1.data[2].y).toBe(3);
+        });
     });
 
 });
