@@ -10,11 +10,15 @@
         var colWidth = this.rangeBand;
         var min = this.options.yAxis.min || this.yMin;
 
+        // for now just user the first series
+        var series = data[0];
+        var seriesName = seriesName;
+
         var col = layer.selectAll('.column')
-            .data(data);
+            .data(series.data);
 
         col.enter().append('rect')
-                .attr('class', 'column v-'+ id + ' s-1')
+                .attr('class', 'column v-'+ id + ' s-1 ' + seriesName)
                 .attr('x', function (d) { return x(d.x); })
                 .attr('y', function () { return y(min); })
                 .attr('height', 0)
