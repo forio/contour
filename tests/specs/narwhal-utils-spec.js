@@ -92,4 +92,19 @@ describe('normalizeSeries', function () {
         expect(series[2]).toBeNormalizedSeries();
     });
 
+    it('should normalize missing Y points as null', function () {
+        var data = [
+            { x: 'a', y: 1 },
+            { x: 'b', y: null },
+            { x: 'c' },
+        ];
+
+        var series = _.nw.normalizeSeries(data);
+        var s1 = series[0];
+
+        expect(s1.data[0].y).toBe(1);
+        expect(s1.data[1].y).toBe(null);
+        expect(s1.data[2].y).toBe(null);
+    });
+
 });

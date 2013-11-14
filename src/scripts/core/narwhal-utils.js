@@ -67,11 +67,15 @@
             return [].concat(array1, array2).sort(function (a,b) { return a-b; });
         },
 
+        /*jshint eqnull:true */
         normalizeSeries: function (data) {
             function normal(set, name) {
                 return {
                     name: name,
-                    data: _.map(set, function (d, i) { return d.hasOwnProperty('x') && d.hasOwnProperty('y') ? d : { x: i, y: d }; })
+                    data: _.map(set, function (d, i) {
+                        var hasX = d.hasOwnProperty('x');
+                        return hasX ? { x: d.x, y: d.y != null ? d.y : null } : { x: i, y: d };
+                    })
                 };
             }
 
