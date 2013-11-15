@@ -30,6 +30,14 @@
         enter.call(this, col);
 
         function stacked(col) {
+            /*jshint eqnull:true */
+            if(this.options.yAxis.max == null) {
+                var flat = _.flatten(_.map(data, function (d) { return d.data; }));
+                var max = _.max(flat, function (d) { return d.y0 + d.y; });
+                this.setYDomain([0, max.y + max.y0]);
+                this.redrawYAxis();
+            }
+
             col.attr('x', function (d) { return x(d.x); })
                 .attr('width', function () { return rangeBand; })
                 .attr('y', function (d) { return y(d.y) + y(d.y0) - h; })
