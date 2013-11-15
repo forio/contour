@@ -17,13 +17,19 @@
                     .attr('class', classFn);
 
         var bar = series.selectAll('.bar')
-                .data(function (d) { return d.data; });
+                .data(function (d) { return d.data; })
+                .enter().append('rect')
+                    .attr('class', 'bar tooltip-tracker');
 
-        enter(bar);
+        enter.call(this, bar);
 
         function stacked(bar) {
-            return bar.enter().append('rect')
-                .attr('class', 'bar tooltip-tracker')
+            var flat = _.flatten(_.map(data, function (d) { return d.data; }));
+            var max = _.max(flat, function (d) { return d.y0 + d.y; });
+            this.setYDomain([0, max.y + max.y0]);
+            this.redrawYAxis();
+
+            return bar
                 .attr('y', function (d) { return xScale(d.x); })
                 .attr('height', rangeBand)
                 .attr('x', function (d) { return yScale(d.y0 || 0); })
@@ -34,8 +40,7 @@
             var height = function () { return rangeBand / numSeries - opt.padding; };
             var offset = function (d, i) { return rangeBand / numSeries * i; };
 
-            return bar.enter().append('rect')
-                .attr('class', 'bar tooltip-tracker')
+            return bar
                 .attr('y', function (d, i, j) { return xScale(d.x) + offset(d, j); })
                 .attr('height', height)
                 .attr('x', function () { return yScale(0); })

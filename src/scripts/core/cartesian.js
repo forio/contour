@@ -98,12 +98,22 @@
             var range = this.options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
 
             this.yScale = d3.scale.linear()
-                .domain(yScaleDomain)
                 .range(range);
+
+            this.setYDomain(yScaleDomain);
 
             // if we are not using smartAxis we use d3's nice() domain
             if (!this.options.yAxis.smartAxis)
                 this.yScale.nice();
+        },
+
+        setYDomain: function (domain) {
+            this.yScale.domain(domain).nice();
+        },
+
+        redrawYAxis: function () {
+            // var t = this.svg.transition().duration(750);
+            d3.select(".y.axis").call(this.yAxis());
         },
 
         computeScales: function () {
@@ -124,7 +134,7 @@
             var format = d3.format(options.labels.format);
             var orient = options.orient;
 
-            return  d3.svg.axis()
+            return d3.svg.axis()
                 .scale(this.yScale)
                 .tickFormat(format)
                 .tickSize(options.innerTickSize, options.outerTickSize)
@@ -249,23 +259,37 @@
             return this;
         },
 
-        getYAxisDataMax: function (datums) {
-            return Math.max(this.yMax || 0, _.max(_.pluck(datums, 'y')));
+        getYAxisDataMax: function (data) {
+            return Math.max(this.yMax || 0, _.max(_.pluck(data, 'y')));
         },
 
-        getYAxisDataMin: function (datums) {
-            return Math.min(this.yMin || 0, _.min(_.pluck(datums, 'y')));
+        getYAxisDataMin: function (data) {
+            return Math.min(this.yMin || 0, _.min(_.pluck(data, 'y')));
         },
 
-        extractXDomain: function(datums) {
-            return  this.options.xAxis.categories ? this.options.xAxis.categories : _.pluck(datums, 'x');
+        extractXDomain: function(data) {
+            return  this.options.xAxis.categories ? this.options.xAxis.categories : _.pluck(data, 'x');
         },
 
-        extractYDomain: function (datums) {
-            var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
-            var min = this.yDomain ? Math.min(this.yDomain[0], _.min(_.pluck(datums, 'y'))) : _.min(_.pluck(datums, 'y'));
+        extractYDomain: function (data) {
+            var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(data, 'y'))) : _.max(_.pluck(data, 'y'));
+            var min = this.yDomain ? Math.min(this.yDomain[0], _.min(_.pluck(data, 'y'))) : _.min(_.pluck(data, 'y'));
 
             return [min, max];
+        },
+
+        extractYStackedDomain: function (data) {
+            var dataSets = _.pluck(data, 'data');
+            var maxLength = _.max(dataSets, function (d) { return d.length; });
+            var stackY = [];
+
+            for (var j=0; j<maxLength; j++) {
+                _.each(dataSets, function (datum) {
+                    stackY[j] = datum && datum.y ? (stackY[j] || 0) + datum.y : (stackY[j] || 0);
+                });
+            }
+
+            return [_.min(stackY), _.max(stackY)];
         },
 
         adjustDomain: function () {

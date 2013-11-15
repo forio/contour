@@ -88,8 +88,8 @@
 
             var renderFunc;
             if (_.isArray(data)) {
-                this.data(data);
                 var datums = _.nw.normalizeSeries(data, categories);
+                this.data(datums);
                 renderFunc = _.partial(renderer, datums);
             } else {
                 renderFunc = _.partial(renderer, data);
