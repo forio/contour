@@ -119,7 +119,7 @@ var config = {
     yAxis: {
         smartAxis: false,
         // min: null,
-        max: 15000,
+        // max: 15000,
         title: 'Values',
 
         labels: {
@@ -156,7 +156,7 @@ data = [
     },
     {
         name: 'More Stuff',
-        data: [4000,4000,4000,2000,3000]
+        data: [4840,4000,4000,2520,3230]
     }
 
 ];
@@ -171,8 +171,8 @@ new Narwhal(config)
     // .column(data)
     // .line(data)
     // .tooltip()
-    .bar(data)
-    .stackTooltip(data, {el: '.legend', stacked: true })
+    .bar(data, { stacked: true })
+    .stackTooltip(data, {el: '.legend' })
     .render();
 
 </script>

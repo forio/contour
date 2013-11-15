@@ -24,10 +24,12 @@
         enter.call(this, bar);
 
         function stacked(bar) {
-            var flat = _.flatten(_.map(data, function (d) { return d.data; }));
-            var max = _.max(flat, function (d) { return d.y0 + d.y; });
-            this.setYDomain([0, max.y + max.y0]);
-            this.redrawYAxis();
+            if(this.options.yAxis.max == null) {
+                var flat = _.flatten(_.map(data, function (d) { return d.data; }));
+                var max = _.max(flat, function (d) { return d.y0 + d.y; });
+                this.setYDomain([0, max.y + max.y0]);
+                this.redrawYAxis();
+            }
 
             return bar
                 .attr('y', function (d) { return xScale(d.x); })
@@ -50,7 +52,7 @@
 
     var defaults = {
         bar: {
-            stacked: true,
+            stacked: false,
             padding: 2      // two px between same group bars
         }
     };

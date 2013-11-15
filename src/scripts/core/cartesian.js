@@ -108,12 +108,12 @@
         },
 
         setYDomain: function (domain) {
-            this.yScale.domain(domain).nice();
+            this.yScale.domain(domain);
         },
 
         redrawYAxis: function () {
             // var t = this.svg.transition().duration(750);
-            d3.select(".y.axis").call(this.yAxis());
+            this.svg.select(".y.axis").call(this.yAxis());
         },
 
         computeScales: function () {
