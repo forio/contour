@@ -108,7 +108,7 @@
         },
 
         setYDomain: function (domain) {
-            this.yScale.domain(domain);
+            this.yScale.domain(domain).nice();
         },
 
         redrawYAxis: function () {
