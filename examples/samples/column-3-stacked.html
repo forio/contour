@@ -1,0 +1,34 @@
+<div class="legend-tooltip column-stacked-tooltip"></div>
+<div class="chart column-stacked"></div>
+<script>
+
+
+    var stackedColData = [
+        { name: 'First Series', data: [10, 20, 30, 4, 50 ]},
+        { name: 'Second Series', data: [10, 20, 30, 4, 50 ]},
+        { name: 'Third Series', data: [10, 20, 30, 4, 50 ]},
+        { name: 'Fourd Series', data: [10, 20, 30, 4, 50 ]}
+    ];
+
+    new Narwhal({
+            el: '.column-stacked',
+            xAxis: {
+                title: 'Index',
+                firstAndLast: false,
+                categories: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
+            },
+            yAxis: {
+                smartAxis: false,
+                title: 'Value'
+            },
+            column: {
+                stacked: true
+            }
+        })
+        .cartesian()
+        .column(stackedColData)
+        // .stackTooltip(stackedColData, { el: '.bar-stacked-tooltip' })
+        .stackTooltip(stackedColData, {el: '.column-stacked-tooltip'})
+        .render();
+
+</script>

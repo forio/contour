@@ -1,9 +1,10 @@
-<div class="legend" style="min-height: 1.3em"></div>
+<div class="legend-tooltip bar-stacked-tooltip"></div>
 <div class="chart bar-stacked"></div>
 <script>
 
+(function () {
 
-    data = [
+    var data = [
         {
             name: 'First Series',
             data: [1,2,3,4,2]
@@ -34,7 +35,7 @@
         .cartesian()
         .horizontal()
         .bar(data)
-        .stackTooltip(data, { el: '.legend' })
+        .stackTooltip(data, { el: '.bar-stacked-tooltip' })
         .render();
-
+})();
 </script>
