@@ -88,8 +88,8 @@
 
             var renderFunc;
             if (_.isArray(data)) {
-                this.data(data);
                 var datums = _.nw.normalizeSeries(data, categories);
+                this.data(datums);
                 renderFunc = _.partial(renderer, datums);
             } else {
                 renderFunc = _.partial(renderer, data);
@@ -329,12 +329,22 @@
             var range = this.options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
 
             this.yScale = d3.scale.linear()
-                .domain(yScaleDomain)
                 .range(range);
+
+            this.setYDomain(yScaleDomain);
 
             // if we are not using smartAxis we use d3's nice() domain
             if (!this.options.yAxis.smartAxis)
                 this.yScale.nice();
+        },
+
+        setYDomain: function (domain) {
+            this.yScale.domain(domain);
+        },
+
+        redrawYAxis: function () {
+            // var t = this.svg.transition().duration(750);
+            this.svg.select(".y.axis").call(this.yAxis());
         },
 
         computeScales: function () {
@@ -355,7 +365,7 @@
             var format = d3.format(options.labels.format);
             var orient = options.orient;
 
-            return  d3.svg.axis()
+            return d3.svg.axis()
                 .scale(this.yScale)
                 .tickFormat(format)
                 .tickSize(options.innerTickSize, options.outerTickSize)
@@ -480,23 +490,37 @@
             return this;
         },
 
-        getYAxisDataMax: function (datums) {
-            return Math.max(this.yMax || 0, _.max(_.pluck(datums, 'y')));
+        getYAxisDataMax: function (data) {
+            return Math.max(this.yMax || 0, _.max(_.pluck(data, 'y')));
         },
 
-        getYAxisDataMin: function (datums) {
-            return Math.min(this.yMin || 0, _.min(_.pluck(datums, 'y')));
+        getYAxisDataMin: function (data) {
+            return Math.min(this.yMin || 0, _.min(_.pluck(data, 'y')));
         },
 
-        extractXDomain: function(datums) {
-            return  this.options.xAxis.categories ? this.options.xAxis.categories : _.pluck(datums, 'x');
+        extractXDomain: function(data) {
+            return  this.options.xAxis.categories ? this.options.xAxis.categories : _.pluck(data, 'x');
         },
 
-        extractYDomain: function (datums) {
-            var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(datums, 'y'))) : _.max(_.pluck(datums, 'y'));
-            var min = this.yDomain ? Math.min(this.yDomain[0], _.min(_.pluck(datums, 'y'))) : _.min(_.pluck(datums, 'y'));
+        extractYDomain: function (data) {
+            var max = this.yDomain ? Math.max(this.yDomain[1], _.max(_.pluck(data, 'y'))) : _.max(_.pluck(data, 'y'));
+            var min = this.yDomain ? Math.min(this.yDomain[0], _.min(_.pluck(data, 'y'))) : _.min(_.pluck(data, 'y'));
 
             return [min, max];
+        },
+
+        extractYStackedDomain: function (data) {
+            var dataSets = _.pluck(data, 'data');
+            var maxLength = _.max(dataSets, function (d) { return d.length; });
+            var stackY = [];
+
+            for (var j=0; j<maxLength; j++) {
+                _.each(dataSets, function (datum) {
+                    stackY[j] = datum && datum.y ? (stackY[j] || 0) + datum.y : (stackY[j] || 0);
+                });
+            }
+
+            return [_.min(stackY), _.max(stackY)];
         },
 
         adjustDomain: function () {
@@ -549,7 +573,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.18';
+Narwhal.version = '0.0.19';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -1029,12 +1053,16 @@ Narwhal.version = '0.0.18';
 
 (function (window, undefined) {
 
-    Narwhal.export('bar', function barRender(data, layer, options, i) {
+
+    function barRender(data, layer, options) {
+        var opt = options.bar;
         var xScale = this.xScale;
         var yScale = this.yScale;
         var rangeBand = this.rangeBand;
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
+        var enter = options.bar.stacked ? stacked : grouped;
+        var numSeries = data.length;
 
         var series = layer.selectAll('g.series')
                 .data(stack(data))
@@ -1042,15 +1070,49 @@ Narwhal.version = '0.0.18';
                     .attr('class', classFn);
 
         var bar = series.selectAll('.bar')
-                .data(function (d) { return d.data; });
+                .data(function (d) { return d.data; })
+                .enter().append('rect')
+                    .attr('class', 'bar tooltip-tracker');
 
-        bar.enter().append('rect')
-            .attr('class', 'bar tooltip-tracker')
-            .attr('y', function (d) { return xScale(d.x); })
-            .attr('height', rangeBand)
-            .attr('x', function (d) { return yScale(d.y0 || 0); })
-            .attr('width', function (d) { return yScale(d.y); });
-    });
+        enter.call(this, bar);
+
+        function stacked(bar) {
+            if(this.options.yAxis.max == null) {
+                var flat = _.flatten(_.map(data, function (d) { return d.data; }));
+                var max = _.max(flat, function (d) { return d.y0 + d.y; });
+                this.setYDomain([0, max.y + max.y0]);
+                this.redrawYAxis();
+            }
+
+            return bar
+                .attr('y', function (d) { return xScale(d.x); })
+                .attr('height', rangeBand)
+                .attr('x', function (d) { return yScale(d.y0 || 0); })
+                .attr('width', function (d) { return yScale(d.y); });
+        }
+
+        function grouped() {
+            var height = function () { return rangeBand / numSeries - opt.padding; };
+            var offset = function (d, i) { return rangeBand / numSeries * i; };
+
+            return bar
+                .attr('y', function (d, i, j) { return xScale(d.x) + offset(d, j); })
+                .attr('height', height)
+                .attr('x', function () { return yScale(0); })
+                .attr('width', function (d) { return yScale(d.y); });
+        }
+    }
+
+    var defaults = {
+        bar: {
+            stacked: false,
+            padding: 2      // two px between same group bars
+        }
+    };
+
+    barRender.defaults = defaults;
+
+    Narwhal.export('bar', barRender);
 
 })(window);
 
@@ -1068,7 +1130,7 @@ Narwhal.version = '0.0.18';
 
         // for now just user the first series
         var series = data[0];
-        var seriesName = seriesName;
+        var seriesName = series.name;
 
         var col = layer.selectAll('.column')
             .data(series.data);
