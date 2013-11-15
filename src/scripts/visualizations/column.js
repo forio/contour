@@ -12,7 +12,7 @@
 
         // for now just user the first series
         var series = data[0];
-        var seriesName = seriesName;
+        var seriesName = series.name;
 
         var col = layer.selectAll('.column')
             .data(series.data);
