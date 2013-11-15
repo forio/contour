@@ -339,7 +339,7 @@
         },
 
         setYDomain: function (domain) {
-            this.yScale.domain(domain);
+            this.yScale.domain(domain).nice();
         },
 
         redrawYAxis: function () {
@@ -573,7 +573,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.19';
+Narwhal.version = '0.0.20';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -1119,40 +1119,57 @@ Narwhal.version = '0.0.19';
 (function (ns, d3, _, $, undefined) {
 
     var defaults = {
+        column : {
+            stacked: false,
+            padding: 1
+        }
     };
 
-    function render(data, layer, options, id) {
+    function render(data, layer, options) {
+        var opt = options.column;
         var h = this.options.chart.plotHeight;
         var x = this.xScale;
         var y = this.yScale;
-        var colWidth = this.rangeBand;
-        var min = this.options.yAxis.min || this.yMin;
+        var rangeBand = this.rangeBand;
+        var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
+        var stack = d3.layout.stack().values(function (d) { return d.data; });
+        var enter = this.options.column.stacked ? stacked : grouped;
 
-        // for now just user the first series
-        var series = data[0];
-        var seriesName = series.name;
+        var series = layer.selectAll('g.series')
+                .data(stack(data))
+                .enter().append('g')
+                    .attr('class', classFn);
 
-        var col = layer.selectAll('.column')
-            .data(series.data);
-
+        var col = series.selectAll('.column')
+            .data(function(d) { return d.data; });
         col.enter().append('rect')
-                .attr('class', 'column v-'+ id + ' s-1 ' + seriesName)
-                .attr('x', function (d) { return x(d.x); })
-                .attr('y', function () { return y(min); })
-                .attr('height', 0)
-                .attr('width', function () { return colWidth; });
+            .attr('class', 'column tooltip-tracker');
 
-        if (this.options.chart.animations) {
-            var delay = 3;
-            col.transition().delay(function (d, i) { return i * delay; })
-                .duration(500)
-                .attr('height', function (d) { return h - y(d.y); })
-                .attr('y', function (d) { return y(d.y); });
+        enter.call(this, col);
 
-        } else {
-            col.attr('height', function (d) { return h - y(d.y); })
-                .attr('y', function (d) { return y(d.y); });
+        function stacked(col) {
+            /*jshint eqnull:true */
+            if(this.options.yAxis.max == null) {
+                var flat = _.flatten(_.map(data, function (d) { return d.data; }));
+                var max = _.max(flat, function (d) { return d.y0 + d.y; });
+                this.setYDomain([0, max.y + max.y0]);
+                this.redrawYAxis();
+            }
 
+            col.attr('x', function (d) { return x(d.x); })
+                .attr('width', function () { return rangeBand; })
+                .attr('y', function (d) { return y(d.y) + y(d.y0) - h; })
+                .attr('height', function (d) { return h - y(d.y); });
+        }
+
+        function grouped(col) {
+            var width = rangeBand / data.length - opt.padding;
+            var offset = function (d, i) { return rangeBand / data.length * i; };
+
+            col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j); })
+                .attr('width', width)
+                .attr('y', function (d) { return y(d.y); })
+                .attr('height', function (d) { return h - y(d.y); });
         }
     }
 
@@ -1266,16 +1283,23 @@ Narwhal.export('stackTooltip', function (data, layer, options) {
 
     tooltip.addClass('stack-tooltip');
 
+    /*jshint eqnull:true*/
     var onMouseOver = function (d) {
         var isNull = function (p) {
             return !(p && p.y != null);
         };
-        var filtered = _.filter(_.map(data, function (p, i) { return !isNull(p.data[d.x]) ? { seriesName: p.name, value: p.data[d.x].y, cssClass: 's-' + (i+1) } : null; }), function (x) { return x; });
+        var mapFn = function (p, i) {
+            var index = _.isNumber(d.x) ? d.x : options.xAxis.categories.indexOf(d.x);
+            return !isNull(p.data[index]) ?
+                { seriesName: p.name, value: p.data[index].y, cssClass: 's-' + (i+1) } :
+                null;
+        };
+        var filtered = _.filter(_.map(data, mapFn), function (x) { return x; });
         var text = _.map(filtered, function (t) { return '<span class="' + t.cssClass + '"">' + t.seriesName + ': ' + valueFormatter(t.value) + '</span>'; }).join(' / ');
         tooltip.html(text).show();
     };
 
-    var onMouseOut = function (d) {
+    var onMouseOut = function (/* datum */) {
         tooltip.html('');
     };
 
