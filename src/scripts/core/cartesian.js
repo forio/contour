@@ -101,14 +101,14 @@
                 .range(range);
 
             this.setYDomain(yScaleDomain);
+        },
+
+        setYDomain: function (domain) {
+            this.yScale.domain(domain);
 
             // if we are not using smartAxis we use d3's nice() domain
             if (!this.options.yAxis.smartAxis)
                 this.yScale.nice();
-        },
-
-        setYDomain: function (domain) {
-            this.yScale.domain(domain).nice();
         },
 
         redrawYAxis: function () {
