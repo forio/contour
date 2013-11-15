@@ -25,12 +25,12 @@
 
     <style>
         .chart {
-            width: 960px;
+            width: 90%;
             margin: 10px 0;
         }
 
         .chart svg {
-            border: solid 1px red;
+            border: solid 0px red;
 
         }
 
@@ -148,15 +148,15 @@ var data = _.map(coq2, function (d) {
 data = [
     {
         name: 'First Series',
-        data: [1000,0,3000,4000, 6000]
+        data: [1000,120,3000,4000, 6000, 8000, 2000, 3000, 4000, 5000]
     },
     {
         name: 'Second Series',
-        data: [1000,1000,null,1000, null]
+        data: [1000,1000,500,1000, 5000, 8000, 2000, 3000, 4000, 5000]
     },
     {
         name: 'More Stuff',
-        data: [4840,4000,4000,2520,3230]
+        data: [4840,4000,4000,2520,3230, 8000, 2000, 3000, 4000, 5000]
     }
 
 ];
@@ -167,11 +167,11 @@ data = [
 
 new Narwhal(config)
     .cartesian()
-    .horizontal()
-    // .column(data)
+    // .horizontal()
+    .column(data, { stacked: true } )
     // .line(data)
     // .tooltip()
-    .bar(data, { stacked: true })
+    // .bar(data, { stacked: true })
     .stackTooltip(data, {el: '.legend' })
     .render();
 
