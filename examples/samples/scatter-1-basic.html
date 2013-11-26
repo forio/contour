@@ -1,0 +1,39 @@
+<div class="chart scatter-basic"></div>
+<script>
+
+    series = [];
+    for(var j=0; j<3; j++) {
+        var data = [];
+        series.push({
+            data: data
+        });
+
+        for(var k=0; k<100; k++) {
+            data.push({x: Math.random() * 1000, y: Math.random() * 1000 });
+        }
+    }
+
+    new Narwhal({
+            el: '.scatter-basic',
+            xAxis: {
+                title: 'Value',
+
+                firstAndLast: false,
+                type: 'linear'
+
+            },
+            yAxis: {
+                title: 'Value',
+
+                smartAxis: false,
+            },
+            scatter: {
+                radius: 1.5
+            }
+        })
+        .cartesian()
+        .scatter(series)
+        .tooltip()
+        .render();
+
+</script>
