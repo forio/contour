@@ -12,7 +12,16 @@
                 data[0].data[0].x && _.isDate(data[0].data[0].x) :
                 _.isArray(data) && data.length > 0 && data[0].x && _.isDate(data[0].x);
 
-            return isTimeData && options.xAxis.type !== 'ordinal' ? new _.nw.TimeScale(data, options) : new _.nw.OrdinalScale(data, options);
+
+            if (isTimeData && options.xAxis.type !== 'ordinal') {
+                return new _.nw.TimeScale(data, options);
+            }
+
+            if (options.xAxis.type === 'linear') {
+                return new _.nw.LinearScale(data, options);
+            }
+
+            return new _.nw.OrdinalScale(data, options);
         }
 
     };
