@@ -332,14 +332,14 @@
                 .range(range);
 
             this.setYDomain(yScaleDomain);
+        },
+
+        setYDomain: function (domain) {
+            this.yScale.domain(domain);
 
             // if we are not using smartAxis we use d3's nice() domain
             if (!this.options.yAxis.smartAxis)
                 this.yScale.nice();
-        },
-
-        setYDomain: function (domain) {
-            this.yScale.domain(domain).nice();
         },
 
         redrawYAxis: function () {
@@ -573,7 +573,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.20';
+Narwhal.version = '0.0.21';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -588,7 +588,16 @@ Narwhal.version = '0.0.20';
                 data[0].data[0].x && _.isDate(data[0].data[0].x) :
                 _.isArray(data) && data.length > 0 && data[0].x && _.isDate(data[0].x);
 
-            return isTimeData && options.xAxis.type !== 'ordinal' ? new _.nw.TimeScale(data, options) : new _.nw.OrdinalScale(data, options);
+
+            if (isTimeData && options.xAxis.type !== 'ordinal') {
+                return new _.nw.TimeScale(data, options);
+            }
+
+            if (options.xAxis.type === 'linear') {
+                return new _.nw.LinearScale(data, options);
+            }
+
+            return new _.nw.OrdinalScale(data, options);
         }
 
     };
@@ -596,6 +605,67 @@ Narwhal.version = '0.0.20';
     _.nw = _.extend({}, _.nw, helpers);
 
 })('Narwhal', window.d3, window._, window.jQuery);
+
+(function (window, undefined) {
+
+    function LinearScale(data, options) {
+        this.options = options;
+        this.data = data;
+
+        this.init();
+    }
+
+    LinearScale.prototype = {
+        init: function () {
+            delete this._scale;
+        },
+
+        scale: function (domain) {
+            this._domain = domain;
+            if(!this._scale) {
+                this._scale = d3.scale.linear().domain([0, _.max(domain)]);
+                this._setRange();
+            }
+
+            return this._scale;
+        },
+
+        axis: function () {
+            var options = this.options.xAxis;
+            var axis = d3.svg.axis()
+                .scale(this._scale)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding)
+                .tickFormat(function (d) {
+                    return _.isDate(d) ? d.getDate() : d;
+                });
+
+            if (this.options.xAxis.firstAndLast) {
+                // show only first and last tick
+                axis.tickValues(_.nw.firstAndLast(this._domain));
+            }
+
+            return axis;
+        },
+
+        rangeBand: function () {
+            return 1;
+        },
+
+        postProcessAxis: function () {
+            return this;
+        },
+
+        _setRange: function () {
+            var rangeSize = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
+            var range = this.options.chart.rotatedFrame ? [rangeSize, 0]  : [0, rangeSize];
+            return this._scale.range(range);
+        }
+    };
+
+    _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
+
+})(window);
 
 (function (ns, d3, _, $, undefined) {
 
@@ -607,6 +677,8 @@ Narwhal.version = '0.0.20';
         axis: returns the d3 axis
 
         range: returns the d3 range for the type
+
+        postProcessAxis:
     }
     */
 
@@ -628,7 +700,7 @@ Narwhal.version = '0.0.20';
             if(!this._scale) {
                 this._scale = new d3.scale.ordinal().domain(domain);
 
-                this.range();
+                this._range();
             }
 
             return this._scale;
@@ -661,7 +733,7 @@ Narwhal.version = '0.0.20';
             return this._scale.rangeBand();
         },
 
-        range: function () {
+        _range: function () {
             var range = this.options.chart.rotatedFrame ? [this.options.chart.plotHeight, 0] : [0, this.options.chart.plotWidth];
             return this.isCategorized ?
                 this._scale.rangeRoundBands(range, 0.1) :
@@ -1275,6 +1347,43 @@ Narwhal.version = '0.0.20';
     Narwhal.export('line', render);
 
 })('Narwhal', window.d3, window._, window.jQuery);
+
+(function (window, undefined) {
+
+    var defaults = {
+        scatter: {
+            radius: 4
+        }
+    };
+
+    function ScatterPlot(data, layer, options) {
+        var opt = options.scatter;
+        var halfRangeBand = this.rangeBand / 2;
+        var x = _.bind(function (d) { return this.xScale(d.x) + halfRangeBand; }, this);
+        var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+
+        _.each(data, renderSeries);
+
+        function renderSeries(series, index) {
+            var seriesName = function () { return series.name + ' s-' + (index+1); };
+            var g = layer.append('g')
+                .attr('class', seriesName);
+
+            g.selectAll('dot')
+                .data(series.data)
+                .enter().append('circle')
+                    .attr('class', 'dot tooltip-tracker')
+                    .attr('r', opt.radius)
+                    .attr('cx', x)
+                    .attr('cy', y);
+        }
+    }
+
+    ScatterPlot.defaults = defaults;
+    Narwhal.export('scatter', ScatterPlot);
+
+
+})(window);
 
 Narwhal.export('stackTooltip', function (data, layer, options) {
 
