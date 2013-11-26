@@ -8,6 +8,8 @@
         axis: returns the d3 axis
 
         range: returns the d3 range for the type
+
+        postProcessAxis:
     }
     */
 
@@ -29,7 +31,7 @@
             if(!this._scale) {
                 this._scale = new d3.scale.ordinal().domain(domain);
 
-                this.range();
+                this._range();
             }
 
             return this._scale;
@@ -62,7 +64,7 @@
             return this._scale.rangeBand();
         },
 
-        range: function () {
+        _range: function () {
             var range = this.options.chart.rotatedFrame ? [this.options.chart.plotHeight, 0] : [0, this.options.chart.plotWidth];
             return this.isCategorized ?
                 this._scale.rangeRoundBands(range, 0.1) :
