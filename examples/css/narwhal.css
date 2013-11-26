@@ -57,9 +57,11 @@
 .s-1.bar,
 .s-1.column,
 .s-1.dot,
+.s-1.area,
 .s-1 .bar,
 .s-1 .column,
-.s-1 .dot {
+.s-1 .dot,
+.s-1 .area {
   fill: #5097fc;
 }
 .s-2 {
@@ -74,9 +76,11 @@
 .s-2.bar,
 .s-2.column,
 .s-2.dot,
+.s-2.area,
 .s-2 .bar,
 .s-2 .column,
-.s-2 .dot {
+.s-2 .dot,
+.s-2 .area {
   fill: #fc4e51;
 }
 .s-3 {
@@ -91,9 +95,11 @@
 .s-3.bar,
 .s-3.column,
 .s-3.dot,
+.s-3.area,
 .s-3 .bar,
 .s-3 .column,
-.s-3 .dot {
+.s-3 .dot,
+.s-3 .area {
   fill: #7decbb;
 }
 .s-4 {
@@ -108,9 +114,11 @@
 .s-4.bar,
 .s-4.column,
 .s-4.dot,
+.s-4.area,
 .s-4 .bar,
 .s-4 .column,
-.s-4 .dot {
+.s-4 .dot,
+.s-4 .area {
   fill: #33363b;
 }
 .s-5 {
@@ -125,8 +133,10 @@
 .s-5.bar,
 .s-5.column,
 .s-5.dot,
+.s-5.area,
 .s-5 .bar,
 .s-5 .column,
-.s-5 .dot {
+.s-5 .dot,
+.s-5 .area {
   fill: #999b9d;
 }
