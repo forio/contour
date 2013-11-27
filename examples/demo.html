@@ -24,6 +24,7 @@
     <script src="../src/scripts/visualizations/stack-tooltip.js"></script>
     <script src="../src/scripts/visualizations/column.js"></script>
     <script src="../src/scripts/visualizations/bar.js"></script>
+    <script src="../src/scripts/visualizations/pie.js"></script>
     <script src="../src/scripts/visualizations/scatter.js"></script>
     <script src="../src/scripts/connectors/csv.js" ></script>
 
@@ -93,15 +94,24 @@ var config = {
     },
     yAxis: {
         smartAxis: false,
+    },
+
+    tooltip: {
+        formatter: function (d) {
+            return d.data.x + '<br>' + d.data.y;
+        }
     }
+
 };
 
 
 
 
 var chart = new Narwhal(config)
-    .cartesian()
-    .area(generateSeries(3))
+    // .cartesian()
+    // .area(generateSeries(3))
+    .pie([{ x: 'Alpha', y: 10}, { x: 'Beta', y: 30}, {x: 'Gamma', y: 40}, {x: 'Kappa', y: 20}])
+    .tooltip()
     .render();
 
 
