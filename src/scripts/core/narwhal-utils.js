@@ -119,6 +119,14 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers);
+    var debuggingHelpers = {
+        warning: function (msg) {
+            if(console && console.log) {
+                console.log('WARNING: ' + msg);
+            }
+        }
+    };
+
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers, debuggingHelpers);
 
 })('Narwhal', window.d3, window._, window.jQuery);
