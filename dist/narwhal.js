@@ -573,7 +573,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.21';
+Narwhal.version = '0.0.22';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -1125,6 +1125,60 @@ Narwhal.version = '0.0.21';
 
 (function (window, undefined) {
 
+    var defaults = {
+        xAxis: {
+            type: 'linear'
+        },
+        area: {
+            stacked: true,
+        }
+    };
+
+    function renderer(data, layer, options) {
+        var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2; }, this);
+        var y = _.bind(function (val) { return this.yScale(val); }, this);
+        var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
+        var stack = d3.layout.stack().values(function (d) { return d.data; });
+        var stackedData = stack(data);
+        var area = d3.svg.area()
+            .x(function(d) { return x(d.x); })
+            .y0(function (d) { return y(d.y0); })
+            .y1(function(d) { return y(d.y0 + d.y); });
+
+        adjustDomain.call(this);
+        renderSeries.call(this);
+
+        function adjustDomain() {
+            /*jshint eqnull:true */
+            if(this.options.area.stacked && this.options.yAxis.max == null) {
+                var flat = _.flatten(_.map(stackedData, function (d) { return d.data; }));
+                var max = _.max(flat, function (d) { return d.y0 + d.y; });
+                this.setYDomain([0, max.y + max.y0]);
+                this.redrawYAxis();
+            }
+        }
+
+        function renderSeries() {
+            var series = layer.selectAll('g.series')
+                    .data(stackedData)
+                    .enter().append('g')
+                        .attr('class', classFn);
+
+            series.append('path')
+                .datum(function(d) { return d.data; })
+                .attr('class', 'area')
+                .attr('d', area);
+        }
+    }
+
+    renderer.defaults = defaults;
+
+    Narwhal.export('area', renderer);
+
+})(window);
+
+(function (window, undefined) {
+
 
     function barRender(data, layer, options) {
         var opt = options.bar;
@@ -1279,12 +1333,16 @@ Narwhal.version = '0.0.21';
         function appendPath(data, seriesName, seriesIndex) {
             seriesName = seriesName ? seriesName.replace(/\s/, '_') : '';
 
+            /*jshint eqnull:true */
             var nonNullData = _.filter(data, function (d) { return d.y != null; });
             var markerSize = this.options.line.marker.size;
             var className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
-            var path = layer.append('path').datum(nonNullData).attr('class', 'line ' + className);
             var renderPath = this.options.chart.animations ? renderAnimatedPath : renderSimplePath;
             var renderMakers = this.options.line.marker.enable ? renderLineMarkers : $.noop;
+
+            var path = layer.append('path')
+                    .datum(nonNullData)
+                    .attr('class', 'line ' + className);
 
             renderPath();
             renderMakers();
