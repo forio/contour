@@ -1,6 +1,9 @@
 (function (window, undefined) {
 
     var defaults = {
+        xAxis: {
+            type: 'linear'
+        },
         area: {
 
         }
