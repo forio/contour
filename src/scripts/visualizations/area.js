@@ -5,7 +5,7 @@
             type: 'linear'
         },
         area: {
-
+            stacked: true,
         }
     };
 
@@ -14,22 +14,36 @@
         var y = _.bind(function (val) { return this.yScale(val); }, this);
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
+        var stackedData = stack(data);
         var area = d3.svg.area()
             .x(function(d) { return x(d.x); })
-            .y0(function (d) { return y(d.y0 || 0); })
+            .y0(function (d) { return y(d.y0); })
             .y1(function(d) { return y(d.y0 + d.y); });
 
-        var series = layer.selectAll('g.series')
-                .data(stack(data))
-                .enter().append('g')
-                    .attr('class', classFn);
+        adjustDomain.call(this);
+        renderSeries.call(this);
 
-        series
-            .append('path')
-            .datum(function(d) { return d.data; })
-            .attr('class', 'area')
-            .attr('d', area);
+        function adjustDomain() {
+            /*jshint eqnull:true */
+            if(this.options.area.stacked && this.options.yAxis.max == null) {
+                var flat = _.flatten(_.map(stackedData, function (d) { return d.data; }));
+                var max = _.max(flat, function (d) { return d.y0 + d.y; });
+                this.setYDomain([0, max.y + max.y0]);
+                this.redrawYAxis();
+            }
+        }
 
+        function renderSeries() {
+            var series = layer.selectAll('g.series')
+                    .data(stackedData)
+                    .enter().append('g')
+                        .attr('class', classFn);
+
+            series.append('path')
+                .datum(function(d) { return d.data; })
+                .attr('class', 'area')
+                .attr('d', area);
+        }
     }
 
     renderer.defaults = defaults;

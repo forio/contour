@@ -61,23 +61,52 @@
 <script>
 
 
+var series = [];
 
-    var chart = new Narwhal({
-        el: '.chart',
-        xAxis: {
-            firstAndLast: false
-        },
-        yAxis: {
-            smartAxis: false,
-            max: 90
+var rand = function (num) {
+    return Math.round(Math.random() * num);
+}
+
+var generateSeries = function (numSeries) {
+    numSeries = numSeries || 1;
+    var numPoints = 100;
+    var series = [];
+    for(var i=0, seriesData = []; i<numSeries; i++) {
+        series.push({
+            name: 'S' + (i+1),
+            data: seriesData
+        });
+
+       for(var j=0; j<numPoints; j++) {
+            seriesData.push(rand(10) + 100);
         }
-    })
+    }
+
+    return series;
+}
+
+
+var config = {
+    el: '.chart',
+    xAxis: {
+        firstAndLast: false
+    },
+    yAxis: {
+        smartAxis: false,
+    }
+};
+
+
+
+
+var chart = new Narwhal(config)
     .cartesian()
-    .area([
-        { name: 'ser2', data: [50, 40, 30, 20, 10] },
-        { name: 'ser1', data: [10, 20, 30, 40, 50] },
-        ])
+    .area(generateSeries(3))
     .render();
+
+
+
+
 
 
 </script>
