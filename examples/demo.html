@@ -5,6 +5,7 @@
     <title>Example on How to User Narwhal</title>
     <link rel="stylesheet" href="../examples/css/bootstrap.min.css">
     <link rel="stylesheet" href="../examples/css/narwhal.css">
+
     <script src="../examples/js/vendor/d3.js"></script>
     <script src="../examples/js/vendor/jquery.js"></script>
     <script src="../examples/js/vendor/lodash.js"></script>
@@ -18,6 +19,7 @@
     <script src="../src/scripts/core/cartesian.js"></script>
     <script src="../src/scripts/core/horizontal-frame.js"></script>
     <script src="../src/scripts/visualizations/line.js"></script>
+    <script src="../src/scripts/visualizations/area.js"></script>
     <script src="../src/scripts/visualizations/tooltip.js"></script>
     <script src="../src/scripts/visualizations/stack-tooltip.js"></script>
     <script src="../src/scripts/visualizations/column.js"></script>
@@ -36,9 +38,6 @@
 
         }
 
-        .dot {
-            fill: red;
-        }
 
         .legend {
             height: 1.5em;
@@ -61,148 +60,26 @@
 </div>
 <script>
 
-// var csvData = 'month,cost,revenue,profit\njan,165,346,181\nfeb,93,340,247\nmar,64,321,257\napr,54,317,263\nmay,189,357,168\njun,80,303,223\njul,196,308,112\naug,165,352,187\nsep,80,359,279\noct,166,335,169\nnov,82,290,208\ndec,177,273,96';
-
-// var connector = new Narwhal.connectors.Csv(csvData);
-// connector.dimension('month');
 
 
-var normal = function () {
-    var u1 = Math.random();
-    var u2 = Math.random();
-    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-}
-var rand = function (n) { return normal() * (n || 100); };
-var roundRand = function (n) { return Math.round(rand(n)); };
-var simpleData = [
-    { x: new Date('2000-01-01 10:00'), y: 10 },
-    { x: new Date('2000-01-01 11:00'), y: 20 },
-    { x: new Date('2000-01-02 10:00'), y: 40 },
-    { x: new Date('2000-01-02 11:00'), y: 30 },
-];
-
-var cats = ['XX', 'A', 'B', 'C', 'wer', 'Ecb', 'F', 'G', 'H', 'I']
-
-
-var config = {
-    el: '.chart',
-    chart: {
-        animations: true,
-
-    },
-
-    xAxis: {
-        firstAndLast: false,
-        maxTicks: 10,
-
-        // categories: cats,
-        title: 'Type',
-        innerTickSize: 6,
-        linearDomain: true,
-        labels: {
-            formatter: function (d) {
-                return _.isDate(d) ? d.toTimeString().match(/\d\d:\d\d/)[0] : d;
-            }
-        }
-    },
-
-    yAxis: {
-        smartAxis: false,
-        // min: null,
-        // max: 15000,
-        title: 'Values',
-
-        labels: {
-            format: ',d'
-        }
-    },
-
-    tooltip: {
-        formatter: function (d) {
-            // this should return the HTML contents for the tooltip
-            return _.isDate(d.x) ? 'Time: ' + new Date(d.x).toTimeString().match(/\d\d:\d\d/)[0] + '<br>' + 'Measure: ' + d.y.toFixed(4) :
-                'X: ' + d.x + '<br>' + 'Y: ' + d.y;
-         }
-    }
-};
-
-
-
-// data = [1,2,3,4,5]
-
-var seriesGenerators = [
-    function (x) { return Math.sin(x * Math.PI / 180); },
-    function (x) { return Math.cos(x * Math.PI / 180); },
-];
-
-data = [];
-for(var j=0, len = seriesGenerators.length; j<len; j++) {
-    var seriesData = [];
-    var seriesGeneratorFunction = seriesGenerators[j];
-    var series = {
-        name: 'Series ' + (j+1),
-        data: seriesData
-    };
-
-    data.push(series);
-
-
-    for(var k=0, n=720; k<n; k++) {
-        // seriesData.push(roundRand(1000));
-        // seriesData.push({ x: Math.random() * 10000, y: roundRand(1000) });
-        seriesData.push({x: k, y: seriesGeneratorFunction(k)})
-    }
-
-    seriesData.sort(function (a, b) { return a.x - b.x; });
-}
-
-
-// new Narwhal(config)
-//     .cartesian()
-//     // .horizontal()
-//     .column(data, { stacked: true } )
-//     // .line(data)
-//     // .tooltip()
-//     // .bar(data, { stacked: true })
-//     .stackTooltip(data, {el: '.legend' })
-//     .render();
-
-var now = new Date();
-
-    new Narwhal({
+    var chart = new Narwhal({
         el: '.chart',
-        chart: {
-            padding: {
-                left: 200
-            }
-        },
         xAxis: {
-            firstAndLast: false,
-            type: 'linear',
-            title: 'degrees'
-
+            firstAndLast: false
         },
         yAxis: {
-            min: -1.5,
-            max: 1.5,
             smartAxis: false,
-            title: 'Sine'
-
-
+            max: 90
         }
     })
     .cartesian()
-    .scatter(data, {
-        radius: function (d) { return 1.1; }
-    })
-    .tooltip()
+    .area([
+        { name: 'ser2', data: [50, 40, 30, 20, 10] },
+        { name: 'ser1', data: [10, 20, 30, 40, 50] },
+        ])
     .render();
 
 
-$('#res').text(new Date() - now + ' ms');
-
 </script>
-
-
 </body>
 </html>
