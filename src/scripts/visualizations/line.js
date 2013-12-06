@@ -2,6 +2,7 @@
 
     var defaults = {
         line: {
+            smooth: false,
             marker: {
                 enable: true,
                 size: 2.5
@@ -19,6 +20,8 @@
         var line = d3.svg.line()
             .x(function (d) { return x(d); })
             .y(function (d) { return y(d); });
+
+        if(this.options.line.smooth) line.interpolate('cardinal');
 
         _.each(data, function (d, i) {
             appendPath.call(this, d.data, d.name, i+1);
