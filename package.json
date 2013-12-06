@@ -10,6 +10,10 @@
     "grunt-contrib-copy": "~0.4.1",
     "grunt": "~0.4.1",
     "grunt-bumpup": "~0.4.2",
-    "grunt-tagrelease": "~0.2.1"
+    "grunt-tagrelease": "~0.2.1",
+    "glob": "~3.2.7",
+    "markdox": "~0.1.2",
+    "async": "~0.2.9",
+    "underscore": "~1.5.2"
   }
 }
