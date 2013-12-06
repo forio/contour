@@ -3,18 +3,22 @@
     var defaults = {
         chart: {
             animations: true,
-            defaultWidth: 400,      // by default take the size of the parent container
-            defaultAspect: 1 / 1.61803398875,       // height = width * ratio
-            width: undefined, // calculated at render time based on the options & container
-            height: undefined,  // if defined, height takes precedence over aspect
-            /* margin between the container and the chart (ie labels or axis title) */
+            // by default take the size of the parent container
+            defaultWidth: 400,
+            // height = width * ratio
+            defaultAspect: 1 / 1.61803398875,
+            // calculated at render time based on the options & container
+            width: undefined,
+            // if defined, height takes precedence over aspect
+            height: undefined,
+            // margin between the container and the chart (ie labels or axis title)
             margin: {
                 top: 0,
                 right: 0,
                 bottom: 0,
                 left: 0
             },
-            /* padding between the chart area and the inner plot area */
+            // padding between the chart area and the inner plot area */
             padding: {
                 top: 0,
                 right: 0,
@@ -33,12 +37,37 @@
         }
     };
 
-    function Narwhal(options) {
+    /**
+    * Narwhal visualization constructor
+    * @class Narwhal visualizations object
+    * @param {object} options The global options object
+    * @see {@link Options}
+    *
+    */
+    function Narwhal (options) {
         this.init(options);
         return this;
     }
 
-    // expose functionality to the core Narwhal object
+    /**
+    * Exposes functionality to the core Narwhal object.
+    * This is used to add base functionality to be used by viasualizations
+    * for example the `cartesian` frame is implemented exposing functionality.
+    *
+    * Example:
+    *
+    *
+    *     Narwhal.expose("example", {
+    *          // when included in the instance, this will expose `.transformData` to the visualizations
+    *         transformData: function(data) { .... }
+    *     });
+    *
+    *     // To include the functionality into a specific instance
+    *     new Narwhal(options)
+    *           .example()
+    *           .visualizationsThatUsesTransformDataFunction()
+    *           .render()
+    */
     Narwhal.expose = function (ctorName, functionality) {
         var ctor = function () {
             // extend the --instance-- we don't want all charts to be overriden...
@@ -54,7 +83,14 @@
         return this;
     },
 
-    // export a visualization to be rendred
+    /**
+    * Adds a visualization to be rendered in the instance of Narwhal
+    * This is the main way to expose visualizations to be used
+    *
+    * @param {String} ctorName Name of the visualization to be used as a contructor name
+    * @param {Function} renderer Function that will be called to render the visualization. The function will recieve the data that was passed in to the constructor function
+    * @see options
+    */
     Narwhal.export = function (ctorName, renderer) {
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
@@ -81,7 +117,7 @@
             renderer.defaults = renderer.defaults || {};
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt = {};
-            // merge the options passed ito Narwhal's constructore and this vis constructor
+            // merge the options passed ito Narwhal's constructor and this vis constructor
             // into a set of options to be merged with the defaults and back into narwhal global options object
             opt[ctorName] = $.extend(true, {}, this.options[ctorName], options);
             $.extend(true, this.options, renderer.defaults, opt);
@@ -105,6 +141,7 @@
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
 
+        // Initializes the instance of Narwhal
         init: function (options) {
             // for now, just  store this options here...
             // the final set of options will be composed before rendering

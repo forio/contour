@@ -24,7 +24,7 @@
         renderSeries.call(this);
 
         function adjustDomain() {
-            /*jshint eqnull:true */
+            /* jshint eqnull:true */
             if(this.options.area.stacked && this.options.yAxis.max == null) {
                 var flat = _.flatten(_.map(stackedData, function (d) { return d.data; }));
                 var max = _.max(flat, function (d) { return d.y0 + d.y; });
@@ -48,6 +48,18 @@
 
     renderer.defaults = defaults;
 
+    /*
+    * Renders an area chart onto the narwhal frame
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'}).area([1,2,3,4]);
+    *
+    * @name area
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('area', renderer);
 
 })(window);

@@ -39,7 +39,17 @@
         }
     };
 
-
+    /*
+    * Provides a cartesian frame to the Narwhal instance
+    *
+    * Example:
+    *
+    *     new Narwhal(options)
+    *           .cartesian();
+    *
+    * Now new visualizations have accecss to the cartesian frame functionality
+    * @name .cartesian()
+    */
     var cartesian = {
         dataSrc: [],
 
@@ -102,6 +112,21 @@
 
             this.setYDomain(yScaleDomain);
         },
+
+        /*
+        * Provides a scaling function based on the xAxis values.
+        *
+        * Example:
+        *
+        *     var scaledValue = this.xScale(100);
+        *
+        * @function xScale
+        * @param {Number|String} value The value to be scaled
+        * @return {Number} The scaled value according to the current xAxis settings
+        */
+        xScale: function(val) { return val; },
+
+        yScale: function(val) { return val; },
 
         setYDomain: function (domain) {
             this.yScale.domain(domain);
