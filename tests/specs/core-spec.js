@@ -58,6 +58,25 @@ describe('Narwhal', function () {
                 expect(dataParam[0].data[0].y).toBe(1);
             });
 
+            it('it should normalize to category strings when categories are defined', function () {
+                Narwhal.export('something', function (data) {
+                    dataParam = data;
+                });
+
+                var target = createNarwhal({
+                    xAxis: {
+                        categories: [1, 2, 3]
+                    }
+                });
+
+                target.something([1,2,3]).render();
+
+                var s1 = dataParam[0];
+                expect(s1.data[0]).toEqual({ x: '1', y: 1});
+                expect(s1.data[1]).toEqual({ x: '2', y: 2});
+                expect(s1.data[2]).toEqual({ x: '3', y: 3});
+            });
+
             it('when categories array is givem, should normalize the data with categories', function () {
                 Narwhal.export('something', function (data) {
                     dataParam = data;
