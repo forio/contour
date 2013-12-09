@@ -2,6 +2,7 @@
 
     var defaults = {
         chart: {
+            gridlines: 'none',
             padding: {
                 top: 6,
                 bottom: 25,
@@ -238,6 +239,50 @@
             }
         },
 
+        renderGridlines: function () {
+            var option = this.options.chart.gridlines;
+            var horizontal = option === 'horizontal' || option === 'both';
+            var vertical = option === 'vertical' || option === 'both';
+
+            function getTicks(axis, smart) {
+                var tickValues = axis.tickValues();
+
+                if(!tickValues) return axis.scale().ticks().slice(1);
+
+                smart && tickValues.pop();
+
+                return tickValues.slice(1);
+            }
+
+            var ticks, gr;
+
+            if(horizontal) {
+                gr = this._yAxisGroup.append('svg:g').attr('class', 'grid-lines');
+
+                ticks = getTicks(this.yAxis(), this.options.yAxis.smartAxis);
+                _.each(ticks, function (val) {
+                    var y = this.yScale(val);
+                    gr.append('line')
+                        .attr('class', 'grid-line')
+                        .attr({
+                            x1: 0,
+                            y1: y,
+                            x2: this.options.chart.plotWidth,
+                            y2: y
+                        });
+                }, this);
+
+
+
+            }
+
+            if(vertical) {
+
+            }
+
+            return this;
+        },
+
         render: function () {
             this.composeOptions();
 
@@ -251,6 +296,7 @@
 
             this.renderXAxis()
                 .renderYAxis()
+                .renderGridlines()
                 .renderAxisLabels();
 
             this.renderVisualizations();

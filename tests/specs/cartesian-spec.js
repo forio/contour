@@ -201,6 +201,39 @@ describe('Cartesian frame', function () {
             var dummy = $(narwhal.svg[0]).children().last();
             expect(dummy.attr('name')).toBe('myDummyVisualization');
         });
+
+    });
+
+    describe('Grid lines', function () {
+
+        it('should render horizontal gridLines width xAxis gridlines turned on', function () {
+            createNarwhal({
+                chart: {
+                    gridlines: 'horizontal'
+                }
+            }).data([10,20,30]);
+
+            narwhal.render();
+
+            expect($el.find('.y.axis .grid-line').length).toBe(1);
+        });
+
+        it('should render only gridlines at ticks for smart axis', function () {
+            createNarwhal({
+                chart: {
+                    gridlines: 'horizontal'
+                },
+
+                yAxis: {
+                    smartAxis: false,
+                }
+            }).data([10,20,30]);
+
+            narwhal.render();
+
+            expect($el.find('.y.axis .grid-line').length).toBe(6);
+
+        });
     });
 
 });
