@@ -3,18 +3,22 @@
     var defaults = {
         chart: {
             animations: true,
-            defaultWidth: 400,      // by default take the size of the parent container
-            defaultAspect: 1 / 1.61803398875,       // height = width * ratio
-            width: undefined, // calculated at render time based on the options & container
-            height: undefined,  // if defined, height takes precedence over aspect
-            /* margin between the container and the chart (ie labels or axis title) */
+            // by default take the size of the parent container
+            defaultWidth: 400,
+            // height = width * ratio
+            defaultAspect: 1 / 1.61803398875,
+            // calculated at render time based on the options & container
+            width: undefined,
+            // if defined, height takes precedence over aspect
+            height: undefined,
+            // margin between the container and the chart (ie labels or axis title)
             margin: {
                 top: 0,
                 right: 0,
                 bottom: 0,
                 left: 0
             },
-            /* padding between the chart area and the inner plot area */
+            // padding between the chart area and the inner plot area */
             padding: {
                 top: 0,
                 right: 0,
@@ -33,12 +37,37 @@
         }
     };
 
-    function Narwhal(options) {
+    /**
+    * Narwhal visualization constructor
+    * @class Narwhal visualizations object
+    * @param {object} options The global options object
+    * @see {@link Options}
+    *
+    */
+    function Narwhal (options) {
         this.init(options);
         return this;
     }
 
-    // expose functionality to the core Narwhal object
+    /**
+    * Exposes functionality to the core Narwhal object.
+    * This is used to add base functionality to be used by viasualizations
+    * for example the `cartesian` frame is implemented exposing functionality.
+    *
+    * Example:
+    *
+    *
+    *     Narwhal.expose("example", {
+    *          // when included in the instance, this will expose `.transformData` to the visualizations
+    *         transformData: function(data) { .... }
+    *     });
+    *
+    *     // To include the functionality into a specific instance
+    *     new Narwhal(options)
+    *           .example()
+    *           .visualizationsThatUsesTransformDataFunction()
+    *           .render()
+    */
     Narwhal.expose = function (ctorName, functionality) {
         var ctor = function () {
             // extend the --instance-- we don't want all charts to be overriden...
@@ -54,7 +83,14 @@
         return this;
     },
 
-    // export a visualization to be rendred
+    /**
+    * Adds a visualization to be rendered in the instance of Narwhal
+    * This is the main way to expose visualizations to be used
+    *
+    * @param {String} ctorName Name of the visualization to be used as a contructor name
+    * @param {Function} renderer Function that will be called to render the visualization. The function will recieve the data that was passed in to the constructor function
+    * @see options
+    */
     Narwhal.export = function (ctorName, renderer) {
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
@@ -81,7 +117,7 @@
             renderer.defaults = renderer.defaults || {};
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt = {};
-            // merge the options passed ito Narwhal's constructore and this vis constructor
+            // merge the options passed ito Narwhal's constructor and this vis constructor
             // into a set of options to be merged with the defaults and back into narwhal global options object
             opt[ctorName] = $.extend(true, {}, this.options[ctorName], options);
             $.extend(true, this.options, renderer.defaults, opt);
@@ -105,6 +141,7 @@
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
 
+        // Initializes the instance of Narwhal
         init: function (options) {
             // for now, just  store this options here...
             // the final set of options will be composed before rendering
@@ -250,7 +287,9 @@
             firstAndLast: true,
             orient: 'bottom',
             labels: {
-            }
+                // format: 'd'
+            },
+            // linearDomain: false,     // specify if a time domain should be treated linearly or ....
         },
 
         yAxis: {
@@ -270,7 +309,17 @@
         }
     };
 
-
+    /*
+    * Provides a cartesian frame to the Narwhal instance
+    *
+    * Example:
+    *
+    *     new Narwhal(options)
+    *           .cartesian();
+    *
+    * Now new visualizations have accecss to the cartesian frame functionality
+    * @name .cartesian()
+    */
     var cartesian = {
         dataSrc: [],
 
@@ -333,6 +382,21 @@
 
             this.setYDomain(yScaleDomain);
         },
+
+        /*
+        * Provides a scaling function based on the xAxis values.
+        *
+        * Example:
+        *
+        *     var scaledValue = this.xScale(100);
+        *
+        * @function xScale
+        * @param {Number|String} value The value to be scaled
+        * @return {Number} The scaled value according to the current xAxis settings
+        */
+        xScale: function(val) { return val; },
+
+        yScale: function(val) { return val; },
 
         setYDomain: function (domain) {
             this.yScale.domain(domain);
@@ -573,7 +637,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.23';
+Narwhal.version = '0.0.24';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -621,9 +685,11 @@ Narwhal.version = '0.0.23';
         },
 
         scale: function (domain) {
-            this._domain = domain;
+            this._domain = domain ? this._getAxisDomain(domain) : this._getAxisDomain(this.data);
             if(!this._scale) {
-                this._scale = d3.scale.linear().domain([0, _.max(domain)]);
+                this._scale = d3.scale.linear().domain(this._domain);
+                if(this.options.xAxis.min == null && this.options.xAxis.max == null)
+                    this._scale.nice();
                 this._setRange();
             }
 
@@ -632,12 +698,13 @@ Narwhal.version = '0.0.23';
 
         axis: function () {
             var options = this.options.xAxis;
+            var formatLabel = d3.format(options.labels.format || 'd');
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickFormat(function (d) {
-                    return _.isDate(d) ? d.getDate() : d;
+                    return _.isDate(d) ? d.getDate() : formatLabel(d);
                 });
 
             if (this.options.xAxis.firstAndLast) {
@@ -657,10 +724,24 @@ Narwhal.version = '0.0.23';
         },
 
         _setRange: function () {
-            var rangeSize = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
-            var range = this.options.chart.rotatedFrame ? [rangeSize, 0]  : [0, rangeSize];
+            var rangeSize = !!this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
+            var range = !!this.options.chart.rotatedFrame ? [rangeSize, 0]  : [0, rangeSize];
             return this._scale.range(range);
-        }
+        },
+
+        _getAxisDomain: function (domain) {
+            /*jshint eqnull: true*/
+            var optMin = this.options.xAxis.min;
+            var optMax = this.options.xAxis.max;
+            var min = optMin != null ? this.options.xAxis.min : d3.min(domain);
+            var max = optMax != null ? this.options.xAxis.max : d3.max(domain);
+
+            if(optMin != null && optMax != null && optMin > optMax) {
+                return d3.extent(domain);
+            }
+
+            return [min, max];
+        },
     };
 
     _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
@@ -1157,7 +1238,7 @@ Narwhal.version = '0.0.23';
         renderSeries.call(this);
 
         function adjustDomain() {
-            /*jshint eqnull:true */
+            /* jshint eqnull:true */
             if(this.options.area.stacked && this.options.yAxis.max == null) {
                 var flat = _.flatten(_.map(stackedData, function (d) { return d.data; }));
                 var max = _.max(flat, function (d) { return d.y0 + d.y; });
@@ -1181,6 +1262,18 @@ Narwhal.version = '0.0.23';
 
     renderer.defaults = defaults;
 
+    /*
+    * Renders an area chart onto the narwhal frame
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'}).area([1,2,3,4]);
+    *
+    * @name area
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('area', renderer);
 
 })(window);
@@ -1316,6 +1409,7 @@ Narwhal.version = '0.0.23';
 
     var defaults = {
         line: {
+            smooth: false,
             marker: {
                 enable: true,
                 size: 2.5
@@ -1333,6 +1427,8 @@ Narwhal.version = '0.0.23';
         var line = d3.svg.line()
             .x(function (d) { return x(d); })
             .y(function (d) { return y(d); });
+
+        if(this.options.line.smooth) line.interpolate('cardinal');
 
         _.each(data, function (d, i) {
             appendPath.call(this, d.data, d.name, i+1);
@@ -1459,6 +1555,9 @@ Narwhal.version = '0.0.23';
 (function (window, undefined) {
 
     var defaults = {
+        xAxis: {
+            type: 'linear'
+        },
         scatter: {
             radius: 4
         }
