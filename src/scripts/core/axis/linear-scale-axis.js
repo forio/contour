@@ -13,9 +13,9 @@
         },
 
         scale: function (domain) {
-            this._domain = domain;
+            this._domain = domain ? this._getAxisDomain(domain) : this._getAxisDomain(this.data);
             if(!this._scale) {
-                this._scale = d3.scale.linear().domain([0, _.max(domain)]);
+                this._scale = d3.scale.linear().domain(this._domain).nice();
                 this._setRange();
             }
 
@@ -24,12 +24,13 @@
 
         axis: function () {
             var options = this.options.xAxis;
+            var formatLabel = d3.format(options.labels.format || 'd');
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickFormat(function (d) {
-                    return _.isDate(d) ? d.getDate() : d;
+                    return _.isDate(d) ? d.getDate() : formatLabel(d);
                 });
 
             if (this.options.xAxis.firstAndLast) {
@@ -49,10 +50,24 @@
         },
 
         _setRange: function () {
-            var rangeSize = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
-            var range = this.options.chart.rotatedFrame ? [rangeSize, 0]  : [0, rangeSize];
+            var rangeSize = !!this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
+            var range = !!this.options.chart.rotatedFrame ? [rangeSize, 0]  : [0, rangeSize];
             return this._scale.range(range);
-        }
+        },
+
+        _getAxisDomain: function (domain) {
+            /*jshint eqnull: true*/
+            var optMin = this.options.xAxis.min;
+            var optMax = this.options.xAxis.max;
+            var min = optMin != null ? this.options.xAxis.min : d3.min(domain);
+            var max = optMax != null ? this.options.xAxis.max : d3.max(domain);
+
+            if(optMin != null && optMax != null && optMin > optMax) {
+                return d3.extent(domain);
+            }
+
+            return [min, max];
+        },
     };
 
     _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
