@@ -15,7 +15,9 @@
         scale: function (domain) {
             this._domain = domain ? this._getAxisDomain(domain) : this._getAxisDomain(this.data);
             if(!this._scale) {
-                this._scale = d3.scale.linear().domain(this._domain).nice();
+                this._scale = d3.scale.linear().domain(this._domain);
+                if(this.options.xAxis.min == null && this.options.xAxis.max == null)
+                    this._scale.nice();
                 this._setRange();
             }
 

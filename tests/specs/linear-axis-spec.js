@@ -64,14 +64,14 @@ describe('Linear axis scale', function () {
     });
 
 
-    // it('should use not use nicing if min || max are defined', function () {
-    //     var opt = {
-    //         xAxis: {
-    //             min: 3,
-    //             max: 297
-    //         }
-    //     };
+    it('should use not use nicing if min || max are defined', function () {
+        var opt = {
+            xAxis: {
+                min: 3,
+                max: 297
+            }
+        };
 
-    //     expect(createAxis(opt).scale().domain()).toEqual([3, 297]);
-    // });
+        expect(createAxis(opt).scale().domain()).toEqual([3, 297]);
+    });
 });
