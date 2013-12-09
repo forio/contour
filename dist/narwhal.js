@@ -637,7 +637,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.24';
+Narwhal.version = '0.0.25';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -1158,7 +1158,7 @@ Narwhal.version = '0.0.24';
                         var hasX = d != null && d.hasOwnProperty('x');
                         var hasCategories = categories && _.isArray(categories);
                         var val = function (v) { return v != null ? v : null; };
-                        return hasX ? { x: d.x, y: val(d.y) } : { x: hasCategories ? categories[i] : i, y: val(d) };
+                        return hasX ? { x: d.x, y: val(d.y) } : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
                     })
                 };
             }
