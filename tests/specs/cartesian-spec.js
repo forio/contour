@@ -43,14 +43,6 @@ describe('Cartesian frame', function () {
         assert_hasDefaultEmptyYScale(narwhal);
     });
 
-    // it('should always treat categories as strings', function () {
-    //         var narwhal = createNarwhal({xAxis: { categories: [1,2,3] }});
-
-    //         narwhal.data([10,20,30]).render();
-
-    //         expect(typeof narwhal.options.xAxis.categories[1]).toEqual('string');
-    // });
-
     describe('with simple array data', function () {
         it('should auto generate categories and add x values as category strings', function () {
             var narwhal = createNarwhal();
