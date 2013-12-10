@@ -206,7 +206,7 @@ describe('Cartesian frame', function () {
 
     describe('Grid lines', function () {
 
-        it('should render horizontal gridLines width xAxis gridlines turned on', function () {
+        it('should render horizontal gridLines width gridlines turned on', function () {
             createNarwhal({
                 chart: {
                     gridlines: 'horizontal'
@@ -233,6 +233,59 @@ describe('Cartesian frame', function () {
 
             expect($el.find('.y.axis .grid-line').length).toBe(6);
 
+        });
+
+        it('when vertical turned on should render vertical gridLines for only for the first and last categories when firstAndLast is turned on', function () {
+            createNarwhal({
+                chart: {
+                    gridlines: 'vertical'
+                },
+                xAxis: {
+                    categories: ['red', 'green', 'blue'],
+                    firstAndLast: true,
+                }
+            }).data([10,20,30]);
+
+            narwhal.render();
+
+            expect($el.find('.x.axis .grid-line').length).toBe(2);
+        });
+
+
+        it('when vertical turned on should render vertical gridLines for all x values when turned on with firstAndLast turned off', function () {
+            createNarwhal({
+                chart: {
+                    gridlines: 'vertical'
+                },
+                xAxis: {
+                    categories: ['red', 'green', 'blue'],
+                    firstAndLast: false,
+                }
+            }).data([10,20,30]);
+
+            narwhal.render();
+
+            expect($el.find('.x.axis .grid-line').length).toBe(3);
+        });
+
+
+        it('when vertical turned on should render vertical gridLines for all x values with linear x axis', function () {
+            createNarwhal({
+                chart: {
+                    gridlines: 'vertical'
+                },
+                xAxis: {
+                    type: 'linear',
+                    firstAndLast: false,
+                }
+            })
+            /* this data gives a tick every 0.5, total 9 (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4) */
+            .data([10,20,30, 40, 50]);
+
+            narwhal.render();
+
+            /* we don't render grid line at the origin x=0 so we should get 8 gridlines */
+            expect($el.find('.x.axis .grid-line').length).toBe(8);
         });
     });
 

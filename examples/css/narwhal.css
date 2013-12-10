@@ -21,6 +21,9 @@
   stroke: none;
   fill: #666666;
 }
+.narwhal-chart .grid-line {
+  stroke: #cfcfcf;
+}
 .nw-tooltip {
   position: absolute;
   text-align: left;

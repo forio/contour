@@ -244,22 +244,26 @@
             var horizontal = option === 'horizontal' || option === 'both';
             var vertical = option === 'vertical' || option === 'both';
 
-            function getTicks(axis, smart) {
+            function getYTicks(axis, smart) {
                 var tickValues = axis.tickValues();
 
-                if(!tickValues) return axis.scale().ticks().slice(1);
+                if(!tickValues)
+                    return axis.scale().ticks().slice(1);
 
                 smart && tickValues.pop();
 
                 return tickValues.slice(1);
             }
 
+            function getXTicks(axis) {
+                return axis.tickValues() || (axis.scale().ticks ? axis.scale().ticks().slice(1) : axis.scale().domain());
+            }
+
             var ticks, gr;
 
             if(horizontal) {
                 gr = this._yAxisGroup.append('svg:g').attr('class', 'grid-lines');
-
-                ticks = getTicks(this.yAxis(), this.options.yAxis.smartAxis);
+                ticks = getYTicks(this.yAxis(), this.options.yAxis.smartAxis);
                 _.each(ticks, function (val) {
                     var y = this.yScale(val);
                     gr.append('line')
@@ -271,12 +275,24 @@
                             y2: y
                         });
                 }, this);
-
-
-
             }
 
             if(vertical) {
+                gr = this._xAxisGroup.append('svg:g').attr('class', 'grid-lines');
+                ticks = getXTicks(this.xAxis());
+
+                _.each(ticks, function (val) {
+                    var x = this.xScale(val);
+                    var offset = this.rangeBand / 2;
+                    gr.append('line')
+                        .attr('class', 'grid-line')
+                        .attr({
+                            x1: x + offset,
+                            y1: -this.options.chart.plotHeight,
+                            x2: x + offset,
+                            y2: 0
+                        });
+                }, this);
 
             }
 
