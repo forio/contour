@@ -39,7 +39,8 @@
 
     /**
     * Narwhal visualization constructor
-    * @class Narwhal visualizations object
+    *
+    * @class Narwhal() visualizations object
     * @param {object} options The global options object
     * @see {@link Options}
     *

@@ -1,3 +1,18 @@
+
+/*
+* Renders a tooltip legend combination for stacked series.
+*
+*
+* ### Example
+*     new Narwha({el: '.chart'})
+*           .stackedTooltip([1,2,3,4]);
+*
+* @name .stackedTooltip(data, options)
+* @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+* @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector the container where to render the tooptip
+* @api public
+*
+*/
 Narwhal.export('stackTooltip', function (data, layer, options) {
 
     var valueFormatter = this.yAxis().tickFormat();

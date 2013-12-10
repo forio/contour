@@ -36,6 +36,20 @@
 
     renderer.defaults = defaults;
 
+
+    /*
+    * Renders a pie chart onto the narwhal frame.
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .pie([1,2,3,4]);
+    *
+    * @name .pie(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('pie', renderer);
 
 })(window);

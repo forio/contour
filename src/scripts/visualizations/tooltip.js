@@ -74,6 +74,21 @@
 
     render.defaults = defaults;
 
+
+    /*
+    * Renders a tooltip on hover.
+    *
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .tooltip(null, options);
+    *
+    * @name .tooltip(data, options)
+    * @param {object|array} data ignored!
+    * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector the container where to render the tooptip
+    * @api public
+    *
+    */
     Narwhal.export('tooltip', render);
 
 

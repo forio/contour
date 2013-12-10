@@ -56,6 +56,23 @@
     }
 
     render.defaults = defaults;
+
+    /*
+    * Renders a column chart (vertical columns) onto the narwhal frame.
+    *
+    * This visualization requires *cartesian()*
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .cartesian()
+    *           .column([1,2,3,4]);
+    *
+    * @name .column(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('column', render);
 
 })('Narwhal', window.d3, window._, window.jQuery);

@@ -58,7 +58,23 @@
     };
 
     barRender.defaults = defaults;
-
+    /*
+    * Renders a bar chart (horizontal columns) onto the narwhal frame.
+    *
+    * You can use this visualization to render stacked & grouped charts (controlled through the options). This visualization requires *cartesian()* and *horizontal()*
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .cartesian()
+    *           .horizontal()
+    *           .bar([1,2,3,4]);
+    *
+    * @name .bar(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('bar', barRender);
 
 })(window);

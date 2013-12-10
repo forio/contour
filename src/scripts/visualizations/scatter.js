@@ -33,6 +33,22 @@
     }
 
     ScatterPlot.defaults = defaults;
+
+    /*
+    * Renders a scatter plot chart
+    * This visualization requires *cartesian()*
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .cartesian()
+    *           .scatter([1,2,3,4]);
+    *
+    * @name .scatter(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('scatter', ScatterPlot);
 
 

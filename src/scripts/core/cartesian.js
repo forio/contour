@@ -22,7 +22,7 @@
             labels: {
                 // format: 'd'
             },
-            // linearDomain: false,     // specify if a time domain should be treated linearly or ....
+            linearDomain: false,     // specify if a time domain should be treated linearly or ....
         },
 
         yAxis: {
@@ -123,14 +123,34 @@
         *
         *     var scaledValue = this.xScale(100);
         *
-        * @function xScale
+        * @function this.xScale()
         * @param {Number|String} value The value to be scaled
         * @return {Number} The scaled value according to the current xAxis settings
         */
         xScale: function(val) { return val; },
 
+        /*
+        * Provides a scaling function based on the xAxis values.
+        *
+        * Example:
+        *
+        *     var scaledValue = this.xScale(100);
+        *
+        * @function this.yScale()
+        * @param {Number} value The value to be scaled
+        * @return {Number} The scaled value according to the current yAxis settings
+        */
         yScale: function(val) { return val; },
 
+        /*
+        * Modifies the domain for the y axis.
+        *
+        * Example:
+        *
+        *     this.setYDomain([100, 200]);
+        *
+        * @param {Array} domain The domain array represeting the min and max values of to be visible in the y Axis
+        */
         setYDomain: function (domain) {
             this.yScale.domain(domain);
 
@@ -139,8 +159,15 @@
                 this.yScale.nice();
         },
 
+        /*
+        * Redraws the yAxis with the new settings and domain
+        *
+        * Example:
+        *
+        *     this.redrawYAxis(;
+        *
+        */
         redrawYAxis: function () {
-            // var t = this.svg.transition().duration(750);
             this.svg.select(".y.axis").call(this.yAxis());
         },
 
