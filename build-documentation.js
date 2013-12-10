@@ -7,9 +7,13 @@ var async = require('async');
 var path = require('path');
 var _ = require('lodash');
 
-var docFolder = __dirname + '/documentation';
-var configDocFolder = docFolder + '/config/';
-var propTemplatePath = docFolder + '/config/prop.template.md';
+var docFolder = __dirname + '/documentation/';
+var configDocFolder = docFolder + 'config/';
+
+var docSrcFolder = __dirname + '/src/documentation/';
+var configTemplateDocFolder = docSrcFolder + '/config/';
+
+var propTemplatePath = docSrcFolder + 'prop-template.md';
 
 var options = {
     src: [
@@ -26,12 +30,49 @@ var options = {
 
 var allFiles = getSourceFileList(options.src);
 
-// generatePerFileDoc(allFiles);
-// generateAllFilesDoc(allFiles);
-generateConfigObjectDoc(allFiles, options.configTarget);
+generatePerFileDoc(allFiles);
+generateAllFilesDoc(allFiles);
+generateConfigObjectDoc(allFiles);
+
+copyDocViewer();
 
 
+function copyDocViewer() {
+    ['index.html', 'docs.css', 'markdown.js'].forEach(function (file) {
+        var src = docSrcFolder + file;
+        var dst = docFolder + file;
+        if(fs.existsSync(docSrcFolder + file)) {
+            console.log('copying file ' + src + ' -> ' + dst);
+            copyFile(src, dst, function(err) { if(err) console.log(err); });
+        } else {
+            console.log('file ' + src + ' does not exists!');
+        }
+    });
+}
 
+function copyFile(source, target, cb) {
+    var cbCalled = false;
+
+    var rd = fs.createReadStream(source);
+    rd.on("error", function(err) {
+        done(err);
+    });
+    var wr = fs.createWriteStream(target);
+    wr.on("error", function(err) {
+        done(err);
+    });
+    wr.on("close", function(ex) {
+        done();
+    });
+    rd.pipe(wr);
+
+    function done(err) {
+        if (!cbCalled) {
+            cb(err);
+            cbCalled = true;
+        }
+    }
+}
 
 function getSourceFileList(srcSpec) {
     var allFiles = [];
@@ -47,7 +88,7 @@ function getSourceFileList(srcSpec) {
 function generatePerFileDoc(allFiles) {
     // One file per Javascript file
     async.forEach(allFiles, function(file, next) {
-        var output = docFolder + '/' + path.basename(file) + '.md';
+        var output = docFolder + path.basename(file) + '.md';
         markdox.process(file, output, next);
     }, function(err) {
         if (err) {
@@ -60,14 +101,14 @@ function generatePerFileDoc(allFiles) {
 
 function generateAllFilesDoc(allFiles) {
     // One file for all Javascript files
-    var output = docFolder + '/all.md';
+    var output = docFolder + 'all.md';
     markdox.process(allFiles, {output:output}, function() {
         console.log('File `all.md` generated with success');
     });
 }
 
 
-function generateConfigObjectDoc(files, targetDir) {
+function generateConfigObjectDoc(files) {
     var configObject = {};
     files.forEach(function (file) {
         var js = fs.readFileSync(file).toString();
@@ -79,20 +120,56 @@ function generateConfigObjectDoc(files, targetDir) {
         configObject = _.merge({}, res, configObject);
     });
 
-    fs.readFile(propTemplatePath, 'utf8', function (err, template) {
-        var compiled = _.template(template);
+    fs.readFile(propTemplatePath, 'utf8', function (err, propTemplate) {
 
-        bfs(configObject, 'config', function (k, isParent) {
-            var fileName = configDocFolder + (k.ctx ? k.ctx + '.' + k.key : k.key);
-            var md = compiled({
-                name: k.key,
+        var menu = {};
+        var namespace = function (obj, path) {
+            var parts = path.split('.');
+            while(parts.length) {
+                var sub = parts.shift();
+                if(!obj[sub]) obj[sub] = {};
+                obj = obj[sub];
+            }
+
+            return obj;
+        };
+
+        // we want to traverse the config file
+        bfs(configObject, 'config', function (k) {
+            var fileName = (k.ctx ? k.ctx + '.' + k.key : k.key) + '.md';
+            var fullPath = configDocFolder + fileName;
+            var templateFileName = configTemplateDocFolder + (k.ctx ? k.ctx + '.' + k.key : k.key) + '.md';
+            var template;
+
+            if(fs.existsSync(templateFileName)) {
+                template = fs.readFileSync(templateFileName, 'utf8');
+            } else {
+                var compiled = _.template(propTemplate);
+                template = compiled({
+                    name: k.key,
+                    type: '<%= type %>',
+                    notes: '<% if(notes) { %><%= notes %><% } %>',
+                    defaultValue: '<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>'
+                });
+
+                fs.writeFileSync(templateFileName, template, 'utf8');
+            }
+
+            // bake and write out the template into an .md file
+            var cooked = _.template(template)({
                 type: typeof k.ref,
-                description: '',
+                notes: '',
                 defaultValue: k.ref === null ? 'null' : k.ref === undefined ? 'undefined' : k.ref.toString()
             });
 
-            fs.writeFile(fileName, md, 'utf8');
+            fs.writeFile(fullPath, cooked, 'utf8');
+
+            // update the menu object
+            namespace(menu, [k.ctx, k.key].join('.')).path = fileName;
         });
+
+        // write out the menu object
+        fs.writeFileSync(configDocFolder + 'menu.json', JSON.stringify(menu), 'utf8');
 
     });
 }
