@@ -52,7 +52,7 @@
     * Renders an area chart onto the narwhal frame. Area charts are stacked by default.
     *
     * ### Example
-    *     new Narwha({el: '.chart'}).area([1,2,3,4]);
+    *     new Narwhal({el: '.chart'}).area([1,2,3,4]);
     *
     * @name .area(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.

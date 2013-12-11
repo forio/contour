@@ -6,7 +6,7 @@
 
 Narwhal visualization constructor
 
-See: {@link Options}
+See: {@link config}
 
 ### Params: 
 
@@ -176,7 +176,7 @@ jshint eqnull:true
 Renders an area chart onto the narwhal frame. Area charts are stacked by default.
 
 ### Example
-    new Narwha({el: &#39;.chart&#39;}).area([1,2,3,4]);
+    new Narwhal({el: &#39;.chart&#39;}).area([1,2,3,4]);
 
 ### Params: 
 

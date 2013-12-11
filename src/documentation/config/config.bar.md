@@ -1,6 +1,6 @@
 #### **bar** : {<%= type %>}
 
-TODO: Insert description here
+ajdfklajdflkajsdf;lkajsdlfjasdf
 
 <% if(notes) { %><%= notes %><% } %>
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
