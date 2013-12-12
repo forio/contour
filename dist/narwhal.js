@@ -1,9 +1,22 @@
-(function (window, undefined) {
+(function (undefined) {
+
+    var root = this;
+
+    if ( typeof module === "object" && module && typeof module.exports === "object" ) {
+        if(typeof require === 'function') {
+            root.d3 = require('d3');
+            root._ = require('lodash');
+            $ = root.jQuery;
+        }
+    }
+
+    if(!$) throw new Error('You need to include jQuery before Narwhal');
 
 
 
+(function () {
 
-(function (ns, d3, _, $, undefined) {
+    var root = this;
 
     var defaults = {
         chart: {
@@ -268,11 +281,12 @@
         }
     });
 
-    window[ns] = Narwhal;
+    // export to our context
+    root.Narwhal = Narwhal;
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
 
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     var defaults = {
         chart: {
@@ -732,10 +746,10 @@
 
     Narwhal.expose('cartesian', cartesian);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
 
-Narwhal.version = '0.0.29';
-(function (ns, d3, _, $, undefined) {
+Narwhal.version = '0.0.30';
+(function () {
 
     var helpers = {
         xScaleFactory: function (data, options) {
@@ -765,9 +779,9 @@ Narwhal.version = '0.0.29';
 
     _.nw = _.extend({}, _.nw, helpers);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
 
-(function (window, undefined) {
+(function () {
 
     function LinearScale(data, options) {
         this.options = options;
@@ -843,9 +857,9 @@ Narwhal.version = '0.0.29';
 
     _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
 
-})(window);
+})();
 
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     // implements the following interface
     /*
@@ -921,9 +935,9 @@ Narwhal.version = '0.0.29';
 
     _.nw = _.extend({}, _.nw, { OrdinalScale: OrdinalScale });
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
 
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     // implements the following interface
     /*
@@ -1046,10 +1060,10 @@ Narwhal.version = '0.0.29';
 
     _.nw = _.extend({}, _.nw, { TimeScale: TimeScale });
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
 
-(function (window, undefined) {
-    var _ = window._;
+(function () {
+
     var defaults = {
         chart: {
             rotatedFrame: true,
@@ -1172,11 +1186,11 @@ Narwhal.version = '0.0.29';
         }
     };
 
-    window.Narwhal.expose('horizontal', frame);
+    Narwhal.expose('horizontal', frame);
 
-})(window);
+})();
 
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     var numberHelpers = {
         firstAndLast: function (ar) {
@@ -1307,9 +1321,9 @@ Narwhal.version = '0.0.29';
 
     _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers, debuggingHelpers);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
 
-(function (window, undefined) {
+(function () {
 
     var defaults = {
         xAxis: {
@@ -1373,9 +1387,9 @@ Narwhal.version = '0.0.29';
     */
     Narwhal.export('area', renderer);
 
-})(window);
+})();
 
-(function (window, undefined) {
+(function () {
 
 
     function barRender(data, layer, options) {
@@ -1454,9 +1468,9 @@ Narwhal.version = '0.0.29';
     */
     Narwhal.export('bar', barRender);
 
-})(window);
+})();
 
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     var defaults = {
         column : {
@@ -1533,9 +1547,9 @@ Narwhal.version = '0.0.29';
     */
     Narwhal.export('column', render);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
 
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     var defaults = {
         line: {
@@ -1655,9 +1669,9 @@ Narwhal.version = '0.0.29';
     */
     Narwhal.export('line', render);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
 
-(function (window, undefined) {
+(function () {
 
     var defaults = {
         pie: {
@@ -1711,9 +1725,9 @@ Narwhal.version = '0.0.29';
     */
     Narwhal.export('pie', renderer);
 
-})(window);
+})();
 
-(function (window, undefined) {
+(function () {
 
     var defaults = {
         xAxis: {
@@ -1767,54 +1781,55 @@ Narwhal.version = '0.0.29';
     Narwhal.export('scatter', ScatterPlot);
 
 
-})(window);
+})();
 
+(function () {
+    /*
+    * Renders a tooltip legend combination for stacked series.
+    *
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .stackedTooltip([1,2,3,4]);
+    *
+    * @name .stackedTooltip(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector the container where to render the tooptip
+    * @api public
+    *
+    */
+    Narwhal.export('stackTooltip', function (data, layer, options) {
 
-/*
-* Renders a tooltip legend combination for stacked series.
-*
-*
-* ### Example
-*     new Narwha({el: '.chart'})
-*           .stackedTooltip([1,2,3,4]);
-*
-* @name .stackedTooltip(data, options)
-* @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-* @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector the container where to render the tooptip
-* @api public
-*
-*/
-Narwhal.export('stackTooltip', function (data, layer, options) {
+        var valueFormatter = this.yAxis().tickFormat();
+        var tooltip = $(options.stackTooltip.el);
 
-    var valueFormatter = this.yAxis().tickFormat();
-    var tooltip = $(options.stackTooltip.el);
+        tooltip.addClass('stack-tooltip');
 
-    tooltip.addClass('stack-tooltip');
-
-    /*jshint eqnull:true*/
-    var onMouseOver = function (d) {
-        var isNull = function (p) {
-            return !(p && p.y != null);
+        /*jshint eqnull:true*/
+        var onMouseOver = function (d) {
+            var isNull = function (p) {
+                return !(p && p.y != null);
+            };
+            var mapFn = function (p, i) {
+                var index = _.isNumber(d.x) ? d.x : options.xAxis.categories.indexOf(d.x);
+                return !isNull(p.data[index]) ?
+                    { seriesName: p.name, value: p.data[index].y, cssClass: 's-' + (i+1) } :
+                    null;
+            };
+            var filtered = _.filter(_.map(data, mapFn), function (x) { return x; });
+            var text = _.map(filtered, function (t) { return '<span class="' + t.cssClass + '"">' + t.seriesName + ': ' + valueFormatter(t.value) + '</span>'; }).join(' / ');
+            tooltip.html(text).show();
         };
-        var mapFn = function (p, i) {
-            var index = _.isNumber(d.x) ? d.x : options.xAxis.categories.indexOf(d.x);
-            return !isNull(p.data[index]) ?
-                { seriesName: p.name, value: p.data[index].y, cssClass: 's-' + (i+1) } :
-                null;
+
+        var onMouseOut = function (/* datum */) {
+            tooltip.html('');
         };
-        var filtered = _.filter(_.map(data, mapFn), function (x) { return x; });
-        var text = _.map(filtered, function (t) { return '<span class="' + t.cssClass + '"">' + t.seriesName + ': ' + valueFormatter(t.value) + '</span>'; }).join(' / ');
-        tooltip.html(text).show();
-    };
 
-    var onMouseOut = function (/* datum */) {
-        tooltip.html('');
-    };
-
-    this.svg.selectAll('.tooltip-tracker')
-        .on('mouseover.tooltip', onMouseOver.bind(this))
-        .on('mouseout.tooltip',  onMouseOut.bind(this));
-});
+        this.svg.selectAll('.tooltip-tracker')
+            .on('mouseover.tooltip', onMouseOver.bind(this))
+            .on('mouseout.tooltip',  onMouseOut.bind(this));
+    });
+})();
 
 (function () {
     var defaults = {
@@ -1966,29 +1981,13 @@ Narwhal.export('stackTooltip', function (data, layer, options) {
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-
-
-
+// exports for commonJS and requireJS styles
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
-    // Expose jQuery as module.exports in loaders that implement the Node
-    // module pattern (including browserify). Do not create the global, since
-    // the user will be storing it themselves locally, and globals are frowned
-    // upon in the Node module world.
-    module.exports = jQuery;
+    module.exports = Narwhal;
 } else {
-    // Otherwise expose jQuery to the global object as usual
-    window.jQuery = window.$ = jQuery;
-
-    // Register as a named AMD module, since jQuery can be concatenated with other
-    // files that may use define, but not via a proper concatenation script that
-    // understands anonymous AMD modules. A named AMD is safest and most robust
-    // way to register. Lowercase jquery is used because AMD module names are
-    // derived from file names, and jQuery is normally delivered in a lowercase
-    // file name. Do this after creating the global so that if an AMD module wants
-    // to call noConflict to hide this version of jQuery, it will work.
+    root.Narwhal = Narwhal;
     if ( typeof define === "function" && define.amd ) {
-        define( "jquery", [], function () { return jQuery; } );
+        define( "narwhal", [], function () { return Narwhal; } );
     }
 }
-
-})( window );
+})();
