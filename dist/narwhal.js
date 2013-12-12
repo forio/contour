@@ -39,7 +39,8 @@
 
     /**
     * Narwhal visualization constructor
-    * @class Narwhal visualizations object
+    *
+    * @class Narwhal() visualizations object
     * @param {object} options The global options object
     * @see {@link Options}
     *
@@ -270,6 +271,7 @@
 
     var defaults = {
         chart: {
+            gridlines: 'none',
             padding: {
                 top: 6,
                 bottom: 25,
@@ -289,7 +291,7 @@
             labels: {
                 // format: 'd'
             },
-            // linearDomain: false,     // specify if a time domain should be treated linearly or ....
+            linearDomain: false,     // specify if a time domain should be treated linearly or ....
         },
 
         yAxis: {
@@ -390,14 +392,34 @@
         *
         *     var scaledValue = this.xScale(100);
         *
-        * @function xScale
+        * @function this.xScale()
         * @param {Number|String} value The value to be scaled
         * @return {Number} The scaled value according to the current xAxis settings
         */
         xScale: function(val) { return val; },
 
+        /*
+        * Provides a scaling function based on the xAxis values.
+        *
+        * Example:
+        *
+        *     var scaledValue = this.xScale(100);
+        *
+        * @function this.yScale()
+        * @param {Number} value The value to be scaled
+        * @return {Number} The scaled value according to the current yAxis settings
+        */
         yScale: function(val) { return val; },
 
+        /*
+        * Modifies the domain for the y axis.
+        *
+        * Example:
+        *
+        *     this.setYDomain([100, 200]);
+        *
+        * @param {Array} domain The domain array represeting the min and max values of to be visible in the y Axis
+        */
         setYDomain: function (domain) {
             this.yScale.domain(domain);
 
@@ -406,8 +428,15 @@
                 this.yScale.nice();
         },
 
+        /*
+        * Redraws the yAxis with the new settings and domain
+        *
+        * Example:
+        *
+        *     this.redrawYAxis(;
+        *
+        */
         redrawYAxis: function () {
-            // var t = this.svg.transition().duration(750);
             this.svg.select(".y.axis").call(this.yAxis());
         },
 
@@ -506,6 +535,66 @@
             }
         },
 
+        renderGridlines: function () {
+            var option = this.options.chart.gridlines;
+            var horizontal = option === 'horizontal' || option === 'both';
+            var vertical = option === 'vertical' || option === 'both';
+
+            function getYTicks(axis, smart) {
+                var tickValues = axis.tickValues();
+
+                if(!tickValues)
+                    return axis.scale().ticks().slice(1);
+
+                smart && tickValues.pop();
+
+                return tickValues.slice(1);
+            }
+
+            function getXTicks(axis) {
+                return axis.tickValues() || (axis.scale().ticks ? axis.scale().ticks().slice(1) : axis.scale().domain());
+            }
+
+            var ticks, gr;
+
+            if(horizontal) {
+                gr = this._yAxisGroup.append('svg:g').attr('class', 'grid-lines');
+                ticks = getYTicks(this.yAxis(), this.options.yAxis.smartAxis);
+                _.each(ticks, function (val) {
+                    var y = this.yScale(val);
+                    gr.append('line')
+                        .attr('class', 'grid-line')
+                        .attr({
+                            x1: 0,
+                            y1: y,
+                            x2: this.options.chart.plotWidth,
+                            y2: y
+                        });
+                }, this);
+            }
+
+            if(vertical) {
+                gr = this._xAxisGroup.append('svg:g').attr('class', 'grid-lines');
+                ticks = getXTicks(this.xAxis());
+
+                _.each(ticks, function (val) {
+                    var x = this.xScale(val);
+                    var offset = this.rangeBand / 2;
+                    gr.append('line')
+                        .attr('class', 'grid-line')
+                        .attr({
+                            x1: x + offset,
+                            y1: -this.options.chart.plotHeight,
+                            x2: x + offset,
+                            y2: 0
+                        });
+                }, this);
+
+            }
+
+            return this;
+        },
+
         render: function () {
             this.composeOptions();
 
@@ -519,6 +608,7 @@
 
             this.renderXAxis()
                 .renderYAxis()
+                .renderGridlines()
                 .renderAxisLabels();
 
             this.renderVisualizations();
@@ -637,7 +727,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.26';
+Narwhal.version = '0.0.28';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -1263,12 +1353,12 @@ Narwhal.version = '0.0.26';
     renderer.defaults = defaults;
 
     /*
-    * Renders an area chart onto the narwhal frame
+    * Renders an area chart onto the narwhal frame. Area charts are stacked by default.
     *
     * ### Example
     *     new Narwha({el: '.chart'}).area([1,2,3,4]);
     *
-    * @name area
+    * @name .area(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public
@@ -1338,7 +1428,23 @@ Narwhal.version = '0.0.26';
     };
 
     barRender.defaults = defaults;
-
+    /*
+    * Renders a bar chart (horizontal columns) onto the narwhal frame.
+    *
+    * You can use this visualization to render stacked & grouped charts (controlled through the options). This visualization requires *cartesian()* and *horizontal()*
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .cartesian()
+    *           .horizontal()
+    *           .bar([1,2,3,4]);
+    *
+    * @name .bar(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('bar', barRender);
 
 })(window);
@@ -1401,6 +1507,23 @@ Narwhal.version = '0.0.26';
     }
 
     render.defaults = defaults;
+
+    /*
+    * Renders a column chart (vertical columns) onto the narwhal frame.
+    *
+    * This visualization requires *cartesian()*
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .cartesian()
+    *           .column([1,2,3,4]);
+    *
+    * @name .column(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('column', render);
 
 })('Narwhal', window.d3, window._, window.jQuery);
@@ -1506,6 +1629,23 @@ Narwhal.version = '0.0.26';
 
     render.defaults = defaults;
 
+
+    /*
+    * Renders a line chart (vertical columns) onto the narwhal frame.
+    *
+    * This visualization requires *cartesian()*
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .cartesian()
+    *           .line([1,2,3,4]);
+    *
+    * @name .line(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('line', render);
 
 })('Narwhal', window.d3, window._, window.jQuery);
@@ -1548,6 +1688,20 @@ Narwhal.version = '0.0.26';
 
     renderer.defaults = defaults;
 
+
+    /*
+    * Renders a pie chart onto the narwhal frame.
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .pie([1,2,3,4]);
+    *
+    * @name .pie(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('pie', renderer);
 
 })(window);
@@ -1587,11 +1741,42 @@ Narwhal.version = '0.0.26';
     }
 
     ScatterPlot.defaults = defaults;
+
+    /*
+    * Renders a scatter plot chart
+    * This visualization requires *cartesian()*
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .cartesian()
+    *           .scatter([1,2,3,4]);
+    *
+    * @name .scatter(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('scatter', ScatterPlot);
 
 
 })(window);
 
+
+/*
+* Renders a tooltip legend combination for stacked series.
+*
+*
+* ### Example
+*     new Narwha({el: '.chart'})
+*           .stackedTooltip([1,2,3,4]);
+*
+* @name .stackedTooltip(data, options)
+* @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+* @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector the container where to render the tooptip
+* @api public
+*
+*/
 Narwhal.export('stackTooltip', function (data, layer, options) {
 
     var valueFormatter = this.yAxis().tickFormat();
@@ -1700,6 +1885,21 @@ Narwhal.export('stackTooltip', function (data, layer, options) {
 
     render.defaults = defaults;
 
+
+    /*
+    * Renders a tooltip on hover.
+    *
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .tooltip(null, options);
+    *
+    * @name .tooltip(data, options)
+    * @param {object|array} data ignored!
+    * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector the container where to render the tooptip
+    * @api public
+    *
+    */
     Narwhal.export('tooltip', render);
 
 
