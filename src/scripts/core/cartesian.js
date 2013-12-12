@@ -276,8 +276,10 @@
             function getYTicks(axis, smart) {
                 var tickValues = axis.tickValues();
 
-                if(!tickValues)
-                    return axis.scale().ticks().slice(1);
+                if(!tickValues) {
+                    var numTicks = axis.ticks()[0];
+                    return axis.scale().ticks(numTicks).slice(1);
+                }
 
                 smart && tickValues.pop();
 
