@@ -169,6 +169,8 @@
         */
         redrawYAxis: function () {
             this.svg.select(".y.axis").call(this.yAxis());
+
+
         },
 
         computeScales: function () {

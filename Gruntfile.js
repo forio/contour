@@ -88,7 +88,7 @@ module.exports = function (grunt) {
         },
         concat: {
             all: {
-                src: ['<%= scripts.core %>', '<%= scripts.vis %>', '<%= scripts.connectors %>'],
+                src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>', '<%= scripts.connectors %>', 'src/scripts/footer.js'],
                 dest: 'dist/narwhal.js'
             }
         },

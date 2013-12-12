@@ -1,7 +1,7 @@
 {
   "name": "Narwhal",
   "description": "Forio's Visualization Library",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "devDependencies": {
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-less": "~0.7.0",
