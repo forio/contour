@@ -1,4 +1,4 @@
-(function (window, undefined) {
+(function () {
 
     var defaults = {
         xAxis: {
@@ -52,4 +52,4 @@
     Narwhal.export('scatter', ScatterPlot);
 
 
-})(window);
+})();

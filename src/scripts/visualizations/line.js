@@ -1,4 +1,4 @@
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     var defaults = {
         line: {
@@ -118,4 +118,4 @@
     */
     Narwhal.export('line', render);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();

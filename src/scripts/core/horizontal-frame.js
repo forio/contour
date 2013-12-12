@@ -1,5 +1,5 @@
-(function (window, undefined) {
-    var _ = window._;
+(function () {
+
     var defaults = {
         chart: {
             rotatedFrame: true,
@@ -122,6 +122,6 @@
         }
     };
 
-    window.Narwhal.expose('horizontal', frame);
+    Narwhal.expose('horizontal', frame);
 
-})(window);
+})();

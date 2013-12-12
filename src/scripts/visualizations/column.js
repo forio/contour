@@ -1,4 +1,4 @@
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     var defaults = {
         column : {
@@ -75,4 +75,4 @@
     */
     Narwhal.export('column', render);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();

@@ -1,4 +1,4 @@
-(function (window, undefined) {
+(function () {
 
     var defaults = {
         xAxis: {
@@ -62,4 +62,4 @@
     */
     Narwhal.export('area', renderer);
 
-})(window);
+})();

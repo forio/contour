@@ -1,4 +1,4 @@
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     // implements the following interface
     /*
@@ -121,4 +121,4 @@
 
     _.nw = _.extend({}, _.nw, { TimeScale: TimeScale });
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();

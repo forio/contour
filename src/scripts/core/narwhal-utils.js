@@ -1,4 +1,4 @@
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     var numberHelpers = {
         firstAndLast: function (ar) {
@@ -129,4 +129,4 @@
 
     _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers, debuggingHelpers);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();

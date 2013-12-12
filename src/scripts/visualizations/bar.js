@@ -1,4 +1,4 @@
-(function (window, undefined) {
+(function () {
 
 
     function barRender(data, layer, options) {
@@ -77,4 +77,4 @@
     */
     Narwhal.export('bar', barRender);
 
-})(window);
+})();

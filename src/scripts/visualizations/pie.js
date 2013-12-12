@@ -1,4 +1,4 @@
-(function (window, undefined) {
+(function () {
 
     var defaults = {
         pie: {
@@ -52,4 +52,4 @@
     */
     Narwhal.export('pie', renderer);
 
-})(window);
+})();

@@ -1,4 +1,4 @@
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     var helpers = {
         xScaleFactory: function (data, options) {
@@ -28,4 +28,4 @@
 
     _.nw = _.extend({}, _.nw, helpers);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();

@@ -1,4 +1,6 @@
-(function (ns, d3, _, $, undefined) {
+(function () {
+
+    var root = this;
 
     var defaults = {
         chart: {
@@ -263,6 +265,7 @@
         }
     });
 
-    window[ns] = Narwhal;
+    // export to our context
+    root.Narwhal = Narwhal;
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();

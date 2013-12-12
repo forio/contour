@@ -1,4 +1,4 @@
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     // implements the following interface
     /*
@@ -74,4 +74,4 @@
 
     _.nw = _.extend({}, _.nw, { OrdinalScale: OrdinalScale });
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();

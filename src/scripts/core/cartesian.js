@@ -1,4 +1,4 @@
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     var defaults = {
         chart: {
@@ -458,4 +458,4 @@
 
     Narwhal.expose('cartesian', cartesian);
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();

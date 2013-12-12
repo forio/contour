@@ -1,4 +1,4 @@
-(function (window, undefined) {
+(function () {
 
     function LinearScale(data, options) {
         this.options = options;
@@ -74,4 +74,4 @@
 
     _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
 
-})(window);
+})();
