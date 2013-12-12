@@ -96,12 +96,11 @@ var config = {
 
     el: '.chart',
     chart: {
-        gridlines: 'both'
+        gridlines: 'horizontal'
     },
 
     xAxis: {
         firstAndLast: false,
-        type: 'linear',
         labels: {
             format: '0.1f'
         }
@@ -109,6 +108,7 @@ var config = {
 
     yAxis: {
         smartAxis: false,
+        // ticks: 2
     },
 
     tooltip: {
@@ -119,13 +119,18 @@ var config = {
 
 };
 
-var data = [10, 20, 30, 10, 20];
+// var data = [10, 20, 30, 10, 20];
+
+var data = [
+    { name: 's1', data: [10, 20, 30, 40]},
+    { name: 's2', data: [30,30, 10, 60]}
+]
 
 
 var chart = new Narwhal(config)
     .cartesian()
-    .line(data)
-    // .area(generateSeries(3))
+    // .line(data)
+    .area(data)
     // .pie([{ x: 'Alpha', y: 10}, { x: 'Beta', y: 30}, {x: 'Gamma', y: 40}, {x: 'Kappa', y: 20}])
     .tooltip()
     .render();

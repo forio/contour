@@ -6,7 +6,7 @@
 
 Narwhal visualization constructor
 
-See: {@link Options}
+See: {@link config}
 
 ### Params: 
 

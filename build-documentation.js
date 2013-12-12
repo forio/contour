@@ -29,16 +29,17 @@ var options = {
 };
 
 var allFiles = getSourceFileList(options.src);
+var filesToCopy = ['index.html', 'docs.css', 'markdown.js'];
 
 generatePerFileDoc(allFiles);
 generateAllFilesDoc(allFiles);
 generateConfigObjectDoc(allFiles);
 
-copyDocViewer();
+copyDocViewer(filesToCopy);
 
 
-function copyDocViewer() {
-    ['index.html', 'docs.css', 'markdown.js'].forEach(function (file) {
+function copyDocViewer(srcFiles) {
+    srcFiles.forEach(function (file) {
         var src = docSrcFolder + file;
         var dst = docFolder + file;
         if(fs.existsSync(docSrcFolder + file)) {

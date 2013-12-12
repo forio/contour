@@ -42,7 +42,7 @@
     *
     * @class Narwhal() visualizations object
     * @param {object} options The global options object
-    * @see {@link Options}
+    * @see {@link config}
     *
     */
     function Narwhal (options) {

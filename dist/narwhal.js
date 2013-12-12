@@ -1,3 +1,8 @@
+(function (window, undefined) {
+
+
+
+
 (function (ns, d3, _, $, undefined) {
 
     var defaults = {
@@ -42,7 +47,7 @@
     *
     * @class Narwhal() visualizations object
     * @param {object} options The global options object
-    * @see {@link Options}
+    * @see {@link config}
     *
     */
     function Narwhal (options) {
@@ -438,6 +443,8 @@
         */
         redrawYAxis: function () {
             this.svg.select(".y.axis").call(this.yAxis());
+
+
         },
 
         computeScales: function () {
@@ -727,7 +734,7 @@
 
 })('Narwhal', window.d3, window._, window.jQuery);
 
-Narwhal.version = '0.0.28';
+Narwhal.version = '0.0.29';
 (function (ns, d3, _, $, undefined) {
 
     var helpers = {
@@ -1356,7 +1363,7 @@ Narwhal.version = '0.0.28';
     * Renders an area chart onto the narwhal frame. Area charts are stacked by default.
     *
     * ### Example
-    *     new Narwha({el: '.chart'}).area([1,2,3,4]);
+    *     new Narwhal({el: '.chart'}).area([1,2,3,4]);
     *
     * @name .area(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
@@ -1958,3 +1965,30 @@ Narwhal.export('stackTooltip', function (data, layer, options) {
     Narwhal.connectors.Csv = Csv;
 
 })('Narwhal', window.d3, window._, window.jQuery);
+
+
+
+
+if ( typeof module === "object" && module && typeof module.exports === "object" ) {
+    // Expose jQuery as module.exports in loaders that implement the Node
+    // module pattern (including browserify). Do not create the global, since
+    // the user will be storing it themselves locally, and globals are frowned
+    // upon in the Node module world.
+    module.exports = jQuery;
+} else {
+    // Otherwise expose jQuery to the global object as usual
+    window.jQuery = window.$ = jQuery;
+
+    // Register as a named AMD module, since jQuery can be concatenated with other
+    // files that may use define, but not via a proper concatenation script that
+    // understands anonymous AMD modules. A named AMD is safest and most robust
+    // way to register. Lowercase jquery is used because AMD module names are
+    // derived from file names, and jQuery is normally delivered in a lowercase
+    // file name. Do this after creating the global so that if an AMD module wants
+    // to call noConflict to hide this version of jQuery, it will work.
+    if ( typeof define === "function" && define.amd ) {
+        define( "jquery", [], function () { return jQuery; } );
+    }
+}
+
+})( window );
