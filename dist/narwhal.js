@@ -457,7 +457,7 @@
         */
         redrawYAxis: function () {
             this.svg.select(".y.axis").call(this.yAxis());
-
+            this.renderGridlines();
 
         },
 
@@ -564,8 +564,10 @@
             function getYTicks(axis, smart) {
                 var tickValues = axis.tickValues();
 
-                if(!tickValues)
-                    return axis.scale().ticks().slice(1);
+                if(!tickValues) {
+                    var numTicks = axis.ticks()[0];
+                    return axis.scale().ticks(numTicks).slice(1);
+                }
 
                 smart && tickValues.pop();
 
@@ -577,40 +579,46 @@
             }
 
             var ticks, gr;
+            var x = this.xScale;
+            var y = this.yScale;
 
             if(horizontal) {
-                gr = this._yAxisGroup.append('svg:g').attr('class', 'grid-lines');
+
+                // remove previous lines (TODO: we need a better way)
+                this._yAxisGroup.select('g.grid-lines').remove();
+                gr = this._yAxisGroup
+                    .append('svg:g')
+                    .attr('class', 'grid-lines');
+
                 ticks = getYTicks(this.yAxis(), this.options.yAxis.smartAxis);
-                _.each(ticks, function (val) {
-                    var y = this.yScale(val);
-                    gr.append('line')
+                var w = this.options.chart.plotWidth;
+
+                gr.selectAll('.grid-line')
+                    .data(ticks)
+                    .enter().append('line')
                         .attr('class', 'grid-line')
-                        .attr({
-                            x1: 0,
-                            y1: y,
-                            x2: this.options.chart.plotWidth,
-                            y2: y
-                        });
-                }, this);
+                        .attr('x1', 0)
+                        .attr('x2', w)
+                        .attr('y1', y)
+                        .attr('y2', y);
             }
 
             if(vertical) {
+                // remove previous lines (TODO: we need a better way)
+                this._xAxisGroup.select('g.grid-lines').remove();
                 gr = this._xAxisGroup.append('svg:g').attr('class', 'grid-lines');
                 ticks = getXTicks(this.xAxis());
+                var offset = this.rangeBand / 2;
+                var h = this.options.chart.plotHeight;
 
-                _.each(ticks, function (val) {
-                    var x = this.xScale(val);
-                    var offset = this.rangeBand / 2;
-                    gr.append('line')
+                gr.selectAll('.grid-line')
+                    .data(ticks)
+                    .enter().append('line')
                         .attr('class', 'grid-line')
-                        .attr({
-                            x1: x + offset,
-                            y1: -this.options.chart.plotHeight,
-                            x2: x + offset,
-                            y2: 0
-                        });
-                }, this);
-
+                        .attr('x1', function (d) { return x(d) + offset; })
+                        .attr('x2', function (d) { return x(d) + offset; })
+                        .attr('y1', -h)
+                        .attr('y2', 0);
             }
 
             return this;
@@ -748,7 +756,7 @@
 
 })();
 
-Narwhal.version = '0.0.30';
+Narwhal.version = '0.0.31';
 (function () {
 
     var helpers = {
