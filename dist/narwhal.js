@@ -757,7 +757,7 @@
 
 })();
 
-Narwhal.version = '0.0.34';
+Narwhal.version = '0.0.35';
 (function () {
 
     var helpers = {
@@ -1278,7 +1278,7 @@ Narwhal.version = '0.0.34';
                         var hasX = d != null && d.hasOwnProperty('x');
                         var hasCategories = categories && _.isArray(categories);
                         var val = function (v) { return v != null ? v : null; };
-                        return hasX ? { x: d.x, y: val(d.y) } : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
+                        return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
                     })
                 };
             }
