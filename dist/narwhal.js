@@ -240,6 +240,7 @@
             var chartOpt = this.options.chart;
 
             this.container = d3.select(this.options.el);
+            this.container.empty();
 
             this.svg = this.container
                 .append('svg')
@@ -756,7 +757,7 @@
 
 })();
 
-Narwhal.version = '0.0.32';
+Narwhal.version = '0.0.33';
 (function () {
 
     var helpers = {
