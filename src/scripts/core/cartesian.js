@@ -152,11 +152,16 @@
         * @param {Array} domain The domain array represeting the min and max values of to be visible in the y Axis
         */
         setYDomain: function (domain) {
-            this.yScale.domain(domain);
+            this.yDomain = domain;
+            this.yMax = domain[1];
+            this.adjustDomain();
+            this.yScale.domain(this.yDomain);
 
             // if we are not using smartAxis we use d3's nice() domain
             if (!this.options.yAxis.smartAxis)
                 this.yScale.nice();
+
+            this.yDomain = this.yScale.domain();
         },
 
         /*
@@ -170,7 +175,6 @@
         redrawYAxis: function () {
             this.svg.select(".y.axis").call(this.yAxis());
             this.renderGridlines();
-
         },
 
         computeScales: function () {
