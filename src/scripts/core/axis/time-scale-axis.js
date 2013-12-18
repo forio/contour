@@ -76,8 +76,8 @@
         postProcessAxis: function (axisGroup) {
             if (!this.options.xAxis.firstAndLast) return;
             var labels = axisGroup.selectAll('.tick text')[0];
-            $(labels[0]).attr('style', 'text-anchor: start');
-            $(labels[labels.length - 1]).attr('style', 'text-anchor: end');
+            d3.select(labels[0]).style({'text-anchor': 'start'});
+            d3.select(labels[labels.length - 1]).style({'text-anchor': 'end'});
         },
 
         rangeBand: function () {

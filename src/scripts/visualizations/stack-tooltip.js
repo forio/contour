@@ -16,9 +16,9 @@
     Narwhal.export('stackTooltip', function (data, layer, options) {
 
         var valueFormatter = this.yAxis().tickFormat();
-        var tooltip = $(options.stackTooltip.el);
+        var tooltip = d3.select(options.stackTooltip.el);
 
-        tooltip.addClass('stack-tooltip');
+        tooltip.classed('stack-tooltip', true);
 
         /*jshint eqnull:true*/
         var onMouseOver = function (d) {
@@ -33,7 +33,7 @@
             };
             var filtered = _.filter(_.map(data, mapFn), function (x) { return x; });
             var text = _.map(filtered, function (t) { return '<span class="' + t.cssClass + '"">' + t.seriesName + ': ' + valueFormatter(t.value) + '</span>'; }).join(' / ');
-            tooltip.html(text).show();
+            tooltip.html(text).style({display: 'block'});
         };
 
         var onMouseOut = function (/* datum */) {

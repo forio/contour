@@ -6,10 +6,10 @@
         if(typeof require === 'function') {
             root.d3 = require('d3');
             root._ = require('lodash');
-            $ = root.jQuery;
         }
     }
 
-    if(!$) throw new Error('You need to include jQuery before Narwhal');
+    if(!d3) throw new Error('You need to include d3.js before Narwhal. Go to http://d3js.org/');
+    if(!_ || !_.merge) throw new Error('You need to include lodash.js before Narwhal. Go to http://lodash.com/');
 
 

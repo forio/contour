@@ -35,7 +35,7 @@
             var markerSize = this.options.line.marker.size;
             var className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
             var renderPath = this.options.chart.animations ? renderAnimatedPath : renderSimplePath;
-            var renderMakers = this.options.line.marker.enable ? renderLineMarkers : $.noop;
+            var renderMakers = this.options.line.marker.enable ? renderLineMarkers : _.noop;
 
             var path = layer.append('path')
                     .datum(nonNullData)
