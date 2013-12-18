@@ -120,11 +120,15 @@
     };
 
     var domHelpers = {
+        selectDom: function (selector) {
+            return d3.select(selector)[0][0];
+        },
+
         getStyle: function (el, style) {
             if(!el) return undefined;
-            var elem = typeof el === 'string' ? d3.select(el)[0][0] : el;
-            // get specific style from the element... to support attached and detached elements
-            var styles = elem.offsetParent ? window.getComputedStyle(elem) : elem.style;
+            var elem = typeof el === 'string' ? this.selectDom(el) : el;
+            // we need a good way to check if the element is detached or not
+            var styles = elem.offsetParent ? elem.ownerDocument.defaultView.getComputedStyle(elem, null) : elem.style;
 
             return style ? styles[style] : styles;
         }
