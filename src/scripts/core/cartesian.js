@@ -58,7 +58,7 @@
 
         init: function (options) {
 
-            this.options = $.extend(true, {}, defaults, options);
+            this.options = _.merge({}, defaults, options);
 
             if (!this.options.xAxis.firstAndLast) {
                 this.options.chart.padding.right += 15;
