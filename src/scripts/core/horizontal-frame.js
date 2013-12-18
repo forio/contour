@@ -17,7 +17,7 @@
     var frame = {
 
         init: function () {
-            $.extend(true, this.options, defaults);
+            _.merge(this.options, defaults);
         },
 
         adjustPadding: function () {
