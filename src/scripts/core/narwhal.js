@@ -122,8 +122,8 @@
             var opt = {};
             // merge the options passed ito Narwhal's constructor and this vis constructor
             // into a set of options to be merged with the defaults and back into narwhal global options object
-            opt[ctorName] = $.extend(true, {}, this.options[ctorName], options);
-            $.extend(true, this.options, renderer.defaults, opt);
+            opt[ctorName] = _.merge({}, this.options[ctorName], options);
+            _.merge(this.options, renderer.defaults, opt);
 
             var renderFunc;
             if (_.isArray(data)) {
@@ -157,11 +157,11 @@
         },
 
         calculateWidth: function () {
-            return parseInt($(this.options.el).width(), 10) || this.options.chart.defaultWidth;
+            return parseInt(d3.select(this.options.el).style('width'), 10) || this.options.chart.defaultWidth;
         },
 
         calculateHeight: function () {
-            var containerHeight = parseInt($(this.options.el).height(), 10);
+            var containerHeight = parseInt(d3.select(this.options.el).style('height'), 10);
             var calcWidth = this.options.chart.width;
             var ratio = this.options.chart.aspect || this.options.chart.defaultAspect;
 
@@ -178,7 +178,7 @@
             options.chart.width = options.chart.width || this.calculateWidth();
             options.chart.height = options.chart.height || this.calculateHeight();
 
-            this.options = $.extend(true, options, {
+            this.options = _.merge(options, {
                 chart: {
                     plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.padding.left - options.chart.padding.right,
                     plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom
@@ -198,7 +198,7 @@
 
         composeOptions: function () {
             // compose the final list of options right before start rendering
-            this.options = $.extend(true, {}, defaults, this.options);
+            this.options = _.merge({}, defaults, this.options);
         },
 
         baseRender: function () {
