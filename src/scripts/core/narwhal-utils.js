@@ -122,8 +122,9 @@
     var domHelpers = {
         getStyle: function (el, style) {
             if(!el) return undefined;
+            var elem = typeof el === 'string' ? d3.select(el)[0][0] : el;
             // get specific style from the element... to support attached and detached elements
-            var styles = el.parent ? window.getComputedStyle(el) : el.style;
+            var styles = elem.offsetParent ? window.getComputedStyle(elem) : elem.style;
 
             return style ? styles[style] : styles;
         }
