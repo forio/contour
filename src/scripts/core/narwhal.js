@@ -157,11 +157,13 @@
         },
 
         calculateWidth: function () {
-            return parseInt(d3.select(this.options.el).style('width'), 10) || this.options.chart.defaultWidth;
+            var width = _.nw.getStyle(this.options.el, 'width');
+            return this.options.el ? (parseInt(width, 10) || this.options.chart.defaultWidth) : this.options.chart.defaultWidth;
         },
 
         calculateHeight: function () {
-            var containerHeight = parseInt(d3.select(this.options.el).style('height'), 10);
+            var height = _.nw.getStyle(this.options.el, 'height');
+            var containerHeight = this.options.el ? parseInt(height, 10) : undefined;
             var calcWidth = this.options.chart.width;
             var ratio = this.options.chart.aspect || this.options.chart.defaultAspect;
 

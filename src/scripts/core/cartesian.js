@@ -152,16 +152,17 @@
         * @param {Array} domain The domain array represeting the min and max values of to be visible in the y Axis
         */
         setYDomain: function (domain) {
-            this.yDomain = domain;
-            this.yMax = domain[1];
-            this.adjustDomain();
-            this.yScale.domain(this.yDomain);
+            // this.yDomain = domain;
+            // this.yMax = domain[1];
+            // this.adjustDomain();
+            // this.yScale.domain(this.yDomain);
+            this.yScale.domain(domain);
 
             // if we are not using smartAxis we use d3's nice() domain
             if (!this.options.yAxis.smartAxis)
                 this.yScale.nice();
 
-            this.yDomain = this.yScale.domain();
+            // this.yDomain = this.yScale.domain();
         },
 
         /*
@@ -429,6 +430,7 @@
 
         _extractYTickValues: function (domain, min, max) {
 
+            /*jshint eqnull:true*/
             function smartAxisValues() {
                 var adjustedDomain = _.nw.merge(domain, this.yMax);
                 // we want to be able to remove parameters with default values
@@ -454,6 +456,7 @@
             return this.options.yAxis.smartAxis ? smartAxisValues.call(this) : undefined;
         },
 
+        /*jshint eqnull:true*/
         _numYTicks: function (domain, min, max) {
             function regularAxisYTicks() {
                 return this.options.yAxis.ticks != null ? this.options.yAxis.ticks : undefined;

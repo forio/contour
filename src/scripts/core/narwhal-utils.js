@@ -95,7 +95,7 @@
 
     };
 
-    var axisHelpers = {
+    var ajaxHelpers = {
         /*jshint eqnull:true */
         extractScaleDomain: function (domain, min, max) {
             var dataMax = _.max(domain);
@@ -119,6 +119,16 @@
         }
     };
 
+    var domHelpers = {
+        getStyle: function (el, style) {
+            if(!el) return undefined;
+            // get specific style from the element... to support attached and detached elements
+            var styles = el.parent ? window.getComputedStyle(el) : el.style;
+
+            return style ? styles[style] : styles;
+        }
+    };
+
     var debuggingHelpers = {
         warning: function (msg) {
             if(console && console.log) {
@@ -127,6 +137,6 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers, debuggingHelpers);
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, ajaxHelpers, debuggingHelpers, domHelpers);
 
 })();

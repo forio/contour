@@ -33,7 +33,6 @@ describe('Cartesian frame', function () {
 
     it('without data should provide default axis', function () {
         var narwhal = createNarwhal().render();
-
         assert_hasDefaultEmptyYScale(narwhal);
     });
 
