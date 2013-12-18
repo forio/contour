@@ -1,4 +1,4 @@
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     function Csv(raw, headerRow) {
         headerRow = typeof headerRow === 'undefined' ? true : headerRow;
@@ -48,4 +48,4 @@
     Narwhal.connectors = Narwhal.connectors || {};
     Narwhal.connectors.Csv = Csv;
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
