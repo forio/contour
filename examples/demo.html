@@ -7,13 +7,15 @@
     <link rel="stylesheet" href="../examples/css/narwhal.css">
 
     <script src="../examples/js/vendor/d3.js"></script>
-    <script src="../examples/js/vendor/jquery.js"></script>
+
     <script src="../examples/js/vendor/lodash.js"></script>
 
     <script src="../src/scripts/core/narwhal-utils.js" ></script>
     <script src="../src/scripts/core/axis/ordinal-scale-axis.js" ></script>
     <script src="../src/scripts/core/axis/time-scale-axis.js" ></script>
     <script src="../src/scripts/core/axis/linear-scale-axis.js" ></script>
+    <script src="../src/scripts/core/axis/y-axis.js" ></script>
+    <script src="../src/scripts/core/axis/smart-y-axis.js" ></script>
     <script src="../src/scripts/core/axis/axis-scale-factory.js" ></script>
     <script src="../src/scripts/core/narwhal.js"></script>
     <script src="../src/scripts/core/cartesian.js"></script>
@@ -26,11 +28,13 @@
     <script src="../src/scripts/visualizations/bar.js"></script>
     <script src="../src/scripts/visualizations/pie.js"></script>
     <script src="../src/scripts/visualizations/scatter.js"></script>
+    <script src="../src/scripts/visualizations/cool-narwhal.js"></script>
     <script src="../src/scripts/connectors/csv.js" ></script>
 
     <style>
         .chart {
-            width: 90%;
+/*            height: 300px;
+            width: 400px;*/
             margin: 10px 0;
         }
 
@@ -42,6 +46,11 @@
 
         .legend {
             height: 1.5em;
+        }
+
+
+        .s-2 {
+            opacity: .7
         }
 
 
@@ -96,7 +105,7 @@ var config = {
 
     el: '.chart',
     chart: {
-        gridlines: 'horizontal'
+        // gridlines: 'horizontal'
     },
 
     xAxis: {
@@ -107,7 +116,7 @@ var config = {
     },
 
     yAxis: {
-        smartAxis: false,
+        smartAxis: true,
         // ticks: 2
     },
 
@@ -123,14 +132,18 @@ var config = {
 
 var data = [
     { name: 's1', data: [10, 20, 30, 40]},
-    { name: 's2', data: [30,30, 10, 60]}
+    { name: 's2', data: [30,30, 10, 30]}
 ]
+
+
+
 
 
 var chart = new Narwhal(config)
     .cartesian()
     // .line(data)
-    .area(data)
+
+    .column(data, {stacked: true})
     // .pie([{ x: 'Alpha', y: 10}, { x: 'Beta', y: 30}, {x: 'Gamma', y: 40}, {x: 'Kappa', y: 20}])
     .tooltip()
     .render();

@@ -22,6 +22,13 @@
             }
 
             return new _.nw.OrdinalScale(data, options);
+        },
+
+        yScaleFactory: function (data, options) {
+            if (options && options.yAxis && options.yAxis.smartAxis)
+                return new _.nw.SmartYAxis(data, options);
+
+            return new _.nw.YAxis(data, options);
         }
 
     };

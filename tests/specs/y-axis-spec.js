@@ -92,6 +92,15 @@ describe('default yAxis', function () {
             expect(+ticks.eq(0).text()).toBe(10);
             expect(+ticks.eq(2).text()).toBe(33); // smart axis is 10% above (birddle test)
         });
+
+        describe('calling setYDomain', function () {
+            it('should recalculate yAxis and ticks with new domain', function () {
+                nw = createNarwhal({}).data([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
+                nw.setYDomain([0, 50]);
+                var ticks = $el.find('.y.axis .tick text');
+                expect(+ticks.last().text()).toBe(55);
+            });
+        });
     });
 
     describe('without smartYAxis', function () {
