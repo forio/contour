@@ -107,16 +107,8 @@
             if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
             var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
-            this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options);
+            this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
             this.yScale = this.yScaleGenerator.scale(yScaleDomain);
-
-            // var rangeSize = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : this.options.chart.plotHeight;
-            // var range = this.options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
-
-            // this.yScale = d3.scale.linear()
-            //     .range(range);
-
-            // this.setYDomain(yScaleDomain);
         },
 
         /*

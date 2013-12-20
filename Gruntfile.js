@@ -67,9 +67,13 @@ module.exports = function (grunt) {
             libs: [
             ],
             core: [
+                'src/scripts/core/narwhal-utils.js',
                 'src/scripts/core/narwhal.js',
+                'src/scripts/core/axis/y-axis.js',
                 'src/scripts/core/cartesian.js',
                 'src/scripts/core/version.js',
+
+
                 'src/scripts/core/**/*.js',
             ],
             vis: [

@@ -24,9 +24,9 @@
             return new _.nw.OrdinalScale(data, options);
         },
 
-        yScaleFactory: function (data, options) {
+        yScaleFactory: function (data, options, yMin, yMax) {
             if (options && options.yAxis && options.yAxis.smartAxis)
-                return new _.nw.SmartYAxis(data, options);
+                return new _.nw.SmartYAxis(data, options, yMin, yMax);
 
             return new _.nw.YAxis(data, options);
         }

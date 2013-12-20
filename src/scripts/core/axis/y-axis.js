@@ -17,7 +17,7 @@
             var options = this.options.yAxis;
             var domain = this._scale.domain();
             var tickValues = options.tickValues;
-            var numTicks = this.numYTicks(domain, options.min, options.max);
+            var numTicks = this.numTicks(domain, options.min, options.max);
             var format = d3.format(options.labels.format);
 
             return d3.svg.axis()

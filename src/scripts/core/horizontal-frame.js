@@ -72,7 +72,7 @@
                 .attr('transform', 'translate(' + x + ',' + y + ')')
                 .call(xAxis);
 
-            this.scaleGenerator.postProcessAxis(this._xAxisGroup);
+            this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
 
             return this;
         },

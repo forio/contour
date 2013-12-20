@@ -141,9 +141,11 @@ var data = [
 
 var chart = new Narwhal(config)
     .cartesian()
+    .horizontal()
+    .bar(data)
     // .line(data)
 
-    .column(data, {stacked: true})
+    // .column(data, {stacked: false})
     // .pie([{ x: 'Alpha', y: 10}, { x: 'Beta', y: 30}, {x: 'Gamma', y: 40}, {x: 'Kappa', y: 20}])
     .tooltip()
     .render();

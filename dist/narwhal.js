@@ -6,13 +6,161 @@
         if(typeof require === 'function') {
             root.d3 = require('d3');
             root._ = require('lodash');
-            $ = root.jQuery;
         }
     }
 
-    if(!$) throw new Error('You need to include jQuery before Narwhal');
+    if(!d3) throw new Error('You need to include d3.js before Narwhal. Go to http://d3js.org/');
+    if(!_ || !_.merge) throw new Error('You need to include lodash.js before Narwhal. Go to http://lodash.com/');
 
 
+
+(function () {
+
+    var numberHelpers = {
+        firstAndLast: function (ar) {
+            return [ar[0], ar[ar.length-1]];
+        },
+
+        roundToNearest: function (number, multiple){
+            return Math.ceil(number / multiple) * multiple;
+        },
+
+        niceRound: function (val) {
+            // for now just round(10% above the value)
+            return Math.ceil(val * 1.10);
+
+            // var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
+            // var fac = Math.pow(10, digits);
+
+            // if(val < 1) return _.nw.roundToNearest(val, 1);
+
+            // if(val < fac / 2) return _.nw.roundToNearest(val, fac / 2);
+
+            // return _.nw.roundToNearest(val, fac);
+        }
+    };
+
+    var stringHelpers = {
+        // measure text inside a narwhal chart container
+        textBounds: function (text, css) {
+            var body = document.getElementsByTagName('body')[0];
+            var wrapper = document.createElement('span');
+            var dummy = document.createElement('span');
+            wrapper.className = 'narwhal-chart';
+            dummy.style.position = 'absolute';
+            dummy.style.width = 'auto';
+            dummy.style.height = 'auto';
+            dummy.style.visibility = 'hidden';
+            dummy.style.lineHeight = '100%';
+
+            dummy.innerHTML = text;
+            dummy.className = css.replace(/\./g, ' ');
+            wrapper.appendChild(dummy);
+            body.appendChild(wrapper);
+            var res = { width: dummy.clientWidth, height: dummy.clientHeight };
+            wrapper.removeChild(dummy);
+            body.removeChild(wrapper);
+            return res;
+        }
+    };
+
+    var dateHelpers = {
+        dateDiff: function(d1, d2) {
+            var diff = d1.getTime() - d2.getTime();
+            return diff / (24*60*60*1000);
+        }
+    };
+
+    var arrayHelpers = {
+        // concatenate and sort two arrays to the resulting array
+        // is sorted ie. merge [2,4,6] and [1,3,5] = [1,2,3,4,5,6]
+        merge: function (array1, array2) {
+            if(typeof(array1) === 'number') array1 = [array1];
+            if(typeof(array2) === 'number') array2 = [array2];
+            if(!array1 || !array1.length) return array2;
+            if(!array2 || !array2.length) return array1;
+
+            return [].concat(array1, array2).sort(function (a,b) { return a-b; });
+        },
+
+        /*jshint eqnull:true */
+        // we are using != null to get null & undefined but not 0
+        normalizeSeries: function (data, categories) {
+            function normal(set, name) {
+                return {
+                    name: name,
+                    data: _.map(set, function (d, i) {
+                        var hasX = d != null && d.hasOwnProperty('x');
+                        var hasCategories = categories && _.isArray(categories);
+                        var val = function (v) { return v != null ? v : null; };
+                        return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
+                    })
+                };
+            }
+
+            if (_.isArray(data)) {
+                if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
+                    // this would be the shape for multiple series
+                    return _.map(data, function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
+                } else {
+                    // this is just the shape [1,2,3,4] or [{x:0, y:1}, { x: 1, y:2}...]
+                    return [normal(data, 'series 1')];
+                }
+            }
+        }
+
+    };
+
+    var ajaxHelpers = {
+        /*jshint eqnull:true */
+        extractScaleDomain: function (domain, min, max) {
+            var dataMax = _.max(domain);
+            var dataMin = _.min(domain);
+
+            // we want null || undefined for all this comparasons
+            // that == null gives us
+            if (min == null && max == null) {
+                return [dataMin, dataMax];
+            }
+
+            if (min == null) {
+                return [Math.min(dataMin, max), max];
+            }
+
+            if (max == null) {
+                return [min, Math.max(min, dataMax)];
+            }
+
+            return [min, max];
+        }
+    };
+
+    var domHelpers = {
+        selectDom: function (selector) {
+            return d3.select(selector)[0][0];
+        },
+
+        getStyle: function (el, style) {
+            if(!el) return undefined;
+            var elem = typeof el === 'string' ? this.selectDom(el) : el;
+            // we need a good way to check if the element is detached or not
+            var styles = elem.offsetParent ? elem.ownerDocument.defaultView.getComputedStyle(elem, null) : elem.style;
+
+            return style ? styles[style] : styles;
+        }
+    };
+
+    var debuggingHelpers = {
+        warning: function (msg) {
+            if(console && console.log) {
+                console.log('WARNING: ' + msg);
+            }
+        }
+    };
+
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, ajaxHelpers, debuggingHelpers, domHelpers);
+
+})();
 
 (function () {
 
@@ -138,8 +286,8 @@
             var opt = {};
             // merge the options passed ito Narwhal's constructor and this vis constructor
             // into a set of options to be merged with the defaults and back into narwhal global options object
-            opt[ctorName] = $.extend(true, {}, this.options[ctorName], options);
-            $.extend(true, this.options, renderer.defaults, opt);
+            opt[ctorName] = _.merge({}, this.options[ctorName], options);
+            _.merge(this.options, renderer.defaults, opt);
 
             var renderFunc;
             if (_.isArray(data)) {
@@ -173,11 +321,13 @@
         },
 
         calculateWidth: function () {
-            return parseInt($(this.options.el).width(), 10) || this.options.chart.defaultWidth;
+            var width = _.nw.getStyle(this.options.el, 'width');
+            return this.options.el ? (parseInt(width, 10) || this.options.chart.defaultWidth) : this.options.chart.defaultWidth;
         },
 
         calculateHeight: function () {
-            var containerHeight = parseInt($(this.options.el).height(), 10);
+            var height = _.nw.getStyle(this.options.el, 'height');
+            var containerHeight = this.options.el ? parseInt(height, 10) : undefined;
             var calcWidth = this.options.chart.width;
             var ratio = this.options.chart.aspect || this.options.chart.defaultAspect;
 
@@ -194,7 +344,7 @@
             options.chart.width = options.chart.width || this.calculateWidth();
             options.chart.height = options.chart.height || this.calculateHeight();
 
-            this.options = $.extend(true, options, {
+            this.options = _.merge(options, {
                 chart: {
                     plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.padding.left - options.chart.padding.right,
                     plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom
@@ -214,7 +364,7 @@
 
         composeOptions: function () {
             // compose the final list of options right before start rendering
-            this.options = $.extend(true, {}, defaults, this.options);
+            this.options = _.merge({}, defaults, this.options);
         },
 
         baseRender: function () {
@@ -289,6 +439,58 @@
 
 (function () {
 
+    var YAxis = function (data, options) {
+        this.data = data;
+        this.options = options;
+    };
+
+
+    function setRange(scale, options) {
+        var rangeSize = options.chart.rotatedFrame ? options.chart.plotWidth : options.chart.plotHeight;
+        var range = options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
+        return scale.range(range);
+    }
+
+    YAxis.prototype = {
+        axis: function () {
+            var options = this.options.yAxis;
+            var domain = this._scale.domain();
+            var tickValues = options.tickValues;
+            var numTicks = this.numTicks(domain, options.min, options.max);
+            var format = d3.format(options.labels.format);
+
+            return d3.svg.axis()
+                .scale(this._scale)
+                .tickFormat(format)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding)
+                .ticks(numTicks)
+                .tickValues(tickValues);
+        },
+
+        scale: function (domain) {
+            if(!this._scale) {
+                this._scale = d3.scale.linear().domain(domain).nice();
+                setRange(this._scale, this.options);
+            }
+
+            return this._scale;
+        },
+
+        /*jshint eqnull:true*/
+        numTicks: function () {
+            return this.options.yAxis.ticks != null ? this.options.yAxis.ticks : undefined;
+        },
+
+    };
+
+
+    _.extend(_.nw, { YAxis: YAxis });
+
+})();
+
+(function () {
+
     var defaults = {
         chart: {
             gridlines: 'none',
@@ -347,7 +549,7 @@
 
         init: function (options) {
 
-            this.options = $.extend(true, {}, defaults, options);
+            this.options = _.merge({}, defaults, options);
 
             if (!this.options.xAxis.firstAndLast) {
                 this.options.chart.padding.right += 15;
@@ -358,8 +560,7 @@
 
         adjustPadding: function () {
             var options = this.options.yAxis;
-            var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, options.min, options.max);
-            var yLabels = this._extractYTickValues(yScaleDomain, options.min, options.max) || [10000];
+            var yLabels = [10000];
             var format = d3.format(options.labels.format);
             var yAxisText = _.map(yLabels, format).join('<br>');
             var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
@@ -388,21 +589,17 @@
         computeXScale: function () {
             if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
-            this.scaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
-            this.xScale = this.scaleGenerator.scale(this.xDomain);
-            this.rangeBand = this.scaleGenerator.rangeBand();
+            this.xScaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
+            this.xScale = this.xScaleGenerator.scale(this.xDomain);
+            this.rangeBand = this.xScaleGenerator.rangeBand();
         },
 
         computeYScale: function () {
             if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
+
             var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
-            var rangeSize = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : this.options.chart.plotHeight;
-            var range = this.options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
-
-            this.yScale = d3.scale.linear()
-                .range(range);
-
-            this.setYDomain(yScaleDomain);
+            this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
+            this.yScale = this.yScaleGenerator.scale(yScaleDomain);
         },
 
         /*
@@ -441,11 +638,20 @@
         * @param {Array} domain The domain array represeting the min and max values of to be visible in the y Axis
         */
         setYDomain: function (domain) {
+            // this.yDomain = domain;
+            //     this.yMax = domain[1];
+            if(!this.yMax) {
+                console.log(this.yMax);
+            }
+            // this.adjustDomain();
+            // this.yScale.domain(this.yDomain);
             this.yScale.domain(domain);
 
             // if we are not using smartAxis we use d3's nice() domain
             if (!this.options.yAxis.smartAxis)
                 this.yScale.nice();
+
+            // this.yDomain = this.yScale.domain();
         },
 
         /*
@@ -459,7 +665,6 @@
         redrawYAxis: function () {
             this.svg.select(".y.axis").call(this.yAxis());
             this.renderGridlines();
-
         },
 
         computeScales: function () {
@@ -470,24 +675,11 @@
         },
 
         xAxis: function () {
-            return this.scaleGenerator.axis().orient(this.options.xAxis.orient);
+            return this.xScaleGenerator.axis().orient(this.options.xAxis.orient);
         },
 
         yAxis: function () {
-            var options = this.options.yAxis;
-            var tickValues = this._extractYTickValues(this.yDomain, options.min, options.max);
-            var numTicks = this._numYTicks(this.yDomain, options.min, options.max);
-            var format = d3.format(options.labels.format);
-            var orient = options.orient;
-
-            return d3.svg.axis()
-                .scale(this.yScale)
-                .tickFormat(format)
-                .tickSize(options.innerTickSize, options.outerTickSize)
-                .tickPadding(options.tickPadding)
-                .orient(orient)
-                .ticks(numTicks)
-                .tickValues(tickValues);
+            return this.yScaleGenerator.axis().orient(this.options.yAxis.orient);
         },
 
         renderXAxis: function () {
@@ -499,7 +691,7 @@
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')')
                 .call(xAxis);
 
-            this.scaleGenerator.postProcessAxis(this._xAxisGroup);
+            this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
 
             return this;
         },
@@ -712,44 +904,7 @@
             this.xDomain = this.xDomain ? this.xDomain : [];
         },
 
-        _extractYTickValues: function (domain, min, max) {
 
-            function smartAxisValues() {
-                var adjustedDomain = _.nw.merge(domain, this.yMax);
-                // we want to be able to remove parameters with default values
-                // so to remove the default yAxis.min: 0, you pass yAxis.min: null
-                // and for that we need to to a truely comparison here (to get null or undefined)
-                if (min == null && max == null)
-                    return adjustedDomain;
-
-                if (min == null) {
-                    return max > this.yMin ? _.nw.merge([max], adjustedDomain) : [max];
-                }
-
-                if (max == null) {
-                    if (min >= this.yMax) return [min];
-                    adjustedDomain[0] = min;
-
-                    return adjustedDomain;
-                }
-
-                return _.nw.merge([min, max], this.yMax);
-            }
-
-            return this.options.yAxis.smartAxis ? smartAxisValues.call(this) : undefined;
-        },
-
-        _numYTicks: function (domain, min, max) {
-            function regularAxisYTicks() {
-                return this.options.yAxis.ticks != null ? this.options.yAxis.ticks : undefined;
-            }
-
-            function smartAxisYTicks() {
-                return 3; // 0, dataMax and niceMax
-            }
-
-            return this.options.yAxis.smartAxis ? smartAxisYTicks.call(this) : regularAxisYTicks.call(this);
-        }
 
     };
 
@@ -782,6 +937,13 @@ Narwhal.version = '0.0.35';
             }
 
             return new _.nw.OrdinalScale(data, options);
+        },
+
+        yScaleFactory: function (data, options, yMin, yMax) {
+            if (options && options.yAxis && options.yAxis.smartAxis)
+                return new _.nw.SmartYAxis(data, options, yMin, yMax);
+
+            return new _.nw.YAxis(data, options);
         }
 
     };
@@ -948,6 +1110,69 @@ Narwhal.version = '0.0.35';
 
 (function () {
 
+    var SmartYAxis = function (data, options, yMin, yMax) {
+        this.data = data;
+        this.options = options;
+        this.yMax = yMax;
+        this.yMin = yMin;
+    };
+
+    function _extractYTickValues(domain, min, max, yMin, yMax) {
+        var adjustedDomain = _.nw.merge(domain, yMax);
+        // we want to be able to remove parameters with default values
+        // so to remove the default yAxis.min: 0, you pass yAxis.min: null
+        // and for that we need to to a truely comparison here (to get null or undefined)
+        if (min == null && max == null)
+            return adjustedDomain;
+
+        if (min == null) {
+            return max > yMin ? _.nw.merge([max], adjustedDomain) : [max];
+        }
+
+        if (max == null) {
+            if (min >= yMax) return [min];
+            adjustedDomain[0] = min;
+
+            return adjustedDomain;
+        }
+
+        return _.nw.merge([min, max], yMax);
+    }
+
+    SmartYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
+        axis: function () {
+
+            var options = this.options.yAxis;
+            var domain = this._scale.domain();
+            var tickValues = _extractYTickValues(domain, options.min, options.max, this.yMin, this.yMax);
+            var numTicks = this.numTicks();
+            var format = d3.format(options.labels.format);
+            var orient = options.orient;
+
+            return d3.svg.axis()
+                .scale(this.scale())
+                .tickFormat(format)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding)
+                .orient(orient)
+                .ticks(numTicks)
+                .tickValues(tickValues);
+        },
+
+        numTicks: function () {
+            return 3;
+        }
+
+
+    });
+
+
+    _.extend(_.nw, { SmartYAxis: SmartYAxis });
+
+})();
+
+(function () {
+
     // implements the following interface
     /*
     {
@@ -1024,8 +1249,8 @@ Narwhal.version = '0.0.35';
         postProcessAxis: function (axisGroup) {
             if (!this.options.xAxis.firstAndLast) return;
             var labels = axisGroup.selectAll('.tick text')[0];
-            $(labels[0]).attr('style', 'text-anchor: start');
-            $(labels[labels.length - 1]).attr('style', 'text-anchor: end');
+            d3.select(labels[0]).style({'text-anchor': 'start'});
+            d3.select(labels[labels.length - 1]).style({'text-anchor': 'end'});
         },
 
         rangeBand: function () {
@@ -1090,7 +1315,7 @@ Narwhal.version = '0.0.35';
     var frame = {
 
         init: function () {
-            $.extend(true, this.options, defaults);
+            _.merge(this.options, defaults);
         },
 
         adjustPadding: function () {
@@ -1145,7 +1370,7 @@ Narwhal.version = '0.0.35';
                 .attr('transform', 'translate(' + x + ',' + y + ')')
                 .call(xAxis);
 
-            this.scaleGenerator.postProcessAxis(this._xAxisGroup);
+            this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
 
             return this;
         },
@@ -1196,139 +1421,6 @@ Narwhal.version = '0.0.35';
     };
 
     Narwhal.expose('horizontal', frame);
-
-})();
-
-(function () {
-
-    var numberHelpers = {
-        firstAndLast: function (ar) {
-            return [ar[0], ar[ar.length-1]];
-        },
-
-        roundToNearest: function (number, multiple){
-            return Math.ceil(number / multiple) * multiple;
-        },
-
-        niceRound: function (val) {
-            // for now just round(10% above the value)
-            return Math.ceil(val * 1.10);
-
-            // var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
-            // var fac = Math.pow(10, digits);
-
-            // if(val < 1) return _.nw.roundToNearest(val, 1);
-
-            // if(val < fac / 2) return _.nw.roundToNearest(val, fac / 2);
-
-            // return _.nw.roundToNearest(val, fac);
-        }
-    };
-
-    var stringHelpers = {
-        // measure text inside a narwhal chart container
-        textBounds: function (text, css) {
-            var body = document.getElementsByTagName('body')[0];
-            var wrapper = document.createElement('span');
-            var dummy = document.createElement('span');
-            wrapper.className = 'narwhal-chart';
-            dummy.style.position = 'absolute';
-            dummy.style.width = 'auto';
-            dummy.style.height = 'auto';
-            dummy.style.visibility = 'hidden';
-            dummy.style.lineHeight = '100%';
-
-            dummy.innerHTML = text;
-            dummy.className = css.replace(/\./g, ' ');
-            wrapper.appendChild(dummy);
-            body.appendChild(wrapper);
-            var res = { width: dummy.clientWidth, height: dummy.clientHeight };
-            wrapper.removeChild(dummy);
-            body.removeChild(wrapper);
-            return res;
-        }
-    };
-
-    var dateHelpers = {
-        dateDiff: function(d1, d2) {
-            var diff = d1.getTime() - d2.getTime();
-            return diff / (24*60*60*1000);
-        }
-    };
-
-    var arrayHelpers = {
-        // concatenate and sort two arrays to the resulting array
-        // is sorted ie. merge [2,4,6] and [1,3,5] = [1,2,3,4,5,6]
-        merge: function (array1, array2) {
-            if(typeof(array1) === 'number') array1 = [array1];
-            if(typeof(array2) === 'number') array2 = [array2];
-            if(!array1 || !array1.length) return array2;
-            if(!array2 || !array2.length) return array1;
-
-            return [].concat(array1, array2).sort(function (a,b) { return a-b; });
-        },
-
-        /*jshint eqnull:true */
-        // we are using != null to get null & undefined but not 0
-        normalizeSeries: function (data, categories) {
-            function normal(set, name) {
-                return {
-                    name: name,
-                    data: _.map(set, function (d, i) {
-                        var hasX = d != null && d.hasOwnProperty('x');
-                        var hasCategories = categories && _.isArray(categories);
-                        var val = function (v) { return v != null ? v : null; };
-                        return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
-                    })
-                };
-            }
-
-            if (_.isArray(data)) {
-                if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
-                    // this would be the shape for multiple series
-                    return _.map(data, function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
-                } else {
-                    // this is just the shape [1,2,3,4] or [{x:0, y:1}, { x: 1, y:2}...]
-                    return [normal(data, 'series 1')];
-                }
-            }
-        }
-
-    };
-
-    var axisHelpers = {
-        /*jshint eqnull:true */
-        extractScaleDomain: function (domain, min, max) {
-            var dataMax = _.max(domain);
-            var dataMin = _.min(domain);
-
-            // we want null || undefined for all this comparasons
-            // that == null gives us
-            if (min == null && max == null) {
-                return [dataMin, dataMax];
-            }
-
-            if (min == null) {
-                return [Math.min(dataMin, max), max];
-            }
-
-            if (max == null) {
-                return [min, Math.max(min, dataMax)];
-            }
-
-            return [min, max];
-        }
-    };
-
-    var debuggingHelpers = {
-        warning: function (msg) {
-            if(console && console.log) {
-                console.log('WARNING: ' + msg);
-            }
-        }
-    };
-
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers, debuggingHelpers);
 
 })();
 
@@ -1560,6 +1652,22 @@ Narwhal.version = '0.0.35';
 
 (function () {
 
+    Narwhal.export('coolNarwhal', function (data, layer) {
+        layer.append('path')
+            .attr('class', 'cool')
+            .attr('opacity', 0)
+            .attr('transform', 'scale(.5) translate(500 150)')
+            .attr('d', 'M-220.02,76.509l-0.78,8.927c-0.956,10.949,1.389,20.422,6.188,30.383c10.203,21.173,63.095,84.05,93.72,115.075c20.145,20.406,19.487,23.018,21.549,40.122c2.487,20.621,24.897,66.462,40.838,71.269 c15.086,4.549,12.91-12.398,13.319-37.83c5.746,2.457,10.917,5.638,20.206,12.697c61.697,46.892,139.734,69.97,206.5,71.733c46.209,1.221,81.432-7.081,142.957-33.694c40.484-17.512,54.271-22.098,65.639-21.504c4.432,0.232,22.678,11.204,41.746,21.563c35.398,19.229,69.457,34.595,75.896,34.239c12.609-1.457-0.701-11.783-8.072-24.217c-7.049-11.892-15.414-29.572-18.844-42.134s-4.723-22.272-8.91-27.091c-2.143-2.463-12.812-6.786-21.189-8.146c-18.045-2.933-22.191-2.922-13.531-8.957c13.076-9.115,17.377-11.039,1.826-29.068c-6.383-7.402-11.336-20.003-13.709-39.542c-1.607-13.237,1.057-23.679-3.869-27.451s-17.271,12.341-20.846,19.334c-2.01,3.937-7.102,19.005-11.312,33.485c-13.795,47.427-29.865,65.742-62.693,71.447c-34.361,5.971-71.623-9.506-116.543-48.404c-13.164-11.399-29.533-25.26-39.254-36.913c-13.428-16.101-15.48-18.138-19.785-20.66c-16.166-9.472-54.98-31.694-103.525-63.815c-24.393-16.141-57.72-36.928-71.453-43.693c-27.236-13.417-68.416-28.952-90.731-46.771c-24.665-19.697-38.108-19.793-67.804-5.479c-21.429,10.328-23.941,15.298-26.52,15.726c-8.216-10.129-22.917-11.198-31.647-20.682c-9.529-10.35-28.027-14.098-37.824-24.957c-10.668-11.826-31.25-16.752-40.886-26.94c-11.339-11.989-29.387-16.096-40.838-26.637c-11.617-10.694-27.159-14.843-37.68-24.045c-10.383-9.082-23.187-12.538-31.408-19.163c-8.193-6.601-16.593-9.444-22.026-11.993c-5.433-2.549-7.398-2.522-7.658-1.927c-0.26,0.594,1.355,2.955,6.054,6.447c4.699,3.491,22.193,18.451,31.645,22.77c10.921,5.104,17.502,15.01,29.671,21.375c13.224,6.918,22.212,18.731,36.229,25.924c15.53,7.971,24.754,21.184,39.657,28.253c16.462,7.808,25.503,21.598,39.958,28.36c14.499,6.78,20.647,20.252,34.429,23.428C-238.033,58.207-227.932,70.443-220.02,76.509L-220.02,76.509z')
+            .transition()
+                .delay(300)
+                .duration(2000)
+                .attr('opacity', 1);
+    });
+
+})();
+
+(function () {
+
     var defaults = {
         line: {
             smooth: false,
@@ -1595,7 +1703,7 @@ Narwhal.version = '0.0.35';
             var markerSize = this.options.line.marker.size;
             var className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
             var renderPath = this.options.chart.animations ? renderAnimatedPath : renderSimplePath;
-            var renderMakers = this.options.line.marker.enable ? renderLineMarkers : $.noop;
+            var renderMakers = this.options.line.marker.enable ? renderLineMarkers : _.noop;
 
             var path = layer.append('path')
                     .datum(nonNullData)
@@ -1810,9 +1918,9 @@ Narwhal.version = '0.0.35';
     Narwhal.export('stackTooltip', function (data, layer, options) {
 
         var valueFormatter = this.yAxis().tickFormat();
-        var tooltip = $(options.stackTooltip.el);
+        var tooltip = d3.select(options.stackTooltip.el);
 
-        tooltip.addClass('stack-tooltip');
+        tooltip.classed('stack-tooltip', true);
 
         /*jshint eqnull:true*/
         var onMouseOver = function (d) {
@@ -1827,7 +1935,7 @@ Narwhal.version = '0.0.35';
             };
             var filtered = _.filter(_.map(data, mapFn), function (x) { return x; });
             var text = _.map(filtered, function (t) { return '<span class="' + t.cssClass + '"">' + t.seriesName + ': ' + valueFormatter(t.value) + '</span>'; }).join(' / ');
-            tooltip.html(text).show();
+            tooltip.html(text).style({display: 'block'});
         };
 
         var onMouseOut = function (/* datum */) {
@@ -1938,7 +2046,7 @@ Narwhal.version = '0.0.35';
 
 
 
-(function (ns, d3, _, $, undefined) {
+(function () {
 
     function Csv(raw, headerRow) {
         headerRow = typeof headerRow === 'undefined' ? true : headerRow;
@@ -1988,7 +2096,7 @@ Narwhal.version = '0.0.35';
     Narwhal.connectors = Narwhal.connectors || {};
     Narwhal.connectors.Csv = Csv;
 
-})('Narwhal', window.d3, window._, window.jQuery);
+})();
 
 // exports for commonJS and requireJS styles
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
