@@ -27,7 +27,7 @@
 
         niceRound: function (val) {
             // for now just round(10% above the value)
-            return Math.ceil(val * 1.10);
+            return Math.ceil(val + val * 0.10);
 
             // var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
             // var fac = Math.pow(10, digits);
@@ -470,11 +470,17 @@
 
         scale: function (domain) {
             if(!this._scale) {
-                this._scale = d3.scale.linear().domain(domain).nice();
+                this._scale = d3.scale.linear();
+                this.setDomain(domain);
                 setRange(this._scale, this.options);
             }
 
             return this._scale;
+        },
+
+        setDomain: function (domain) {
+            this._scale.domain(domain);
+            this._niceTheScale();
         },
 
         /*jshint eqnull:true*/
@@ -482,8 +488,10 @@
             return this.options.yAxis.ticks != null ? this.options.yAxis.ticks : undefined;
         },
 
+        _niceTheScale: function () {
+            this._scale.nice();
+        }
     };
-
 
     _.extend(_.nw, { YAxis: YAxis });
 
@@ -638,20 +646,7 @@
         * @param {Array} domain The domain array represeting the min and max values of to be visible in the y Axis
         */
         setYDomain: function (domain) {
-            // this.yDomain = domain;
-            //     this.yMax = domain[1];
-            if(!this.yMax) {
-                console.log(this.yMax);
-            }
-            // this.adjustDomain();
-            // this.yScale.domain(this.yDomain);
-            this.yScale.domain(domain);
-
-            // if we are not using smartAxis we use d3's nice() domain
-            if (!this.options.yAxis.smartAxis)
-                this.yScale.nice();
-
-            // this.yDomain = this.yScale.domain();
+            this.yScaleGenerator.setDomain(domain);
         },
 
         /*
@@ -855,7 +850,7 @@
             } else if (series instanceof Array && !series[0].data) {
                 this.dataSrc = _.map(series, _.bind(this.datum, this));
                 this.xDomain = this.extractXDomain(this.dataSrc);
-                this.yDomain = this.extractYDomain(this.dataSrc);
+                this.yDomain = this.options.chart.stacked ? this.extractYStackedDomain(this.dataSrc) : this.extractYDomain(this.dataSrc);
                 this.yMax = this.getYAxisDataMax(this.dataSrc);
                 this.yMin = this.getYAxisDataMin(this.dataSrc);
             } else if (series instanceof Array && series[0].data) {
@@ -900,19 +895,16 @@
         },
 
         adjustDomain: function () {
-            this.yDomain = this.yDomain ? this.options.yAxis.smartAxis ? [this.yDomain[0], _.nw.niceRound(this.yDomain[1])] : this.yDomain : [0, 10];
+            this.yDomain = this.yDomain ? this.yDomain : [0, 10];
             this.xDomain = this.xDomain ? this.xDomain : [];
-        },
-
-
-
+        }
     };
 
     Narwhal.expose('cartesian', cartesian);
 
 })();
 
-Narwhal.version = '0.0.35';
+Narwhal.version = '0.0.36';
 (function () {
 
     var helpers = {
@@ -1141,31 +1133,34 @@ Narwhal.version = '0.0.35';
 
     SmartYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
         axis: function () {
-
             var options = this.options.yAxis;
             var domain = this._scale.domain();
             var tickValues = _extractYTickValues(domain, options.min, options.max, this.yMin, this.yMax);
             var numTicks = this.numTicks();
-            var format = d3.format(options.labels.format);
-            var orient = options.orient;
-
-            return d3.svg.axis()
-                .scale(this.scale())
-                .tickFormat(format)
-                .tickSize(options.innerTickSize, options.outerTickSize)
-                .tickPadding(options.tickPadding)
-                .orient(orient)
-                .ticks(numTicks)
+            var axis = _.nw.YAxis.prototype.axis.call(this);
+            return axis.ticks(numTicks)
                 .tickValues(tickValues);
         },
 
         numTicks: function () {
             return 3;
+        },
+
+        setDomain: function (domain) {
+            var extent = d3.extent(domain);
+            this.yMin = extent[0];
+            this.yMax = extent[1];
+            this._scale.domain(domain);
+
+            this._niceTheScale();
+        },
+
+        _niceTheScale: function () {
+            var domain = this._scale.domain();
+            var nice = [this.options.yAxis.min || domain[0], this.options.yAxis.max || _.nw.niceRound(domain[1])];
+            this._scale.domain(nice);
         }
-
-
     });
-
 
     _.extend(_.nw, { SmartYAxis: SmartYAxis });
 
