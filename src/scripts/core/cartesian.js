@@ -73,11 +73,11 @@
             var format = d3.format(options.labels.format);
             var yAxisText = _.map(yLabels, format).join('<br>');
             var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
-            var xLabelBounds = _.nw.textBounds('ABC', '.x.axis');
+            var xLabelBounds = _.nw.textBounds('jgitlhHJKQWE', '.x.axis');
             var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
 
             this.options.chart.padding.left = maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
-            this.options.chart.padding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height - 4;
+            this.options.chart.padding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height;
         },
 
         adjustTitlePadding: function () {
