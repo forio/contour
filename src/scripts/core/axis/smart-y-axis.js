@@ -57,7 +57,6 @@
             var domain = this._scale.domain();
             var nice = [this.options.yAxis.min || domain[0], this.options.yAxis.max || _.nw.niceRound(domain[1])];
             this._scale.domain(nice);
-            // do nothing here
         }
     });
 

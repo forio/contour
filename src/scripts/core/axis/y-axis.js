@@ -52,9 +52,7 @@
         _niceTheScale: function () {
             this._scale.nice();
         }
-
     };
-
 
     _.extend(_.nw, { YAxis: YAxis });
 
