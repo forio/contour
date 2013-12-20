@@ -97,6 +97,7 @@ describe('default yAxis', function () {
             it('should recalculate yAxis and ticks with new domain', function () {
                 nw = createNarwhal({}).data([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
                 nw.setYDomain([0, 50]);
+                nw.redrawYAxis();
                 var ticks = $el.find('.y.axis .tick text');
                 expect(+ticks.last().text()).toBe(55);
             });
