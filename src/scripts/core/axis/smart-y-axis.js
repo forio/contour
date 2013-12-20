@@ -44,7 +44,19 @@
             return 3;
         },
 
+        setDomain: function (domain) {
+            var extent = d3.extent(domain);
+            this.yMin = extent[0];
+            this.yMax = extent[1];
+            this._scale.domain(domain);
+
+            this._niceTheScale();
+        },
+
         _niceTheScale: function () {
+            var domain = this._scale.domain();
+            var nice = [this.options.yAxis.min || domain[0], this.options.yAxis.max || _.nw.niceRound(domain[1])];
+            this._scale.domain(nice);
             // do nothing here
         }
     });

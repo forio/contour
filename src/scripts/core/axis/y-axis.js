@@ -31,12 +31,17 @@
 
         scale: function (domain) {
             if(!this._scale) {
-                this._scale = d3.scale.linear().domain(domain);
-                this._niceTheScale();
+                this._scale = d3.scale.linear();
+                this.setDomain(domain);
                 setRange(this._scale, this.options);
             }
 
             return this._scale;
+        },
+
+        setDomain: function (domain) {
+            this._scale.domain(domain);
+            this._niceTheScale();
         },
 
         /*jshint eqnull:true*/

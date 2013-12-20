@@ -147,20 +147,7 @@
         * @param {Array} domain The domain array represeting the min and max values of to be visible in the y Axis
         */
         setYDomain: function (domain) {
-            // this.yDomain = domain;
-            //     this.yMax = domain[1];
-            if(!this.yMax) {
-                console.log(this.yMax);
-            }
-            // this.adjustDomain();
-            // this.yScale.domain(this.yDomain);
-            this.yScale.domain(domain);
-
-            // if we are not using smartAxis we use d3's nice() domain
-            if (!this.options.yAxis.smartAxis)
-                this.yScale.nice();
-
-            // this.yDomain = this.yScale.domain();
+            this.yScaleGenerator.setDomain(domain);
         },
 
         /*
@@ -364,7 +351,7 @@
             } else if (series instanceof Array && !series[0].data) {
                 this.dataSrc = _.map(series, _.bind(this.datum, this));
                 this.xDomain = this.extractXDomain(this.dataSrc);
-                this.yDomain = this.extractYDomain(this.dataSrc);
+                this.yDomain = this.options.chart.stacked ? this.extractYStackedDomain(this.dataSrc) : this.extractYDomain(this.dataSrc);
                 this.yMax = this.getYAxisDataMax(this.dataSrc);
                 this.yMin = this.getYAxisDataMin(this.dataSrc);
             } else if (series instanceof Array && series[0].data) {
@@ -409,12 +396,9 @@
         },
 
         adjustDomain: function () {
-            this.yDomain = this.yDomain ? this.options.yAxis.smartAxis ? [this.yDomain[0], _.nw.niceRound(this.yDomain[1])] : this.yDomain : [0, 10];
+            this.yDomain = this.yDomain ? this.yDomain : [0, 10];
             this.xDomain = this.xDomain ? this.xDomain : [];
-        },
-
-
-
+        }
     };
 
     Narwhal.expose('cartesian', cartesian);

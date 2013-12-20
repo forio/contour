@@ -11,7 +11,7 @@
 
         niceRound: function (val) {
             // for now just round(10% above the value)
-            return Math.ceil(val * 1.10);
+            return Math.ceil(val + val * 0.10);
 
             // var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
             // var fac = Math.pow(10, digits);

@@ -28,7 +28,7 @@ describe('Cartesian frame', function () {
         var h = narwhal.options.chart.plotHeight;
 
         expect(narwhal.yScale(0)).toEqual(h);
-        expect(narwhal.yScale(10)).toEqual(0);
+        expect(narwhal.yScale(11)).toEqual(0);
     }
 
     it('without data should provide default axis', function () {
