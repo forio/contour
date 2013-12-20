@@ -42,6 +42,10 @@
 
         numTicks: function () {
             return 3;
+        },
+
+        _niceTheScale: function () {
+            // do nothing here
         }
     });
 

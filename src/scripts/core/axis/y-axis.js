@@ -31,7 +31,8 @@
 
         scale: function (domain) {
             if(!this._scale) {
-                this._scale = d3.scale.linear().domain(domain).nice();
+                this._scale = d3.scale.linear().domain(domain);
+                this._niceTheScale();
                 setRange(this._scale, this.options);
             }
 
@@ -42,6 +43,10 @@
         numTicks: function () {
             return this.options.yAxis.ticks != null ? this.options.yAxis.ticks : undefined;
         },
+
+        _niceTheScale: function () {
+            this._scale.nice();
+        }
 
     };
 
