@@ -106,22 +106,22 @@ var config = {
 
     el: '.chart',
     chart: {
-        gridlines: 'horizontal'
+        gridlines: 'horizontal',
     },
 
     xAxis: {
         firstAndLast: false,
         categories: ['javascript', 'fortran', 'julia', 'x'],
+
         labels: {
             format: '0.1f'
         }
+
     },
 
     yAxis: {
-        type: 'log',
         smartAxis: false,
         // min: 0.1
-        max: 1000000,
         // ticks: 15,
         labels: {
             format: ',.0f'

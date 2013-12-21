@@ -503,8 +503,9 @@
             gridlines: 'none',
             padding: {
                 top: 6,
-                bottom: 25,
-                left: 0,
+
+                // bottom: 25,
+                // left: 0,
                 right: 5
             }
         },
@@ -524,6 +525,8 @@
         },
 
         yAxis: {
+            /** @param: {linear|smart|log} */
+            type: 'smart',
             min: 0,
             max: undefined,
             smartAxis: true,
@@ -541,7 +544,7 @@
         }
     };
 
-    /*
+    /**
     * Provides a cartesian frame to the Narwhal instance
     *
     * Example:
@@ -575,8 +578,8 @@
             var xLabelBounds = _.nw.textBounds('jgitlhHJKQWE', '.x.axis');
             var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
 
-            this.options.chart.padding.left = maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
-            this.options.chart.padding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height;
+            this.options.chart.padding.left = this.options.chart.padding.left ||  maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
+            this.options.chart.padding.bottom = this.options.chart.padding.bottom ||maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height;
         },
 
         adjustTitlePadding: function () {
@@ -904,7 +907,7 @@
 
 })();
 
-Narwhal.version = '0.0.37';
+Narwhal.version = '0.0.38';
 (function () {
 
     var helpers = {
