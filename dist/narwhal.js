@@ -444,7 +444,6 @@
         this.options = options;
     };
 
-
     function setRange(scale, options) {
         var rangeSize = options.chart.rotatedFrame ? options.chart.plotWidth : options.chart.plotHeight;
         var range = options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
@@ -536,6 +535,7 @@
             labels: {
                 align: 'middle',
                 format: 's' // d3 formats
+                // formatter
 
             }
         }
@@ -568,15 +568,15 @@
 
         adjustPadding: function () {
             var options = this.options.yAxis;
-            var yLabels = [10000];
-            var format = d3.format(options.labels.format);
+            var yLabels = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), options.min, options.max);
+            var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
             var yAxisText = _.map(yLabels, format).join('<br>');
             var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
-            var xLabelBounds = _.nw.textBounds('ABC', '.x.axis');
+            var xLabelBounds = _.nw.textBounds('jgitlhHJKQWE', '.x.axis');
             var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
 
             this.options.chart.padding.left = maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
-            this.options.chart.padding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height - 4;
+            this.options.chart.padding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height;
         },
 
         adjustTitlePadding: function () {
@@ -904,7 +904,7 @@
 
 })();
 
-Narwhal.version = '0.0.36';
+Narwhal.version = '0.0.37';
 (function () {
 
     var helpers = {
@@ -932,10 +932,18 @@ Narwhal.version = '0.0.36';
         },
 
         yScaleFactory: function (data, options, yMin, yMax) {
-            if (options && options.yAxis && options.yAxis.smartAxis)
-                return new _.nw.SmartYAxis(data, options, yMin, yMax);
+            var map = {
+                'log': _.nw.LogYAxis,
+                'smart': _.nw.SmartYAxis,
+                'linear': _.nw.YAxis
+            };
 
-            return new _.nw.YAxis(data, options);
+            if(!options.yAxis.type) options.yAxis.type = 'linear';
+            if(options.yAxis.type === 'linear' && options.yAxis.smartAxis) options.yAxis.type = 'smart';
+
+            if(!map[options.yAxis.type]) throw new Error('Unknown axis type: "' + options.yAxis.type + '"');
+
+            return new map[options.yAxis.type](data, options, yMin, yMax);
         }
 
     };
@@ -1019,6 +1027,58 @@ Narwhal.version = '0.0.36';
     };
 
     _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
+
+})();
+
+(function () {
+
+    var LogYAxis = function (data, options) {
+        this.data = data;
+        this.options = options;
+    };
+
+    function setRange(scale, options) {
+        var rangeSize = options.chart.rotatedFrame ? options.chart.plotWidth : options.chart.plotHeight;
+        var range = options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
+        return scale.range(range);
+    }
+
+    LogYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
+        axis: function () {
+            var options = this.options.yAxis;
+            var domain = this._scale.domain();
+            var ticksHint = Math.ceil(Math.log(domain[1]) / Math.log(10));
+            var format = d3.format(options.labels.format || ',.0f');
+
+            var axis = d3.svg.axis()
+                .scale(this._scale)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding);
+            if(options.labels.formatter) {
+                axis.tickFormat(options.labels.formatter);
+            } else {
+                axis.ticks(options.ticks || ticksHint, format);
+            }
+
+
+            return axis;
+        },
+
+        scale: function (domain) {
+            if(!this._scale) {
+                if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
+
+                this._scale = d3.scale.log().domain(domain).clamp(true);
+
+                setRange(this._scale, this.options);
+            }
+
+            return this._scale;
+
+        }
+    });
+
+    _.extend(_.nw, { LogYAxis: LogYAxis });
 
 })();
 
