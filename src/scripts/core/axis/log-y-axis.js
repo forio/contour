@@ -15,7 +15,7 @@
         axis: function () {
             var options = this.options.yAxis;
             var domain = this._scale.domain();
-            var ticksHint = Math.ceil(Math.log(domain[1]));
+            var ticksHint = Math.ceil(Math.log(domain[1]) / Math.log(10));
             var format = d3.format(options.labels.format || ',.0f');
 
             var axis = d3.svg.axis()
@@ -36,7 +36,7 @@
             if(!this._scale) {
                 if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
 
-                this._scale = d3.scale.log().domain(domain);
+                this._scale = d3.scale.log().domain(domain).clamp(true);
 
                 setRange(this._scale, this.options);
             }
