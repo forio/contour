@@ -70,8 +70,8 @@
 
         adjustPadding: function () {
             var options = this.options.yAxis;
-            var yLabels = this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]);
-            var format = d3.format(options.labels.format);
+            var yLabels = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), options.min, options.max);
+            var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
             var yAxisText = _.map(yLabels, format).join('<br>');
             var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
             var xLabelBounds = _.nw.textBounds('jgitlhHJKQWE', '.x.axis');
