@@ -16,6 +16,7 @@
     <script src="../src/scripts/core/axis/linear-scale-axis.js" ></script>
     <script src="../src/scripts/core/axis/y-axis.js" ></script>
     <script src="../src/scripts/core/axis/smart-y-axis.js" ></script>
+    <script src="../src/scripts/core/axis/log-y-axis.js" ></script>
     <script src="../src/scripts/core/axis/axis-scale-factory.js" ></script>
     <script src="../src/scripts/core/narwhal.js"></script>
     <script src="../src/scripts/core/cartesian.js"></script>
@@ -39,7 +40,7 @@
         }
 
         .chart svg {
-            border: solid 0px red;
+            border: solid 1px red;
 
         }
 
@@ -105,19 +106,28 @@ var config = {
 
     el: '.chart',
     chart: {
-        // gridlines: 'horizontal'
+        gridlines: 'horizontal'
     },
 
     xAxis: {
         firstAndLast: false,
+        categories: ['javascript', 'fortran', 'julia', 'x'],
         labels: {
             format: '0.1f'
         }
     },
 
     yAxis: {
-        smartAxis: true,
-        // ticks: 2
+        type: 'log',
+        smartAxis: false,
+        // min: 0.1
+        max: 1000000,
+        // ticks: 15,
+        labels: {
+            format: ',.0f'
+
+            // formatter: function (d) { return 'a' }
+        }
     },
 
     tooltip: {
@@ -141,11 +151,9 @@ var data = [
 
 var chart = new Narwhal(config)
     .cartesian()
-    .horizontal()
-    .bar(data)
     // .line(data)
 
-    // .column(data, {stacked: false})
+    .column(data, {stacked: false})
     // .pie([{ x: 'Alpha', y: 10}, { x: 'Beta', y: 30}, {x: 'Gamma', y: 40}, {x: 'Kappa', y: 20}])
     .tooltip()
     .render();
