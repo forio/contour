@@ -1,0 +1,51 @@
+(function () {
+
+    var LogYAxis = function (data, options) {
+        this.data = data;
+        this.options = options;
+    };
+
+    function setRange(scale, options) {
+        var rangeSize = options.chart.rotatedFrame ? options.chart.plotWidth : options.chart.plotHeight;
+        var range = options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];
+        return scale.range(range);
+    }
+
+    LogYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
+        axis: function () {
+            var options = this.options.yAxis;
+            var domain = this._scale.domain();
+            var ticksHint = Math.ceil(Math.log(domain[1]));
+            var format = d3.format(options.labels.format || ',.0f');
+
+            var axis = d3.svg.axis()
+                .scale(this._scale)
+                .tickSize(options.innerTickSize, options.outerTickSize)
+                .tickPadding(options.tickPadding);
+            if(options.labels.formatter) {
+                axis.tickFormat(options.labels.formatter);
+            } else {
+                axis.ticks(options.ticks || ticksHint, format);
+            }
+
+
+            return axis;
+        },
+
+        scale: function (domain) {
+            if(!this._scale) {
+                if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
+
+                this._scale = d3.scale.log().domain(domain);
+
+                setRange(this._scale, this.options);
+            }
+
+            return this._scale;
+
+        }
+    });
+
+    _.extend(_.nw, { LogYAxis: LogYAxis });
+
+})();

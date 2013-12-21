@@ -5,7 +5,6 @@
         this.options = options;
     };
 
-
     function setRange(scale, options) {
         var rangeSize = options.chart.rotatedFrame ? options.chart.plotWidth : options.chart.plotHeight;
         var range = options.chart.rotatedFrame ? [0, rangeSize] : [rangeSize, 0];

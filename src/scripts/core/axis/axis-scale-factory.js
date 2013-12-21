@@ -25,10 +25,18 @@
         },
 
         yScaleFactory: function (data, options, yMin, yMax) {
-            if (options && options.yAxis && options.yAxis.smartAxis)
-                return new _.nw.SmartYAxis(data, options, yMin, yMax);
+            var map = {
+                'log': _.nw.LogYAxis,
+                'smart': _.nw.SmartYAxis,
+                'linear': _.nw.YAxis
+            };
 
-            return new _.nw.YAxis(data, options);
+            if(!options.yAxis.type) options.yAxis.type = 'linear';
+            if(options.yAxis.type === 'linear' && options.yAxis.smartAxis) options.yAxis.type = 'smart';
+
+            if(!map[options.yAxis.type]) throw new Error('Unknown axis type: "' + options.yAxis.type + '"');
+
+            return new map[options.yAxis.type](data, options, yMin, yMax);
         }
 
     };

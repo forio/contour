@@ -37,6 +37,7 @@
             labels: {
                 align: 'middle',
                 format: 's' // d3 formats
+                // formatter
 
             }
         }
