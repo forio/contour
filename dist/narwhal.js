@@ -488,7 +488,8 @@
         },
 
         _niceTheScale: function () {
-            this._scale.nice();
+            if (this.options.yAxis.nicing)
+                this._scale.nice();
         }
     };
 
@@ -526,7 +527,7 @@
 
         yAxis: {
             /** @param: {linear|smart|log} */
-            type: 'smart',
+            // type: 'smart',
             min: 0,
             max: undefined,
             smartAxis: true,
@@ -534,6 +535,7 @@
             outerTickSize: 6,
             tickPadding: 4,
             titlePadding: 4,
+            nicing: true,
             orient: 'left',
             labels: {
                 align: 'middle',
@@ -907,7 +909,7 @@
 
 })();
 
-Narwhal.version = '0.0.38';
+Narwhal.version = '0.0.39';
 (function () {
 
     var helpers = {

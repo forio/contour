@@ -1,1 +1,1 @@
-Narwhal.version = '0.0.38';
+Narwhal.version = '0.0.39';
