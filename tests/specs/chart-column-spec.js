@@ -52,6 +52,16 @@ describe('Column chart', function () {
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });
 
+            it('should call the offset function with Narwhal instance context if specified', function () {
+                var ctx;
+                var offset = function () { ctx = this; return 50; };
+                var nw = createNarwhal({
+                    column: { offset: offset , stacked: true }
+                }).column(data).render();
+
+                expect(ctx).toBe(nw);
+            });
+
             it('should user columnWidth value to get the width for each column', function () {
                 createNarwhal({
                     column: { columnWidth: 1.5 , stacked: true }

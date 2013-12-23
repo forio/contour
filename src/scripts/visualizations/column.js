@@ -18,6 +18,7 @@
         var x = this.xScale;
         var y = this.yScale;
         var rangeBand = getValue(opt.columnWidth, this.rangeBand, this);
+        var chartOffset = getValue(opt.offset, 0, this);
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
         var enter = this.options.column.stacked ? stacked : grouped;
@@ -36,7 +37,6 @@
 
         function stacked(col) {
             /*jshint eqnull:true */
-            var chartOffset = opt.offset | 0;
             if(this.options.yAxis.max == null) {
                 var flat = _.flatten(_.map(data, function (d) { return d.data; }));
                 var max = _.max(flat, function (d) { return d.y0 + d.y; });
@@ -51,7 +51,6 @@
         }
 
         function grouped(col) {
-            var chartOffset = opt.offset | 0;
             var width = rangeBand / data.length - opt.padding;
             var offset = function (d, i) { return rangeBand / data.length * i; };
 
