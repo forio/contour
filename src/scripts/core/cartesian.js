@@ -36,6 +36,7 @@
             outerTickSize: 6,
             tickPadding: 4,
             titlePadding: 4,
+            nicing: true,
             orient: 'left',
             labels: {
                 align: 'middle',

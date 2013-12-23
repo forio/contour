@@ -49,7 +49,8 @@
         },
 
         _niceTheScale: function () {
-            this._scale.nice();
+            if (this.options.yAxis.nicing)
+                this._scale.nice();
         }
     };
 
