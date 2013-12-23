@@ -37,6 +37,76 @@ describe('Column chart', function () {
             expect(+rects.eq(2).attr('height')).toBe(y(data[2]));
         });
 
+        describe('stacked', function () {
+
+
+            it('should move the columns by \'offset\' if specified', function () {
+                var offset = 50;
+                var nw = createNarwhal({
+                    column: { offset: offset , stacked: true }
+                }).column(data).render();
+
+                var rects = $el.find('rect');
+                var x1 = nw.xScale(0) + offset;
+
+                expect(+rects.eq(0).attr('x')).toBe(x1);
+            });
+
+            it('should user columnWidth value to get the width for each column', function () {
+                createNarwhal({
+                    column: { columnWidth: 1.5 , stacked: true }
+                }).column(data).render();
+
+                var rects = $el.find('rect');
+                expect(+rects.eq(0).attr('width')).toBe(1.5);
+                expect(+rects.eq(1).attr('width')).toBe(1.5);
+                expect(+rects.eq(2).attr('width')).toBe(1.5);
+            });
+
+            it('should user columnWidth function to get the width for each column', function () {
+                createNarwhal({
+                    column: { columnWidth: function () { return 1.5; }, stacked: true }
+                }).column(data).render();
+
+                var rects = $el.find('rect');
+                expect(+rects.eq(0).attr('width')).toBe(1.5);
+                expect(+rects.eq(1).attr('width')).toBe(1.5);
+                expect(+rects.eq(2).attr('width')).toBe(1.5);
+            });
+
+        });
+
+        describe('grouped', function () {
+
+
+            it('should move the columns by \'offset\' if specified', function () {
+                var offset = 50;
+                var nw = createNarwhal({
+                    column: { offset: offset, stacked: false }
+                }).column(data).render();
+
+                var rects = $el.find('rect');
+                var x1 = nw.xScale(0) + offset;
+
+                expect(+rects.eq(0).attr('x')).toBe(x1);
+            });
+
+            it('should user columnWidth function to get the width for each column in the group', function () {
+                createNarwhal({
+                    column: { padding: 1, columnWidth: function () { return 3; }, stacked: false }
+                }).column([{data: [1,2,3]}, {data: [4,5,6]}]).render();
+
+                // each group has #series columns, in this case two series, so each group has 2 columns
+                // the width of each column should be rangeBand / 2 - padding
+                var w = 3/2 - 1;
+
+                var rects = $el.find('rect');
+                expect(+rects.eq(0).attr('width')).toBe(w);
+                expect(+rects.eq(1).attr('width')).toBe(w);
+                expect(+rects.eq(2).attr('width')).toBe(w);
+            });
+        });
+
     });
 
 });
