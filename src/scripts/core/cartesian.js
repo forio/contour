@@ -28,7 +28,7 @@
 
         yAxis: {
             /** @param: {linear|smart|log} */
-            type: 'smart',
+            // type: 'smart',
             min: 0,
             max: undefined,
             smartAxis: true,
