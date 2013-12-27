@@ -15,11 +15,42 @@ describe('Ordinal xAxis', function () {
     });
 
 
-    it('should not have any Tick marks', function () {
+    it('should not have any Tick marks by default', function () {
         narwhal.data([0,10,20,30]).render();
         var ticks = $el.find('.x.axis ');
         expect(_.all(ticks.find('.tick line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '0'; })).toBe(true);
         expect(ticks.find('.domain').attr('d')).toContain('M0');
+    });
+
+
+    it('should change padding between axis and first rangeBand using outerRangePadding', function () {
+        function getScale (inner, outer) {
+            narwhal = createNarwhal({ xAxis: { innerRangePadding: inner, outerRangePadding: outer }}) .data([10, 20, 30]).render();
+            return narwhal.xAxis().scale();
+        }
+
+        var scale = getScale(0, 0);
+
+        expect(scale(0)).toBe(0);
+
+        scale = getScale(0, 0.5);
+        var width = scale.rangeBand();
+        expect(scale(0)).toBe(width / 2 + 1);
+    });
+
+    it('should change padding between columns using innerRangePadding', function () {
+        function getScale (inner, outer) {
+            narwhal = createNarwhal({ xAxis: { innerRangePadding: inner, outerRangePadding: outer }}) .data([10, 20, 30]).render();
+            return narwhal.xAxis().scale();
+        }
+
+        var scale = getScale(0, 0);
+        var width = scale.rangeBand();
+        expect(scale(1)).toBe(width);
+
+        scale = getScale(0, 0.5);
+        width = scale.rangeBand();
+        expect(scale(1)).toBe(width * 1.5 + 1);
     });
 
     describe('with options.xAxis.min set', function () {

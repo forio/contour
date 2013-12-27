@@ -18,6 +18,10 @@
             outerTickSize: 0,
             tickPadding: 6,
             titlePadding: 4,
+            /* padding between ranges (ie. columns) expressed in percentage of rangeBand width */
+            innerRangePadding: 0.1,
+            /* padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width */
+            outerRangePadding: 0.1,
             firstAndLast: true,
             orient: 'bottom',
             labels: {
