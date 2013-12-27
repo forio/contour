@@ -203,6 +203,8 @@
         }
     };
 
+    var _visualizations = [];
+
     /**
     * Narwhal visualization constructor
     *
@@ -283,13 +285,10 @@
             sortSeries(data);
             renderer.defaults = renderer.defaults || {};
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
-            var opt = {};
-            // merge the options passed ito Narwhal's constructor and this vis constructor
-            // into a set of options to be merged with the defaults and back into narwhal global options object
-            opt[ctorName] = _.merge({}, this.options[ctorName], options);
-            _.merge(this.options, renderer.defaults, opt);
-
             var renderFunc;
+            var opt = {};
+            opt[ctorName] = options || {};
+
             if (_.isArray(data)) {
                 var datums = _.nw.normalizeSeries(data, categories);
                 this.data(datums);
@@ -298,13 +297,16 @@
                 renderFunc = _.partial(renderer, data);
             }
 
-            this.visualizations.push(renderFunc);
+            _visualizations.push({
+                type: ctorName,
+                defaults: renderer.defaults,
+                renderFunc: renderFunc,
+                options: opt
+            });
 
             return this;
         };
     };
-
-
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
 
@@ -313,9 +315,9 @@
             // for now, just  store this options here...
             // the final set of options will be composed before rendering
             // after all components/visualizations have been added
-            this.options = options;
+            this.options = options || {};
 
-            this.visualizations = [];
+            _visualizations.length = 0;
 
             return this;
         },
@@ -363,8 +365,13 @@
         },
 
         composeOptions: function () {
+            var allDefaults = _.merge({}, defaults);
+            var mergeDefaults = function (vis) { _.merge(allDefaults, vis.defaults); };
+
+            _.each(_visualizations, mergeDefaults);
+
             // compose the final list of options right before start rendering
-            this.options = _.merge({}, defaults, this.options);
+            this.options = _.merge({}, allDefaults, this.options);
         },
 
         baseRender: function () {
@@ -404,17 +411,19 @@
             return this;
         },
 
-        createVisualizationLayer: function (id) {
+        createVisualizationLayer: function (vis, id) {
             return this.svg.append('g')
                 .attr('vis-id', id)
+                .attr('vis-type', vis.type)
                 .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
         },
 
         renderVisualizations: function () {
-            _.each(this.visualizations, function (visualization, index) {
+            _.each(_visualizations, function (visualization, index) {
                 var id = index + 1;
-                var layer = this.createVisualizationLayer(id);
-                visualization.call(this, layer, this.options, id);
+                var layer = this.createVisualizationLayer(visualization, id);
+                var opt = _.merge({}, this.options, visualization.options);
+                visualization.renderFunc.call(this, layer, opt);
             }, this);
 
             return this;
@@ -909,7 +918,7 @@
 
 })();
 
-Narwhal.version = '0.0.39';
+Narwhal.version = '0.0.40';
 (function () {
 
     var helpers = {
@@ -1636,16 +1645,22 @@ Narwhal.version = '0.0.39';
     var defaults = {
         column : {
             stacked: false,
-            padding: 1
+            padding: 1,
+            columnWidth: function() { return this.rangeBand; }
         }
     };
+
+    function getValue(src, deafult, ctx) {
+        return !src ? deafult : typeof src === 'function' ? src.call(ctx) : src;
+    }
 
     function render(data, layer, options) {
         var opt = options.column;
         var h = this.options.chart.plotHeight;
         var x = this.xScale;
         var y = this.yScale;
-        var rangeBand = this.rangeBand;
+        var rangeBand = getValue(opt.columnWidth, this.rangeBand, this);
+        var chartOffset = getValue(opt.offset, 0, this);
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
         var enter = this.options.column.stacked ? stacked : grouped;
@@ -1671,7 +1686,7 @@ Narwhal.version = '0.0.39';
                 this.redrawYAxis();
             }
 
-            col.attr('x', function (d) { return x(d.x); })
+            col.attr('x', function (d) { return x(d.x) + chartOffset; })
                 .attr('width', function () { return rangeBand; })
                 .attr('y', function (d) { return y(d.y) + y(d.y0) - h; })
                 .attr('height', function (d) { return h - y(d.y); });
@@ -1681,7 +1696,7 @@ Narwhal.version = '0.0.39';
             var width = rangeBand / data.length - opt.padding;
             var offset = function (d, i) { return rangeBand / data.length * i; };
 
-            col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j); })
+            col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
                 .attr('width', width)
                 .attr('y', function (d) { return y(d.y); })
                 .attr('height', function (d) { return h - y(d.y); });
