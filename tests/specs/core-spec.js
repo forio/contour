@@ -77,7 +77,7 @@ describe('Narwhal', function () {
                 expect(s1.data[2]).toEqual({ x: '3', y: 3});
             });
 
-            it('when categories array is givem, should normalize the data with categories', function () {
+            it('when categories array is given, should normalize the data with categories', function () {
                 Narwhal.export('something', function (data) {
                     dataParam = data;
                 });
@@ -155,10 +155,38 @@ describe('Narwhal', function () {
             expect(nw.options.vis).toBeDefined();
             expect(nw.options.vis.xyz).toBe(30);
         });
+
+        it('should not override global config options if options are specificed for the visualization', function () {
+            // if the options are passed to the Narwhal constructor, then the instance gets the merged version of the
+            // conig object, but if the options are passed in to the visualization as a second parameter, only
+            // that visualization should get the version of the config merged with the options.
+
+            var calls = [];
+            function render(data, layer, options) {
+                calls.push({data: data, opt: options.vis });
+            }
+
+            Narwhal.export('vis', render);
+
+            nw = new Narwhal({})
+                .vis([{name: 's1', data: [1]}], { option1: 10 })
+                .vis([{name: 's2', data:[2]}], { option1: 20 })
+                .render();
+
+            expect(calls.length).toBe(2);
+            expect(calls[0].data[0].name).toEqual('s1');
+            expect(calls[0].opt.option1).toBe(10);
+            expect(calls[1].data[0].name).toEqual('s2');
+            expect(calls[1].opt.option1).toBe(20);
+
+
+        });
     });
 
     describe('constructor', function () {
-        it('should provide a visualizations array in the options', function () {
+        // this is no longer valid, the visualizations array is a provate var now
+        xit('should provide a visualizations array in the options', function () {
+
             createNarwhal();
             expect(narwhal.visualizations).toBeDefined();
         });
@@ -313,51 +341,36 @@ describe('Narwhal', function () {
         });
 
         it('should call visualizations to render!', function () {
-            var mock = { render: function () { }};
-            var target = createNarwhal();
-            spyOn(mock, 'render');
+            var mock = createVisMock('something', _.noop);
 
-            target.visualizations.push(mock.render);
-            target.render();
+            createNarwhal().something().render();
 
             expect(mock.render).toHaveBeenCalled();
         });
 
     });
 
-    describe('renderVisualizations', function () {
-        it('should call each visualization on the list', function () {
-            var target = createNarwhal();
-            var called = false;
+    function createVisMock(name, fn) {
+        var mock = { render: fn || function () {} };
+        spyOn(mock, 'render');
+        Narwhal.export(name, mock.render);
 
-            target.visualizations.push(function () { called = true && this === target; } );
-            target.render();
-            expect(called).toBe(true);
-        });
+        return mock;
+    }
+
+    describe('renderVisualizations', function () {
 
         it('should call each visualization with the context of the narwhal instance', function () {
-            var target = createNarwhal();
-            var context;
-
-            target.visualizations.push(function () { context = this; } );
-            target.render();
+            var context = null;
+            var mock = { render: function () { context = this; }};
+            spyOn(mock, 'render').andCallThrough();
+            Narwhal.export('something', mock.render);
+            // createVisMock('something', function () {
+            //     context = this;
+            // });
+            var target = createNarwhal().something().render();
             expect(context).toEqual(target);
         });
-
-        it('should pass the visualization id as parameter', function () {
-            var target = createNarwhal();
-            var theId = 0;
-            var mock = { render: function (svg, options, id) { theId = id; }};
-
-            target.visualizations.push(mock.render);
-
-            target.render();
-
-            expect(theId).toBe(1);
-        });
-
     });
-
-
 
 });

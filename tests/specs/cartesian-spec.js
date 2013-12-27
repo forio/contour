@@ -137,8 +137,8 @@ describe('Cartesian frame', function () {
             var target = createNarwhal();
             spyOn(mock, 'render');
 
-            target.visualizations.push(mock.render);
-            target.data([1,2]).render();
+            Narwhal.export('something', mock.render);
+            target.data([1,2]).something().render();
 
             expect(mock.render).toHaveBeenCalled();
         });
@@ -190,12 +190,12 @@ describe('Cartesian frame', function () {
 
         it('should render visualizations after all axis and other elements (zindex)', function () {
             createNarwhal().data([1,2,3]);
-            narwhal.visualizations.push(function (layer) {
+            Narwhal.export('something_zindex', function (data, layer) {
                 // add a dummy svg element
                 layer.attr('name', 'myDummyVisualization');
             });
 
-            narwhal.render();
+            narwhal.something_zindex().render();
 
             var dummy = $(narwhal.svg[0]).children().last();
             expect(dummy.attr('name')).toBe('myDummyVisualization');

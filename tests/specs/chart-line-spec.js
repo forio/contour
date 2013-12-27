@@ -33,12 +33,6 @@ describe('Visualizations', function () {
                     expect(nw.line(data)).toEqual(nw);
                 });
 
-                it('should add a visualization renderer to the visualizations array', function () {
-                    expect(nw.visualizations.length).toBe(0);
-                    nw.line(data);
-                    expect(nw.visualizations.length).toBe(1);
-                });
-
                 it('should accept an 1-dimension array as data set', function () {
                     nw.line([1,2,3]).render();
                     var paths = $el.find('g[vis-id="1"] path');
