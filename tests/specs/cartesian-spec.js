@@ -54,6 +54,15 @@ describe('Cartesian frame', function () {
         });
     });
 
+    describe('width categories array', function () {
+        it('should override the x axis type to be ordinal', function () {
+            var narwhal = createNarwhal({xAxis: { type: 'linear', categories: [1,2,3,4] }});
+            narwhal.render();
+
+            expect(narwhal.xScale.rangeRoundBands).toBeDefined();
+        });
+    });
+
     describe('datum', function () {
         it('should handle the case of normalzing an array of data', function () {
             var narwhal = createNarwhal();
@@ -82,6 +91,8 @@ describe('Cartesian frame', function () {
             expect(narwhal.xScale(9)).toEqual(90);
         });
     });
+
+
 
     describe('default yScale', function () {
         beforeEach(function () {

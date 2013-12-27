@@ -13,6 +13,8 @@
         },
 
         xAxis: {
+            /* type of axis {ordinal|linear|time} */
+            // type: 'ordinal',
             rangePadding: 0,
             innerTickSize: 0,
             outerTickSize: 0,

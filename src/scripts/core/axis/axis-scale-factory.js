@@ -17,7 +17,7 @@
                 return new _.nw.TimeScale(data, options);
             }
 
-            if (options.xAxis.type === 'linear') {
+            if (!options.xAxis.categories && options.xAxis.type === 'linear') {
                 return new _.nw.LinearScale(data, options);
             }
 
