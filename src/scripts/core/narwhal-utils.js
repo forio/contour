@@ -9,6 +9,31 @@
             return Math.ceil(number / multiple) * multiple;
         },
 
+        linearRegression: function (dataSrc) {
+            var lr = {};
+            var n = dataSrc.length;
+            var sum_x = 0;
+            var sum_y = 0;
+            var sum_xy = 0;
+            var sum_xx = 0;
+            var sum_yy = 0;
+
+            for (var i = 0; i < n; i++) {
+
+                sum_x += dataSrc[i].x;
+                sum_y += dataSrc[i].y;
+                sum_xy += (dataSrc[i].x*dataSrc[i].y);
+                sum_xx += (dataSrc[i].x*dataSrc[i].x);
+                sum_yy += (dataSrc[i].y*dataSrc[i].y);
+            }
+
+            lr.slope = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
+            lr.intercept = (sum_y - lr.slope * sum_x)/n;
+            lr.r2 = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+
+            return lr;
+        },
+
         niceRound: function (val) {
             // for now just round(10% above the value)
             return Math.ceil(val + val * 0.10);

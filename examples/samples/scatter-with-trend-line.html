@@ -1,0 +1,48 @@
+
+
+
+<div class="chart scatter-trend-line"></div>
+<script>
+
+    series = [];
+    for(var j=0; j<3; j++) {
+        var data = [];
+        series.push({
+            data: data
+        });
+
+        var rand = function(l,h) { return Math.random() * (h-l) + l; };
+
+        for(var k=0; k<10; k++) {
+            data.push({
+                x: k + rand(-1, 1),
+                y: k + rand(0, 5)
+            });
+        }
+    }
+
+    new Narwhal({
+            el: '.scatter-trend-line',
+            xAxis: {
+                title: 'Value',
+
+                firstAndLast: false,
+                type: 'linear'
+
+            },
+            yAxis: {
+                title: 'Value',
+
+                smartAxis: false,
+            },
+            scatter: {
+                radius: 2.5
+            }
+        })
+        .cartesian()
+        .scatter(series)
+        .trendLine(series)
+        .tooltip()
+        .render();
+
+</script>
