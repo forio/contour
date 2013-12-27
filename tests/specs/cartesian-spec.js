@@ -69,14 +69,17 @@ describe('Cartesian frame', function () {
         });
 
         it('should be an ordinal scaling', function () {
-            narwhal.data([0,10,20,30]).render();
+            narwhal = createNarwhal({chart: { width: 131 } , xAxis: { innerRangePadding: 0, outerRangePadding: 0 }});
+            narwhal.data([0,1,2,3,4,5,6,7,8,9]).render();
 
             // TODO: NEED TO FIX THIS TEST
 
-            // expect(narwhal.xScale(0)).toEqual(0);
-            // expect(narwhal.xScale(1)).toEqual(100);
-            // expect(narwhal.xScale(2)).toEqual(200);
-            // expect(narwhal.xScale(3)).toEqual(300);
+            expect(narwhal.xScale(0)).toEqual(0);
+            expect(narwhal.xScale(1)).toEqual(10);
+            expect(narwhal.xScale(2)).toEqual(20);
+            expect(narwhal.xScale(3)).toEqual(30);
+
+            expect(narwhal.xScale(9)).toEqual(90);
         });
     });
 
