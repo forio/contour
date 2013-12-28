@@ -30,6 +30,7 @@
     <script src="../src/scripts/visualizations/pie.js"></script>
     <script src="../src/scripts/visualizations/scatter.js"></script>
     <script src="../src/scripts/visualizations/cool-narwhal.js"></script>
+    <script src="../src/scripts/visualizations/trend-line.js"></script>
     <script src="../src/scripts/connectors/csv.js" ></script>
 
     <style>
@@ -52,6 +53,14 @@
 
         .s-2 {
             opacity: .7
+        }
+
+        .grid-line {
+            stroke-dasharray: 5,5
+        }
+
+        .xyz, .www {
+            opacity: 0.4;
         }
 
 
@@ -111,38 +120,43 @@ var config = {
 
     xAxis: {
         firstAndLast: false,
-        categories: ['javascript', 'fortran', 'julia', 'x'],
+        innerTickSize: 5,
+        // categories: [1,2,3,4,5,6,7],
 
         labels: {
-            format: '0.1f'
+            format: '0.1f',
         }
 
     },
 
     yAxis: {
         smartAxis: false,
-        // min: 0.1
-        // ticks: 15,
+        nicing: true,
+
+        // tickValues: [0, 5, 10, 15],
         labels: {
-            format: ',.0f'
+            format: ',.1f'
 
             // formatter: function (d) { return 'a' }
         }
+    },
+
+    column: {
+        stacked: false
     },
 
     tooltip: {
         // formatter: function (d) {
         //     return d.data.x + '<br>' + d.data.y;
         // }
-    }
+    },
 
 };
 
-// var data = [10, 20, 30, 10, 20];
 
 var data = [
-    { name: 's1', data: [10, 20, 30, 40]},
-    { name: 's2', data: [30,30, 10, 30]}
+    { name: 'abc', data: [5,3,6,5,1,6,2]},
+    { name: 'good', data: [6,2,2,3,2,2,5]}
 ]
 
 
@@ -151,10 +165,9 @@ var data = [
 
 var chart = new Narwhal(config)
     .cartesian()
-    // .line(data)
-
-    .column(data, {stacked: false})
+    .column(data)
     // .pie([{ x: 'Alpha', y: 10}, { x: 'Beta', y: 30}, {x: 'Gamma', y: 40}, {x: 'Kappa', y: 20}])
+    .trendLine(data)
     .tooltip()
     .render();
 

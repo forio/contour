@@ -25,6 +25,31 @@
             return Math.ceil(number / multiple) * multiple;
         },
 
+        linearRegression: function (dataSrc) {
+            var lr = {};
+            var n = dataSrc.length;
+            var sum_x = 0;
+            var sum_y = 0;
+            var sum_xy = 0;
+            var sum_xx = 0;
+            var sum_yy = 0;
+
+            for (var i = 0; i < n; i++) {
+
+                sum_x += dataSrc[i].x;
+                sum_y += dataSrc[i].y;
+                sum_xy += (dataSrc[i].x*dataSrc[i].y);
+                sum_xx += (dataSrc[i].x*dataSrc[i].x);
+                sum_yy += (dataSrc[i].y*dataSrc[i].y);
+            }
+
+            lr.slope = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x);
+            lr.intercept = (sum_y - lr.slope * sum_x)/n;
+            lr.r2 = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+
+            return lr;
+        },
+
         niceRound: function (val) {
             // for now just round(10% above the value)
             return Math.ceil(val + val * 0.10);
@@ -521,11 +546,17 @@
         },
 
         xAxis: {
+            /* type of axis {ordinal|linear|time} */
+            // type: 'ordinal',
             rangePadding: 0,
             innerTickSize: 0,
             outerTickSize: 0,
             tickPadding: 6,
             titlePadding: 4,
+            /* padding between ranges (ie. columns) expressed in percentage of rangeBand width */
+            innerRangePadding: 0.1,
+            /* padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width */
+            outerRangePadding: 0.1,
             firstAndLast: true,
             orient: 'bottom',
             labels: {
@@ -918,7 +949,7 @@
 
 })();
 
-Narwhal.version = '0.0.40';
+Narwhal.version = '0.0.41';
 (function () {
 
     var helpers = {
@@ -938,7 +969,7 @@ Narwhal.version = '0.0.40';
                 return new _.nw.TimeScale(data, options);
             }
 
-            if (options.xAxis.type === 'linear') {
+            if (!options.xAxis.categories && options.xAxis.type === 'linear') {
                 return new _.nw.LinearScale(data, options);
             }
 
@@ -1165,7 +1196,7 @@ Narwhal.version = '0.0.40';
         _range: function () {
             var range = this.options.chart.rotatedFrame ? [this.options.chart.plotHeight, 0] : [0, this.options.chart.plotWidth];
             return this.isCategorized ?
-                this._scale.rangeRoundBands(range, 0.1) :
+                this._scale.rangeRoundBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
                 this._scale.rangePoints(range);
         }
     };
@@ -1645,8 +1676,9 @@ Narwhal.version = '0.0.40';
     var defaults = {
         column : {
             stacked: false,
-            padding: 1,
-            columnWidth: function() { return this.rangeBand; }
+            groupPadding: 1,
+            columnWidth: function() { return this.rangeBand; },
+            offset: function() { return 0; }
         }
     };
 
@@ -1693,7 +1725,7 @@ Narwhal.version = '0.0.40';
         }
 
         function grouped(col) {
-            var width = rangeBand / data.length - opt.padding;
+            var width = rangeBand / data.length - opt.groupPadding;
             var offset = function (d, i) { return rangeBand / data.length * i; };
 
             col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
@@ -2120,6 +2152,30 @@ Narwhal.version = '0.0.40';
 })();
 
 
+
+(function () {
+
+
+    function ctor(data, layer, options) {
+        var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);
+        var y = _.bind(function(d) { return this.yScale(d); }, this);
+        var regression = _.nw.linearRegression(_.flatten(_.pluck(data, 'data')));
+        var domain = this.xScale.domain();
+        var lineY = function (x) { return regression.intercept + regression.slope * x; };
+
+        layer.append('line')
+            .attr('class', 'trend-line')
+            .attr('x1', x(domain[0]))
+            .attr('y1', y(lineY(domain[0])))
+            .attr('x2', x(domain[1]))
+            .attr('y2', y(lineY(domain[1])));
+    }
+
+    ctor.defaults = {};
+
+    Narwhal.export('trendLine', ctor);
+
+})();
 
 (function () {
 
