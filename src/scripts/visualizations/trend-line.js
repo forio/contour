@@ -5,7 +5,7 @@
         var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);
         var y = _.bind(function(d) { return this.yScale(d); }, this);
         var regression = _.nw.linearRegression(_.flatten(_.pluck(data, 'data')));
-        var domain = this.xScale.domain();
+        var domain = d3.extent(this.xScale.domain());
         var lineY = function (x) { return regression.intercept + regression.slope * x; };
 
         layer.append('line')

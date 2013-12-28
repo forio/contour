@@ -24,6 +24,10 @@
 .narwhal-chart .grid-line {
   stroke: #cfcfcf;
 }
+.narwhal-chart .trend-line {
+  stroke-width: 1px;
+  stroke: #05f;
+}
 .cool {
   stroke: #000;
   stroke-width: 0;
