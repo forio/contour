@@ -35,13 +35,14 @@
 
     <style>
         .chart {
+            width: 400px;
 /*            height: 300px;
             width: 400px;*/
             margin: 10px 0;
         }
 
         .chart svg {
-            border: solid 1px red;
+            border: solid 0px red;
 
         }
 
@@ -121,6 +122,7 @@ var config = {
     xAxis: {
         firstAndLast: false,
         innerTickSize: 5,
+        outerTickSize: 3,
         // categories: [1,2,3,4,5,6,7],
 
         labels: {
@@ -154,10 +156,68 @@ var config = {
 };
 
 
+Narwhal.export('col', function (data, layer, options) {
+    var w = options.chart.plotWidth;
+    var h = options.chart.plotHeight;
+    var x = this.xScale;
+    var y = this.yScale;
+    var clamp = function (val, l, h) { return val > h ? h : val < l ? l : val; };
+    var clampLeft = function (val, low) { return val < low ? low : val; };
+    var clampRight = function (val, high) { return val > high ? high : val; };
+
+    var g = layer.attr('class', 'series s-1');
+    update.call(this, data);
+
+    function update(data) {
+        var duration = 400;
+        var dataKey = function (datum) { return datum.x };
+        var cats = options.xAxis.categories;
+
+        // x.domain(_.map(data, function (d, i) { return cats[i]; }));
+        // y.domain([0, d3.max(data[0].data, function(d) { return d.y; })]);
+
+
+        // svg.select('.x.axis').transition().duration(duration).call(xAxis)
+        // this.svg.select('.y.axis').transition().duration(duration).call(this.yAxis())
+
+        var bars = g.selectAll('.column')
+            .data(data[0].data, dataKey);
+
+        bars.enter()
+            .append('rect')
+            .attr('class', function(d, i) { return  'column ' + i; })
+            .attr('x', function (d, i) {
+                return x(d.x) + 0.5;
+            })
+            .attr('width', x.rangeBand() + 0.5)
+            .attr('y', clampLeft(h  - 0.5, 0))
+            .attr('height', 0)
+
+        bars.transition().duration(duration)
+            .attr('x', function (d, i) {
+                return x(d.x);
+            })
+            .attr('y', function (d) { return y(d.y) + 0.5; })
+            .attr('width', x.rangeBand() + 0.5)
+            .attr('height', function(d) {
+                return clampLeft(h-y(d.y) - 0.5, 0);
+            });
+
+
+        bars.exit()
+            .transition().duration(duration)
+            .attr('y', h)
+            .attr('height', 0)
+            .remove();
+
+    }
+
+})
+
+
 var data = [
-    { name: 'abc', data: [5,3,6,5,1,6,2]},
-    { name: 'good', data: [6,2,2,3,2,2,5]}
-]
+    { name: 'abc', data: [5,3,6,10, 5,1,6,2]}
+    ]
 
 
 
@@ -165,14 +225,14 @@ var data = [
 
 var chart = new Narwhal(config)
     .cartesian()
-    .column(data)
+    .col(data)
     // .pie([{ x: 'Alpha', y: 10}, { x: 'Beta', y: 30}, {x: 'Gamma', y: 40}, {x: 'Kappa', y: 20}])
-    .trendLine(data)
     .tooltip()
     .render();
 
 
 
+console.log('some')
 
 
 

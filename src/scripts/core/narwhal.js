@@ -107,29 +107,65 @@
             return data;
         }
 
+        function updateFn(renderFn, orig, data) {
+            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
+            var normalData = _.nw.normalizeSeries(data, categories);
+            var opt = _.merge({}, this.parent.options, this.options);
+            this.parent.data(normalData);
+            this.parent.update();
+
+            renderFn.call(this.parent, normalData, this.layer, opt);
+        }
+
         Narwhal.prototype[ctorName] = function (data, options) {
             data = data || [];
             sortSeries(data);
             renderer.defaults = renderer.defaults || {};
-            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var renderFunc;
             var opt = {};
+            var _xExtent, _yExtent;
+            var normalData;
             opt[ctorName] = options || {};
 
             if (_.isArray(data)) {
-                var datums = _.nw.normalizeSeries(data, categories);
-                this.data(datums);
-                renderFunc = _.partial(renderer, datums);
+                var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
+                normalData = _.nw.normalizeSeries(data, categories);
+                this.data(normalData);
+                renderFunc = _.partial(renderer, normalData);
+
+                _extent = function (field, d) {
+                    var maxs = [], mins = [];
+                    _.each(d, function (d) {
+                        var values = _.pluck(d.data, field);
+                        maxs.push(d3.max(values));
+                        mins.push(d3.min(values));
+                    });
+
+                    return [_.min(mins), _.max(maxs)];
+                };
+                _xExtent = _.partial(_extent, 'x');
+                _yExtent = _.partial(_extent, 'y');
             } else {
                 renderFunc = _.partial(renderer, data);
+                _xExtent = _yExtent = _.noop;
             }
 
-            _visualizations.push({
+            var visDef = {
                 type: ctorName,
                 defaults: renderer.defaults,
                 renderFunc: renderFunc,
-                options: opt
-            });
+                options: opt,
+                layer: undefined,
+                extent: {
+                    x: _xExtent(normalData),
+                    y: _yExtent(normalData)
+                }
+            };
+
+            visDef.update = _.partial(updateFn, renderer, visDef);
+
+
+            _visualizations.push(visDef);
 
             return this;
         };
@@ -238,6 +274,10 @@
             this.options = _.merge({}, allDefaults, this.options);
         },
 
+        getExtents: function () {
+            return d3.extent(_.pluck(_visualizations, 'extent'));
+        },
+
         baseRender: function () {
             this.plotArea();
 
@@ -265,6 +305,11 @@
 
             this.renderVisualizations();
 
+            return this;
+        },
+
+        update: function () {
+            this.calcMetrics();
             return this;
         },
 
@@ -299,10 +344,16 @@
                 var id = index + 1;
                 var layer = this.createVisualizationLayer(visualization, id);
                 var opt = _.merge({}, this.options, visualization.options);
+                visualization.layer = layer;
+                visualization.parent = this;
                 visualization.renderFunc.call(this, layer, opt);
             }, this);
 
             return this;
+        },
+
+        getVisualization: function (index) {
+            return _visualizations[index];
         },
 
         compose: function(ctorName, funcArray) {

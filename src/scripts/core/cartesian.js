@@ -53,6 +53,8 @@
         }
     };
 
+    var _xAxis, _yAxis;
+
     /**
     * Provides a Cartesian frame to the Narwhal instance.
     *
@@ -108,17 +110,26 @@
         computeXScale: function () {
             if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
-            this.xScaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
-            this.xScale = this.xScaleGenerator.scale(this.xDomain);
-            this.rangeBand = this.xScaleGenerator.rangeBand();
+            if(!this.xScale) {
+                this.xScaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
+                this.xScale = this.xScaleGenerator.scale(this.xDomain);
+                this.rangeBand = this.xScaleGenerator.rangeBand();
+            } else {
+                this.xScale.domain(this.xDomain);
+            }
         },
 
         computeYScale: function () {
             if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
             var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
-            this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
-            this.yScale = this.yScaleGenerator.scale(yScaleDomain);
+
+            if(!this.yScale) {
+                this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
+                this.yScale = this.yScaleGenerator.scale(yScaleDomain);
+            } else {
+                this.yScale.domain(yScaleDomain);
+            }
         },
 
         /**
@@ -132,7 +143,7 @@
         * @param {Number|String} value The value to be scaled.
         * @return {Number} The scaled value according to the current xAxis settings.
         */
-        xScale: function(val) { return val; },
+        xScale: undefined,
 
         /**
         * Provides a scaling function based on the yAxis values.
@@ -145,7 +156,7 @@
         * @param {Number} value The value to be scaled.
         * @return {Number} The scaled value according to the current yAxis settings.
         */
-        yScale: function(val) { return val; },
+        yScale: undefined,
 
         /**
         * Modifies the domain for the yAxis.
@@ -174,6 +185,7 @@
             this.renderGridlines();
         },
 
+
         computeScales: function () {
             this.computeXScale();
             this.computeYScale();
@@ -182,11 +194,18 @@
         },
 
         xAxis: function () {
-            return this.xScaleGenerator.axis().orient(this.options.xAxis.orient);
+            if (!_xAxis) {
+                _xAxis = this.xScaleGenerator.axis().orient(this.options.xAxis.orient);
+            }
+
+            return _xAxis;
         },
 
         yAxis: function () {
-            return this.yScaleGenerator.axis().orient(this.options.yAxis.orient);
+            if(!_yAxis) {
+                _yAxis = this.yScaleGenerator.axis().orient(this.options.yAxis.orient);
+            }
+            return _yAxis;
         },
 
         renderXAxis: function () {
@@ -283,24 +302,39 @@
             var y = this.yScale;
 
             if(horizontal) {
-
-                // remove previous lines (TODO: we need a better way)
-                this._yAxisGroup.select('g.grid-lines').remove();
-                gr = this._yAxisGroup
-                    .append('svg:g')
-                    .attr('class', 'grid-lines');
-
                 ticks = getYTicks(this.yAxis(), this.options.yAxis.smartAxis);
                 var w = this.options.chart.plotWidth;
 
-                gr.selectAll('.grid-line')
-                    .data(ticks)
-                    .enter().append('line')
+                // remove previous lines (TODO: we need a better way)
+                // this._yAxisGroup.select('g.grid-lines').remove();
+                gr = this._yAxisGroup
+                    .selectAll('.grid-lines')
+                    .data([ticks]);
+
+                gr.enter().append('svg:g')
+                    .attr('class', 'grid-lines');
+
+                var lines = gr.selectAll('.grid-line')
+                    .data(function (d) { return d; });
+
+                lines.transition().duration(400)
+                    .attr('x1', 0)
+                    .attr('x2', function () {
+                        return w;
+                    })
+                    .attr('y1', y)
+                    .attr('y2', y);
+
+                lines.enter().append('line')
                         .attr('class', 'grid-line')
                         .attr('x1', 0)
-                        .attr('x2', w)
+                        .attr('x2', function () {
+                            return w;
+                        })
                         .attr('y1', y)
                         .attr('y2', y);
+
+                lines.exit().remove();
             }
 
             if(vertical) {
@@ -325,16 +359,12 @@
         },
 
         render: function () {
+
             this.composeOptions();
-
             this.adjustDomain();
-
             this.calcMetrics();
-
             this.computeScales();
-
             this.baseRender();
-
             this.renderXAxis()
                 .renderYAxis()
                 .renderGridlines()
@@ -343,6 +373,23 @@
             this.renderVisualizations();
 
             return this;
+        },
+
+        update: function () {
+            var duration = 400;
+
+            this.adjustDomain();
+            this.calcMetrics();
+            this.computeScales();
+
+            this.svg.select('.x.axis').transition().duration(duration).call(this.xAxis());
+            this.svg.select('.y.axis').transition().duration(duration).call(this.yAxis());
+
+            this.renderGridlines();
+            // this
+            //     .renderXAxis()
+            //     .renderYAxis()
+            //     .renderAxisLabels();
         },
 
         datum: function (d, index) {
@@ -407,7 +454,7 @@
         },
 
         adjustDomain: function () {
-            this.yDomain = this.yDomain ? this.yDomain : [0, 10];
+            this.yDomain = this.getExtents() || [0, 10];
             this.xDomain = this.xDomain ? this.xDomain : [];
         }
     };
