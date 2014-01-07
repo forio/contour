@@ -1,7 +1,5 @@
 
 
-<!-- Start src/scripts/core/cartesian.js -->
-
 ## .cartesian()
 
 Provides a cartesian frame to the Narwhal instance
@@ -21,7 +19,7 @@ Example:
 
     var scaledValue = this.xScale(100);
 
-### Params: 
+### Params:
 
 * **Number|String** *value* The value to be scaled
 
@@ -37,7 +35,7 @@ Example:
 
     var scaledValue = this.xScale(100);
 
-### Params: 
+### Params:
 
 * **Number** *value* The value to be scaled
 
@@ -51,7 +49,7 @@ Example:
 
     this.setYDomain([100, 200]);
 
-### Params: 
+### Params:
 
 * **Array** *domain* The domain array represeting the min and max values of to be visible in the y Axis
 
@@ -60,6 +58,4 @@ Redraws the yAxis with the new settings and domain
 Example:
 
     this.redrawYAxis(;
-
-<!-- End src/scripts/core/cartesian.js -->
 
