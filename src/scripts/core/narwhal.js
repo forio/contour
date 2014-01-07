@@ -55,40 +55,6 @@
     }
 
     /**
-    * Exposes functionality to the core Narwhal object.
-    * This is used to add base functionality to be used by viasualizations
-    * for example the `cartesian` frame is implemented exposing functionality.
-    *
-    * Example:
-    *
-    *
-    *     Narwhal.expose("example", {
-    *          // when included in the instance, this will expose `.transformData` to the visualizations
-    *         transformData: function(data) { .... }
-    *     });
-    *
-    *     // To include the functionality into a specific instance
-    *     new Narwhal(options)
-    *           .example()
-    *           .visualizationsThatUsesTransformDataFunction()
-    *           .render()
-    */
-    Narwhal.expose = function (ctorName, functionality) {
-        var ctor = function () {
-            // extend the --instance-- we don't want all charts to be overriden...
-            _.extend(this, _.omit(functionality, 'init'));
-
-            if(functionality.init) functionality.init.call(this, this.options);
-
-            return this;
-        };
-
-        Narwhal.prototype[ctorName] = ctor;
-
-        return this;
-    },
-
-    /**
     * Adds a visualization to be rendered in the instance of Narwhal
     * This is the main way to expose visualizations to be used
     *
@@ -142,6 +108,41 @@
 
             return this;
         };
+    };
+
+
+    /**
+    * Exposes functionality to the core Narwhal object.
+    * This is used to add base functionality to be used by viasualizations
+    * for example the `cartesian` frame is implemented exposing functionality.
+    *
+    * Example:
+    *
+    *
+    *     Narwhal.expose("example", {
+    *          // when included in the instance, this will expose `.transformData` to the visualizations
+    *         transformData: function(data) { .... }
+    *     });
+    *
+    *     // To include the functionality into a specific instance
+    *     new Narwhal(options)
+    *           .example()
+    *           .visualizationsThatUsesTransformDataFunction()
+    *           .render()
+    */
+    Narwhal.expose = function (ctorName, functionality) {
+        var ctor = function () {
+            // extend the --instance-- we don't want all charts to be overriden...
+            _.extend(this, _.omit(functionality, 'init'));
+
+            if(functionality.init) functionality.init.call(this, this.options);
+
+            return this;
+        };
+
+        Narwhal.prototype[ctorName] = ctor;
+
+        return this;
     };
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
@@ -216,6 +217,19 @@
             return this;
         },
 
+        /**
+        * Renders all the composed visualizations into the DOM.
+        * This calls to render all the visualizations that were composed into the instance
+        *
+        * Example:
+        *
+        *     new Narwhal({ el:'.chart' })
+        *           .pie([1,2,3])
+        *           .render()
+        *
+        * @function .render
+        *
+        */
         render: function () {
             this.composeOptions();
 

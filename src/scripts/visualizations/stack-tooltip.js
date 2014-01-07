@@ -1,5 +1,5 @@
 (function () {
-    /*
+    /**
     * Renders a tooltip legend combination for stacked series.
     *
     *

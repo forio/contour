@@ -18,6 +18,21 @@
 
     ctor.defaults = {};
 
+    /**
+    * Renders a 'trend line' for the given data.
+    *
+    * The trend like is calculated using linear regression (min square error fit)
+    *
+    * ### Example
+    *     new Narwha({el: '.chart'})
+    *           .trendLine(data);
+    *
+    * @name .trendLine(data, options)
+    * @param {object|array} data the data to use for the linear regression
+    * @param {object} options Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('trendLine', ctor);
 
 })();

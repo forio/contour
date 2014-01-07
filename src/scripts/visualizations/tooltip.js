@@ -75,7 +75,7 @@
     render.defaults = defaults;
 
 
-    /*
+    /**
     * Renders a tooltip on hover.
     *
     *

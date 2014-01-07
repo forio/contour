@@ -37,12 +37,13 @@
     renderer.defaults = defaults;
 
 
-    /*
+    /**
     * Renders a pie chart onto the narwhal frame.
     *
     * ### Example
     *     new Narwha({el: '.chart'})
-    *           .pie([1,2,3,4]);
+    *           .pie([1,2,3,4])
+    *           .render();
     *
     * @name .pie(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.

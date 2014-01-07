@@ -64,7 +64,7 @@
 
     render.defaults = defaults;
 
-    /*
+    /**
     * Renders a column chart (vertical columns) onto the narwhal frame.
     *
     * This visualization requires *cartesian()*
@@ -72,7 +72,8 @@
     * ### Example
     *     new Narwha({el: '.chart'})
     *           .cartesian()
-    *           .column([1,2,3,4]);
+    *           .column([1,2,3,4])
+    *           .render();
     *
     * @name .column(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.

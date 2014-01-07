@@ -48,11 +48,13 @@
 
     renderer.defaults = defaults;
 
-    /*
+    /**
     * Renders an area chart onto the narwhal frame. Area charts are stacked by default.
     *
     * ### Example
-    *     new Narwhal({el: '.chart'}).area([1,2,3,4]);
+    *     new Narwhal({el: '.chart'})
+    *           .area([1,2,3,4])
+    *           .render();
     *
     * @name .area(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
