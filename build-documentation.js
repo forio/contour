@@ -102,8 +102,7 @@ function generatePerFileDoc(allFiles) {
                 return docfile;
             },
             compiler: function(filepath, data){
-                var d = commentNormalizer(data);
-                return d;
+                return commentNormalizer(data);
             }
         }, next);
     }, function(err) {
@@ -118,7 +117,16 @@ function generatePerFileDoc(allFiles) {
 function generateAllFilesDoc(allFiles) {
     // One file for all Javascript files
     var output = docFolder + 'all.md';
-    markdox.process(allFiles, {output:output}, function() {
+    markdox.process(allFiles, {
+        output:output,
+        template: 'src/documentation/file-dox-template.ejs',
+        formatter: function(docfile){
+            return docfile;
+        },
+        compiler: function(filepath, data){
+            return commentNormalizer(data);
+        }
+    }, function() {
         console.log('File `all.md` generated with success');
     });
 }
