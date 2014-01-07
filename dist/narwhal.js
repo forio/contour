@@ -244,40 +244,6 @@
     }
 
     /**
-    * Exposes functionality to the core Narwhal object.
-    * This is used to add base functionality to be used by viasualizations
-    * for example the `cartesian` frame is implemented exposing functionality.
-    *
-    * Example:
-    *
-    *
-    *     Narwhal.expose("example", {
-    *          // when included in the instance, this will expose `.transformData` to the visualizations
-    *         transformData: function(data) { .... }
-    *     });
-    *
-    *     // To include the functionality into a specific instance
-    *     new Narwhal(options)
-    *           .example()
-    *           .visualizationsThatUsesTransformDataFunction()
-    *           .render()
-    */
-    Narwhal.expose = function (ctorName, functionality) {
-        var ctor = function () {
-            // extend the --instance-- we don't want all charts to be overriden...
-            _.extend(this, _.omit(functionality, 'init'));
-
-            if(functionality.init) functionality.init.call(this, this.options);
-
-            return this;
-        };
-
-        Narwhal.prototype[ctorName] = ctor;
-
-        return this;
-    },
-
-    /**
     * Adds a visualization to be rendered in the instance of Narwhal
     * This is the main way to expose visualizations to be used
     *
@@ -331,6 +297,41 @@
 
             return this;
         };
+    };
+
+
+    /**
+    * Exposes functionality to the core Narwhal object.
+    * This is used to add base functionality to be used by viasualizations
+    * for example the `cartesian` frame is implemented exposing functionality.
+    *
+    * Example:
+    *
+    *
+    *     Narwhal.expose("example", {
+    *          // when included in the instance, this will expose `.transformData` to the visualizations
+    *         transformData: function(data) { .... }
+    *     });
+    *
+    *     // To include the functionality into a specific instance
+    *     new Narwhal(options)
+    *           .example()
+    *           .visualizationsThatUsesTransformDataFunction()
+    *           .render()
+    */
+    Narwhal.expose = function (ctorName, functionality) {
+        var ctor = function () {
+            // extend the --instance-- we don't want all charts to be overriden...
+            _.extend(this, _.omit(functionality, 'init'));
+
+            if(functionality.init) functionality.init.call(this, this.options);
+
+            return this;
+        };
+
+        Narwhal.prototype[ctorName] = ctor;
+
+        return this;
     };
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
@@ -405,6 +406,19 @@
             return this;
         },
 
+        /**
+        * Renders all the composed visualizations into the DOM.
+        * This calls to render all the visualizations that were composed into the instance
+        *
+        * Example:
+        *
+        *     new Narwhal({ el:'.chart' })
+        *           .pie([1,2,3])
+        *           .render()
+        *
+        * @function .render
+        *
+        */
         render: function () {
             this.composeOptions();
 
@@ -566,7 +580,7 @@
         },
 
         yAxis: {
-            /** @param: {linear|smart|log} */
+            /* @param: {linear|smart|log} */
             // type: 'smart',
             min: 0,
             max: undefined,
@@ -655,7 +669,7 @@
             this.yScale = this.yScaleGenerator.scale(yScaleDomain);
         },
 
-        /*
+        /**
         * Provides a scaling function based on the xAxis values.
         *
         * Example:
@@ -668,7 +682,7 @@
         */
         xScale: function(val) { return val; },
 
-        /*
+        /**
         * Provides a scaling function based on the xAxis values.
         *
         * Example:
@@ -681,7 +695,7 @@
         */
         yScale: function(val) { return val; },
 
-        /*
+        /**
         * Modifies the domain for the y axis.
         *
         * Example:
@@ -694,7 +708,7 @@
             this.yScaleGenerator.setDomain(domain);
         },
 
-        /*
+        /**
         * Redraws the yAxis with the new settings and domain
         *
         * Example:
@@ -949,7 +963,7 @@
 
 })();
 
-Narwhal.version = '0.0.42';
+Narwhal.version = '0.0.43';
 (function () {
 
     var helpers = {
@@ -1412,6 +1426,21 @@ Narwhal.version = '0.0.42';
         }
     };
 
+    /**
+    * Horizontal Frame
+    *
+    * Provides the basis for horizontal visualizations where the y axis grows to the right (ie. bar chart)
+    *
+    * Example:
+    *     new Narwhal(config)
+    *        .cartesian()
+    *        .horizontal()
+    *        .bar([1,2,3])
+    *        .render();
+    *
+    *
+    */
+
     var frame = {
 
         init: function () {
@@ -1519,7 +1548,25 @@ Narwhal.version = '0.0.42';
             }
         }
     };
-
+        /*
+        * Sets the visualization frame to be "horizontal". 
+        * The xAxis is set vertical and the yAxis is set horizontal. 
+        * 
+        * This visualization requires *.cartesian()*.
+        *
+        * This visualization is a prerequiste for rendering bar charts (*.bar()*).
+        *
+        * ###Example:
+        *
+        *     new Narwhal({el: '.myChart'})
+        *        .cartesian()
+        *        .horizontal()
+        *        .bar([1, 2, 3, 4, 5, 4, 3, 2, 1])
+        *        .render()
+        *
+        * @function .horiztonal
+        * @param {TBW} frame TBW
+        */
     Narwhal.expose('horizontal', frame);
 
 })();
@@ -1575,10 +1622,18 @@ Narwhal.version = '0.0.42';
     renderer.defaults = defaults;
 
     /*
-    * Renders an area chart onto the narwhal frame. Area charts are stacked by default.
+    * Adds an area chart to the Narwhal instance. 
     *
-    * ### Example
-    *     new Narwhal({el: '.chart'}).area([1,2,3,4]);
+    * Area charts are stacked by default when the _data_ includes multiple series. 
+    *
+    * This visualization requires *.cartesian()*.
+    *
+    * ### Example:
+    *
+    *     new Narwhal({el: '.myChart'})
+    *           .cartesian()
+    *           .area([1,2,3,4])
+    *           .render();          
     *
     * @name .area(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
@@ -1651,15 +1706,19 @@ Narwhal.version = '0.0.42';
 
     barRender.defaults = defaults;
     /*
-    * Renders a bar chart (horizontal columns) onto the narwhal frame.
+    * Adds a bar chart (horizontal columns) to the Narwhal instance.
     *
-    * You can use this visualization to render stacked & grouped charts (controlled through the options). This visualization requires *cartesian()* and *horizontal()*
+    * You can use this visualization to render both stacked and grouped charts (controlled through the _options_).
     *
-    * ### Example
-    *     new Narwha({el: '.chart'})
+    * This visualization requires _.cartesian()_ and _.horizontal()_.
+    *
+    * ### Example:
+    *
+    *     new Narwhal({el: '.myChart'})
     *           .cartesian()
     *           .horizontal()
-    *           .bar([1,2,3,4]);
+    *           .bar([1,2,3,4])
+    *           .render();
     *
     * @name .bar(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
@@ -1738,14 +1797,16 @@ Narwhal.version = '0.0.42';
     render.defaults = defaults;
 
     /*
-    * Renders a column chart (vertical columns) onto the narwhal frame.
+    * Adds a column chart (vertical columns) to the Narwhal instance.
     *
-    * This visualization requires *cartesian()*
+    * This visualization requires *.cartesian()*.
     *
-    * ### Example
-    *     new Narwha({el: '.chart'})
+    * ### Example:
+    *
+    *     new Narwhal({el: '.myChart'})
     *           .cartesian()
-    *           .column([1,2,3,4]);
+    *           .column([1,2,3,4])
+    *           .render();
     *
     * @name .column(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
@@ -1876,14 +1937,16 @@ Narwhal.version = '0.0.42';
 
 
     /*
-    * Renders a line chart (vertical columns) onto the narwhal frame.
+    * Adds a line chart to the Narwhal instance.
     *
-    * This visualization requires *cartesian()*
+    * This visualization requires *.cartesian()*.
     *
-    * ### Example
-    *     new Narwha({el: '.chart'})
+    * ### Example:
+    *
+    *     new Narwhal({el: '.myChart'})
     *           .cartesian()
-    *           .line([1,2,3,4]);
+    *           .line([1,2,3,4])
+    *           .render();
     *
     * @name .line(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
@@ -1935,14 +1998,16 @@ Narwhal.version = '0.0.42';
 
 
     /*
-    * Renders a pie chart onto the narwhal frame.
+    * Adds a pie chart to the Narwhal instance.
     *
-    * ### Example
-    *     new Narwha({el: '.chart'})
-    *           .pie([1,2,3,4]);
+    * ### Example:
+    *
+    *     new Narwhal({el: '.myChart'})
+    *           .pie([1,2,3,4])
+    *           .render();
     *
     * @name .pie(data, options)
-    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats. The data elements are summed and then divided. In the example, `.pie([1,2,3,4])` makes four pie slices: 1/10, 2/10, 3/10, and 4/10.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public
     *
@@ -1988,13 +2053,16 @@ Narwhal.version = '0.0.42';
     ScatterPlot.defaults = defaults;
 
     /*
-    * Renders a scatter plot chart
-    * This visualization requires *cartesian()*
+    * Adds a scatter plot to the Narwhal instance.
     *
-    * ### Example
-    *     new Narwha({el: '.chart'})
+    * This visualization requires *.cartesian()*.
+    *
+    * ### Example:
+    *
+    *     new Narwhal({el: '.chart'})
     *           .cartesian()
-    *           .scatter([1,2,3,4]);
+    *           .scatter([1,2,3,4])
+    *           .render();
     *
     * @name .scatter(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
@@ -2009,16 +2077,20 @@ Narwhal.version = '0.0.42';
 
 (function () {
     /*
-    * Renders a tooltip legend combination for stacked series.
+    * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Narwhal instance. 
+    * Requires a second display element (`<div>`) for the legend in the html.
     *
+    * ### Example:
     *
-    * ### Example
-    *     new Narwha({el: '.chart'})
-    *           .stackedTooltip([1,2,3,4]);
+    *     new Narwhal({el: '.myChart'})
+    *           .cartesian()
+    *           .column(stackedColData)
+    *           .stackedTooltip(stackedColData, {el: '.myChartLegend'})
+    *           .render();
     *
-    * @name .stackedTooltip(data, options)
+    * @name .stackTooltip(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-    * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector the container where to render the tooptip
+    * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector of the container in which the tooltip should be rendered.
     * @api public
     *
     */
@@ -2133,16 +2205,21 @@ Narwhal.version = '0.0.42';
 
 
     /*
-    * Renders a tooltip on hover.
+    * Adds a tooltip on hover to all other visualizations in the Narwhal instance.
     *
+    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips. 
     *
-    * ### Example
-    *     new Narwha({el: '.chart'})
-    *           .tooltip(null, options);
+    * ### Example:
+    *
+    *     new Narwhal({el: '.myChart'})
+    *           .cartesian()
+    *           .line([2, 4, 3, 5, 7])
+    *           .tooltip()
+    *           .render();
     *
     * @name .tooltip(data, options)
-    * @param {object|array} data ignored!
-    * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector the container where to render the tooptip
+    * @param {object|array} data Ignored!
+    * @param {object} options Options particular to this visualization that override the defaults. TBW -- 
     * @api public
     *
     */
@@ -2173,6 +2250,24 @@ Narwhal.version = '0.0.42';
 
     ctor.defaults = {};
 
+    /*
+    * Adds a trend line to the Narwhal instance, based on linear regression.
+    * 
+    * This visualization requires *.cartesian()*.
+    *
+    * ### Example:
+    *
+    *     new Narwhal({el: '.myChart'})
+    *           .cartesian()
+    *           .trendLine([2,4,3,5,7])
+    *           .render();
+    *
+    * @name .trendLine(data, options)
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats. A linear regression is performed on the _data series_ and the resulting trend line is displayed.
+    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
     Narwhal.export('trendLine', ctor);
 
 })();
