@@ -49,17 +49,13 @@ For example:
 
 Narwhal is designed to be easily extensible.
 
-**Functionality**
-
-You can add functionality to the core Narwhal object using `.expose()`.  {Details TBW}
-
 **Visualizations**
 
 You can also add your own visualizations to the core Narwhal object using `.export()`. 
 
 To add a visualization to the core Narwhal object:
 
-1. Call the `.export` function on the Narwhal object.
+1. Call the `.export()` function on the Narwhal object.
 2. Pass in the name of the new visualization. (You'll call this constructor in your Narwhal instance.)
 3. Pass in the function that creates the new visualization.
 	* The body of this function will most likely require you to write directly in [D3](http://d3js.org) or [SVG](http://www.w3schools.com/svg/svg_reference.asp).
@@ -86,5 +82,31 @@ For example:
 	new Narwhal({ el: '.myChart' })
 		.cartesian()
 		.myExportedVisualization(3)
+		.render();
+
+**Functionality**
+
+You can add functionality to the core Narwhal object using `.expose()`.   This functionality is then available to other visualizations, for example visualizations that you add using `.export()`. Consider this your own mini-library that you can include in particular Narwhal instances as needed.
+
+To add functionality to the core Narwhal object:
+
+1. Call the `.expose()` function on the Narwhal object.
+2. Pass in the name of the new set of functionality. (You'll call this functionality in your Narwhal instance.)
+3. Add visualizations to your Narwhal instance by calling their respective constructors. These constructors can now use any of the functions defined in the set of functionality you've exposed.
+
+For example: 
+
+	Narwhal.expose('myNewFunctions') {
+		function1 : function (data) { /* some function */ },
+		function2 : function (data) { /* some function */ }
+	};
+	
+	Narwhal.export('myExportedVisualization', function (data, layer) {
+		/* function body including call to this.function1(data) or this.function2 */
+	});
+	
+	new Narwhal({ el: '.myChart' })
+		.myNewFunctions()
+		.myExportedVisualization(data)
 		.render();
 
