@@ -86,11 +86,25 @@ function getSourceFileList(srcSpec) {
     return allFiles;
 }
 
+function commentNormalizer(data) {
+    // change simple /* comments to /*! comments
+    // so Dox does not treat them as jsdoc documentation comments
+    return data.replace(/\/\*(?!\*)/gm, '/*!');
+}
+
 function generatePerFileDoc(allFiles) {
     // One file per Javascript file
     async.forEach(allFiles, function(file, next) {
-        var output = docFolder + path.basename(file) + '.md';
-        markdox.process(file, output, next);
+        markdox.process(file, {
+            output: docFolder + path.basename(file) + '.md',
+            template: 'src/documentation/file-dox-template.ejs',
+            formatter: function(docfile){
+                return docfile;
+            },
+            compiler: function(filepath, data){
+                return commentNormalizer(data);
+            }
+        }, next);
     }, function(err) {
         if (err) {
             throw err;
@@ -103,7 +117,16 @@ function generatePerFileDoc(allFiles) {
 function generateAllFilesDoc(allFiles) {
     // One file for all Javascript files
     var output = docFolder + 'all.md';
-    markdox.process(allFiles, {output:output}, function() {
+    markdox.process(allFiles, {
+        output:output,
+        template: 'src/documentation/file-dox-template.ejs',
+        formatter: function(docfile){
+            return docfile;
+        },
+        compiler: function(filepath, data){
+            return commentNormalizer(data);
+        }
+    }, function() {
         console.log('File `all.md` generated with success');
     });
 }

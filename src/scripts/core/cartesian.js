@@ -33,7 +33,7 @@
         },
 
         yAxis: {
-            /** @param: {linear|smart|log} */
+            /* @param: {linear|smart|log} */
             // type: 'smart',
             min: 0,
             max: undefined,
@@ -122,7 +122,7 @@
             this.yScale = this.yScaleGenerator.scale(yScaleDomain);
         },
 
-        /*
+        /**
         * Provides a scaling function based on the xAxis values.
         *
         * Example:
@@ -135,7 +135,7 @@
         */
         xScale: function(val) { return val; },
 
-        /*
+        /**
         * Provides a scaling function based on the xAxis values.
         *
         * Example:
@@ -148,7 +148,7 @@
         */
         yScale: function(val) { return val; },
 
-        /*
+        /**
         * Modifies the domain for the y axis.
         *
         * Example:
@@ -161,7 +161,7 @@
             this.yScaleGenerator.setDomain(domain);
         },
 
-        /*
+        /**
         * Redraws the yAxis with the new settings and domain
         *
         * Example:

@@ -37,7 +37,7 @@
         enter.call(this, col);
 
         function stacked(col) {
-            //jshint eqnull:true
+            /*jshint eqnull:true */
             if(this.options.yAxis.max == null) {
                 var flat = _.flatten(_.map(data, function (d) { return d.data; }));
                 var max = _.max(flat, function (d) { return d.y0 + d.y; });

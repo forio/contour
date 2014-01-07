@@ -36,7 +36,7 @@
 
     /*
     * Adds a scatter plot to the Narwhal instance.
-    * 
+    *
     * This visualization requires *.cartesian()*.
     *
     * ### Example:

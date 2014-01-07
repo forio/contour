@@ -30,7 +30,7 @@
         function appendPath(data, seriesName, seriesIndex) {
             seriesName = seriesName ? seriesName.replace(/\s/, '_') : '';
 
-            //jshint eqnull:true
+            /*jshint eqnull:true */
             var nonNullData = _.filter(data, function (d) { return d.y != null; });
             var markerSize = this.options.line.marker.size;
             var className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
@@ -113,7 +113,7 @@
     *           .render();
     *
     * @name .line(data, options)
-    * @param {object | array} [data] The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
+    * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public
     *

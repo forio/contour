@@ -24,7 +24,7 @@
 
         tooltip.classed('stack-tooltip', true);
 
-        //jshint eqnull:true
+        /*jshint eqnull:true*/
         var onMouseOver = function (d) {
             var isNull = function (p) {
                 return !(p && p.y != null);
@@ -40,8 +40,7 @@
             tooltip.html(text).style({display: 'block'});
         };
 
-        var onMouseOut = function (//* datum */
-            ) {
+        var onMouseOut = function (/* datum */) {
             tooltip.html('');
         };
 
