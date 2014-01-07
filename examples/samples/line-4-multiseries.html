@@ -1,4 +1,4 @@
-<div class="chart line-multiseries"></div>
+<div class="chart line-multiseries" style="float: left; width: 50%;"></div>
 <script>
 (function () {
 
@@ -11,11 +11,11 @@
             el: '.line-multiseries',
             xAxis: {
                 firstAndLast:false,
-                title: 'Type',
-                categories: ['Red', 'Green', 'Blue', 'Yellow', 'Black']
+                title: 'Quarter',
+                categories: ['Q4 \'12', 'Q1 \'13', 'Q2 \'13', 'Q3 \'13', 'Q4 \'13']
             },
             yAxis: {
-                title: 'Value'
+                title: 'Product Sales'
             }
         })
         .cartesian()
@@ -27,3 +27,27 @@
 
 
 </script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    var data = [
+        { name: 'Company A', data: [1,2,3,4,5] },
+        { name: 'Company B', data: [2,3,2,3,4] },
+        { name: 'Company C', data: [5,4,8,4,1] }
+    ];
+    new Narwhal({
+            el: '.line-multiseries',
+            xAxis: {
+                firstAndLast:false,
+                title: 'Quarter',
+                categories: ['Q4 \'12', 'Q1 \'13', 'Q2 \'13', 'Q3 \'13', 'Q4 \'13']
+            },
+            yAxis: {
+                title: 'Product Sales'
+            }
+        })
+        .cartesian()
+        .line(data)
+        .render();
+    </small></pre>
+</div>

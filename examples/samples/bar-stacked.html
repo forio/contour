@@ -1,5 +1,5 @@
 <div class="legend-tooltip bar-stacked-tooltip"></div>
-<div class="chart bar-stacked"></div>
+<div class="chart bar-stacked" style="float: left; width: 50%;"></div>
 <script>
 
 (function () {
@@ -27,10 +27,6 @@
                 smartAxis: false,
                 title: 'Value'
             },
-            bar: {
-                stacked: true
-            }
-
         })
         .cartesian()
         .horizontal()
@@ -39,3 +35,28 @@
         .render();
 })();
 </script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    var data = [
+        { name: 'First Series', data: [1,2,3,4,2] },
+        { name: 'Second Series', data: [1,1,1,1,8] },
+        { name: 'More Stuff', data: [4,4,4,2,3] }
+    ];
+    new Narwhal({
+            el: '.bar-stacked',
+            xAxis: {
+                title: 'Index',
+            },
+            yAxis: {
+                smartAxis: false,
+                title: 'Value'
+            },
+        })
+        .cartesian()
+        .horizontal()
+        .bar(data)
+        .stackTooltip(data, { el: '.bar-stacked-tooltip' })
+        .render();
+    </small></pre>
+</div>

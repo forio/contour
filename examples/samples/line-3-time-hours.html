@@ -1,4 +1,4 @@
-<div class="chart line-time-hrs"></div>
+<div class="chart line-time-hrs" style="float: left; width: 50%;"></div>
 <script>
 (function () {
 
@@ -29,3 +29,29 @@
 
 
 </script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    var data = [
+        { x: new Date('1/1/2000 10:00'), y: 5},
+        { x: new Date('1/1/2000 11:00'), y: 3},
+        { x: new Date('1/1/2000 12:00'), y: 6},
+        { x: new Date('1/1/2000 13:00'), y: 7},
+        { x: new Date('1/1/2000 14:00'), y: 4},
+        { x: new Date('1/1/2000 15:00'), y: 2}
+    ];
+    new Narwhal({
+            el: '.line-time-hrs',
+            xAxis: {
+                firstAndLast:false,
+                title: 'Time',
+            },
+            yAxis: {
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .line(data)
+        .render();
+    </small></pre>
+</div>

@@ -1,10 +1,11 @@
-<div class="chart line-basic"></div>
-<script>
 
+<div class="chart line-basic" style="float: left; width: 50%;"></div>
+<script>
+(function () {
     new Narwhal({
             el: '.line-basic',
             xAxis: {
-                title: 'Index',
+                title: 'Index'
             },
             yAxis: {
                 title: 'Value'
@@ -13,5 +14,22 @@
         .cartesian()
         .line([1, 2, 3, 4, 5, 4, 3, 2, 1])
         .render();
-
+})();
 </script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    new Narwhal({
+            el: '.line-basic',
+            xAxis: {
+                title: 'Index'
+            },
+            yAxis: {
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .line([1, 2, 3, 4, 5, 4, 3, 2, 1])
+        .render();
+    </small></pre>
+</div>

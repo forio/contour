@@ -1,6 +1,6 @@
-<div class="chart simple-tooltip"></div>
+<div class="chart simple-tooltip" style="float: left; width: 50%;"></div>
 <script>
-
+(function () {
     new Narwhal({
             el: '.simple-tooltip',
             xAxis: {
@@ -16,5 +16,25 @@
         .line([10, 20, 40, 20, 34, 56])
         .tooltip()
         .render();
-
+})();
 </script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    new Narwhal({
+            el: '.simple-tooltip',
+            xAxis: {
+                firstAndLast: false,
+                title: 'Index',
+            },
+            yAxis: {
+                smartAxis: false,
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .line([10, 20, 40, 20, 34, 56])
+        .tooltip()
+        .render();
+    </small></pre>
+</div>

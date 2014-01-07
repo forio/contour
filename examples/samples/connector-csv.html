@@ -1,8 +1,8 @@
 
 
-<div class="chart connecto-basic"></div>
+<div class="chart connecto-basic" style="float: left; width: 50%;"></div>
 <script>
-
+(function () {
     var csvData = 'quarter,cost,revenue,profit\n2013Q1,100,150,50\n2013Q2,110,150,40\n2013Q3,90,180,90\n2013Q4,105,190,85'
     var csv = new Narwhal.connectors.Csv(csvData);
 
@@ -19,5 +19,26 @@
         .cartesian()
         .column(csv.measure('profit'))
         .render();
-
+})();
 </script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    var csvData = 'quarter,cost,revenue,profit\n2013Q1,100,150,50\n2013Q2,110,150,40\n2013Q3,90,180,90\n2013Q4,105,190,85'
+    var csv = new Narwhal.connectors.Csv(csvData);
+
+    new Narwhal({
+            el: '.connecto-basic',
+            xAxis: {
+                firstAndLast: false,
+                title: 'Profit ($)',
+            },
+            yAxis: {
+                title: 'Quarter'
+            }
+        })
+        .cartesian()
+        .column(csv.measure('profit'))
+        .render();
+    </small></pre>
+</div>

@@ -1,6 +1,6 @@
-<div class="chart extend-line-marker"></div>
+<div class="chart extend-line-marker" style="float: left; width: 50%;"></div>
 <script>
-
+(function () {
     Narwhal.export('lineMarker', function (data, layer) {
         var y = this.yScale(data);
         layer.append('path')
@@ -23,5 +23,33 @@
         .lineMarker(4)
         .lineMarker(1)
         .render();
-
+})();
 </script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    //see <a href="">Example extensions</a> for more on extending Narwhal    
+    Narwhal.export('lineMarker', function (data, layer) {
+        var y = this.yScale(data);
+        layer.append('path')
+            .attr('d', 'M0,' + y + ' L' + this.options.chart.plotWidth + ',' + y)
+            .attr('stroke', '#000');
+    });
+
+    new Narwhal({
+            el: '.extend-line-marker',
+            xAxis: {
+                title: 'Index',
+            },
+            yAxis: {
+                smartAxis: false,
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .line([1, 2, 3, 4, 5, 4, 3, 2, 1])
+        .lineMarker(4)
+        .lineMarker(1)
+        .render();
+    </small></pre>
+</div>

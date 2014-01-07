@@ -24,7 +24,7 @@
         renderSeries.call(this);
 
         function adjustDomain() {
-            /* jshint eqnull:true */
+            // jshint eqnull:true
             if(this.options.area.stacked && this.options.yAxis.max == null) {
                 var flat = _.flatten(_.map(stackedData, function (d) { return d.data; }));
                 var max = _.max(flat, function (d) { return d.y0 + d.y; });
@@ -49,10 +49,18 @@
     renderer.defaults = defaults;
 
     /*
-    * Renders an area chart onto the narwhal frame. Area charts are stacked by default.
+    * Adds an area chart to the Narwhal instance. 
+    * 
+    * Area charts are stacked by default when the _data_ includes multiple series. 
+    * 
+    * This visualization requires *.cartesian()*.
     *
-    * ### Example
-    *     new Narwhal({el: '.chart'}).area([1,2,3,4]);
+    * ### Example:
+    *
+    *     new Narwhal({el: '.myChart'})
+    *           .cartesian()
+    *           .area([1,2,3,4])
+    *           .render();          
     *
     * @name .area(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.

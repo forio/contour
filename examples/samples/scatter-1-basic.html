@@ -1,6 +1,6 @@
-<div class="chart scatter-basic"></div>
+<div class="chart scatter-basic" style="float: left; width: 50%;"></div>
 <script>
-
+(function () {
     series = [];
     for(var j=0; j<3; j++) {
         var data = [];
@@ -35,5 +35,40 @@
         .scatter(series)
         .tooltip()
         .render();
-
+})();
 </script>
+
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    series = [];
+    //series defined as 3x10 array of random (x,y) pairs
+    for(var j=0; j&lt;3; j++) {
+        var data = [];
+        series.push({ data: data });
+        for(var k=0; k&lt;100; k++) {
+            data.push({x: Math.random() * 1000, y: Math.random() * 1000 });
+        }
+    }
+
+    new Narwhal({
+            el: '.scatter-basic',
+            xAxis: {
+                title: 'Value',
+                firstAndLast: false,
+                type: 'linear'
+            },
+            yAxis: {
+                title: 'Value',
+                smartAxis: false,
+            },
+            scatter: {
+                radius: 1.5
+            }
+        })
+        .cartesian()
+        .scatter(series)
+        .tooltip()
+        .render();
+    </small></pre>
+</div>

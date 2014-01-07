@@ -37,7 +37,7 @@
         enter.call(this, col);
 
         function stacked(col) {
-            /*jshint eqnull:true */
+            //jshint eqnull:true
             if(this.options.yAxis.max == null) {
                 var flat = _.flatten(_.map(data, function (d) { return d.data; }));
                 var max = _.max(flat, function (d) { return d.y0 + d.y; });
@@ -65,14 +65,16 @@
     render.defaults = defaults;
 
     /*
-    * Renders a column chart (vertical columns) onto the narwhal frame.
+    * Adds a column chart (vertical columns) to the Narwhal instance.
     *
-    * This visualization requires *cartesian()*
+    * This visualization requires *.cartesian()*.
     *
-    * ### Example
-    *     new Narwha({el: '.chart'})
+    * ### Example:
+    *
+    *     new Narwhal({el: '.myChart'})
     *           .cartesian()
-    *           .column([1,2,3,4]);
+    *           .column([1,2,3,4])
+    *           .render();
     *
     * @name .column(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.

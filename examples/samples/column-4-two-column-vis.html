@@ -12,9 +12,9 @@
     }
 
 </style>
-<div class="chart column-two-vis"></div>
+<div class="chart column-two-vis" style="float: left; width: 50%;"></div>
 <script>
-
+(function () {
     var data2 = [
         { name: 'qqq', data: [6,8,3,5,9,8,3] },
         { name: 'www', data: [1,2,1,2,1,2,1] },
@@ -53,5 +53,48 @@
             offset: function () { return this.rangeBand / 3 * 2+0.5; }
         })
         .render();
-
+})();
 </script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    var data2 = [
+        { name: 'qqq', data: [6,8,3,5,9,8,3] },
+        { name: 'www', data: [1,2,1,2,1,2,1] },
+    ];
+
+    var data = [
+        { name: 'abc', data: [5,3,6,5,1,6,2]},
+        { name: 'good', data: [5,3,2,5,1,6,5]}
+    ];
+
+    new Narwhal({
+            el: '.column-two-vis',
+            chart: {
+                gridlines: 'horizontal'
+            },
+            xAxis: {
+                title: 'Index',
+            },
+            yAxis: {
+                smartAxis: false,
+                max: 15,
+                ticks: 3,
+                nicing: false,
+                title: 'Value'
+            },
+            column: {
+                stacked: true
+            }
+        })
+        .cartesian()
+        .column(data, {
+            columnWidth: function () { return this.rangeBand/3 * 2; }
+        })
+        .column(data2, {
+            columnWidth: function () { return this.rangeBand/3; },
+            offset: function () { return this.rangeBand / 3 * 2+0.5; }
+        })
+        .render();
+    </small></pre>
+</div>

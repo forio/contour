@@ -1,6 +1,6 @@
-<div class="chart line-basic-nosmart"></div>
+<div class="chart line-basic-nosmart" style="float: left; width: 50%;"></div>
 <script>
-
+(function () {
     new Narwhal({
             el: '.line-basic-nosmart',
             xAxis: {
@@ -14,5 +14,23 @@
         .cartesian()
         .line([1, 2, 3, 4, 5, 4, 3, 2, 1])
         .render();
-
+})();
 </script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    new Narwhal({
+            el: '.line-basic-nosmart',
+            xAxis: {
+                title: 'Index',
+            },
+            yAxis: {
+                smartAxis: false,
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .line([1, 2, 3, 4, 5, 4, 3, 2, 1])
+        .render();
+    </small></pre>
+</div>
