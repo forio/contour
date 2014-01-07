@@ -54,14 +54,13 @@
     };
 
     /**
-    * Provides a cartesian frame to the Narwhal instance
+    * Provides a Cartesian frame to the Narwhal instance.
     *
-    * Example:
+    * ###Example:
     *
     *     new Narwhal(options)
     *           .cartesian();
     *
-    * Now new visualizations have accecss to the cartesian frame functionality
     * @name .cartesian()
     */
     var cartesian = {
@@ -125,49 +124,50 @@
         /**
         * Provides a scaling function based on the xAxis values.
         *
-        * Example:
+        * ###Example:
         *
         *     var scaledValue = this.xScale(100);
         *
-        * @function this.xScale()
-        * @param {Number|String} value The value to be scaled
-        * @return {Number} The scaled value according to the current xAxis settings
+        * @function this.xScale
+        * @param {Number|String} value The value to be scaled.
+        * @return {Number} The scaled value according to the current xAxis settings.
         */
         xScale: function(val) { return val; },
 
         /**
-        * Provides a scaling function based on the xAxis values.
+        * Provides a scaling function based on the yAxis values.
         *
-        * Example:
+        * ###Example:
         *
-        *     var scaledValue = this.xScale(100);
+        *     var scaledValue = this.yScale(100);
         *
-        * @function this.yScale()
-        * @param {Number} value The value to be scaled
-        * @return {Number} The scaled value according to the current yAxis settings
+        * @function this.yScale
+        * @param {Number} value The value to be scaled.
+        * @return {Number} The scaled value according to the current yAxis settings.
         */
         yScale: function(val) { return val; },
 
         /**
-        * Modifies the domain for the y axis.
+        * Modifies the domain for the yAxis.
         *
-        * Example:
+        * ###Example:
         *
         *     this.setYDomain([100, 200]);
         *
-        * @param {Array} domain The domain array represeting the min and max values of to be visible in the y Axis
-        */
+        * @function this.setYDomain
+        * @param {Array} domain The domain array represeting the min and max values to be visible in the yAxis.       */
         setYDomain: function (domain) {
             this.yScaleGenerator.setDomain(domain);
         },
 
         /**
-        * Redraws the yAxis with the new settings and domain
+        * Redraws the yAxis with the new settings and domain.
         *
-        * Example:
+        * ###Example:
         *
-        *     this.redrawYAxis(;
+        *     this.redrawYAxis();
         *
+        * @function this.redrawYAxis
         */
         redrawYAxis: function () {
             this.svg.select(".y.axis").call(this.yAxis());
