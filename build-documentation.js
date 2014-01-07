@@ -86,11 +86,26 @@ function getSourceFileList(srcSpec) {
     return allFiles;
 }
 
+function commentNormalizer(data) {
+    // change simple /* comments to /*! comments
+    // so Dox does not treat them as jsdoc documentation comments
+    return data.replace(/\/\*(?!\*)/gm, '/*!');
+}
+
 function generatePerFileDoc(allFiles) {
     // One file per Javascript file
     async.forEach(allFiles, function(file, next) {
-        var output = docFolder + path.basename(file) + '.md';
-        markdox.process(file, output, next);
+        markdox.process(file, {
+            output: docFolder + path.basename(file) + '.md',
+            template: 'src/documentation/file-dox-template.ejs',
+            formatter: function(docfile){
+                return docfile;
+            },
+            compiler: function(filepath, data){
+                var d = commentNormalizer(data);
+                return d;
+            }
+        }, next);
     }, function(err) {
         if (err) {
             throw err;
