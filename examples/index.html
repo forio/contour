@@ -66,7 +66,7 @@
         <h3>Example Visualizations</h3>
         <ul>
             <li><a href="#LineCharts">Line Charts</a></li>
-            <li><a href="#BarCharts">Bar Charts</a></li>            
+            <li><a href="#BarCharts">Bar Charts</a></li>
             <li><a href="#AreaCharts">Area Charts</a></li>
             <li><a href="#ColumnCharts">Column Charts</a></li>
             <li><a href="#PieCharts">Pie Charts</a></li>
@@ -87,7 +87,7 @@
 
         var sampleArea = ['area-1-basic'];
 
-        var sampleColumn = ['column-1-basic','column-2-categories','column-3-stacked','column-4-two-column-vis','connector-csv'];
+        var sampleColumn = ['column-1-basic','column-2-categories','column-3-stacked','column-4-two-column-vis'];
 
         var sampleBar = ['bar-basic', 'bar-stacked'];
 
@@ -142,7 +142,7 @@
             });
             samples.append(div)
 
-        }, this);  
+        }, this);
 
         samples.append("<a name=\"PieCharts\"></a><div><h3>Pie Charts</h3><p>Create pie charts by adding <code>.pie()</code> in your Narwhal instance. Use configuration options to set radius and padding options.</p></div>");
          _.each(samplePie, function (file) {
@@ -154,7 +154,7 @@
             });
             samples.append(div)
 
-        }, this);  
+        }, this);
 
         samples.append("<a name=\"ScatterPlots\"></a><div><h3>Scatter Plots</h3><p>Create scatter plots by adding <code>.cartesian()</code> and <code>.scatter()</code> in your Narwhal instance. Use configuration options to set properties of the axes and the plot, including the <code>radius</code> of the data points.</p></div>");
          _.each(sampleScatter, function (file) {
