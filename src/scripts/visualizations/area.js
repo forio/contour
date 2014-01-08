@@ -43,15 +43,33 @@
                 .datum(function(d) { return d.data; })
                 .attr('class', 'area')
                 .attr('d', area);
+
+            renderTooltipTrackers.call(this, series);
         }
+
+        function renderTooltipTrackers(series){
+            var trackerSize = 10;
+            // add the tooltip trackers regardless
+            series.append('g').attr('class', 'tooltip-trackers')
+                .selectAll('tooltip-tracker')
+                    .data(function (d) { return d.data; })
+                .enter().append('circle')
+                    .attr('class', 'tooltip-tracker')
+                    .attr('opacity', 0)
+                    .attr('r', trackerSize)
+                    .attr('cx', function(d) { return x(d.x); })
+                    .attr('cy', function(d) { return y(d.y0 + d.y); });
+        }
+
+
     }
 
     renderer.defaults = defaults;
 
     /*
-    * Adds an area chart to the Narwhal instance. 
+    * Adds an area chart to the Narwhal instance.
     *
-    * Area charts are stacked by default when the _data_ includes multiple series. 
+    * Area charts are stacked by default when the _data_ includes multiple series.
     *
     * This visualization requires *.cartesian()*.
     *
@@ -60,7 +78,7 @@
     *     new Narwhal({el: '.myChart'})
     *           .cartesian()
     *           .area([1,2,3,4])
-    *           .render();          
+    *           .render();
     *
     * @name .area(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
