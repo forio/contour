@@ -42,7 +42,20 @@
     var _visualizations = [];
 
     /**
-    * Narwhal visualization constructor
+    * Create a set of related visualizations by calling the Narwhal visualization constructor. This creates a Narwhal instance, based on the core Narwhal object.
+    *
+    *   * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Narwhal instance will be rendered.
+    *   * Set the frame for this Narwhal instance (e.g. `.cartesian()`). 
+    *   * Add one or more specific visualizations to this Narwhal instance (e.g. `.scatter()`, `.trend-line()`). Pass each visualization constructor the data it displays.
+    *   * Invoke an action for this Narwhal instance (e.g. `.render()`).
+    *
+    * ### Example:
+    *
+    *     new Narwhal({el: 'myChart'})
+    *       .cartesian()
+    *       .line([1,3,2,5])
+    *       .render()
+    *
     *
     * @class Narwhal() visualizations object
     * @param {object} options The global options object
@@ -55,11 +68,23 @@
     }
 
     /**
-    * Adds a visualization to be rendered in the instance of Narwhal
-    * This is the main way to expose visualizations to be used
+    * Adds a new kind of visualization to the core Narwhal object. 
+    * The *renderer* function will be called when you add this visualization to instances of Narwhal.
     *
-    * @param {String} ctorName Name of the visualization to be used as a contructor name
-    * @param {Function} renderer Function that will be called to render the visualization. The function will recieve the data that was passed in to the constructor function
+    * ### Example:
+    *
+    *     Narwhal.export("exampleVisualization", function(data, layer) {
+    *           //function body to create exampleVisualization
+    *           //for example using SVG and/or D3
+    *     });
+    *
+    *     //to include the visualization into a specific Narwhal instance
+    *     new Narwhal(options)
+    *           .exampleVisualization(data)
+    *           .render()
+    *     
+    * @param {String} ctorName Name of the visualization, used as a constructor name.
+    * @param {Function} renderer Function called when this visualization is added to a Narwhal instance. This function receives the data that is passed in to the constructor.
     * @see options
     */
     Narwhal.export = function (ctorName, renderer) {
@@ -113,21 +138,23 @@
 
     /**
     * Exposes functionality to the core Narwhal object.
-    * This is used to add base functionality to be used by viasualizations
-    * for example the `cartesian` frame is implemented exposing functionality.
+    * Use this to add *functionality* that will be available for any new visualizations created with `.export()`.
     *
-    * Example:
-    *
+    * ###Example:
     *
     *     Narwhal.expose("example", {
-    *          // when included in the instance, this will expose `.transformData` to the visualizations
+    *          // when included in the instance, the function `.transformData` is available the visualizations
     *         transformData: function(data) { .... }
     *     });
     *
-    *     // To include the functionality into a specific instance
+    *     Narwhal.export("visualizationThatUsesTransformDataFunction", function(data, layer) {
+    *           //function body including call to this.transformData(data)
+    *     });       
+    *
+    *     // to include the functionality into a specific instance
     *     new Narwhal(options)
     *           .example()
-    *           .visualizationsThatUsesTransformDataFunction()
+    *           .visualizationThatUsesTransformDataFunction()
     *           .render()
     */
     Narwhal.expose = function (ctorName, functionality) {
@@ -218,12 +245,11 @@
         },
 
         /**
-        * Renders all the composed visualizations into the DOM.
-        * This calls to render all the visualizations that were composed into the instance
+        * Renders this Narwhal instance and all its visualizations into the DOM.
         *
         * Example:
         *
-        *     new Narwhal({ el:'.chart' })
+        *     new Narwhal({ el:'.myChart' })
         *           .pie([1,2,3])
         *           .render()
         *
