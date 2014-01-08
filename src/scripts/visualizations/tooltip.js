@@ -2,13 +2,13 @@
     var defaults = {
         tooltip: {
             animate: true,
-            visibleOpacity: 0.75,
+            opacity: 0.85,
             showTime: 300,
             hideTime: 500
         }
     };
 
-    function render(data, layer) {
+    function render() {
 
         var clearHideTimer = function () {
             clearTimeout(this.tooltip.hideTimer);
@@ -40,9 +40,25 @@
         };
 
         var getTooltipText = function (d) {
-            if(this.options.tooltip.formatter) return this.options.tooltip.formatter.call(this, d);
+            function match() {
+                var params = Array.prototype.slice.call(arguments);
+                var list = params[0];
+                var rest = params.slice(1);
 
-            return  'x: ' + d.x + '<br>' + 'y: ' + d.y;
+                var response = _.map(list, function(fn) { return fn.apply(this, rest); }).concat([_.noop]);
+
+                return _.first(_.select(response));
+            }
+            var options = this.options.tooltip;
+            var formatters = [
+                function (d) { return options.formatter ? _.partial(options.formatter, d) : null; },
+                function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return 'x: ' + d.x + '<br>' + 'y: ' + d.y; }, d) : null; },
+                function (d) { return d.hasOwnProperty('value') ? _.partial(function (d) { return d.value; }, d) : null;  },
+                function () { return function () { return 'NA'; }; }
+            ];
+
+
+            return match(formatters, d)();
         };
 
         var show = function (d, pos) {
@@ -55,7 +71,7 @@
                 .style('top', pos.y + 'px')
                 .style('left', pos.x + 'px');
 
-            changeOpacity.call(this, this.options.tooltip.visibleOpacity, this.options.tooltip.showTime);
+            changeOpacity.call(this, this.options.tooltip.opacity, this.options.tooltip.showTime);
         };
 
         this.tooltipElement = this.container
@@ -78,7 +94,7 @@
     /*
     * Adds a tooltip on hover to all other visualizations in the Narwhal instance.
     *
-    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips. 
+    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips.
     *
     * ### Example:
     *
@@ -90,7 +106,7 @@
     *
     * @name .tooltip(data, options)
     * @param {object|array} data Ignored!
-    * @param {object} options Options particular to this visualization that override the defaults. TBW -- 
+    * @param {object} options Options particular to this visualization that override the defaults. TBW --
     * @api public
     *
     */
