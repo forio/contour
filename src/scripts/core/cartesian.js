@@ -5,10 +5,11 @@
             gridlines: 'none',
             padding: {
                 top: 6,
-
-                // bottom: 25,
-                // left: 0,
-                right: 5
+                right: 5,
+                // this get's defined based on the axis & title
+                bottom: undefined,
+                // this get's defined based on the axis & title
+                left: undefined
             }
         },
 
@@ -46,9 +47,8 @@
             orient: 'left',
             labels: {
                 align: 'middle',
-                format: 's' // d3 formats
-                // formatter
-
+                format: 's', // d3 formats
+                formatter: undefined // a function that formats each value ie. function (datum) { return 'x: ' + datum.x + ', y:' + datum.y }
             }
         }
     };

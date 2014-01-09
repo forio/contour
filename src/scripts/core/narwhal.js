@@ -133,6 +133,8 @@
     * ###Example:
     *
     *     Narwhal.expose("example", function () {
+    *         // return a new instance of the functionality we want to expose
+    *         // to the narwhal instance...
     *         return {
     *              // when included in the instance, the function `.transformData` is available the visualizations
     *             transformData: function(data) { .... }
