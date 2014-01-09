@@ -15,14 +15,14 @@
 
     function render(data, layer, options) {
         var opt = options.column;
-        var h = this.options.chart.plotHeight;
+        var h = options.chart.plotHeight;
         var x = this.xScale;
         var y = this.yScale;
         var rangeBand = getValue(opt.columnWidth, this.rangeBand, this);
         var chartOffset = getValue(opt.offset, 0, this);
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
-        var enter = this.options.column.stacked ? stacked : grouped;
+        var enter = options.column.stacked ? stacked : grouped;
 
         var series = layer.selectAll('g.series')
                 .data(stack(data))
@@ -38,7 +38,7 @@
 
         function stacked(col) {
             /*jshint eqnull:true */
-            if(this.options.yAxis.max == null) {
+            if(options.yAxis.max == null) {
                 var flat = _.flatten(_.map(data, function (d) { return d.data; }));
                 var max = _.max(flat, function (d) { return d.y0 + d.y; });
                 this.setYDomain([0, max.y + max.y0]);
