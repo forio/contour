@@ -119,6 +119,7 @@
                     this.rangeBand = this.xScaleGenerator.rangeBand();
                 } else {
                     this.xScaleGenerator.update(this.xDomain, this.dataSrc);
+                    this.rangeBand = this.xScaleGenerator.rangeBand();
                 }
             },
 
