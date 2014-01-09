@@ -365,7 +365,6 @@
 
             render: function () {
 
-                this.processVisualizations();
                 this.composeOptions();
                 this.adjustDomain();
                 this.calcMetrics();
@@ -393,11 +392,6 @@
                 this.svg.select('.y.axis').transition().duration(duration).call(this.yAxis());
 
                 this.renderGridlines();
-                // this
-                //     .renderXAxis()
-                //     .renderYAxis()
-                //     .renderAxisLabels();
-
                 this.renderVisualizations();
 
             },
@@ -412,20 +406,6 @@
                 };
             },
 
-            data: function (vis) {
-                var series = vis.data;
-                if (series instanceof Array && !series.length) {
-                    return this;
-                } else if (series instanceof Array && series[0].data) {
-                    // this.dataSrc = _.merge(this.dataSrc, _.flatten(_.map(series, _.bind(this.datum, this))));
-                    // this.xDomain = _.nw.merge(this.xDomain, vis.xDomain);
-                    // this.yDomain = _.nw.merge(this.yDomain, vis.yExtent);
-                    // this.yMin = this.yDomain[0];
-                    // this.yMax = this.yDomain[this.yDomain.length - 1];
-                }
-
-                return this;
-            },
             adjustDomain: function () {
                 var extents = this.getExtents();
                 this.yDomain = extents.length ? extents : [0, 10];

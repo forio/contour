@@ -251,8 +251,6 @@
         *
         */
         render: function () {
-            this.processVisualizations();
-
             this.composeOptions();
 
             this.calcMetrics();
@@ -267,10 +265,6 @@
         update: function () {
             this.calcMetrics();
             return this;
-        },
-
-        processVisualizations: function () {
-            _.each(this._visualizations, this.data, this);
         },
 
         plotArea: function () {
