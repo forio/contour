@@ -107,15 +107,6 @@
             return data;
         }
 
-        function updateFn(renderFn, orig, data) {
-            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
-            var normalData = _.nw.normalizeSeries(data, categories);
-            var opt = _.merge({}, this.parent.options, this.options);
-            this.parent.data(normalData);
-            this.parent.update();
-
-            renderFn.call(this.parent, normalData, this.layer, opt);
-        }
 
         Narwhal.prototype[ctorName] = function (data, options) {
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
@@ -126,11 +117,7 @@
 
             sortSeries(data);
 
-            renderer.defaults = renderer.defaults || {};
-
-            opt[ctorName] = options || {};
-
-            vis = new Narwhal.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer);
+            vis = new Narwhal.VisualizationContainer(_.nw.normalizeSeries(data, categories), options, ctorName, renderer, this);
 
             this._visualizations.push(vis);
 
@@ -245,11 +232,6 @@
             this.options = _.merge({}, allDefaults, this.options);
         },
 
-        getExtents: function () {
-            var all = _.flatten(_.pluck(this._visualizations, 'yExtent'));
-            return all.length ? d3.extent(all) : [];
-        },
-
         baseRender: function () {
             this.plotArea();
 
@@ -318,9 +300,10 @@
         },
 
         renderVisualizations: function () {
+
             _.each(this._visualizations, function (visualization, index) {
                 var id = index + 1;
-                var layer = this.createVisualizationLayer(visualization, id);
+                var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
                 var opt = _.merge({}, this.options, visualization.options);
                 visualization.layer = layer;
                 visualization.parent = this;

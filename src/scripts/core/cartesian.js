@@ -118,7 +118,7 @@
                     this.xScale = this.xScaleGenerator.scale(this.xDomain);
                     this.rangeBand = this.xScaleGenerator.rangeBand();
                 } else {
-                    this.xScale.domain(this.xDomain);
+                    this.xScaleGenerator.update(this.xDomain, this.dataSrc);
                 }
             },
 
@@ -131,7 +131,7 @@
                     this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
                     this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                 } else {
-                    this.yScale.domain(yScaleDomain);
+                    this.yScaleGenerator.update(yScaleDomain, this.dataSrc);
                 }
             },
 
@@ -384,6 +384,7 @@
             update: function () {
                 var duration = 400;
 
+
                 this.adjustDomain();
                 this.calcMetrics();
                 this.computeScales();
@@ -396,6 +397,9 @@
                 //     .renderXAxis()
                 //     .renderYAxis()
                 //     .renderAxisLabels();
+
+                this.renderVisualizations();
+
             },
 
             datum: function (d, index) {
@@ -413,11 +417,11 @@
                 if (series instanceof Array && !series.length) {
                     return this;
                 } else if (series instanceof Array && series[0].data) {
-                    this.dataSrc = _.merge(this.dataSrc, _.flatten(_.map(series, _.bind(this.datum, this))));
-                    this.xDomain = _.nw.merge(this.xDomain, vis.xDomain);
-                    this.yDomain = _.nw.merge(this.yDomain, vis.yExtent);
-                    this.yMin = this.yDomain[0];
-                    this.yMax = this.yDomain[this.yDomain.length - 1];
+                    // this.dataSrc = _.merge(this.dataSrc, _.flatten(_.map(series, _.bind(this.datum, this))));
+                    // this.xDomain = _.nw.merge(this.xDomain, vis.xDomain);
+                    // this.yDomain = _.nw.merge(this.yDomain, vis.yExtent);
+                    // this.yMin = this.yDomain[0];
+                    // this.yMax = this.yDomain[this.yDomain.length - 1];
                 }
 
                 return this;
@@ -425,8 +429,30 @@
             adjustDomain: function () {
                 var extents = this.getExtents();
                 this.yDomain = extents.length ? extents : [0, 10];
-                this.xDomain = this.xDomain ? this.xDomain : [];
+                this.xDomain = this.getXDomain();
+                this.yMin = this.yDomain[0];
+                this.yMax = this.yDomain[this.yDomain.length - 1];
+                this.dataSrc = _.flatten(
+                    _.map(this._visualizations, function (v) {
+                        return _.flatten(_.map(v.data, _.bind(this.datum, this)));
+                    }, this)
+                );
+
+                this._yAxis = null;
+                this._xAxis = null;
+            },
+
+            getExtents: function (axis) {
+                var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
+                var all = _.flatten(_.pluck(this._visualizations, field));
+                return all.length ? d3.extent(all) : [];
+            },
+
+            getXDomain: function () {
+                var all = _.flatten(_.pluck(this._visualizations, 'xDomain'));
+                return all;
             }
+
         };
     };
 
