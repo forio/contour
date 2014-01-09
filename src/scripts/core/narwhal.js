@@ -39,13 +39,12 @@
         }
     };
 
-    var _visualizations = [];
 
     /**
     * Create a set of related visualizations by calling the Narwhal visualization constructor. This creates a Narwhal instance, based on the core Narwhal object.
     *
     *   * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Narwhal instance will be rendered.
-    *   * Set the frame for this Narwhal instance (e.g. `.cartesian()`). 
+    *   * Set the frame for this Narwhal instance (e.g. `.cartesian()`).
     *   * Add one or more specific visualizations to this Narwhal instance (e.g. `.scatter()`, `.trend-line()`). Pass each visualization constructor the data it displays.
     *   * Invoke an action for this Narwhal instance (e.g. `.render()`).
     *
@@ -64,11 +63,12 @@
     */
     function Narwhal (options) {
         this.init(options);
+
         return this;
     }
 
     /**
-    * Adds a new kind of visualization to the core Narwhal object. 
+    * Adds a new kind of visualization to the core Narwhal object.
     * The *renderer* function will be called when you add this visualization to instances of Narwhal.
     *
     * ### Example:
@@ -82,7 +82,7 @@
     *     new Narwhal(options)
     *           .exampleVisualization(data)
     *           .render()
-    *     
+    *
     * @param {String} ctorName Name of the visualization, used as a constructor name.
     * @param {Function} renderer Function called when this visualization is added to a Narwhal instance. This function receives the data that is passed in to the constructor.
     * @see options
@@ -118,54 +118,21 @@
         }
 
         Narwhal.prototype[ctorName] = function (data, options) {
-            data = data || [];
-            sortSeries(data);
-            renderer.defaults = renderer.defaults || {};
-            var renderFunc;
+            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt = {};
-            var _xExtent, _yExtent;
-            var normalData;
+            var vis;
+
+            data = data || [];
+
+            sortSeries(data);
+
+            renderer.defaults = renderer.defaults || {};
+
             opt[ctorName] = options || {};
 
-            if (_.isArray(data)) {
-                var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
-                normalData = _.nw.normalizeSeries(data, categories);
-                this.data(normalData);
-                renderFunc = _.partial(renderer, normalData);
+            vis = new Narwhal.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer);
 
-                _extent = function (field, d) {
-                    var maxs = [], mins = [];
-                    _.each(d, function (d) {
-                        var values = _.pluck(d.data, field);
-                        maxs.push(d3.max(values));
-                        mins.push(d3.min(values));
-                    });
-
-                    return [_.min(mins), _.max(maxs)];
-                };
-                _xExtent = _.partial(_extent, 'x');
-                _yExtent = _.partial(_extent, 'y');
-            } else {
-                renderFunc = _.partial(renderer, data);
-                _xExtent = _yExtent = _.noop;
-            }
-
-            var visDef = {
-                type: ctorName,
-                defaults: renderer.defaults,
-                renderFunc: renderFunc,
-                options: opt,
-                layer: undefined,
-                extent: {
-                    x: _xExtent(normalData),
-                    y: _yExtent(normalData)
-                }
-            };
-
-            visDef.update = _.partial(updateFn, renderer, visDef);
-
-
-            _visualizations.push(visDef);
+            this._visualizations.push(vis);
 
             return this;
         };
@@ -178,14 +145,16 @@
     *
     * ###Example:
     *
-    *     Narwhal.expose("example", {
-    *          // when included in the instance, the function `.transformData` is available the visualizations
-    *         transformData: function(data) { .... }
+    *     Narwhal.expose("example", function () {
+    *         return {
+    *              // when included in the instance, the function `.transformData` is available the visualizations
+    *             transformData: function(data) { .... }
+    *         };
     *     });
     *
     *     Narwhal.export("visualizationThatUsesTransformDataFunction", function(data, layer) {
     *           //function body including call to this.transformData(data)
-    *     });       
+    *     });
     *
     *     // to include the functionality into a specific instance
     *     new Narwhal(options)
@@ -193,8 +162,9 @@
     *           .visualizationThatUsesTransformDataFunction()
     *           .render()
     */
-    Narwhal.expose = function (ctorName, functionality) {
+    Narwhal.expose = function (ctorName, functionalityConstructor) {
         var ctor = function () {
+            var functionality = typeof functionalityConstructor === 'function' ? new functionalityConstructor() : functionalityConstructor;
             // extend the --instance-- we don't want all charts to be overriden...
             _.extend(this, _.omit(functionality, 'init'));
 
@@ -209,6 +179,7 @@
     };
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
+        _visualizations: [],
 
         // Initializes the instance of Narwhal
         init: function (options) {
@@ -217,7 +188,7 @@
             // after all components/visualizations have been added
             this.options = options || {};
 
-            _visualizations.length = 0;
+            this._visualizations.length = 0;
 
             return this;
         },
@@ -266,16 +237,17 @@
 
         composeOptions: function () {
             var allDefaults = _.merge({}, defaults);
-            var mergeDefaults = function (vis) { _.merge(allDefaults, vis.defaults); };
+            var mergeDefaults = function (vis) { _.merge(allDefaults, vis.renderer.defaults); };
 
-            _.each(_visualizations, mergeDefaults);
+            _.each(this._visualizations, mergeDefaults);
 
             // compose the final list of options right before start rendering
             this.options = _.merge({}, allDefaults, this.options);
         },
 
         getExtents: function () {
-            return d3.extent(_.pluck(_visualizations, 'extent'));
+            var all = _.flatten(_.pluck(this._visualizations, 'yExtent'));
+            return all.length ? d3.extent(all) : [];
         },
 
         baseRender: function () {
@@ -297,6 +269,8 @@
         *
         */
         render: function () {
+            this.processVisualizations();
+
             this.composeOptions();
 
             this.calcMetrics();
@@ -311,6 +285,10 @@
         update: function () {
             this.calcMetrics();
             return this;
+        },
+
+        processVisualizations: function () {
+            _.each(this._visualizations, this.data, this);
         },
 
         plotArea: function () {
@@ -340,20 +318,20 @@
         },
 
         renderVisualizations: function () {
-            _.each(_visualizations, function (visualization, index) {
+            _.each(this._visualizations, function (visualization, index) {
                 var id = index + 1;
                 var layer = this.createVisualizationLayer(visualization, id);
                 var opt = _.merge({}, this.options, visualization.options);
                 visualization.layer = layer;
                 visualization.parent = this;
-                visualization.renderFunc.call(this, layer, opt);
+                visualization.render(layer, opt, this);
             }, this);
 
             return this;
         },
 
         getVisualization: function (index) {
-            return _visualizations[index];
+            return this._visualizations[index];
         },
 
         compose: function(ctorName, funcArray) {

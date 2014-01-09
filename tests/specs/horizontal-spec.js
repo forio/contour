@@ -34,7 +34,7 @@ describe('Horizontal frame', function () {
 
         describe('yScale', function () {
             it('should go from 0 to width', function () {
-                narwhal.data([1,2,3]).render();
+                narwhal.nullVis([1,2,3]).render();
                 var w = narwhal.options.chart.plotWidth;
 
                 expect(narwhal.yScale(0)).toBe(0);
@@ -45,7 +45,7 @@ describe('Horizontal frame', function () {
 
         describe('xScale', function () {
             it('should be inverted (first index should be below --greater Y coord-- then the last index)', function () {
-                narwhal.data([1,2,3]).render();
+                narwhal.nullVis([1,2,3]).render();
 
                 expect(narwhal.xScale(0)).toBeGreaterThan(narwhal.xScale(2));
             });
