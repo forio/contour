@@ -116,6 +116,13 @@
                     return [normal(data, 'series 1')];
                 }
             }
+
+            // nothing to do to the data if it's not in a supported format
+            return data;
+        },
+
+        isSupportedDataFormat: function (data) {
+            return _.isArray(data) && (_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0]);
         }
 
     };
