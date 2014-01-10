@@ -31,10 +31,10 @@
 
             if(!this._scale) {
                 this._scale = new d3.time.scale();
+                this.setDomain(domain);
                 this.range();
             }
 
-            this.setDomain(domain);
 
             return this._scale;
         },
