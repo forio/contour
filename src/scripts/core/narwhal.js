@@ -274,16 +274,17 @@
             var chartOpt = this.options.chart;
 
             this.container = d3.select(this.options.el);
-            this.container.select('svg').remove();
 
-            this.svg = this.container
-                .append('svg')
+            if(!this.svg) {
+                this.svg = this.container
+                    .append('svg')
                     .attr('viewBox', '0 0 ' + chartOpt.width + ' ' + chartOpt.height)
                     .attr('preserveAspectRatio', 'xMinYMin')
                     .attr('class', 'narwhal-chart')
                     .attr('height', chartOpt.height)
-                .append('g')
-                    .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
+                    .append('g')
+                        .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
+            }
 
             return this;
         },

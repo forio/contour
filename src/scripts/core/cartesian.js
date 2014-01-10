@@ -82,6 +82,7 @@
             xDomain: [],
             yDomain: [],
 
+
             adjustPadding: function () {
                 var options = this.options.yAxis;
                 var yLabels = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), options.min, options.max);
@@ -217,10 +218,17 @@
             renderXAxis: function () {
                 var xAxis = this.xAxis();
                 var y = this.options.chart.plotHeight + this.options.chart.padding.top;
-                this._xAxisGroup = this.svg
+
+                this._xAxisGroup = this.svg.selectAll('.x.axis')
+                    .data([1]);
+
+                this._xAxisGroup.enter()
                     .append('g')
-                    .attr('class', 'x axis')
                     .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + y + ')')
+                    .attr('class', 'x axis');
+
+                this._xAxisGroup
+                    .transition().duration(400 * this.options.chart.animations)
                     .call(xAxis);
 
                 this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
@@ -233,15 +241,18 @@
                 var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
                 var x = this.options.chart.padding.left;
                 var y = this.options.chart.padding.top;
-                var yAxis = this.yAxis();
 
-                this._yAxisGroup = this.svg
-                    .append('g')
-                    .attr('class', 'y axis')
-                    .attr('transform', 'translate(' + x + ',' + y + ')')
-                    .call(yAxis);
+                this._yAxisGroup = this.svg.selectAll('.y.axis')
+                    .data([1]);
 
                 this._yAxisGroup
+                    .enter().append('g')
+                    .attr('transform', 'translate(' + x + ',' + y + ')')
+                        .attr('class', 'y axis');
+
+                this._yAxisGroup
+                    .transition().duration(400 * this.options.chart.animations)
+                    .call(this.yAxis())
                     .selectAll('text')
                         .attr('dy', alignmentOffset[options.labels.align]);
 
@@ -279,6 +290,8 @@
                         .attr('dy', 0)
                         .text(this.options.yAxis.title);
                 }
+
+                return this;
             },
 
             renderGridlines: function () {
@@ -371,30 +384,14 @@
                 this.calcMetrics();
                 this.computeScales();
                 this.baseRender();
+
                 this.renderXAxis()
                     .renderYAxis()
                     .renderGridlines()
-                    .renderAxisLabels();
-
-                this.renderVisualizations();
+                    .renderAxisLabels()
+                    .renderVisualizations();
 
                 return this;
-            },
-
-            update: function () {
-                var duration = 400;
-
-
-                this.adjustDomain();
-                this.calcMetrics();
-                this.computeScales();
-
-                this.svg.select('.x.axis').transition().duration(duration).call(this.xAxis());
-                this.svg.select('.y.axis').transition().duration(duration).call(this.yAxis());
-
-                this.renderGridlines();
-                this.renderVisualizations();
-
             },
 
             datum: function (d, index) {
