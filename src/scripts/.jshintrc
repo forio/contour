@@ -1,0 +1,9 @@
+{
+    "browser": true,
+    "strict": false,
+    "globals": {
+        "_": true,
+        "Narwhal": true,
+        "d3": true
+    }
+}
