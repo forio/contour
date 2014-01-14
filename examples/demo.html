@@ -133,8 +133,8 @@ var config = {
     },
 
     yAxis: {
-        // smartAxis: false,
-        // nicing: false,
+        smartAxis: false,
+        nicing: false,
 
         // tickValues: [10, 20, 100, 140, 150],
         // max:150,
@@ -151,9 +151,9 @@ var config = {
     },
 
     tooltip: {
-        // formatter: function (d) {
-        //     return d.data.x + '<br>' + d.data.y;
-        // }
+        formatter: function (d) {
+            return d.y + ' Narwhals swimming in the sea';
+        }
     },
 
 };
@@ -189,7 +189,7 @@ Narwhal.export('col', function (data, layer, options) {
 
         bars.enter()
             .append('rect')
-            .attr('class', function(d, i) { return  'column ' + i; })
+            .attr('class', function(d, i) { return  'tooltip-tracker column ' + i; })
             .attr('x', function (d, i) {
                 return x(d.x) + 0.5;
             })
