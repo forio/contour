@@ -71,7 +71,7 @@
         },
 
         _updateDomain: function () {
-            if(!this.options[this.type]) throw new Errro('Set the options before calling setData or _updateDomain');
+            if(!this.options[this.type]) throw new Error('Set the options before calling setData or _updateDomain');
 
             if (_.nw.isSupportedDataFormat(this.data)) {
                 this.xDomain = _.flatten(_.map(this.data, function (set) { return _.pluck(set.data, 'x'); }));
