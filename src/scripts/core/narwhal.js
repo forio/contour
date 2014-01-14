@@ -209,7 +209,9 @@
             this.options = _.merge(options, {
                 chart: {
                     plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.padding.left - options.chart.padding.right,
-                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom
+                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom,
+                    plotLeft: options.chart.margin.left + options.chart.padding.left,
+                    plotTop: options.chart.margin.top + options.chart.padding.top
                 }
             });
         },
