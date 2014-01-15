@@ -5,8 +5,20 @@
             return [ar[0], ar[ar.length-1]];
         },
 
-        roundToNearest: function (number, multiple){
+        roundToNearest: function (number, multiple) {
             return Math.ceil(number / multiple) * multiple;
+        },
+
+        clamp: function (val, l, h) {
+            return val > h ? h : val < l ? l : val;
+        },
+
+        clampLeft: function (val, low) {
+            return val < low ? low : val;
+        },
+
+        clampRight: function (val, high) {
+            return val > high ? high : val;
         },
 
         linearRegression: function (dataSrc) {
