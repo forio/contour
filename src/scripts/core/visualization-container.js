@@ -49,7 +49,6 @@
             this.setData(data);
         },
 
-
         render: function (layer, options) {
             this.renderer.call(this.ctx, this.data, layer, options);
 
@@ -78,17 +77,6 @@
                 this.xExtent = _xExtent(this.data);
                 this.yExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);
             }
-        },
-
-        // function updateFn(renderFn, orig, data) {
-        update: function (data, options) {
-            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
-            var normalData = _.nw.normalizeSeries(data, categories);
-            var opt = _.merge({}, this.parent.options, this.options);
-            this.parent.data(normalData);
-            this.parent.update();
-
-            renderFn.call(this.parent, normalData, this.layer, opt);
         }
 
     };
