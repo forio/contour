@@ -33,8 +33,8 @@
             var distance = this.options.tooltip.distance;
             var width = parseFloat(this.tooltipElement.style('width'));
             var height = parseFloat(this.tooltipElement.style('height'));
-            var pointX = this.xScale(d.x);
-            var pointY = this.yScale(d.y);
+            var pointX = this.xScale ? this.xScale(d.x) : d3.event.x;
+            var pointY = this.yScale ? this.yScale(d.y) : d3.event.y;
             var alignedRight;
 
             var pos = {
