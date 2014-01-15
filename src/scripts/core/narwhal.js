@@ -26,7 +26,15 @@
                 right: 0,
                 bottom: 0,
                 left: 0
-            }
+            },
+            // with in pixels of the plot area (area inside the axis if any). This gets calculated on render
+            plotWidth: undefined,
+            // height in pixels of the plot area (area inside the axis if any). This gets calculated on render
+            plotHeight: undefined,
+            // top edge in pixels (from the edge of the svg) of the plot area (area inside the axis if any). This gets calculated on render
+            plotTop: undefined,
+            // left edge in pixels (from the edge of the svg) of the plot area (area inside the axis if any). This gets calculated on render
+            plotLeft: undefined,
         },
 
         xAxis: {
@@ -327,6 +335,7 @@
 
         }
     });
+
 
     // export to our context
     root.Narwhal = Narwhal;
