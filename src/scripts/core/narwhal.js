@@ -69,7 +69,7 @@
 
     /**
     * Adds a new kind of visualization to the core Narwhal object. 
-    * The *renderer* function will be called when you add this visualization to instances of Narwhal.
+    * The *renderer* function is called when you add this visualization to instances of Narwhal.
     *
     * ### Example:
     *
@@ -138,23 +138,23 @@
 
     /**
     * Exposes functionality to the core Narwhal object.
-    * Use this to add *functionality* that will be available for any new visualizations created with `.export()`.
+    * Use this to add *functionality* that will be available for any visualizations.
     *
     * ###Example:
     *
     *     Narwhal.expose("example", {
-    *          // when included in the instance, the function `.transformData` is available the visualizations
-    *         transformData: function(data) { .... }
+    *          // when included in the instance, the function `.myFunction` is available in the visualizations
+    *         myFunction: function(data) { .... }
     *     });
     *
-    *     Narwhal.export("visualizationThatUsesTransformDataFunction", function(data, layer) {
-    *           //function body including call to this.transformData(data)
+    *     Narwhal.export("visualizationThatUsesMyFunction", function(data, layer) {
+    *           //function body including call to this.myFunction(data)
     *     });       
     *
     *     // to include the functionality into a specific instance
     *     new Narwhal(options)
     *           .example()
-    *           .visualizationThatUsesTransformDataFunction()
+    *           .visualizationThatUsesMyFunction()
     *           .render()
     */
     Narwhal.expose = function (ctorName, functionality) {
@@ -253,7 +253,7 @@
         *           .pie([1,2,3])
         *           .render()
         *
-        * @function .render
+        * @function render
         *
         */
         render: function () {

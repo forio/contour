@@ -9,9 +9,9 @@ The core Narwhal object defines functionality, visualizations, and default confi
 * To create visualizations, [make a new Narwhal instance](#narwhal-instance).
 * To create additional functionality or visualizations, [add them to Narwhal](#adding-to-narwhal).
 
-For additional details, see also the [Narwhal reference documentation](TBW).
+For additional details, see also the [Narwhal reference documentation]().
 
-<a name="narwhal-instance"></a>
+<a id="narwhal-instance"></a>
 ###The Narwhal Instance
 
 When you want to create a set of related visualizations, you create a Narwhal instance based on the core Narwhal object.
@@ -44,7 +44,7 @@ For example:
 	.render();
 
 
-<a name="adding-to-narwhal"></a>
+<a id="adding-to-narwhal"></a>
 ###Adding Capabilities to Narwhal
 
 Narwhal is designed to be easily extensible.
@@ -59,25 +59,25 @@ To add a visualization to the core Narwhal object:
 2. Pass in the name of the new visualization. (You'll call this constructor in your Narwhal instance.)
 3. Pass in the function that creates the new visualization.
 	* The body of this function will most likely require you to write directly in [D3](http://d3js.org) or [SVG](http://www.w3schools.com/svg/svg_reference.asp).
+4. Add this new visualization to an instance of Narwhal.
 
 For example:
 
 	Narwhal.export('myExportedVisualization', function (data, layer) {
 	
-		// new visualization is a circle, radius 45px, centered at (n,n) in the Narwhal frame
-		// where n is passed in when the visualization constructor is called in the Narwhal instance
-		// .xScale and .yScale are functions of Narwhal's .cartesian() frame, 
-		//so this visualization will require .cartesian() 
+		// new visualization is a circle, radius 45px, 
+		// centered at (n,n) in the Narwhal frame;
+		// n is passed in when the visualization constructor
+		// is called in the Narwhal instance
+		// .xScale and .yScale are functions of 
+		// Narwhal's .cartesian() frame, 
+		// so this visualization requires .cartesian() 
 	
 		layer.append('circle')
 			.attr('cx', this.xScale(data))
 			.attr('cy', this.yScale(data))
 			.attr('r', 45);
 	});
-
-Visualizations that you have added to the core Narwhal object are then available to add to any instance of Narwhal.
-
-For example:
 
 	new Narwhal({ el: '.myChart' })
 		.cartesian()
@@ -86,13 +86,14 @@ For example:
 
 **Functionality**
 
-You can add functionality to the core Narwhal object using `.expose()`.   This functionality is then available to other visualizations, for example visualizations that you add using `.export()`. Consider this your own mini-library that you can include in particular Narwhal instances as needed.
+You can add functionality to the core Narwhal object using `.expose()`. This functionality is then available to other visualizations, for example visualizations that you add using `.export()`. Consider this your own mini-library that you can include in particular Narwhal instances as needed.
 
 To add functionality to the core Narwhal object:
 
 1. Call the `.expose()` function on the Narwhal object.
 2. Pass in the name of the new set of functionality. (You'll call this functionality in your Narwhal instance.)
-3. Add visualizations to your Narwhal instance by calling their respective constructors. These constructors can now use any of the functions defined in the set of functionality you've exposed.
+3. Pass in a JSON object including one or more functions; each function is available after you add this set of functionality to your Narwhal instance.
+4. Add visualizations to your Narwhal instance by calling their respective constructors. These constructors can now use any of the functions defined in the set of functionality you've exposed.
 
 For example: 
 
@@ -102,7 +103,8 @@ For example:
 	};
 	
 	Narwhal.export('myExportedVisualization', function (data, layer) {
-		/* function body including call to this.function1(data) or this.function2 */
+		// function body including call to 
+		// this.function1(data) or this.function2(data)
 	});
 	
 	new Narwhal({ el: '.myChart' })

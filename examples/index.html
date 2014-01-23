@@ -9,25 +9,7 @@
     <script src="../examples/js/vendor/jquery.js"></script>
     <script src="../examples/js/vendor/lodash.js"></script>
     <script src="../dist/narwhal.js"></script>
-<!--
-    <script src="../src/scripts/core/narwhal-utils.js" ></script>
-    <script src="../src/scripts/core/axis/ordinal-scale-axis.js" ></script>
-    <script src="../src/scripts/core/axis/linear-scale-axis.js" ></script>
-    <script src="../src/scripts/core/axis/time-scale-axis.js" ></script>
-    <script src="../src/scripts/core/axis/axis-scale-factory.js" ></script>
-    <script src="../src/scripts/core/narwhal.js"></script>
-    <script src="../src/scripts/core/cartesian.js"></script>
-    <script src="../src/scripts/core/horizontal-frame.js"></script>
-    <script src="../src/scripts/visualizations/line.js"></script>
-    <script src="../src/scripts/visualizations/column.js"></script>
-    <script src="../src/scripts/visualizations/bar.js"></script>
-    <script src="../src/scripts/visualizations/area.js"></script>
-    <script src="../src/scripts/visualizations/scatter.js"></script>
-    <script src="../src/scripts/visualizations/stack-tooltip.js"></script>
-    <script src="../src/scripts/visualizations/tooltip.js"></script>
-    <script src="../src/scripts/connectors/csv.js" ></script>
 
- -->
     <style>
     *, *:before, *:after {
       -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
@@ -64,13 +46,16 @@
 <body>
     <div class="container">
         <h3>Example Visualizations</h3>
+
+         <p>The core Narwhal visualizations include several common types of charts and different styles for tooltips.</p>
+
         <ul>
             <li><a href="#LineCharts">Line Charts</a></li>
-            <li><a href="#BarCharts">Bar Charts</a></li>            
             <li><a href="#AreaCharts">Area Charts</a></li>
-            <li><a href="#ColumnCharts">Column Charts</a></li>
-            <li><a href="#PieCharts">Pie Charts</a></li>
             <li><a href="#ScatterPlots">Scatter Plots</a></li>
+            <li><a href="#ColumnCharts">Column Charts</a></li>
+            <li><a href="#BarCharts">Bar Charts</a></li>            
+            <li><a href="#PieCharts">Pie Charts</a></li>
         </ul>
 
         <div class="samples">
@@ -81,7 +66,7 @@
 
         var samplesFolder = 'samples/';
 
-        var sampleLines = ['line-1-basic','line-2-time-dates','line-3-time-hours','line-4-multiseries', 'line-without-smart-yaxis', 'line-time-hrs-custom-ticks','simple-tooltip','extend-line-marker'];
+        var sampleLines = ['line-1-basic','line-2-time-dates','line-3-time-hours','line-4-multiseries', 'line-without-smart-yaxis', 'line-time-hrs-custom-ticks','simple-tooltip'];
 
         var sampleScatter = ['scatter-1-basic','scatter-with-trend-line'];
 
@@ -89,14 +74,14 @@
 
         var sampleColumn = ['column-1-basic','column-2-categories','column-3-stacked','column-4-two-column-vis','connector-csv'];
 
-        var sampleBar = ['bar-basic', 'bar-stacked'];
+        var sampleBar = ['bar-basic', 'bar-stacked', 'bar-stack-tooltip'];
 
         var samplePie = ['pie-basic'];
 
-        var sampleFiles = ['line-1-basic','scatter-with-trend-line',  'scatter-1-basic', 'area-1-basic', 'line-4-multiseries', 'line-without-smart-yaxis', 'line-2-time-dates','line-3-time-hours', 'line-time-hrs-custom-ticks', 'column-1-basic', 'column-2-categories', 'column-3-stacked', 'connector-csv', 'extend-line-marker', 'simple-tooltip', 'bar-basic', 'bar-stacked', 'column-4-two-column-vis', 'pie-basic'];
+        var sampleFiles = ['line-1-basic','scatter-with-trend-line',  'scatter-1-basic', 'area-1-basic', 'line-4-multiseries', 'line-without-smart-yaxis', 'line-2-time-dates','line-3-time-hours', 'line-time-hrs-custom-ticks', 'column-1-basic', 'column-2-categories', 'column-3-stacked', 'connector-csv', 'simple-tooltip', 'bar-basic', 'bar-stacked', 'bar-stack-tooltip', 'column-4-two-column-vis', 'pie-basic'];
 
         var samples = $('.samples');
-        samples.append("<a name=\"LineCharts\"></a><div><h3>Line Charts</h3><p>Create line charts by adding <code>.cartesian()</code> and <code>.line()</code> in your Narwhal instance. Use configuration options to set properties of the axes and add markers or tooltips.</p></div>");
+        samples.append("<a name=\"LineCharts\"></a><div><h3>Line Charts</h3><p>Create line charts by adding <code>.cartesian()</code> and <code>.line()</code> in your Narwhal instance. Use configuration options to set properties of the visualizations and axes.</p></div>");
         _.each(sampleLines, function (file) {
             var div = $('<div>').attr('id', file).attr('class', 'sample-container');
             var ext = /\.html/.test(file) ? '' : '.html'
@@ -108,19 +93,7 @@
 
         }, this);
 
-        samples.append("<a name=\"BarCharts\"></a><div><h3>Bar Charts</h3><p>Create bar charts by adding <code>.cartesian()</code>, <code>.horizontal()</code>, and <code>.bar()</code> in your Narwhal instance. Use configuration options to set properties of the axes and add markers or tooltips.</p></div>");
-         _.each(sampleBar, function (file) {
-            var div = $('<div>').attr('id', file).attr('class', 'sample-container');
-            var ext = /\.html/.test(file) ? '' : '.html'
-            var title = $('<h4>').text(file);
-            div.load((samplesFolder || '') + file + ext, function () {
-                $(this).prepend(title);
-            });
-            samples.append(div)
-
-        }, this);
-
-        samples.append("<a name=\"AreaCharts\"></a><div><h3>Area Charts</h3><p>Create area charts by adding <code>.cartesian()</code> and <code>.area()</code> in your Narwhal instance. Use configuration options to set properties of the axes or add tooltips.</p></div>");
+        samples.append("<a name=\"AreaCharts\"></a><div><h3>Area Charts</h3><p>Create area charts by adding <code>.cartesian()</code> and <code>.area()</code> in your Narwhal instance. Use configuration options to set properties of the visualizations and axes.</p></div>");
          _.each(sampleArea, function (file) {
             var div = $('<div>').attr('id', file).attr('class', 'sample-container');
             var ext = /\.html/.test(file) ? '' : '.html'
@@ -132,8 +105,32 @@
 
         }, this);
 
-        samples.append("<a name=\"ColumnCharts\"></a><div><h3>Column Charts</h3><p>Create line charts by adding <code>.cartesian()</code> and <code>.column()</code> in your Narwhal instance. Use configuration options to set properties of the axes and add markers or tooltips.</p></div>");
+        samples.append("<a name=\"ScatterPlots\"></a><div><h3>Scatter Plots</h3><p>Create scatter plots by adding <code>.cartesian()</code> and <code>.scatter()</code> in your Narwhal instance. Use configuration options to set properties of the axes and the plot, including the <code>radius</code> of the data points.</p></div>");
+         _.each(sampleScatter, function (file) {
+            var div = $('<div>').attr('id', file).attr('class', 'sample-container');
+            var ext = /\.html/.test(file) ? '' : '.html'
+            var title = $('<h4>').text(file);
+            div.load((samplesFolder || '') + file + ext, function () {
+                $(this).prepend(title);
+            });
+            samples.append(div)
+
+        }, this);
+
+        samples.append("<a name=\"ColumnCharts\"></a><div><h3>Column Charts</h3><p>Create line charts by adding <code>.cartesian()</code> and <code>.column()</code> in your Narwhal instance. Use configuration options to set properties of the visualizations and axes.</p></div>");
          _.each(sampleColumn, function (file) {
+            var div = $('<div>').attr('id', file).attr('class', 'sample-container');
+            var ext = /\.html/.test(file) ? '' : '.html'
+            var title = $('<h4>').text(file);
+            div.load((samplesFolder || '') + file + ext, function () {
+                $(this).prepend(title);
+            });
+            samples.append(div)
+
+        }, this);
+
+        samples.append("<a name=\"BarCharts\"></a><div><h3>Bar Charts</h3><p>Create bar charts by adding <code>.cartesian()</code>, <code>.horizontal()</code>, and <code>.bar()</code> in your Narwhal instance. Use configuration options to set properties of the visualizations and axes.</p></div>");
+         _.each(sampleBar, function (file) {
             var div = $('<div>').attr('id', file).attr('class', 'sample-container');
             var ext = /\.html/.test(file) ? '' : '.html'
             var title = $('<h4>').text(file);
@@ -155,18 +152,6 @@
             samples.append(div)
 
         }, this);  
-
-        samples.append("<a name=\"ScatterPlots\"></a><div><h3>Scatter Plots</h3><p>Create scatter plots by adding <code>.cartesian()</code> and <code>.scatter()</code> in your Narwhal instance. Use configuration options to set properties of the axes and the plot, including the <code>radius</code> of the data points.</p></div>");
-         _.each(sampleScatter, function (file) {
-            var div = $('<div>').attr('id', file).attr('class', 'sample-container');
-            var ext = /\.html/.test(file) ? '' : '.html'
-            var title = $('<h4>').text(file);
-            div.load((samplesFolder || '') + file + ext, function () {
-                $(this).prepend(title);
-            });
-            samples.append(div)
-
-        }, this);
 
     </script>
 </body>

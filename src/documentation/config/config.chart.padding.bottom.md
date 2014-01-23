@@ -1,6 +1,20 @@
 #### **bottom** : {<%= type %>}
 
-TODO: Insert description here
+<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+
+The amount of whitespace (padding), in pixels, between the lower edge of any visualizations in this Narwhal instance (for example, the labels or axis titles) and the inner plot area (for example, the axes).
+
+**Example:**
+
+	new Narwhal({
+	    el: ".myChart",
+	    chart: {
+	      padding: { bottom: 10 } 
+	    }
+	  })
+	.cartesian()
+	.line(data)
+	.render()
 
 <% if(notes) { %><%= notes %><% } %>
-<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+

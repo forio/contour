@@ -1,0 +1,36 @@
+<div class="chart expose-sample-code" style="float: left; width: 50%;"></div>
+<script>
+(function () {
+    Narwhal.expose('myNewFunctions') {
+        function1 : function (data) { /* some function */ },
+        function2 : function (data) { /* some function */ }
+    });
+
+    Narwhal.export('myExportedVisualization', function (data, layer) {
+        /* function body including call to this.function1(data) or this.function2(data) */
+    });
+
+    new Narwhal({ el: '.expose-sample-code'})
+        .myNewFunctions()
+        .myExportedVisualization(data)
+        .render();
+})();
+</script>
+
+<div style="float: left; width: 50%;">
+    <pre><small>
+    Narwhal.expose('myNewFunctions') {
+        function1 : function (data) { /* some function */ },
+        function2 : function (data) { /* some function */ }
+    });
+
+    Narwhal.export('myExportedVisualization', function (data, layer) {
+        /* function body including call to this.function1(data) or this.function2(data) */
+    });
+
+    new Narwhal({ el: '.expose-sample-code'})
+        .myNewFunctions()
+        .myExportedVisualization(data)
+        .render();
+    </small></pre>
+</div>

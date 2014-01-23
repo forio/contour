@@ -23,15 +23,15 @@
 
 var main = [
     { key: 'Overview', path: 'overview.md' },
-    { key: '&nbsp;&nbsp;&nbsp;&nbsp;Key Concepts', path: 'key_concepts.md'},
     { key: 'QuickStart', path: 'quickstart.md'},    
     { key: 'Example Visualizations', path: '../examples/index.html'},
-    { key: 'Example Extensions', path: ''},
+    { key: 'Example Extensions', path: '../examples/extensions.html'},
+    { key: 'Key Concepts', path: 'key_concepts.md'},
     { key: 'Supported Data Formats', path: 'supported_data_formats.md'},    
     { key: '&nbsp;', path: ''},
     { key: 'Narwhal', path: 'narwhal.js.md' },
     { key: 'cartesian', path: 'cartesian.js.md' },
-    { key: 'horizontal frame', path: 'horizontal-frame.js.md' },
+    { key: 'horizontal', path: 'horizontal-frame.js.md' },
     { key: 'line', path: 'line.js.md' },
     { key: 'bar', path: 'bar.js.md' },
     { key: 'area', path: 'area.js.md' },
@@ -65,7 +65,8 @@ function constructMenu(data) {
             type:'GET',
             url: path,
             success: function (md) {
-                $('#content').html(Markdown.toHTML(md));
+                $('#content').html(Markdown.toHTML(md))
+                //$('#content').html(md)
             }
         })
 
@@ -77,6 +78,7 @@ function build(data, container) {
         if(!key) continue;
         if (key !== 'path') {
             var dataPath = data[key].path ? 'data-path="config/'+data[key].path + '"' : '';
+            if (key == 'config') { dataPath = 'data-path="config/config.md"'; }
             container.append(['<li class="nav-element" '+ dataPath +'>', key, '</li>'].join(''))
         }
 

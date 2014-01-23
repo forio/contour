@@ -88,9 +88,9 @@
     *           .tooltip()
     *           .render();
     *
-    * @name .tooltip(data, options)
+    * @name tooltip(data, options)
     * @param {object|array} data Ignored!
-    * @param {object} options Options particular to this visualization that override the defaults. TBW -- 
+    * @param {object} options Options particular to this visualization that override the defaults. 
     * @api public
     *
     */

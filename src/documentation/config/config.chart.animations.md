@@ -1,6 +1,22 @@
 #### **animations** : {<%= type %>}
 
-TODO: Insert description here
+<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+
+This property only applies to [line]() visualizations. 
+
+When `true`, renders the visualization by plotting the data points and then animating the line being drawn between them.
+
+When `false`, renders the visualization by drawing the data points and the line between them simultaneously. 
+
+**Example:**
+
+	new Narwhal({
+	    el: ".myChart",
+	    chart: { animations: true }
+	  })
+	.cartesian()
+	.line(data)
+	.render()
 
 <% if(notes) { %><%= notes %><% } %>
-<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+

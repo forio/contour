@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Example Extensions with Narwhal</title>
+    <link rel="stylesheet" href="../examples/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../dist/narwhal.min.css">
+    <script src="../examples/js/vendor/d3.js"></script>
+    <script src="../examples/js/vendor/jquery.js"></script>
+    <script src="../examples/js/vendor/lodash.js"></script>
+    <script src="../dist/narwhal.js"></script>
+
+    <style>
+    *, *:before, *:after {
+      -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+     }
+
+    body {
+      font: 10px sans-serif;
+    }
+
+    .chart {
+        width: 400px;
+        height: 240px;
+        margin: 0px;
+        border: solid 0px red;
+    }
+
+    .sample-container {
+        /*width: 410px;*/
+        width: 910px;
+        /*box-sizing: border-box;*/
+        display: inline-block;
+        margin: 10px;
+        padding: 5px;
+        background-color: #efefef;
+        border-radius: 4px;
+    }
+
+    .legend-tooltip {
+        min-height: 1.5em;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Example Extensions</h3>
+
+        <p>Narwhal is designed to be easily extensible.</p>
+        <p>You can add your own visualizations to the core Narwhal object using <code>.export()</code>. Visualizations that you have added are then available to add to any instance of Narwhal.</p>
+        <p>You can also add functionality to the core Narwhal object using <code>.expose()</code>. This functionality is then available to other visualizations, for example visualizations that you add using <code>.export()</code>. Consider this your own mini-library that you can include in particular Narwhal instances as needed.</p>
+        <p>Below are some examples of extending Narwhal using both <code>.export()</code> and <code>.expose()</code>. For additional background, see the <a href="">Key Concepts</a> page.</p>
+
+        <ul>
+            <li><a href="#export">Export Examples</a></li>
+            <li><a href="#expose">Expose Examples</a></li>
+        </ul>
+
+        <div class="samples">
+        </div>
+    </div>
+
+    <script>
+
+        var samplesFolder = 'samples/';
+
+        var sampleExport = ['export-sample-code','export-line-marker'];
+
+        var sampleExpose = ['expose-sample-code'];
+
+        
+        var samples = $('.samples');
+        samples.append("<a name=\"export\"></a><div><h3>Export Examples</h3><p>Add a visualization to the core Narwhal object using <code>Narwhal.export('nameOfVisualization', function(data, layer){})</code>. Then pass in a function of your choosing that creates the new visualization. (Probably you'll use some combination of <a href=\"http://d3js.org/\">D3</a> or <a href=\"http://www.w3schools.com/svg/svg_reference.asp\">SVG</a> in the body of this function.) For additional detail, see also the <a href=\"\">Key Concepts</a> page and the <a href=\"\">Narwhal reference material</a>.</p></div>");
+        _.each(sampleExport, function (file) {
+            var div = $('<div>').attr('id', file).attr('class', 'sample-container');
+            var ext = /\.html/.test(file) ? '' : '.html'
+            var title = $('<h4>').text(file);
+            div.load((samplesFolder || '') + file + ext, function () {
+                $(this).prepend(title);
+            });
+            samples.append(div)
+
+        }, this);
+
+        samples.append("<a name=\"expose\"></a><div><h3>Expose Examples</h3><p>Add functionality to the core Narwhal object using <code>Narwhal.expose('nameOfFunctionalitySet'){ JSON listing new functions }</code>. Then add <code>nameOfFunctionalitySet</code> to your Narwhal instance and all of the exposed functionality is available. For additional detail, see also the <a href=\"\">Key Concepts</a> page and the <a href=\"\">Narwhal reference material</a>.</p></div>");
+         _.each(sampleExpose, function (file) {
+            var div = $('<div>').attr('id', file).attr('class', 'sample-container');
+            var ext = /\.html/.test(file) ? '' : '.html'
+            var title = $('<h4>').text(file);
+            div.load((samplesFolder || '') + file + ext, function () {
+                $(this).prepend(title);
+            });
+            samples.append(div)
+
+        }, this);
+    
+    </script>
+</body>
+
+</html>
