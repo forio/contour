@@ -60,11 +60,19 @@
             .remove();
 
 
-        function stacked(col) {
+        function stacked(col, enter) {
             col.attr('x', function (d) { return x(d.x) + chartOffset; })
-                .attr('width', function () { return rangeBand; })
-                .attr('y', function (d) { return y(d.y) + y(d.y0) - h; })
-                .attr('height', function (d) { return h - y(d.y); });
+                .attr('width', function () { return rangeBand; });
+
+            if (enter) {
+                col
+                    .attr('y', function (d) { return h; })
+                    .attr('height', function (d) { return 0; });
+            } else {
+                col
+                    .attr('y', function (d) { return y(d.y) + y(d.y0) - h; })
+                    .attr('height', function (d) { return h - y(d.y); });
+            }
         }
 
         function grouped(col, enter) {
@@ -74,7 +82,7 @@
             col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
                 .attr('width', width);
 
-            if(enter)
+            if (enter)
                 col.attr('y', _.nw.clampLeft(h, 0))
                     .attr('height', 0);
             else
