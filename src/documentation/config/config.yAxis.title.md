@@ -1,8 +1,8 @@
-#### **titlePadding** : {<%= type %>}
+#### **title** : {<%= type %>}
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-The distance to the left of the axis and [`chart.padding.left`](), in pixels, where the axis `title` is drawn.
+The title to display for this axis. 	    
 
 **Example:**
 
@@ -14,6 +14,10 @@ The distance to the left of the axis and [`chart.padding.left`](), in pixels, wh
 	.cartesian()
 	.line(data)
 	.render()
+
+**Notes:**
+
+[`titlePadding`]() determines the distance below the axis and [`chart.padding.left`](), in pixels, where the axis `title` is drawn. 
 
 <% if(notes) { %><%= notes %><% } %>
 

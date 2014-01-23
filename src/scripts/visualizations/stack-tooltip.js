@@ -11,7 +11,7 @@
     *           .stackedTooltip(stackedColData, {el: '.myChartLegend'})
     *           .render();
     *
-    * @name .stackTooltip(data, options)
+    * @name stackTooltip(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
     * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector of the container in which the tooltip should be rendered.
     * @api public

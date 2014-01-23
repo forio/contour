@@ -1,6 +1,26 @@
 #### **enable** : {<%= type %>}
 
-TODO: Insert description here
+<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+
+When `true`, show the individual data points on a line chart.
+
+When `false`, show only the line segments drawn between the data points.
+
+**Example:**
+
+	new Narwhal({
+	    el: '.myChart',
+	    line: { 
+	        marker : { enable: false }
+	      } 
+      })
+      .cartesian()
+      .line([5, 3, 6, 7, 4, 2])
+      .render()
+
+**Notes:**
+
+`enable` has precendence over [`size`](), so if `enable` is set to `false`, the marker does not appear, regardless of the value for [`size`]().
 
 <% if(notes) { %><%= notes %><% } %>
-<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+

@@ -1,6 +1,20 @@
 #### **left** : {<%= type %>}
 
-TODO: Insert description here
+<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+
+The amount of whitespace (padding), in pixels, between the left edge of the container for this Narwhal instance and the outer edge of any visualizations in this Narwhal instance (for example, the labels or axis titles).
+
+**Example:**
+
+	new Narwhal({
+	    el: ".myChart",
+	    chart: {
+	      margin: { left: 10 } 
+	    }
+	  })
+	.cartesian()
+	.line(data)
+	.render()
 
 <% if(notes) { %><%= notes %><% } %>
-<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+

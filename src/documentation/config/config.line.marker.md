@@ -1,6 +1,8 @@
 #### **marker** : {<%= type %>}
 
-TODO: Insert description here
+<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+
+The object containing configuration options for line markers. See the specific options (e.g. [`enable`](), [`size`]()) for details.
 
 <% if(notes) { %><%= notes %><% } %>
-<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+

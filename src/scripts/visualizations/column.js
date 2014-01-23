@@ -67,7 +67,7 @@
     /*
     * Adds a column chart (vertical columns) to the Narwhal instance.
     *
-    * This visualization requires *.cartesian()*.
+    * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
@@ -76,7 +76,7 @@
     *           .column([1,2,3,4])
     *           .render();
     *
-    * @name .column(data, options)
+    * @name column(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public

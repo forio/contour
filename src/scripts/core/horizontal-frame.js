@@ -14,21 +14,6 @@
         }
     };
 
-    /**
-    * Horizontal Frame
-    *
-    * Provides the basis for horizontal visualizations where the y axis grows to the right (ie. bar chart)
-    *
-    * Example:
-    *     new Narwhal(config)
-    *        .cartesian()
-    *        .horizontal()
-    *        .bar([1,2,3])
-    *        .render();
-    *
-    *
-    */
-
     var frame = {
 
         init: function () {
@@ -140,9 +125,9 @@
         * Sets the visualization frame to be "horizontal". 
         * The xAxis is set vertical and the yAxis is set horizontal. 
         * 
-        * This visualization requires *.cartesian()*.
+        * This visualization requires `.cartesian()`.
         *
-        * This visualization is a prerequiste for rendering bar charts (*.bar()*).
+        * This visualization is a prerequiste for rendering bar charts (`.bar()`).
         *
         * ###Example:
         *
@@ -152,8 +137,7 @@
         *        .bar([1, 2, 3, 4, 5, 4, 3, 2, 1])
         *        .render()
         *
-        * @function .horiztonal
-        * @param {TBW} frame TBW
+        * @function horiztonal
         */
     Narwhal.expose('horizontal', frame);
 

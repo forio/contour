@@ -29,7 +29,7 @@ var options = {
 };
 
 var allFiles = getSourceFileList(options.src);
-var filesToCopy = ['index.html', 'docs.css', 'markdown.js', 'overview.md', 'quickstart.md', 'key_concepts.md', 'supported_data_formats.md'];
+var filesToCopy = ['index.html', 'docs.css', 'markdown.js', 'overview.md', 'quickstart.md', 'key_concepts.md', 'supported_data_formats.md', 'quickstart.png'];
 
 generatePerFileDoc(allFiles);
 generateAllFilesDoc(allFiles);

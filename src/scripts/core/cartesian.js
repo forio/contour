@@ -14,11 +14,12 @@
 
         xAxis: {
             /* type of axis {ordinal|linear|time} */
-            // type: 'ordinal',
-            rangePadding: 0,
+            type: 'ordinal',
             innerTickSize: 0,
             outerTickSize: 0,
             tickPadding: 6,
+            maxTicks: undefined,
+            title: undefined, 
             titlePadding: 4,
             /* padding between ranges (ie. columns) expressed in percentage of rangeBand width */
             innerRangePadding: 0.1,
@@ -41,6 +42,9 @@
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
+            tickValues: undefined,
+            ticks: undefined,
+            title: undefined, 
             titlePadding: 4,
             nicing: true,
             orient: 'left',
@@ -61,7 +65,7 @@
     *     new Narwhal(options)
     *           .cartesian();
     *
-    * @name .cartesian()
+    * @name cartesian()
     */
     var cartesian = {
         dataSrc: [],
@@ -128,7 +132,7 @@
         *
         *     var scaledValue = this.xScale(100);
         *
-        * @function this.xScale
+        * @function xScale
         * @param {Number|String} value The value to be scaled.
         * @return {Number} The scaled value according to the current xAxis settings.
         */
@@ -141,7 +145,7 @@
         *
         *     var scaledValue = this.yScale(100);
         *
-        * @function this.yScale
+        * @function yScale
         * @param {Number} value The value to be scaled.
         * @return {Number} The scaled value according to the current yAxis settings.
         */
@@ -154,8 +158,8 @@
         *
         *     this.setYDomain([100, 200]);
         *
-        * @function this.setYDomain
-        * @param {Array} domain The domain array represeting the min and max values to be visible in the yAxis.       */
+        * @function setYDomain
+        * @param {Array} domain The domain array representing the min and max values visible on the yAxis.       */
         setYDomain: function (domain) {
             this.yScaleGenerator.setDomain(domain);
         },
@@ -167,7 +171,7 @@
         *
         *     this.redrawYAxis();
         *
-        * @function this.redrawYAxis
+        * @function redrawYAxis
         */
         redrawYAxis: function () {
             this.svg.select(".y.axis").call(this.yAxis());

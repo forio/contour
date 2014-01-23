@@ -1,6 +1,20 @@
 #### **pie** : {<%= type %>}
 
-TODO: Insert description here
+<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+
+To override any of the default configuration options in a pie chart, include the `pie` configuration object in the configuration options that you pass to your Narwhal constructor.
+
+**Example:**
+
+	new Narwhal({
+	    el: ".myPieChart",
+	    pie: {
+	      // pie-specific configuration options
+	    }
+	  })
+	.pie(data)
+	.render()
 
 <% if(notes) { %><%= notes %><% } %>
-<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+
+
