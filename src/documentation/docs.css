@@ -22,13 +22,13 @@
             padding: 0;
         }
 
-        nav li[data-path] {
+        nav a[data-path] {
             color: blue;
             cursor: pointer;
             margin-bottom: .1em;
         }
 
-        nav li[data-path]:hover {
+        nav a[data-path]:hover {
             text-decoration: underline;
         }
 

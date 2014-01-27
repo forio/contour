@@ -22,64 +22,86 @@
 
 
 var main = [
-    { key: 'Overview', path: 'overview.md' },
-    { key: 'QuickStart', path: 'quickstart.md'},
-    { key: 'Example Visualizations', path: '../examples/index.html'},
-    { key: 'Example Extensions', path: '../examples/extensions.html'},
-    { key: 'Key Concepts', path: 'key_concepts.md'},
-    { key: 'Supported Data Formats', path: 'supported_data_formats.md'},
-    { key: '&nbsp;', path: ''},
-    { key: 'Narwhal', path: 'narwhal.js.md' },
-    { key: 'cartesian', path: 'cartesian.js.md' },
-    { key: 'horizontal', path: 'horizontal-frame.js.md' },
-    { key: 'line', path: 'line.js.md' },
-    { key: 'bar', path: 'bar.js.md' },
-    { key: 'area', path: 'area.js.md' },
-    { key: 'column', path: 'column.js.md' },
-    { key: 'pie', path: 'pie.js.md' },
-    { key: 'scatter', path: 'scatter.js.md' },
-    { key: 'trendLine', path: 'trend-line.js.md' },
-    { key: 'tooltip', path: 'tooltip.js.md' },
-    { key: 'stackTooltip', path: 'stack-tooltip.js.md' },
+    { key: 'overview', text: 'Overview', path: 'overview.md' },
+    { key: 'quickstart', text: 'QuickStart', path: 'quickstart.md'},
+    { key: 'examples_index', text: 'Example Visualizations', path: '../examples/index.html'},
+    { key: 'examples_extensions', text: 'Example Extensions', path: '../examples/extensions.html'},
+    { key: 'key_concepts', text: 'Key Concepts', path: 'key_concepts.md'},
+    { key: 'supported_data_formats', text: 'Supported Data Formats', path: 'supported_data_formats.md'},
+    { key: '', text: '&nbsp;', path: ''},
+    { key: 'narwhal', text: 'Narwhal', path: 'narwhal.js.md' },
+    { key: 'cartesian', text: 'cartesian', path: 'cartesian.js.md' },
+    { key: 'horizontal-frame', text: 'horizontal', path: 'horizontal-frame.js.md' },
+    { key: 'line', text: 'line', path: 'line.js.md' },
+    { key: 'bar', text: 'bar', path: 'bar.js.md' },
+    { key: 'area', text: 'area', path: 'area.js.md' },
+    { key: 'column', text: 'column', path: 'column.js.md' },
+    { key: 'pie', text: 'pie', path: 'pie.js.md' },
+    { key: 'scatter', text: 'scatter', path: 'scatter.js.md' },
+    { key: 'trend-line', text: 'trendLine', path: 'trend-line.js.md' },
+    { key: 'tooltip', text: 'tooltip', path: 'tooltip.js.md' },
+    { key: 'stack-tooltip', text: 'stackTooltip', path: 'stack-tooltip.js.md' },
 ];
 
-var navLITemplate = '<li class="nav-element" data-path="<%= path %>"><%= key %></li>';
+var navLITemplate = '<li class="nav-element"><% if(path) { %><a href="#<%- key %>" data-path="<%- path %>"><%= text %></a><% } else { %><%= text %> <% } %></li>';
 
 $.getJSON('./config/menu.json', constructMenu);
 
+function bindNavigation() {
 
+    function navigate() {
+        var target = document.location.hash.replace('#', '') || 'overview';
+        var path = $('nav').find('a[href="#' + target + '"]').data('path');
+        loadPage(path);
+    }
+
+    $(window).on('hashchange', function () {
+        navigate();
+    });
+
+    // setup the first page
+    navigate();
+}
+
+function loadPage(path) {
+    var isHtml = /\.html$/i.test(path);
+    return $.ajax({
+        type:'GET',
+        url: path,
+        success: function (content) {
+            $('#content').html(isHtml ? content : Markdown.toHTML(content))
+        }
+    });
+}
 
 function constructMenu(data) {
     var ul = $('<ul>');
 
     _.each(main, function(e) {
+
         ul.append(_.template(navLITemplate)(e));
     });
 
     build(data, ul);
     ul.appendTo($('nav'));
 
-    $('nav').on('click', 'li[data-path]', function () {
-        var path = $(this).attr('data-path');
-        var isHtml = /\.html$/i.test(path);
-        $.ajax({
-            type:'GET',
-            url: path,
-            success: function (content) {
-                $('#content').html(isHtml ? content : Markdown.toHTML(content))
-            }
-        })
-
-    })
+    bindNavigation();
 }
 
 function build(data, container) {
     for(var key in data) {
         if(!key) continue;
         if (key !== 'path') {
-            var dataPath = data[key].path ? 'data-path="config/'+data[key].path + '"' : '';
-            if (key == 'config') { dataPath = 'data-path="config/config.md"'; }
-            container.append(['<li class="nav-element" '+ dataPath +'>', key, '</li>'].join(''))
+            var dataPath = data[key].path ? 'config/' + data[key].path : '';
+            if (key == 'config') { dataPath = 'config/config.md'; }
+
+            var templateData = {
+                text: data[key].text || key,
+                key: dataPath.replace('/', '_').replace('.md', ''),
+                path: dataPath
+            };
+
+            container.append(_.template(navLITemplate, templateData));
         }
 
         if(typeof data[key] === 'object') {
