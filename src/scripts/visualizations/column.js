@@ -50,15 +50,18 @@
             .attr('class', 'column tooltip-tracker')
             .call(enter);
 
-        cols.transition().duration(duration)
-            .call(update);
+        if (options.chart.animation) cols.transition().duration(duration);
+        cols.call(update);
 
-        cols.exit()
-            .transition().duration(duration)
-            .attr('y', h)
-            .attr('height', function () { return 0; })
-            .remove();
-
+        if (options.chart.animation) {
+            cols.exit()
+                .transition().duration(duration)
+                .attr('y', h)
+                .attr('height', function () { return 0; })
+                .remove();
+        } else {
+            cols.exit().remove();
+        }
 
         function stacked(col, enter) {
             col.attr('x', function (d) { return x(d.x) + chartOffset; })
