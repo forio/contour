@@ -118,15 +118,12 @@
 
         Narwhal.prototype[ctorName] = function (data, options) {
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
-            var opt = {};
+            var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
 
             data = data || [];
-
             sortSeries(data);
-
-            vis = new Narwhal.VisualizationContainer(_.nw.normalizeSeries(data, categories), options, ctorName, renderer, this);
-
+            vis = new Narwhal.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
             this._visualizations.push(vis);
 
             return this;

@@ -63,8 +63,10 @@
         },
 
         setOptions: function (options) {
+            var opt = {};
+            opt[this.type] = options || {};
             this.options = {};
-            this.options[this.type] = _.merge({}, this.renderer.defaults || {}, options);
+            this.options = _.merge({}, this.renderer.defaults || {}, opt);
 
             return this.ctx;
         },
