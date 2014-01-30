@@ -76,7 +76,7 @@
 
             if (_.nw.isSupportedDataFormat(this.data)) {
                 this.xDomain = _.flatten(_.map(this.data, function (set) { return _.pluck(set.data, 'x'); }));
-                this.xExtent = _xExtent(this.data);
+                this.xExtent = _xExtent(this.data, 'x');
                 this.yExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);
             }
         }
