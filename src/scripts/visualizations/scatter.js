@@ -12,24 +12,37 @@
     function ScatterPlot(data, layer, options) {
         var opt = options.scatter;
         var halfRangeBand = this.rangeBand / 2;
+        var duration = 400;
         var x = _.bind(function (d) { return this.xScale(d.x) + halfRangeBand; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+        var h = options.chart.plotHeight;
+        var classFn = function (d, i) { return d.name + ' series s-' + (i+1); };
 
-        _.each(data, renderSeries);
+        var series = layer.selectAll('.series')
+            .data(data);
 
-        function renderSeries(series, index) {
-            var seriesName = function () { return series.name + ' s-' + (index+1); };
-            var g = layer.append('g')
-                .attr('class', seriesName);
+        series.enter().append('svg:g')
+            .attr('class', classFn);
 
-            g.selectAll('dot')
-                .data(series.data)
-                .enter().append('circle')
-                    .attr('class', 'dot tooltip-tracker')
-                    .attr('r', opt.radius)
-                    .attr('cx', x)
-                    .attr('cy', y);
-        }
+        series.exit().remove();
+
+        var dots = series.selectAll('.dot')
+            .data(function (d) { return d.data; });
+
+        dots
+            .enter().append('circle')
+                .attr('class', 'dot tooltip-tracker')
+                .attr('r', opt.radius)
+                .attr('cx', x)
+                .attr('cy', h);
+
+        dots
+            .transition().duration(duration)
+            .attr('r', opt.radius)
+            .attr('cx', x)
+            .attr('cy', y);
+
+        dots.exit().remove();
     }
 
     ScatterPlot.defaults = defaults;
