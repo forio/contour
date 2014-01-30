@@ -9,10 +9,6 @@
         }
     };
 
-    function getValue(src, deafult, ctx) {
-        return !src ? deafult : typeof src === 'function' ? src.call(ctx) : src;
-    }
-
     function render(data, layer, options) {
         var duration = 400;
         var opt = options.column;
@@ -21,8 +17,8 @@
         var x = this.xScale;
         var y = this.yScale;
         var dataKey = function (d) { return d.data; };
-        var chartOffset = getValue(opt.offset, 0, this);
-        var rangeBand = getValue(opt.columnWidth, this.rangeBand, this);
+        var chartOffset = _.nw.getValue(opt.offset, 0, this);
+        var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
         var enter = _.partialRight((options.column.stacked ? stacked : grouped), true);
         var update = options.column.stacked ? stacked : grouped;
         var stack = d3.layout.stack().values(function (d) {

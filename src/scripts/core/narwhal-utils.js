@@ -1,5 +1,14 @@
 (function () {
 
+    var generalHelpers = {
+        // the src is a function returns the function evaluated
+        // otherwise returns src
+        getValue: function (src, deafult, ctx, args) {
+            args = Array.prototype.slice.call(arguments, 3);
+            return !src ? deafult : typeof src === 'function' ? src.apply(ctx, args) : src;
+        }
+    };
+
     var numberHelpers = {
         firstAndLast: function (ar) {
             return [ar[0], ar[ar.length-1]];
@@ -31,7 +40,6 @@
             var sum_yy = 0;
 
             for (var i = 0; i < n; i++) {
-
                 sum_x += dataSrc[i].x;
                 sum_y += dataSrc[i].y;
                 sum_xy += (dataSrc[i].x*dataSrc[i].y);
@@ -186,6 +194,6 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, ajaxHelpers, debuggingHelpers, domHelpers);
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, ajaxHelpers, debuggingHelpers, domHelpers, generalHelpers);
 
 })();
