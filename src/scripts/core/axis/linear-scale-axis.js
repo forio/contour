@@ -20,7 +20,7 @@
                     this._scale.nice();
                 this._setRange();
             } else {
-                this._scale.domain(domain);
+                this._scale.domain(this._domain);
             }
 
             return this._scale;
