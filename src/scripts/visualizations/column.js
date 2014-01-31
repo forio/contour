@@ -46,17 +46,17 @@
             .attr('class', 'column tooltip-tracker')
             .call(enter);
 
-        if (options.chart.animation) cols.transition().duration(duration);
-        cols.call(update);
-
-        if (options.chart.animation) {
+        if (options.chart.animations) {
             cols.exit()
                 .transition().duration(duration)
                 .attr('y', h)
                 .attr('height', function () { return 0; })
                 .remove();
+            cols.transition().duration(duration)
+                .call(update);
         } else {
             cols.exit().remove();
+            cols.call(update);
         }
 
         function stacked(col, enter) {
