@@ -16,7 +16,7 @@ describe('time Axis', function () {
 
     it('should only show first and last tick labels by default', function () {
         narwhal = createNarwhal()
-            .data([
+            .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
                 { x: new Date('10/13/2013'), y: 30 }
@@ -29,7 +29,7 @@ describe('time Axis', function () {
 
     it('should set text-anchor:left to first label and text-anchor:end to last label only when firstAndLast is set to true', function () {
         narwhal = createNarwhal({ xAxis: { firstAndLast: true }})
-            .data([
+            .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
                 { x: new Date('10/13/2013'), y: 30 }
@@ -43,7 +43,7 @@ describe('time Axis', function () {
 
     it('should set text-anchor:middle on first and last labels only when firstAndLast is set to false', function () {
         narwhal = createNarwhal({ xAxis: { firstAndLast: false }})
-            .data([
+            .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
                 { x: new Date('10/13/2013'), y: 30 }
@@ -57,7 +57,7 @@ describe('time Axis', function () {
 
     it('should top the number of ticks to options.xAxis.maxTicks if pressent', function () {
         narwhal = createNarwhal({ xAxis: { firstAndLast: false, maxTicks: 2 }})
-            .data([
+            .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
                 { x: new Date('10/13/2013'), y: 30 }
@@ -70,7 +70,7 @@ describe('time Axis', function () {
 
     it('should print hrs, when xDomain is all in the same day', function () {
         narwhal = createNarwhal({ xAxis: { firstAndLast: false }})
-            .data([
+            .nullVis([
                 { x: new Date('10/11/2013 10:00'), y: 10 },
                 { x: new Date('10/11/2013 11:00'), y: 20 },
                 { x: new Date('10/11/2013 12:00'), y: 30 }
@@ -91,7 +91,7 @@ describe('time Axis', function () {
                     { x: new Date('12/11/2013 10:00'), y: 30 }
                 ];
             var narwhal = createNarwhal({ chart: { width: 400 }, xAxis: { linearDomain: true, firstAndLast: false }})
-                .data(data)
+                .nullVis(data)
                 .render();
 
             var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);

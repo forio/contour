@@ -5,93 +5,131 @@
             smooth: false,
             marker: {
                 enable: true,
-                size: 2.5
+                size: 3
             }
         }
     };
 
 
-    function render(data, layer, options, id) {
+    function render(rawData, layer, options, id) {
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
-        var normalizeData = data;
+        var h = options.chart.plotHeight;
+        var duration = 400;
+        /*jshint eqnull:true */
+        var data = _.map(rawData, function (s) {
+            return _.extend(s, {
+                data: _.filter(s.data, function (d) { return d.y != null; })
+            });
+        });
 
-        var line = d3.svg.line()
-            .x(function (d) { return x(d); })
-            .y(function (d) { return y(d); });
-
-        if(this.options.line.smooth) line.interpolate('cardinal');
-
-        _.each(data, function (d, i) {
-            appendPath.call(this, d.data, d.name, i+1);
-        }, this);
-
-        function appendPath(data, seriesName, seriesIndex) {
-            seriesName = seriesName ? seriesName.replace(/\s/, '_') : '';
-
-            /*jshint eqnull:true */
-            var nonNullData = _.filter(data, function (d) { return d.y != null; });
-            var markerSize = this.options.line.marker.size;
-            var className = ['v-' + id, 's-' + seriesIndex, seriesName].join(' ');
-            var renderPath = this.options.chart.animations ? renderAnimatedPath : renderSimplePath;
-            var renderMakers = this.options.line.marker.enable ? renderLineMarkers : _.noop;
-
-            var path = layer.append('path')
-                    .datum(nonNullData)
-                    .attr('class', 'line ' + className);
-
-            renderPath();
-            renderMakers();
-            renderTooltipTrackers();
+        renderPaths();
+        renderMarkers();
+        renderTooltipTrackers();
 
 
-            function renderAnimatedPath() {
-                if(!nonNullData[0]) return ;
-                path.attr('d', line(nonNullData[0]))
-                    .transition().duration(600)
-                        .attrTween('d', pathTween);
+        function renderPaths() {
+            var startLine = d3.svg.line()
+                .x(function (d) { return x(d); })
+                .y(function () { return y({x: 0, y: 0}); });
+
+            var line = d3.svg.line()
+                .x(function (d) { return x(d); })
+                .y(function (d) { return y(d); });
+
+            if(options.line.smooth) line.interpolate('cardinal');
+
+            var series = layer.selectAll('g.series')
+                    .data(data);
+
+            // enter
+            var el = series.enter().append('svg:g')
+                .attr('class', function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; })
+                .append('path')
+                    .attr('class', 'line');
+
+            if (options.chart.animations) {
+                el.attr('d', function(d) { return startLine(d.data); })
+                    .transition().duration(duration)
+                    .attr('d', function (d) { return line(d.data); });
+            } else {
+                el.attr('d', function (d) { return line(d.data); });
             }
 
-            function renderSimplePath() {
-                path.attr('d', line);
+            // update
+            el = series.select('.line');
 
+            if (options.chart.animations) {
+                el.transition().duration(duration)
+                    .attr('d', function (d) { return line(d.data); });
+            } else  {
+                el.attr('d', function (d) { return line(d.data); });
             }
 
-            function renderLineMarkers() {
-                layer.append('g').attr('class', 'line-chart-markers')
-                    .selectAll('dot')
-                        .data(nonNullData)
-                    .enter().append('circle')
-                        .attr('class', 'dot ' + className)
-                        .attr('r', markerSize)
-                        .attr('cx', x)
-                        .attr('cy', y);
-
+            // remove
+            if (options.chart.animations) {
+                series.exit()
+                    .remove();
+            } else  {
+                series.exit().remove();
             }
+        }
 
-            function renderTooltipTrackers(){
-                var trackerSize = 10;
-                // add the tooltip trackers regardless
-                layer.append('g').attr('class', 'tooltip-trackers')
-                    .selectAll('tooltip-tracker')
-                        .data(nonNullData)
-                    .enter().append('circle')
-                        .attr('class', 'tooltip-tracker')
-                        .attr('opacity', 0)
-                        .attr('r', trackerSize)
-                        .attr('cx', x)
-                        .attr('cy', y);
-            }
+        function renderMarkers() {
+            var markers = layer.selectAll('.line-chart-markers')
+                .data(data);
 
-            function pathTween() {
-                var _data = nonNullData;
-                var interpolate = d3.scale.quantile().domain([0,1])
-                        .range(d3.range(1, _data.length + 1));
-                return function(t) {
-                    return line(_data.slice(0, interpolate(t)));
-                };
+            markers.enter().append('g')
+                .attr('class', function (d, i) { return 'line-chart-markers markers s-' + (i+1); });
+
+            markers.exit().remove();
+
+            var dots = markers.selectAll('.dot')
+                .data(function (d) { return d.data; }, function (d) { return d.x; });
+
+            dots.enter().append('circle')
+                .attr('class', 'dot')
+                .attr('r', options.line.marker.size)
+                .attr('cx', x)
+                .attr('cy', h);
+
+            dots.exit().remove();
+
+            if (options.chart.animations) {
+                dots.transition().delay(100).duration(duration)
+                    .attr('cx', x)
+                    .attr('cy', y);
+            } else {
+                dots.attr('cx', x)
+                    .attr('cy', y);
             }
+        }
+
+        function renderTooltipTrackers() {
+            var trackerSize = 10;
+            var markers = layer.selectAll('.tooltip-trackers')
+                .data(data);
+
+            markers.enter().append('g')
+                .attr('class', function (d, i) { return 'tooltip-trackers s-' + (i+1); });
+
+            markers.exit().remove();
+
+            var dots = markers.selectAll('.tooltip-tracker')
+                .data(function (d) { return d.data; }, function (d) { return d.x; });
+
+            dots.enter().append('circle')
+                .attr('class', 'tooltip-tracker')
+                .attr('r', trackerSize)
+                .attr('opacity', 0)
+                .attr('cx', x)
+                .attr('cy', h);
+
+            dots.exit().remove();
+
+            dots.attr('cx', x)
+                .attr('cy', y);
         }
 
         return this;

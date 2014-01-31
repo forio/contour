@@ -4,7 +4,8 @@
             animate: true,
             opacity: 0.85,
             showTime: 300,
-            hideTime: 500
+            hideTime: 500,
+            distance: 5
         }
     };
 
@@ -24,15 +25,56 @@
             }
         };
 
-        var positionTooltip = function (ev) {
-            return { x: ev.pageX + 10, y: ev.pageY - 10 };
+        var positionTooltip = function (d) {
+            var plotLeft = this.options.chart.plotLeft;
+            var plotWidth = this.options.chart.plotWidth;
+            var plotTop = this.options.chart.plotTop;
+            var plotHeight = this.options.chart.plotHeight;
+            var distance = this.options.tooltip.distance;
+            var width = parseFloat(this.tooltipElement.style('width'));
+            var height = parseFloat(this.tooltipElement.style('height'));
+            var pointX = this.xScale ? this.xScale(d.x) : d3.event.x;
+            var pointY = this.yScale ? this.yScale(d.y) : d3.event.y;
+            var alignedRight;
+
+            var pos = {
+                x: plotLeft + pointX - (distance + width),
+                y: plotTop + pointY - (distance + height)
+            };
+
+            // Check outside plot area (left)
+            if (pos.x < plotLeft) {
+                pos.x = plotLeft + Math.max(pos.x, 0) + distance;
+            }
+
+            // Check outside plot area (right)
+            if (pos.x + width > plotLeft + plotWidth) {
+                pos.x -= (pos.x + width) - (plotLeft + plotWidth);
+                // Don't overlap point
+                pos.y = plotTop + pointY - (height + distance);
+                alignedRight = true;
+            }
+
+            // Check outside the plot area (top)
+            if (pos.y < plotTop) {
+                pos.y = plotTop + distance;
+
+                // Don't overlap point
+                if (alignedRight && pointY >= pos.y && pointY <= pos.y + height) {
+                    pos.y = pointY + plotTop + distance;
+                }
+            }
+
+            // Check outside the plot area (bottom)
+            if (pos.y + height > plotTop + plotHeight) {
+                pos.y = Math.max(plotTop, plotTop + plotHeight - (height + distance));
+            }
+
+            return pos;
         };
 
         var onMouseOver = function (d) {
-            var ev = d3.event;
-            var pos = positionTooltip(ev);
-
-            show.call(this, d, pos);
+            show.call(this, d);
         };
 
         var onMouseOut = function () {
@@ -62,11 +104,12 @@
             return match(formatters, d)();
         };
 
-        var show = function (d, pos) {
+        var show = function (d) {
             clearHideTimer.call(this);
-            var text = getTooltipText.call(this, d);
 
-            this.tooltipElement.select('.text').html(text);
+            this.tooltipElement.select('.text').html(getTooltipText.call(this, d));
+
+            var pos = positionTooltip.call(this, d);
 
             this.tooltipElement
                 .style('top', pos.y + 'px')
@@ -76,6 +119,7 @@
         };
 
         this.tooltipElement = this.container
+            .style('position', 'relative')
             .append('div');
 
         this.tooltipElement

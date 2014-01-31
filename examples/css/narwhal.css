@@ -45,6 +45,7 @@
   border: solid 1px transparent;
   border-radius: 8px;
   pointer-events: none;
+  transition: all 0.05s ease-out;
 }
 .nw-tooltip .text {
   opacity: 1;

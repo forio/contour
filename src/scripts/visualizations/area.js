@@ -12,36 +12,39 @@
     function renderer(data, layer, options) {
         var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2; }, this);
         var y = _.bind(function (val) { return this.yScale(val); }, this);
+        var h = options.chart.plotHeight;
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
-        var stackedData = stack(data);
+
+        var startArea = d3.svg.area()
+            .x(function(d) { return x(d.x); })
+            .y0(function (d) { return h; })
+            .y1(function(d) { return h; });
+
         var area = d3.svg.area()
             .x(function(d) { return x(d.x); })
             .y0(function (d) { return y(d.y0); })
             .y1(function(d) { return y(d.y0 + d.y); });
 
-        adjustDomain.call(this);
-        renderSeries.call(this);
+        renderSeries();
 
-        function adjustDomain() {
-            /* jshint eqnull:true */
-            if(this.options.area.stacked && this.options.yAxis.max == null) {
-                var flat = _.flatten(_.map(stackedData, function (d) { return d.data; }));
-                var max = _.max(flat, function (d) { return d.y0 + d.y; });
-                this.setYDomain([0, max.y + max.y0]);
-                this.redrawYAxis();
-            }
-        }
 
         function renderSeries() {
             var series = layer.selectAll('g.series')
-                    .data(stackedData)
-                    .enter().append('g')
-                        .attr('class', classFn);
+                    .data(stack(data));
 
-            series.append('path')
-                .datum(function(d) { return d.data; })
-                .attr('class', 'area')
+            series.enter()
+                .append('svg:g')
+                .attr('class', classFn)
+                .append('path').datum(function (d) { return d.data; })
+                    .attr('class', 'area')
+                    .attr('d', startArea);
+
+            series.exit().remove();
+
+            series.select('.area')
+                .datum(function (d) { return d.data; })
+                .transition().duration(400)
                 .attr('d', area);
 
             renderTooltipTrackers.call(this, series);
@@ -60,8 +63,6 @@
                     .attr('cx', function(d) { return x(d.x); })
                     .attr('cy', function(d) { return y(d.y0 + d.y); });
         }
-
-
     }
 
     renderer.defaults = defaults;

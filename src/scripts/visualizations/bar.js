@@ -1,61 +1,83 @@
 (function () {
 
-
-    function barRender(data, layer, options) {
-        var opt = options.bar;
-        var xScale = this.xScale;
-        var yScale = this.yScale;
-        var rangeBand = this.rangeBand;
-        var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
-        var stack = d3.layout.stack().values(function (d) { return d.data; });
-        var enter = options.bar.stacked ? stacked : grouped;
-        var numSeries = data.length;
-
-        var series = layer.selectAll('g.series')
-                .data(stack(data))
-                .enter().append('svg:g')
-                    .attr('class', classFn);
-
-        var bar = series.selectAll('.bar')
-                .data(function (d) { return d.data; })
-                .enter().append('rect')
-                    .attr('class', 'bar tooltip-tracker');
-
-        enter.call(this, bar);
-
-        function stacked(bar) {
-            if(this.options.yAxis.max == null) {
-                var flat = _.flatten(_.map(data, function (d) { return d.data; }));
-                var max = _.max(flat, function (d) { return d.y0 + d.y; });
-                this.setYDomain([0, max.y + max.y0]);
-                this.redrawYAxis();
-            }
-
-            return bar
-                .attr('y', function (d) { return xScale(d.x); })
-                .attr('height', rangeBand)
-                .attr('x', function (d) { return yScale(d.y0 || 0); })
-                .attr('width', function (d) { return yScale(d.y); });
-        }
-
-        function grouped() {
-            var height = function () { return rangeBand / numSeries - opt.padding; };
-            var offset = function (d, i) { return rangeBand / numSeries * i; };
-
-            return bar
-                .attr('y', function (d, i, j) { return xScale(d.x) + offset(d, j); })
-                .attr('height', height)
-                .attr('x', function () { return yScale(0); })
-                .attr('width', function (d) { return yScale(d.y); });
-        }
-    }
-
     var defaults = {
         bar: {
             stacked: false,
             padding: 2      // two px between same group bars
         }
     };
+
+    function barRender(data, layer, options) {
+        var duration = 400;
+        var x = this.xScale;
+        var y = this.yScale;
+        var rangeBand = this.rangeBand;
+        var stack = d3.layout.stack().values(function (d) { return d.data; });
+        var update = options.bar.stacked ? stacked : grouped;
+        var enter = _.partialRight(update, true);
+        var classFn = function (d, i) { return 'series s-' + (i+1); };
+
+        var series = layer.selectAll('g.series')
+            .data(stack(data));
+
+        series.enter().append('svg:g')
+            .attr('class', classFn);
+
+        series.exit().remove();
+
+        var bars = series.selectAll('.bar')
+            .data(function (d) { return d.data; });
+
+        bars.enter().append('rect')
+            .attr('class', 'bar tooltip-tracker')
+            .call(enter);
+
+        if(options.chart.animations) {
+            bars.transition().duration(duration).call(update);
+            bars.exit()
+                .transition().duration(duration)
+                .attr('width', y(0))
+                .remove();
+        } else {
+            bars.call(update);
+            bars.exit().remove();
+        }
+
+        function stacked(bar, enter) {
+            bar
+                .attr('y', function (d) { return x(d.x); })
+                .attr('height', rangeBand);
+
+            if (enter) {
+                return bar
+                    .attr('x', function (d) { return y(0); })
+                    .attr('width', function (d) { return y(0); });
+
+            } else {
+                return bar
+                    .attr('x', function (d) { return y(d.y0 || 0); })
+                    .attr('width', function (d) { return y(d.y); });
+            }
+        }
+
+        function grouped(bar, enter) {
+            var numSeries = data.length;
+            var height = function () { return rangeBand / numSeries - options.bar.padding; };
+            var offset = function (d, i) { return rangeBand / numSeries * i; };
+
+            bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })
+                .attr('x', 0)
+                .attr('height', height);
+
+            if (enter) {
+                return bar
+                    .attr('width', function (d) { return y(0); });
+            } else {
+                return bar
+                    .attr('width', function (d) { return y(d.y); });
+            }
+        }
+    }
 
     barRender.defaults = defaults;
     /*

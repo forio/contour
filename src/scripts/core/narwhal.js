@@ -26,7 +26,15 @@
                 right: 0,
                 bottom: 0,
                 left: 0
-            }
+            },
+            // with in pixels of the plot area (area inside the axis if any). This gets calculated on render
+            plotWidth: undefined,
+            // height in pixels of the plot area (area inside the axis if any). This gets calculated on render
+            plotHeight: undefined,
+            // top edge in pixels (from the edge of the svg) of the plot area (area inside the axis if any). This gets calculated on render
+            plotTop: undefined,
+            // left edge in pixels (from the edge of the svg) of the plot area (area inside the axis if any). This gets calculated on render
+            plotLeft: undefined,
         },
 
         xAxis: {
@@ -39,13 +47,12 @@
         }
     };
 
-    var _visualizations = [];
 
     /**
     * Create a set of related visualizations by calling the Narwhal visualization constructor. This creates a Narwhal instance, based on the core Narwhal object.
     *
     *   * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Narwhal instance will be rendered.
-    *   * Set the frame for this Narwhal instance (e.g. `.cartesian()`). 
+    *   * Set the frame for this Narwhal instance (e.g. `.cartesian()`).
     *   * Add one or more specific visualizations to this Narwhal instance (e.g. `.scatter()`, `.trend-line()`). Pass each visualization constructor the data it displays.
     *   * Invoke an action for this Narwhal instance (e.g. `.render()`).
     *
@@ -64,11 +71,12 @@
     */
     function Narwhal (options) {
         this.init(options);
+
         return this;
     }
 
     /**
-    * Adds a new kind of visualization to the core Narwhal object. 
+    * Adds a new kind of visualization to the core Narwhal object.
     * The *renderer* function is called when you add this visualization to instances of Narwhal.
     *
     * ### Example:
@@ -82,7 +90,7 @@
     *     new Narwhal(options)
     *           .exampleVisualization(data)
     *           .render()
-    *     
+    *
     * @param {String} ctorName Name of the visualization, used as a constructor name.
     * @param {Function} renderer Function called when this visualization is added to a Narwhal instance. This function receives the data that is passed in to the constructor.
     * @see options
@@ -107,29 +115,16 @@
             return data;
         }
 
+
         Narwhal.prototype[ctorName] = function (data, options) {
+            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
+            var opt =  _.extend({}, this.options[ctorName], options);
+            var vis;
+
             data = data || [];
             sortSeries(data);
-            renderer.defaults = renderer.defaults || {};
-            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
-            var renderFunc;
-            var opt = {};
-            opt[ctorName] = options || {};
-
-            if (_.isArray(data)) {
-                var datums = _.nw.normalizeSeries(data, categories);
-                this.data(datums);
-                renderFunc = _.partial(renderer, datums);
-            } else {
-                renderFunc = _.partial(renderer, data);
-            }
-
-            _visualizations.push({
-                type: ctorName,
-                defaults: renderer.defaults,
-                renderFunc: renderFunc,
-                options: opt
-            });
+            vis = new Narwhal.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
+            this._visualizations.push(vis);
 
             return this;
         };
@@ -149,7 +144,7 @@
     *
     *     Narwhal.export("visualizationThatUsesMyFunction", function(data, layer) {
     *           //function body including call to this.myFunction(data)
-    *     });       
+    *     });
     *
     *     // to include the functionality into a specific instance
     *     new Narwhal(options)
@@ -157,8 +152,9 @@
     *           .visualizationThatUsesMyFunction()
     *           .render()
     */
-    Narwhal.expose = function (ctorName, functionality) {
+    Narwhal.expose = function (ctorName, functionalityConstructor) {
         var ctor = function () {
+            var functionality = typeof functionalityConstructor === 'function' ? new functionalityConstructor() : functionalityConstructor;
             // extend the --instance-- we don't want all charts to be overriden...
             _.extend(this, _.omit(functionality, 'init'));
 
@@ -173,6 +169,7 @@
     };
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
+        _visualizations: [],
 
         // Initializes the instance of Narwhal
         init: function (options) {
@@ -181,7 +178,7 @@
             // after all components/visualizations have been added
             this.options = options || {};
 
-            _visualizations.length = 0;
+            this._visualizations.length = 0;
 
             return this;
         },
@@ -213,7 +210,9 @@
             this.options = _.merge(options, {
                 chart: {
                     plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.padding.left - options.chart.padding.right,
-                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom
+                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom,
+                    plotLeft: options.chart.margin.left + options.chart.padding.left,
+                    plotTop: options.chart.margin.top + options.chart.padding.top
                 }
             });
         },
@@ -230,9 +229,9 @@
 
         composeOptions: function () {
             var allDefaults = _.merge({}, defaults);
-            var mergeDefaults = function (vis) { _.merge(allDefaults, vis.defaults); };
+            var mergeDefaults = function (vis) { _.merge(allDefaults, vis.renderer.defaults); };
 
-            _.each(_visualizations, mergeDefaults);
+            _.each(this._visualizations, mergeDefaults);
 
             // compose the final list of options right before start rendering
             this.options = _.merge({}, allDefaults, this.options);
@@ -268,21 +267,27 @@
             return this;
         },
 
+        update: function () {
+            this.calcMetrics();
+            return this;
+        },
+
         plotArea: function () {
 
             var chartOpt = this.options.chart;
 
             this.container = d3.select(this.options.el);
-            this.container.select('svg').remove();
 
-            this.svg = this.container
-                .append('svg')
+            if(!this.svg) {
+                this.svg = this.container
+                    .append('svg')
                     .attr('viewBox', '0 0 ' + chartOpt.width + ' ' + chartOpt.height)
                     .attr('preserveAspectRatio', 'xMinYMin')
                     .attr('class', 'narwhal-chart')
                     .attr('height', chartOpt.height)
-                .append('g')
-                    .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
+                    .append('g')
+                        .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
+            }
 
             return this;
         },
@@ -295,20 +300,61 @@
         },
 
         renderVisualizations: function () {
-            _.each(_visualizations, function (visualization, index) {
+
+            _.each(this._visualizations, function (visualization, index) {
                 var id = index + 1;
-                var layer = this.createVisualizationLayer(visualization, id);
+                var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
                 var opt = _.merge({}, this.options, visualization.options);
-                visualization.renderFunc.call(this, layer, opt);
+                visualization.layer = layer;
+                visualization.parent = this;
+                visualization.render(layer, opt, this);
             }, this);
 
             return this;
         },
 
-        compose: function(ctorName, funcArray) {
-            // compose differnt functional objects into this instance...
-            // this way we can do something like new Narwhal().BarChart(...) and it includes
-            // cartesia, xAxis, yAxis, tooltip, highliter, etc...
+        /**
+        * Set's the same data set into all visualizations for an instance
+        *
+        * Example:
+        *
+        *     var data = [1,2,3,4,5];
+        *     var chart = new Narwhal({ el:'.myChart' })
+        *           .scatter(data)
+        *           .trendLine(data);
+        *
+        *     data.push(10);
+        *     chart.setData(data)
+        *           .render();
+        *
+        * @function .setData
+        *
+        */
+        setData: function (data) {
+            _.invoke(this._visualizations, 'setData', data);
+
+            return this;
+        },
+
+        /**
+        * Returns a VisualizationContainer object for the visualization at a given index (0-based)
+        *
+        * Example:
+        *
+        *     var chart = new Narwhal({ el:'.myChart' })
+        *           .pie([1,2,3])
+        *           .render()
+        *
+        *     var myPie = chart.select(0)
+        *
+        *     // do something with the visualization like updateing its data set
+        *     myPie.setData([6,7,8,9]).render()
+        *
+        * @function .select
+        *
+        */
+        select: function (index) {
+            return this._visualizations[index];
         },
 
         // place holder function for now
@@ -316,6 +362,7 @@
 
         }
     });
+
 
     // export to our context
     root.Narwhal = Narwhal;
