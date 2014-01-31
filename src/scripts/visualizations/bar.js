@@ -2,7 +2,7 @@
 
     var defaults = {
         bar: {
-            stacked: true,
+            stacked: false,
             padding: 2      // two px between same group bars
         }
     };
