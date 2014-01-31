@@ -56,7 +56,7 @@ describe('Visualizations', function () {
                     expect(paths.eq(1).attr('d').length).toBeGreaterThan(0);
                 });
 
-                it('should add the name of the series as a class series-name to each path', function () {
+                it('should add the name of the series as a class series-name to each path\'s group', function () {
                     nw.line([{
                         name: 's1',
                         data: [1,2,3]
@@ -65,7 +65,7 @@ describe('Visualizations', function () {
                         data: [1,2,3]
                     }]).render();
 
-                    var paths = $el.find('g[vis-id="1"] path');
+                    var paths = $el.find('g[vis-id="1"] .series');
 
                     expect(paths.eq(0).attr('class')).toContain('s1');
                     expect(paths.eq(1).attr('class')).toContain('s2');
@@ -112,8 +112,8 @@ describe('Visualizations', function () {
 
                 it('should add a tooltip trackers AFTER line markers', function () {
                     var groups = $el.find('g[vis-id="1"] g');
-                    expect(groups.eq(0).attr('class')).toContain('line-chart-markers');
-                    expect(groups.eq(1).attr('class')).toContain('tooltip-trackers');
+                    expect(groups.eq(1).attr('class')).toContain('line-chart-markers');
+                    expect(groups.eq(2).attr('class')).toContain('tooltip-trackers');
                 });
             });
 
