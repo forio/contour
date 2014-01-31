@@ -16,7 +16,8 @@ describe('Ordinal xAxis', function () {
 
 
     it('should not have any Tick marks by default', function () {
-        narwhal.data([0,10,20,30]).render();
+        narwhal.nullVis([0,10,20,30]).render();
+        d3.timer.flush();
         var ticks = $el.find('.x.axis ');
         expect(_.all(ticks.find('.tick line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '0'; })).toBe(true);
         expect(ticks.find('.domain').attr('d')).toContain('M0');
@@ -25,7 +26,7 @@ describe('Ordinal xAxis', function () {
 
     it('should change padding between axis and first rangeBand using outerRangePadding', function () {
         function getScale (inner, outer) {
-            narwhal = createNarwhal({ xAxis: { innerRangePadding: inner, outerRangePadding: outer }}) .data([10, 20, 30]).render();
+            narwhal = createNarwhal({ xAxis: { innerRangePadding: inner, outerRangePadding: outer }}) .nullVis([10, 20, 30]).render();
             return narwhal.xAxis().scale();
         }
 
@@ -40,7 +41,7 @@ describe('Ordinal xAxis', function () {
 
     it('should change padding between columns using innerRangePadding', function () {
         function getScale (inner, outer) {
-            narwhal = createNarwhal({ xAxis: { innerRangePadding: inner, outerRangePadding: outer }}) .data([10, 20, 30]).render();
+            narwhal = createNarwhal({ xAxis: { innerRangePadding: inner, outerRangePadding: outer }}) .nullVis([10, 20, 30]).render();
             return narwhal.xAxis().scale();
         }
 
@@ -59,13 +60,13 @@ describe('Ordinal xAxis', function () {
         });
 
         xit('should use the options.xAxis.min as the min of the domain', function () {
-            narwhal.data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
+            narwhal.nullVis([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
             // a value equal to the max should be scaled at the top of the chart (y=0)
             expect(narwhal.xScale(5)).toBe(0);
         });
 
         xit('should merge options.xAxis.min as the first tick', function () {
-            // narwhal.data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
+            // narwhal.nullVis([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
 
             // var ticks = $el.find('.x.axis .tick.major');
             // var topTick = ticks.first();
@@ -84,7 +85,7 @@ describe('Ordinal xAxis', function () {
         });
 
         xit('should use the options.xAxis.max as the max of the domain', function () {
-            narwhal.data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
+            narwhal.nullVis([10, 20, 30, 40, 50, 60, 70, 80, 90, 100]).render();
             // a value equal to the max should be scaled at the top of the chart (y=0)
             expect(narwhal.xScale(7)).toBe(narwhal.options.chart.plotWidth);
         });
@@ -94,7 +95,7 @@ describe('Ordinal xAxis', function () {
         it('should only show first and last tick labels by default', function () {
            // var config = { xAxis: { firstAndLast: true } };
             narwhal = createNarwhal()
-                .data([10, 20, 30])
+                .nullVis([10, 20, 30])
                 .render();
 
             var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
@@ -106,7 +107,7 @@ describe('Ordinal xAxis', function () {
         it('should show all category labels if firstAndLast is set to false', function () {
             var config = { xAxis: { firstAndLast: false } };
             narwhal = createNarwhal(config)
-                .data([10, 20, 30])
+                .nullVis([10, 20, 30])
                 .render();
 
             var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
@@ -118,7 +119,7 @@ describe('Ordinal xAxis', function () {
 
         it('should set text-anchor:middle for all labels', function () {
             narwhal = createNarwhal({ xAxis: { categories: ['one', 'two', 'three'], firstAndLast: false }})
-                .data([10, 20, 30])
+                .nullVis([10, 20, 30])
                 .render();
 
             var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
@@ -132,7 +133,7 @@ describe('Ordinal xAxis', function () {
 
         it('should render category labels if xAxis.categories is defined', function () {
             narwhal = createNarwhal({ xAxis: { categories: ['one', 'two', 'three'], firstAndLast: false }})
-                .data([10, 20, 30])
+                .nullVis([10, 20, 30])
                 .render();
 
             var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
@@ -146,7 +147,7 @@ describe('Ordinal xAxis', function () {
     describe('with data with x values for categories', function () {
         it('should render categories from x values', function () {
             narwhal = createNarwhal({xAxis: { firstAndLast: false }})
-                .data([{x:'one', y: 10}, { x: 'two', y: 20}, { x: 'three', y: 30}])
+                .nullVis([{x:'one', y: 10}, { x: 'two', y: 20}, { x: 'three', y: 30}])
                 .render();
 
             var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
@@ -160,7 +161,7 @@ describe('Ordinal xAxis', function () {
     describe('xAxis title', function () {
         it('should be included if specificed in the options', function () {
             narwhal = createNarwhal({ xAxis: { title: 'xAxis' } });
-            narwhal.data([1,2,3]).render();
+            narwhal.nullVis([1,2,3]).render();
             titles = $el.find('.axis-title');
             expect(titles.length).toBe(1);
             expect(titles.text()).toBe('xAxis');
@@ -168,13 +169,13 @@ describe('Ordinal xAxis', function () {
 
         it('should NOT be included if NOT specificed in the options', function () {
             narwhal = createNarwhal({ xAxis: { title: '' } });
-            narwhal.data([1,2,3]).render();
+            narwhal.nullVis([1,2,3]).render();
             titles = $el.find('.x.axis-title');
             expect(titles.length).toBe(0);
         });
 
         it('should adjust bottom padding and plot height to fit the title', function () {
-            createNarwhal({ xAxis: { title: 'hello world' }}).data([1,2,3]).render();
+            createNarwhal({ xAxis: { title: 'hello world' }}).nullVis([1,2,3]).render();
             var y = narwhal.options.chart.height - narwhal.options.chart.padding.bottom - narwhal.options.chart.padding.top;
 
             expect(narwhal.options.chart.padding.bottom).toBeGreaterThan(0);

@@ -1,12 +1,33 @@
 (function () {
 
+    var generalHelpers = {
+        // the src is a function returns the function evaluated
+        // otherwise returns src
+        getValue: function (src, deafult, ctx, args) {
+            args = Array.prototype.slice.call(arguments, 3);
+            return !src ? deafult : typeof src === 'function' ? src.apply(ctx, args) : src;
+        }
+    };
+
     var numberHelpers = {
         firstAndLast: function (ar) {
             return [ar[0], ar[ar.length-1]];
         },
 
-        roundToNearest: function (number, multiple){
+        roundToNearest: function (number, multiple) {
             return Math.ceil(number / multiple) * multiple;
+        },
+
+        clamp: function (val, l, h) {
+            return val > h ? h : val < l ? l : val;
+        },
+
+        clampLeft: function (val, low) {
+            return val < low ? low : val;
+        },
+
+        clampRight: function (val, high) {
+            return val > high ? high : val;
         },
 
         linearRegression: function (dataSrc) {
@@ -19,7 +40,6 @@
             var sum_yy = 0;
 
             for (var i = 0; i < n; i++) {
-
                 sum_x += dataSrc[i].x;
                 sum_y += dataSrc[i].y;
                 sum_xy += (dataSrc[i].x*dataSrc[i].y);
@@ -116,6 +136,13 @@
                     return [normal(data, 'series 1')];
                 }
             }
+
+            // nothing to do to the data if it's not in a supported format
+            return data;
+        },
+
+        isSupportedDataFormat: function (data) {
+            return _.isArray(data) && (_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0]);
         }
 
     };
@@ -167,6 +194,6 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, ajaxHelpers, debuggingHelpers, domHelpers);
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, ajaxHelpers, debuggingHelpers, domHelpers, generalHelpers);
 
 })();

@@ -9,56 +9,84 @@
         }
     };
 
-    function getValue(src, deafult, ctx) {
-        return !src ? deafult : typeof src === 'function' ? src.call(ctx) : src;
-    }
-
     function render(data, layer, options) {
+        var duration = 400;
         var opt = options.column;
-        var h = this.options.chart.plotHeight;
+        var w = options.chart.plotWidth;
+        var h = options.chart.plotHeight;
         var x = this.xScale;
         var y = this.yScale;
-        var rangeBand = getValue(opt.columnWidth, this.rangeBand, this);
-        var chartOffset = getValue(opt.offset, 0, this);
-        var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
-        var stack = d3.layout.stack().values(function (d) { return d.data; });
-        var enter = this.options.column.stacked ? stacked : grouped;
+        var dataKey = function (d) { return d.data; };
+        var chartOffset = _.nw.getValue(opt.offset, 0, this);
+        var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
+        var enter = _.partialRight((options.column.stacked ? stacked : grouped), true);
+        var update = options.column.stacked ? stacked : grouped;
+        var stack = d3.layout.stack().values(function (d) {
+            return d.data;
+        });
 
         var series = layer.selectAll('g.series')
-                .data(stack(data))
-                .enter().append('g')
-                    .attr('class', classFn);
+                .data(stack(data));
 
-        var col = series.selectAll('.column')
-            .data(function(d) { return d.data; });
-        col.enter().append('rect')
-            .attr('class', 'column tooltip-tracker');
+        series.enter()
+            .append('g')
+            .attr('class', function (d, i) { return 'series s-' + (i+1); });
 
-        enter.call(this, col);
+        series.exit()
+            .remove();
 
-        function stacked(col) {
-            /*jshint eqnull:true */
-            if(this.options.yAxis.max == null) {
-                var flat = _.flatten(_.map(data, function (d) { return d.data; }));
-                var max = _.max(flat, function (d) { return d.y0 + d.y; });
-                this.setYDomain([0, max.y + max.y0]);
-                this.redrawYAxis();
-            }
+        var cols = series.selectAll('.column')
+                .data(dataKey);
 
-            col.attr('x', function (d) { return x(d.x) + chartOffset; })
-                .attr('width', function () { return rangeBand; })
-                .attr('y', function (d) { return y(d.y) + y(d.y0) - h; })
-                .attr('height', function (d) { return h - y(d.y); });
+        var offset = function (d, i) { return rangeBand / data.length * i; };
+        var width = rangeBand / data.length - opt.groupPadding;
+
+        cols.enter()
+            .append('rect')
+            .attr('class', 'column tooltip-tracker')
+            .call(enter);
+
+        if (options.chart.animations) {
+            cols.exit()
+                .transition().duration(duration)
+                .attr('y', h)
+                .attr('height', function () { return 0; })
+                .remove();
+            cols.transition().duration(duration)
+                .call(update);
+        } else {
+            cols.exit().remove();
+            cols.call(update);
         }
 
-        function grouped(col) {
+        function stacked(col, enter) {
+            col.attr('x', function (d) { return x(d.x) + chartOffset; })
+                .attr('width', function () { return rangeBand; });
+
+            if (enter) {
+                col
+                    .attr('y', function (d) { return h; })
+                    .attr('height', function (d) { return 0; });
+            } else {
+                col
+                    .attr('y', function (d) { return y(d.y) + y(d.y0) - h; })
+                    .attr('height', function (d) { return h - y(d.y); });
+            }
+        }
+
+        function grouped(col, enter) {
             var width = rangeBand / data.length - opt.groupPadding;
             var offset = function (d, i) { return rangeBand / data.length * i; };
 
             col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
-                .attr('width', width)
-                .attr('y', function (d) { return y(d.y); })
-                .attr('height', function (d) { return h - y(d.y); });
+                .attr('width', width);
+
+            if (enter)
+                col.attr('y', _.nw.clampLeft(h, 0))
+                    .attr('height', 0);
+            else
+                col.attr('height', function (d) { return h - y(d.y); })
+                    .attr('y', function (d) { return y(d.y); });
         }
     }
 

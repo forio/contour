@@ -28,14 +28,13 @@
         },
 
         scale: function (domain) {
-            this._domain = domain;
-            var axisDomain = this._getAxisDomain(domain);
-            if(!this._scale) {
-                this._scale = new d3.time.scale()
-                    .domain(axisDomain);
 
+            if(!this._scale) {
+                this._scale = new d3.time.scale();
+                this.setDomain(domain);
                 this.range();
             }
+
 
             return this._scale;
         },
@@ -71,6 +70,17 @@
             }
 
             return axis;
+        },
+
+        update: function (domain, data) {
+            this.data = data;
+            this.setDomain(domain);
+        },
+
+        setDomain: function (domain) {
+            this._domain = domain;
+            var axisDomain = this._getAxisDomain(this._domain);
+            this._scale.domain(axisDomain);
         },
 
         postProcessAxis: function (axisGroup) {

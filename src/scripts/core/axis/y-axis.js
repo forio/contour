@@ -43,6 +43,11 @@
             this._niceTheScale();
         },
 
+        update: function (domain, dataSrc) {
+            this.data = dataSrc;
+            this.setDomain(domain);
+        },
+
         /*jshint eqnull:true*/
         numTicks: function () {
             return this.options.yAxis.ticks != null ? this.options.yAxis.ticks : undefined;

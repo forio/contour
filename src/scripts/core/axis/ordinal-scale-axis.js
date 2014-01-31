@@ -27,12 +27,12 @@
         },
 
         scale: function (domain) {
-            this._domain = domain;
             if(!this._scale) {
-                this._scale = new d3.scale.ordinal().domain(domain);
-
+                this._scale = new d3.scale.ordinal();
                 this._range();
             }
+
+            this.setDomain(domain);
 
             return this._scale;
         },
@@ -58,6 +58,16 @@
         },
 
         postProcessAxis: function (axisGroup) {
+        },
+
+        update: function (domain, data) {
+            this.data = data;
+            this.setDomain(domain);
+        },
+
+        setDomain: function (domain) {
+            this._domain = domain;
+            this._scale.domain(domain);
         },
 
         rangeBand: function () {

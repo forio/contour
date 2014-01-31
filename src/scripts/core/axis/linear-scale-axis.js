@@ -19,6 +19,8 @@
                 if(this.options.xAxis.min == null && this.options.xAxis.max == null)
                     this._scale.nice();
                 this._setRange();
+            } else {
+                this._scale.domain(this._domain);
             }
 
             return this._scale;
@@ -41,6 +43,11 @@
             }
 
             return axis;
+        },
+
+        update: function (domain, dataSrc) {
+            this.data = dataSrc;
+            this.scale(domain);
         },
 
         rangeBand: function () {

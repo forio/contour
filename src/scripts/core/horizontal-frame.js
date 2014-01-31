@@ -21,7 +21,6 @@
         },
 
         adjustPadding: function () {
-
             var categoryLabels = this.options.xAxis.categories || _.pluck(this.dataSrc, 'x');
             var text = categoryLabels.join('<br>');
             var xLabel = _.nw.textBounds(text, '.x.axis');
@@ -45,7 +44,6 @@
                     this.options.chart.padding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
                 }
             }
-
         },
 
         renderYAxis: function () {
@@ -53,10 +51,20 @@
             var x = this.options.chart.padding.left;
             var y = this.options.chart.padding.top + this.options.chart.plotHeight;
 
-            this._yAxisGroup = this.svg.append('g')
+            this._yAxisGroup = this.svg.selectAll('.y.axis')
+                .data([1]);
+
+            this._yAxisGroup.enter().append('g')
                 .attr('class', 'y axis')
                 .attr('transform', 'translate(' + x+ ',' + y + ')')
                 .call(yAxis);
+
+            this._yAxisGroup.exit().remove();
+
+            this._yAxisGroup
+                    .transition().duration(400 * this.options.chart.animations)
+                    .attr('transform', 'translate(' + x+ ',' + y + ')')
+                    .call(yAxis);
 
             return this;
         },
@@ -66,9 +74,18 @@
             var y = this.options.chart.padding.top;
             var xAxis = this.xAxis();
 
-            this._xAxisGroup = this.svg
-                .append('g')
+            this._xAxisGroup = this.svg.selectAll('.x.axis')
+                .data([1]);
+
+            this._xAxisGroup.enter().append('g')
                 .attr('class', 'x axis')
+                .attr('transform', 'translate(' + x + ',' + y + ')')
+                .call(xAxis);
+
+            this._xAxisGroup.exit().remove();
+
+           this._xAxisGroup
+                .transition().duration(400 * this.options.chart.animations)
                 .attr('transform', 'translate(' + x + ',' + y + ')')
                 .call(xAxis);
 
@@ -119,26 +136,30 @@
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .text(this.options.yAxis.title);
             }
+
+            return this;
         }
     };
-        /*
-        * Sets the visualization frame to be "horizontal". 
-        * The xAxis is set vertical and the yAxis is set horizontal. 
-        * 
-        * This visualization requires `.cartesian()`.
-        *
-        * This visualization is a prerequiste for rendering bar charts (`.bar()`).
-        *
-        * ###Example:
-        *
-        *     new Narwhal({el: '.myChart'})
-        *        .cartesian()
-        *        .horizontal()
-        *        .bar([1, 2, 3, 4, 5, 4, 3, 2, 1])
-        *        .render()
-        *
-        * @function horiztonal
-        */
+
+    /**
+    * Sets the visualization frame to be "horizontal".
+    * The xAxis is set vertical and the yAxis is set horizontal.
+    *
+    * This visualization requires *.cartesian()*.
+    *
+    * This visualization is a prerequiste for rendering bar charts (*.bar()*).
+    *
+    * ###Example:
+    *
+    *     new Narwhal({el: '.myChart'})
+    *        .cartesian()
+    *        .horizontal()
+    *        .bar([1, 2, 3, 4, 5, 4, 3, 2, 1])
+    *        .render()
+    *
+    * @function .horiztonal
+    * @param {TBW} frame TBW
+    */
     Narwhal.expose('horizontal', frame);
 
 })();

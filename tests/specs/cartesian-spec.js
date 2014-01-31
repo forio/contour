@@ -2,13 +2,17 @@ describe('Cartesian frame', function () {
     var $el, el;
     var narwhal;
 
+
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
     });
 
     function createNarwhal(options) {
+        $el = $('<div>');
+        el = $el.get(0);
         options = _.extend({ el: el }, options);
+
         narwhal = new Narwhal(options).cartesian();
         return narwhal;
     }
@@ -37,7 +41,7 @@ describe('Cartesian frame', function () {
     });
 
     it('with empty array data should provide default axis', function () {
-        var narwhal = createNarwhal().data([]).render();
+        var narwhal = createNarwhal().nullVis([]).render();
 
         assert_hasDefaultEmptyYScale(narwhal);
     });
@@ -45,7 +49,7 @@ describe('Cartesian frame', function () {
     describe('with simple array data', function () {
         it('should auto generate categories and add x values as category strings', function () {
             var narwhal = createNarwhal();
-            narwhal.data([10,20,30]).render();
+            narwhal.nullVis([10,20,30]).render();
 
             expect(narwhal.dataSrc).toBeDefined();
             expect(narwhal.dataSrc[0].x).toBe(0);
@@ -79,7 +83,7 @@ describe('Cartesian frame', function () {
 
         it('should be an ordinal scaling', function () {
             narwhal = createNarwhal({chart: { width: 131 } , xAxis: { innerRangePadding: 0, outerRangePadding: 0 }});
-            narwhal.data([0,1,2,3,4,5,6,7,8,9]).render();
+            narwhal.nullVis([0,1,2,3,4,5,6,7,8,9]).render();
 
             // TODO: NEED TO FIX THIS TEST
 
@@ -103,7 +107,7 @@ describe('Cartesian frame', function () {
         xit('should be an inverted linear scaling', function () {
             // the 'nice rounding' for the max y value, makes it
             // that the top value of the chart is 50 for the following data
-            narwhal.data([0,10,20,30,40,49]).render();
+            narwhal.nullVis([0,10,20,30,40,49]).render();
             var h = narwhal.options.chart.plotHeight;
 
             expect(narwhal.yScale(0)).toEqual(h);
@@ -119,7 +123,7 @@ describe('Cartesian frame', function () {
         describe('yAxis title', function () {
             it('should be included if specificed in the options', function () {
                 narwhal = createNarwhal({ yAxis: { title: 'yAxis' } });
-                narwhal.data([1,2,3]).render();
+                narwhal.nullVis([1,2,3]).render();
                 titles = $el.find('.y.axis-title');
                 expect(titles.length).toBe(1);
                 expect(titles.text()).toBe('yAxis');
@@ -127,7 +131,7 @@ describe('Cartesian frame', function () {
 
             it('should NOT be included if NOT specificed in the options', function () {
                 narwhal = createNarwhal({ yAxis: { title: '' } });
-                narwhal.data([1,2,3]).render();
+                narwhal.nullVis([1,2,3]).render();
                 titles = $el.find('.axis-title');
                 expect(titles.length).toBe(0);
             });
@@ -139,7 +143,7 @@ describe('Cartesian frame', function () {
         // this should be in the render, because is data dependent
         it('should provide scaling function (xScale & yScale) for visualizations to use', function () {
             var target = createNarwhal()
-                .data([1,2,3])
+                .nullVis([1,2,3])
                 .render();
 
             expect(target.xScale).toBeDefined();
@@ -152,13 +156,13 @@ describe('Cartesian frame', function () {
             spyOn(mock, 'render');
 
             Narwhal.export('something', mock.render);
-            target.data([1,2]).something().render();
+            target.nullVis([1,2]).something().render();
 
             expect(mock.render).toHaveBeenCalled();
         });
 
         it('should render an xAxis at the bottom of the chart', function () {
-            createNarwhal().data([1,2,3]).render();
+            createNarwhal().nullVis([1,2,3]).render();
             var axis = $el.find('.x.axis');
             var y = narwhal.options.chart.plotHeight + narwhal.options.chart.padding.top;
             var x = narwhal.options.chart.padding.left;
@@ -168,7 +172,7 @@ describe('Cartesian frame', function () {
         });
 
         it('should adjust bottom padding and plot height to fit the xAxis and labels', function () {
-            createNarwhal().data([1,2,3]).render();
+            createNarwhal().nullVis([1,2,3]).render();
             var y = narwhal.options.chart.height - narwhal.options.chart.padding.bottom - narwhal.options.chart.padding.top;
 
             expect(narwhal.options.chart.padding.bottom).toBeGreaterThan(0);
@@ -176,7 +180,7 @@ describe('Cartesian frame', function () {
         });
 
         it('should render an yAxis at the left of the chart', function () {
-            createNarwhal().data([1,2,3]).render();
+            createNarwhal().nullVis([1,2,3]).render();
             var axis = $el.find('.y.axis');
             var x = narwhal.options.chart.padding.left;
             var y = narwhal.options.chart.padding.top;
@@ -186,7 +190,7 @@ describe('Cartesian frame', function () {
         });
 
         it('should position the yAxis at the left with some padding', function () {
-            createNarwhal().data([1,2,3]).render();
+            createNarwhal().nullVis([1,2,3]).render();
             var x = narwhal.options.chart.width - narwhal.options.chart.padding.left - narwhal.options.chart.padding.right;
 
             expect(narwhal.options.chart.padding.left).toBeGreaterThan(0);
@@ -197,13 +201,13 @@ describe('Cartesian frame', function () {
             // not sure what it should be the default...
             // changed the defult to be a ordinal with rangeBands...
             xit('should be set default to 0 (rangePoint)', function () {
-                createNarwhal().data([1,2,3]).render();
+                createNarwhal().nullVis([1,2,3]).render();
                 expect(narwhal.rangeBand).toBe(0);
             });
         });
 
         it('should render visualizations after all axis and other elements (zindex)', function () {
-            createNarwhal().data([1,2,3]);
+            createNarwhal().nullVis([1,2,3]);
             Narwhal.export('something_zindex', function (data, layer) {
                 // add a dummy svg element
                 layer.attr('name', 'myDummyVisualization');
@@ -219,12 +223,16 @@ describe('Cartesian frame', function () {
 
     describe('Grid lines', function () {
 
+        beforeEach(function () {
+            narwhal = null;
+        });
+
         it('should render horizontal gridLines width gridlines turned on', function () {
             createNarwhal({
                 chart: {
                     gridlines: 'horizontal'
                 }
-            }).data([10,20,30]);
+            }).nullVis([10,20,30]);
 
             narwhal.render();
 
@@ -240,7 +248,7 @@ describe('Cartesian frame', function () {
                 yAxis: {
                     smartAxis: false,
                 }
-            }).data([10,20,30]);
+            }).nullVis([10,20,30]);
 
             narwhal.render();
 
@@ -257,7 +265,7 @@ describe('Cartesian frame', function () {
                     categories: ['red', 'green', 'blue'],
                     firstAndLast: true,
                 }
-            }).data([10,20,30]);
+            }).nullVis([10,20,30]);
 
             narwhal.render();
 
@@ -274,7 +282,7 @@ describe('Cartesian frame', function () {
                     categories: ['red', 'green', 'blue'],
                     firstAndLast: false,
                 }
-            }).data([10,20,30]);
+            }).nullVis([10,20,30]);
 
             narwhal.render();
 
@@ -293,7 +301,7 @@ describe('Cartesian frame', function () {
                 }
             })
             /* this data gives a tick every 0.5, total 9 (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4) */
-            .data([10,20,30, 40, 50]);
+            .nullVis([10,20,30, 40, 50]);
 
             narwhal.render();
 
