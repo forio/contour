@@ -2,7 +2,7 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-This property only applies to [line]() visualizations. 
+This property only applies to [line](#line) visualizations. 
 
 When `true`, renders the visualization by plotting the data points and then animating the line being drawn between them.
 

@@ -28,7 +28,7 @@
             firstAndLast: true,
             orient: 'bottom',
             labels: {
-                // format: 'd'
+                 format: 'd'
             },
             linearDomain: false,     // specify if a time domain should be treated linearly or ....
         },

@@ -98,5 +98,5 @@ Narwhal converts this automatically to:
 
 ###Advantages of Automatic Conversion
 
-It might seem excessive to have Narwhal automatically convert all data series to such a verbose format. However, this conversion makes [exposing and exporting]() much easier. As the author of an `.expose()` or `.export()` function, you always know exactly what form of data you'll be receiving. 
+It might seem excessive to have Narwhal automatically convert all data series to such a verbose format. However, this conversion makes [exposing and exporting](#narwhal) much easier. As the author of an `.expose()` or `.export()` function, you always know exactly what form of data you'll be receiving. 
 

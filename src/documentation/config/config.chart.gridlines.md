@@ -23,7 +23,7 @@ Options for drawing gridlines are:
 
 **Notes:**
 
-Gridlines are drawn from all visible tick marks. See [`xAxis.firstAndLast`]() and [`yAxis.smartAxis`]() to control which tick marks are visible.
+Gridlines are drawn from all visible tick marks. See [`xAxis.firstAndLast`](#config_config.xAxis.firstAndLast) and [`yAxis.smartAxis`](#config_config.yAxis.smartAxis) to control which tick marks are visible.
 
 <% if(notes) { %><%= notes %><% } %>
 

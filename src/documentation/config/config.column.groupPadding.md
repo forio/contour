@@ -19,7 +19,7 @@ The horizontal distance between each data series in the *same* column visualizat
 
 **Notes:**
 
-Use [`columnWidth`]() and [`offset`]() to set the distance between columns in *different* column visualizations.
+Use [`columnWidth`](#config_config.column.columnWidth) and [`offset`](#config_config.column.offset) to set the distance between columns in *different* column visualizations.
 
 <% if(notes) { %><%= notes %><% } %>
 

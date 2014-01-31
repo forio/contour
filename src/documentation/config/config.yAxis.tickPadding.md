@@ -16,7 +16,7 @@ The distance between the end of the tick mark (which is offset `innerTickSize` f
 
 **Notes:**
 
-The label of the tick mark appears to the left of the end of the tick mark when [`orient`]() is set to `left`. The label of the tick mark appears to the right of the end of the tick mark when [`orient`]() is set to `right`.
+The label of the tick mark appears to the left of the end of the tick mark when [`orient`](#config_config.yAxis.orient) is set to `left`. The label of the tick mark appears to the right of the end of the tick mark when [`orient`](#config_config.yAxis.orient) is set to `right`.
 
 <% if(notes) { %><%= notes %><% } %>
 

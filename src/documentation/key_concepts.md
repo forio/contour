@@ -9,7 +9,7 @@ The core Narwhal object defines functionality, visualizations, and default confi
 * To create visualizations, [make a new Narwhal instance](#narwhal-instance).
 * To create additional functionality or visualizations, [add them to Narwhal](#adding-to-narwhal).
 
-For additional details, see also the [Narwhal reference documentation]().
+For additional details, see also the [Narwhal reference documentation](#narwhal).
 
 <a id="narwhal-instance"></a>
 ###The Narwhal Instance

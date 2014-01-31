@@ -20,7 +20,7 @@ The radius of each data point in a line chart, in pixels.
 
 The `size` can be any non-negative number. 
 
-[`enable`]() has precendence over `size`, so if [`enable`]() is set to `false`, the marker does not appear, regardless of the value for `size`.
+[`enable`](#config_config.line.marker.enable) has precendence over `size`, so if [`enable`](#config_config.line.marker.enable) is set to `false`, the marker does not appear, regardless of the value for `size`.
 
 <% if(notes) { %><%= notes %><% } %>
 
