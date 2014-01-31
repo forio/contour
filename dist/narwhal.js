@@ -293,7 +293,7 @@
 
     /**
     * Adds a new kind of visualization to the core Narwhal object.
-    * The *renderer* function will be called when you add this visualization to instances of Narwhal.
+    * The *renderer* function is called when you add this visualization to instances of Narwhal.
     *
     * ### Example:
     *
@@ -349,27 +349,23 @@
 
     /**
     * Exposes functionality to the core Narwhal object.
-    * Use this to add *functionality* that will be available for any new visualizations created with `.export()`.
+    * Use this to add *functionality* that will be available for any visualizations.
     *
     * ###Example:
     *
-    *     Narwhal.expose("example", function () {
-    *         // return a new instance of the functionality we want to expose
-    *         // to the narwhal instance...
-    *         return {
-    *              // when included in the instance, the function `.transformData` is available the visualizations
-    *             transformData: function(data) { .... }
-    *         };
+    *     Narwhal.expose("example", {
+    *          // when included in the instance, the function `.myFunction` is available in the visualizations
+    *         myFunction: function(data) { .... }
     *     });
     *
-    *     Narwhal.export("visualizationThatUsesTransformDataFunction", function(data, layer) {
-    *           //function body including call to this.transformData(data)
+    *     Narwhal.export("visualizationThatUsesMyFunction", function(data, layer) {
+    *           //function body including call to this.myFunction(data)
     *     });
     *
     *     // to include the functionality into a specific instance
     *     new Narwhal(options)
     *           .example()
-    *           .visualizationThatUsesTransformDataFunction()
+    *           .visualizationThatUsesMyFunction()
     *           .render()
     */
     Narwhal.expose = function (ctorName, functionalityConstructor) {
@@ -472,7 +468,7 @@
         *           .pie([1,2,3])
         *           .render()
         *
-        * @function .render
+        * @function render
         *
         */
         render: function () {
@@ -671,11 +667,12 @@
 
         xAxis: {
             /* type of axis {ordinal|linear|time} */
-            // type: 'ordinal',
-            rangePadding: 0,
+            type: 'ordinal',
             innerTickSize: 0,
             outerTickSize: 0,
             tickPadding: 6,
+            maxTicks: undefined,
+            title: undefined, 
             titlePadding: 4,
             /* padding between ranges (ie. columns) expressed in percentage of rangeBand width */
             innerRangePadding: 0.1,
@@ -698,6 +695,9 @@
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
+            tickValues: undefined,
+            ticks: undefined,
+            title: undefined, 
             titlePadding: 4,
             nicing: true,
             orient: 'left',
@@ -718,7 +718,7 @@
     *     new Narwhal(options)
     *           .cartesian();
     *
-    * @name .cartesian()
+    * @name cartesian()
     */
     var cartesian = function () {
         return {
@@ -800,7 +800,7 @@
             *
             *     var scaledValue = this.xScale(100);
             *
-            * @function this.xScale
+        * @function xScale
             * @param {Number|String} value The value to be scaled.
             * @return {Number} The scaled value according to the current xAxis settings.
             */
@@ -813,7 +813,7 @@
             *
             *     var scaledValue = this.yScale(100);
             *
-            * @function this.yScale
+        * @function yScale
             * @param {Number} value The value to be scaled.
             * @return {Number} The scaled value according to the current yAxis settings.
             */
@@ -826,8 +826,8 @@
             *
             *     this.setYDomain([100, 200]);
             *
-            * @function this.setYDomain
-            * @param {Array} domain The domain array represeting the min and max values to be visible in the yAxis.       */
+        * @function setYDomain
+        * @param {Array} domain The domain array representing the min and max values visible on the yAxis.       */
             setYDomain: function (domain) {
                 this.yScaleGenerator.setDomain(domain);
             },
@@ -839,7 +839,7 @@
             *
             *     this.redrawYAxis();
             *
-            * @function this.redrawYAxis
+        * @function redrawYAxis
             */
             redrawYAxis: function () {
                 this.svg.select(".y.axis").call(this.yAxis());
@@ -1094,7 +1094,7 @@
 
 })();
 
-Narwhal.version = '0.0.44';
+Narwhal.version = '0.0.45';
 (function () {
 
     var helpers = {
@@ -1584,21 +1584,6 @@ Narwhal.version = '0.0.44';
         }
     };
 
-    /**
-    * Horizontal Frame
-    *
-    * Provides the basis for horizontal visualizations where the y axis grows to the right (ie. bar chart)
-    *
-    * Example:
-    *     new Narwhal(config)
-    *        .cartesian()
-    *        .horizontal()
-    *        .bar([1,2,3])
-    *        .render();
-    *
-    *
-    */
-
     var frame = {
 
         init: function () {
@@ -1912,7 +1897,7 @@ Narwhal.version = '0.0.44';
     *
     * Area charts are stacked by default when the _data_ includes multiple series.
     *
-    * This visualization requires *.cartesian()*.
+    * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
@@ -1921,7 +1906,7 @@ Narwhal.version = '0.0.44';
     *           .area([1,2,3,4])
     *           .render();
     *
-    * @name .area(data, options)
+    * @name area(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public
@@ -2018,7 +2003,7 @@ Narwhal.version = '0.0.44';
     *
     * You can use this visualization to render both stacked and grouped charts (controlled through the _options_).
     *
-    * This visualization requires _.cartesian()_ and _.horizontal()_.
+    * This visualization requires `.cartesian()` and `.horizontal()`.
     *
     * ### Example:
     *
@@ -2028,7 +2013,7 @@ Narwhal.version = '0.0.44';
     *           .bar([1,2,3,4])
     *           .render();
     *
-    * @name .bar(data, options)
+    * @name bar(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public
@@ -2135,7 +2120,7 @@ Narwhal.version = '0.0.44';
     /*
     * Adds a column chart (vertical columns) to the Narwhal instance.
     *
-    * This visualization requires *.cartesian()*.
+    * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
@@ -2313,7 +2298,7 @@ Narwhal.version = '0.0.44';
     /*
     * Adds a line chart to the Narwhal instance.
     *
-    * This visualization requires *.cartesian()*.
+    * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
@@ -2322,7 +2307,7 @@ Narwhal.version = '0.0.44';
     *           .line([1,2,3,4])
     *           .render();
     *
-    * @name .line(data, options)
+    * @name line(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public
@@ -2436,7 +2421,7 @@ Narwhal.version = '0.0.44';
     *           .pie([1,2,3,4])
     *           .render();
     *
-    * @name .pie(data, options)
+    * @name pie(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats. The data elements are summed and then divided. In the example, `.pie([1,2,3,4])` makes four pie slices: 1/10, 2/10, 3/10, and 4/10.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public
@@ -2498,7 +2483,7 @@ Narwhal.version = '0.0.44';
     /*
     * Adds a scatter plot to the Narwhal instance.
     *
-    * This visualization requires *.cartesian()*.
+    * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
@@ -2507,7 +2492,7 @@ Narwhal.version = '0.0.44';
     *           .scatter([1,2,3,4])
     *           .render();
     *
-    * @name .scatter(data, options)
+    * @name scatter(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public
@@ -2531,7 +2516,7 @@ Narwhal.version = '0.0.44';
     *           .stackedTooltip(stackedColData, {el: '.myChartLegend'})
     *           .render();
     *
-    * @name .stackTooltip(data, options)
+    * @name stackTooltip(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
     * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector of the container in which the tooltip should be rendered.
     * @api public
@@ -2711,7 +2696,7 @@ Narwhal.version = '0.0.44';
     /*
     * Adds a tooltip on hover to all other visualizations in the Narwhal instance.
     *
-    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips.
+    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips. 
     *
     * ### Example:
     *
@@ -2721,9 +2706,9 @@ Narwhal.version = '0.0.44';
     *           .tooltip()
     *           .render();
     *
-    * @name .tooltip(data, options)
+    * @name tooltip(data, options)
     * @param {object|array} data Ignored!
-    * @param {object} options Options particular to this visualization that override the defaults. TBW --
+    * @param {object} options Options particular to this visualization that override the defaults. 
     * @api public
     *
     */
@@ -2777,7 +2762,7 @@ Narwhal.version = '0.0.44';
     /*
     * Adds a trend line to the Narwhal instance, based on linear regression.
     *
-    * This visualization requires *.cartesian()*.
+    * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
@@ -2786,7 +2771,7 @@ Narwhal.version = '0.0.44';
     *           .trendLine([2,4,3,5,7])
     *           .render();
     *
-    * @name .trendLine(data, options)
+    * @name trendLine(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats. A linear regression is performed on the _data series_ and the resulting trend line is displayed.
     * @param {object} [options] Options particular to this visualization that override the defaults.
     * @api public
