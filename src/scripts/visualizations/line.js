@@ -11,12 +11,18 @@
     };
 
 
-    function render(data, layer, options, id) {
+    function render(rawData, layer, options, id) {
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
         var h = options.chart.plotHeight;
         var duration = 400;
+        /*jshint eqnull:true */
+        var data = _.map(rawData, function (s) {
+            return _.extend(s, {
+                data: _.filter(s.data, function (d) { return d.y != null; })
+            });
+        });
 
         renderPaths();
         renderMarkers();
@@ -39,7 +45,7 @@
 
             // enter
             var el = series.enter().append('svg:g')
-                .attr('class', function (d, i) { return 'series s-' + (i+1); })
+                .attr('class', function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; })
                 .append('path')
                     .attr('class', 'line');
 
