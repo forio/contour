@@ -20,7 +20,7 @@
             outerTickSize: 0,
             tickPadding: 6,
             maxTicks: undefined,
-            title: undefined, 
+            title: undefined,
             titlePadding: 4,
             /* padding between ranges (ie. columns) expressed in percentage of rangeBand width */
             innerRangePadding: 0.1,
@@ -45,7 +45,7 @@
             tickPadding: 4,
             tickValues: undefined,
             ticks: undefined,
-            title: undefined, 
+            title: undefined,
             titlePadding: 4,
             nicing: true,
             orient: 'left',
@@ -340,7 +340,7 @@
                     var lines = gr.selectAll('.grid-line')
                         .data(function (d) { return d; });
 
-                    lines.transition().duration(400)
+                    lines.transition().duration(400 * this.options.chart.animations)
                         .attr('x1', 0)
                         .attr('x2', function () {
                             return w;
