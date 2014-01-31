@@ -36,9 +36,11 @@
                 .attr('cx', x)
                 .attr('cy', h);
 
-        dots
-            .transition().duration(duration)
-            .attr('r', opt.radius)
+        if (options.chart.animations) {
+            dots.transition().duration(duration);
+        }
+
+        dots.attr('r', opt.radius)
             .attr('cx', x)
             .attr('cy', y);
 
