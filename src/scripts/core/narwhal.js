@@ -317,14 +317,48 @@
             return this;
         },
 
-        getVisualization: function (index) {
-            return this._visualizations[index];
+        /**
+        * Set's the same data set into all visualizations for an instance
+        *
+        * Example:
+        *
+        *     var data = [1,2,3,4,5];
+        *     var chart = new Narwhal({ el:'.myChart' })
+        *           .scatter(data)
+        *           .trendLine(data);
+        *
+        *     data.push(10);
+        *     chart.setData(data)
+        *           .render();
+        *
+        * @function .setData
+        *
+        */
+        setData: function (data) {
+            _.invoke(this._visualizations, 'setData', data);
+
+            return this;
         },
 
-        compose: function(ctorName, funcArray) {
-            // compose differnt functional objects into this instance...
-            // this way we can do something like new Narwhal().BarChart(...) and it includes
-            // cartesia, xAxis, yAxis, tooltip, highliter, etc...
+        /**
+        * Returns a VisualizationContainer object for the visualization at a given index (0-based)
+        *
+        * Example:
+        *
+        *     var chart = new Narwhal({ el:'.myChart' })
+        *           .pie([1,2,3])
+        *           .render()
+        *
+        *     var myPie = chart.select(0)
+        *
+        *     // do something with the visualization like updateing its data set
+        *     myPie.setData([6,7,8,9]).render()
+        *
+        * @function .select
+        *
+        */
+        select: function (index) {
+            return this._visualizations[index];
         },
 
         // place holder function for now
