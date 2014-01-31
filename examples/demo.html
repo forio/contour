@@ -118,6 +118,7 @@ var config = {
     el: '.chart',
     chart: {
         gridlines: 'none',
+        animations: true
     },
 
     xAxis: {
@@ -147,7 +148,7 @@ var config = {
     },
 
     column: {
-        stacked: false
+        // stacked: false
     },
 
     tooltip: {
@@ -160,9 +161,15 @@ var config = {
 
 
 var data = [
-    { name: 'abc', data: [1, 2, 4]},
-    { name: 'xxx', data: [3, 2, 1]}
+    { name: 'abc', data: [1, 2, 4,3,5,6]},
+    { name: 'xxx', data: [3, 2, 4,1,8,4]}
     ]
+
+    var d2 = [
+                        { x: 1, y: 10},
+                        { x: 2, y: null},
+                        { x: 3}
+                    ];
 
 
 // data = [
@@ -177,7 +184,13 @@ var data = [
 
 var chart = new Narwhal(config)
     .cartesian()
-    .column(data)
+    // .horizontal()
+    // .bar(data)
+    // .column(data, {stacked: true})
+    .line(d2)
+    // .scatter(data)
+    // .trendLine(data)
+    // .stackTooltip(data, { el: '.legend' })
     // .pie([{ x: 'Alpha', y: 10}, { x: 'Beta', y: 30}, {x: 'Gamma', y: 40}, {x: 'Kappa', y: 20}])
     .tooltip()
     .render();
