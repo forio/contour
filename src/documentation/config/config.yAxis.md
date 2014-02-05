@@ -4,7 +4,7 @@
 
 To override any of the default configuration options in a yAxis, include the `yAxis` configuration object in the configuration options that you pass to your Narwhal constructor.
 
-A yAxis is only useful if your Narwhal instance uses a [cartesian]() frame.
+A yAxis is only useful if your Narwhal instance uses a [cartesian](#cartesian) frame.
 
 **Example:**
 

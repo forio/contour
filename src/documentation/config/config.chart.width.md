@@ -16,7 +16,7 @@ The width of the container for this Narwhal instance, in pixels.
 
 **Notes:**
 
-If `width` is undefined, [`defaultWidth`]() determines the width. However, if `width` is defined, it takes precendence over [`defaultWidth`](). 
+If `width` is undefined, [`defaultWidth`](#config_config.chart.defaultWidth) determines the width. However, if `width` is defined, it takes precendence over [`defaultWidth`](#config_config.chart.defaultWidth). 
 
 <% if(notes) { %><%= notes %><% } %>
 

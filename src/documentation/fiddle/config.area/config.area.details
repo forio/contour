@@ -1,0 +1,9 @@
+---
+name: config.area demo
+description: example description
+authors:
+    - Forio Narwhal team
+resources:- http://d3js.org/d3.v3.js
+    - http://forio.com/tools/narwhal/narwhal.js
+    - http://forio.com/tools/narwhal/narwhal.min.css
+...

@@ -2,7 +2,7 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-When `true`, the tooltip gradually reaches [`visibleOpacity`]() over the course of [`showTime`]() milliseconds.
+When `true`, the tooltip gradually reaches [`opacity`](#config_config.tooltip.opacity) over the course of [`showTime`](#config_config.tooltip.showTime) milliseconds.
 
 When `false`, the tooltip appears instantaneously (`false`).
 

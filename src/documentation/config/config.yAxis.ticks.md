@@ -21,7 +21,7 @@ Tick marks are evenly spaced along the domain at multiples of 1, 2, 5, 10, or 10
 
 **Notes:**
 
-The `ticks` configuration option has the lowest precedence in specifying locations of tick marks. If [`smartAxis`]() is `true`, or if [`tickValues`]() are specified, the `ticks` option is ignored.
+The `ticks` configuration option has the lowest precedence in specifying locations of tick marks. If [`smartAxis`](#config_config.yAxis.smartAxis) is `true`, or if [`tickValues`](#config_config.yAxis.tickValues) are specified, the `ticks` option is ignored.
 
 <% if(notes) { %><%= notes %><% } %>
 

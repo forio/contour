@@ -16,7 +16,7 @@ The height of the container for this Narwhal instance, in pixels.
 
 **Notes:**
 
-If `height` is undefined, [`defaultAspect`]() determines the height. However, if `height` is defined, it takes precendence over [`defaultAspect`]().
+If `height` is undefined, [`defaultAspect`](#config_config.chart.defaultAspect) determines the height. However, if `height` is defined, it takes precendence over [`defaultAspect`](#config_config.chart.defaultAspect).
 
 <% if(notes) { %><%= notes %><% } %>
 

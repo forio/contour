@@ -15,7 +15,7 @@ The default value `this.rangeBand` refers to the width when the axis interval fo
 
 **Notes:** 
 
-The `columnWidth` is divided evenly among *all* of the column visualizations in this instance of Narwhal. Therefore, if you add multiple column chart visualizations to your Narwhal instance, mostly likely you will want to override this configuration option *for each subsequent visualization*. (You'll probably also want to set the [`offset`](), so that columns for the two visualizations don't overlap.)
+The `columnWidth` is divided evenly among *all* of the column visualizations in this instance of Narwhal. Therefore, if you add multiple column chart visualizations to your Narwhal instance, mostly likely you will want to override this configuration option *for each subsequent visualization*. (You'll probably also want to set the [`offset`](#config_config.column.offset), so that columns for the two visualizations don't overlap.)
 
 For example:
 
