@@ -22,7 +22,7 @@
 
     OrdinalScale.prototype = {
         init: function () {
-            this.isCategorized = true;// _.isArray(this.options.xAxis.categories);
+            this.isCategorized = true;
             delete this._scale;
         },
 
