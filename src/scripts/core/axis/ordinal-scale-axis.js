@@ -57,7 +57,28 @@
             return axis;
         },
 
+        /* jshint eqnull:true */
         postProcessAxis: function (axisGroup) {
+            var options = this.options.xAxis;
+            if (!options.labels || options.labels.rotation == null) return;
+
+            var deg = options.labels.rotation;
+            var rad = _.nw.degToRad(deg);
+            var lineCenter = 0.71; // center of text line is at .31em
+            var cos = Math.cos(rad);
+            var sin = Math.sin(rad);
+            var positive = options.labels.rotation > 0;
+            var anchor = options.labels.rotation < 0 ? 'end' : options.labels.rotation > 0 ? 'start' : 'middle';
+            var labels = axisGroup.selectAll('.tick text')
+                .style({'text-anchor': anchor})
+                .attr('transform', function (d, i, j) {
+                    var x = d3.select(this).attr('x') || 0;
+                    var y = d3.select(this).attr('y') || 0;
+                    return 'rotate(' + options.labels.rotation + ' ' + x + ',' + y + ')';
+                })
+                .attr('dy', function (d, i, j) {
+                    return (cos * lineCenter + (0.31)).toFixed(4) + 'em';
+                });
         },
 
         update: function (domain, data) {

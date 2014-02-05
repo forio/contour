@@ -30,6 +30,14 @@
             return val > high ? high : val;
         },
 
+        degToRad: function (deg) {
+            return deg * Math.PI / 180;
+        },
+
+        radToDeg: function (rad) {
+            return rad * 180 / Math.PI;
+        },
+
         linearRegression: function (dataSrc) {
             var lr = {};
             var n = dataSrc.length;

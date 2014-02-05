@@ -88,16 +88,25 @@
 
 
             adjustPadding: function () {
-                var options = this.options.yAxis;
-                var yLabels = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), options.min, options.max);
-                var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
+                var yOptions = this.options.yAxis;
+                var xOptions = this.options.xAxis;
+                var yLabels = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
+                var xLabels = this.xDomain;
+
+                var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
                 var yAxisText = _.map(yLabels, format).join('<br>');
+                var xAxisText = xLabels.join('<br>');
                 var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
-                var xLabelBounds = _.nw.textBounds('jgitlhHJKQWE', '.x.axis');
+                var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
+                var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
+                var em = regularXBounds.height;
+                var rad = function (deg) { return deg * Math.PI / 180; };
+                var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
+                var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(rad(ang))));
                 var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
 
                 this.options.chart.padding.left = this.options.chart.padding.left ||  maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
-                this.options.chart.padding.bottom = this.options.chart.padding.bottom ||maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height;
+                this.options.chart.padding.bottom = this.options.chart.padding.bottom || maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelHeightUsed + Math.floor(em * 0);
             },
 
             adjustTitlePadding: function () {
