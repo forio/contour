@@ -16,6 +16,8 @@ To override any of the default configuration options in a scatter plot, include 
 	.scatter(data)
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/jy2Xn/)*
+
 <% if(notes) { %><%= notes %><% } %>
 
 

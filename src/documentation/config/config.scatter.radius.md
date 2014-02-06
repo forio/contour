@@ -8,8 +8,10 @@ The radius of the data points on a scatter plot, in pixels.
 
 		new Narwhal({
 		  el: '.myScatterPlot',
-		  scatter: { radius: 1.5 }
+		  scatter: { radius: 10 }
 		})
+
+*[Try it.](http://jsfiddle.net/forio/XZWP5/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

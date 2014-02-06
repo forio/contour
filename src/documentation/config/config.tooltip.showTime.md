@@ -8,12 +8,14 @@ The amount of time, in milliseconds, for the tooltip to appear and reach [`opaci
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    tooltip: { showTime: 200 }
+	    tooltip: { showTime: 1000 }
 	  })
 	.cartesian()
 	.line(data)
 	.tooltip()
 	.render() 
+
+*[Try it.](http://jsfiddle.net/forio/Xb8Y6/)*
 
 **Notes:**
 

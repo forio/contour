@@ -8,11 +8,14 @@ The length of the tick marks, in pixels, offset from the axis.
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    xAxis: { innerTickSize: 6}
+	    xAxis: { innerTickSize: 15,
+	    		 firstAndLast: false }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/LU6du/)*
 
 **Notes:**
 

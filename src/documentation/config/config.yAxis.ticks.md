@@ -10,14 +10,18 @@ Tick marks are evenly spaced along the domain at multiples of 1, 2, 5, 10, or 10
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    yAxis: { ticks: 4 }
+	    chart: { margin : { left: 20 } },
+        yAxis: { ticks: 4, smartAxis: false }
 	  })
 	.cartesian()
 		//for this data set, 
 		//ticks: 4 draws tick marks at 0, 2, 4, 6, 8
-		//ticks: 29 draws tick marks at 0.2, 0.4, 0.6, 0.8, 1, 1.2, etc.
+		//ticks: 15 draws tick marks at 0.5, 1, 1.5, 2, 2.5, etc.
 	.line([1, 2, 4, 5, 6, 7, 8])
+	.tooltip()
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/GaF5p/)*
 
 **Notes:**
 

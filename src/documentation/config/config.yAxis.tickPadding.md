@@ -8,11 +8,14 @@ The distance between the end of the tick mark (which is offset `innerTickSize` f
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    yAxis: { tickPadding: 20}
+	    yAxis: { tickPadding: 20,
+	    		 smartAxis: false }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/Ws4Vm/)*
 
 **Notes:**
 

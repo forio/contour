@@ -8,8 +8,11 @@ The distance from the edge of the chart to the [`outerRadius`](#config_config.pi
 
 		new Narwhal({
 		  el: '.myPieChart',
-		  pie: { piePadding: 30 }
+		  pie: { piePadding: 100 }
 		})
+
+TODO: Pending https://github.com/forio/forio-narwhal/issues/82
+*[Try it.](http://jsfiddle.net/forio/8b4E2/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

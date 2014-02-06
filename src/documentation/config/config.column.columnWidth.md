@@ -10,8 +10,10 @@ The default value `this.rangeBand` refers to the width when the axis interval fo
 
 		new Narwhal({
 		  el: '.myColumnChart',
-		  column: { columnWidth: 50 }
+		  column: { columnWidth: 20 }
 		})
+
+*[Try it.](http://jsfiddle.net/forio/5JubL/)*
 
 **Notes:** 
 

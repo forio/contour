@@ -12,7 +12,7 @@ When `true`, extends the domain so that it starts and ends on ["nice, round" val
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    yAxis: { nicing: true}
+	    yAxis: { nicing: true, smartAxis: false }
 	  })
 	.cartesian()
 		//for this data set, 
@@ -20,6 +20,12 @@ When `true`, extends the domain so that it starts and ends on ["nice, round" val
 		//nicing: false draws the top tick mark at 9 
 	.line([0.8, 2, 4, 5, 8.2]) 
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/q5tLG/)*
+
+**Notes:**
+
+The [`smartAxis`](#config_config.yAxis.smartAxis) configuration option has the highest precedence in specifying locations of tick marks. If [`smartAxis`](#config_config.yAxis.smartAxis) is `true`, `nicing` is ignored.
 
 <% if(notes) { %><%= notes %><% } %>
 

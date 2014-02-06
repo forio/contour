@@ -12,11 +12,13 @@ Use the [`outerRangePadding`](#config_config.xAxis.outerRangePadding) to set the
 
 	new Narwhal({
 	    el: ".myColumnChart",
-	    xAxis: { innerRangePadding: 0.6}
+	    xAxis: { innerRangePadding: 0.9}
 	  })
 	.cartesian()
 	.column(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/LJ4ZS/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

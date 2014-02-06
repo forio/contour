@@ -18,5 +18,7 @@ The vertical distance between each data series in the *same* bar visualization.
           ])
         .render()
 
+*[Try it.](http://jsfiddle.net/forio/Js25t/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

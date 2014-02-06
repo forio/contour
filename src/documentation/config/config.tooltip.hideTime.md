@@ -15,5 +15,7 @@ The amount of time, in milliseconds, for the tooltip to disappear after the mous
 	.tooltip()
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/sNRgL/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

@@ -8,11 +8,13 @@ The length of the tick mark at the end of the axis, in pixels, offset from the a
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    yAxis: { outerTickSize: 10}
+	    yAxis: { outerTickSize: 20 }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/DDwL3/)*
 
 **Notes:**
 

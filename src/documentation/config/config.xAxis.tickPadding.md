@@ -8,11 +8,16 @@ The distance between the end of the tick mark and the label of the tick mark, in
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    xAxis: { tickPadding: 20}
+	    xAxis: { innerTickSize: 6, 
+                 tickPadding: 25,
+                 firstAndLast: false                
+               }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/abzJE/)*
 
 **Notes:**
 

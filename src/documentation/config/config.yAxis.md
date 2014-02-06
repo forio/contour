@@ -18,6 +18,7 @@ A yAxis is only useful if your Narwhal instance uses a [cartesian](#cartesian) f
 	.line(data)
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/Te6ew/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

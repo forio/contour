@@ -9,12 +9,14 @@ The amount of whitespace (padding), in pixels, between the left edge of any visu
 	new Narwhal({
 	    el: ".myChart",
 	    chart: {
-	      padding: { left: 10 } 
+	      padding: { left: 50 } 
 	    }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/RUeJ4/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

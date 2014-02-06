@@ -8,12 +8,13 @@ The title to display for this axis.
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    chart: { padding: { bottom: 0 } }
-	    xAxis: { title: 'Index', titlePadding: 10}
+	    xAxis: { title: 'Index'}
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/34M75/)*
 
 **Notes:**
 

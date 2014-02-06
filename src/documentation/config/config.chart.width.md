@@ -8,11 +8,13 @@ The width of the container for this Narwhal instance, in pixels.
 
 	new Narwhal({
 	    el: ".myChart",
-	    chart: { width: 400 }
+	    chart: { width: 200 }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/5SBJ8/)*
 
 **Notes:**
 

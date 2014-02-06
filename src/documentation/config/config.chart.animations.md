@@ -18,5 +18,7 @@ When `false`, renders the visualization by drawing the data points and the line 
 	.line(data)
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/QfqbZ/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

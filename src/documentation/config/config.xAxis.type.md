@@ -18,6 +18,8 @@ How the xAxis should be scaled. The available options are:
 	.line([{x:0, y:5}, {x:1, y:3}, {x:3, y:7}, {x:10, y:4}])
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/gYL6y/)*
+
 **Notes:**
 
 The `type` defaults to `ordinal` **unless** your data is in the JavaScript [Date](http://www.w3schools.com/jsref/jsref_obj_date.asp) format, in which case the `type` defaults to `time`. Either way, you can set the `type` explicitly if needed.

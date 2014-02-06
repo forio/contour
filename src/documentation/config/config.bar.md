@@ -17,5 +17,7 @@ To override any of the default configuration options in a bar chart, include the
 	.bar(data)
 	.render()	
 	
+*[Try it.](http://jsfiddle.net/forio/C27eg/)*	
+	
 <% if(notes) { %><%= notes %><% } %>
 

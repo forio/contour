@@ -8,11 +8,13 @@ The minimum value for the domain of the yAxis.
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    yAxis: { min: 10 }
+	    yAxis: { min: 50 }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/9Vf9k/)*
 
 **Notes:**
 

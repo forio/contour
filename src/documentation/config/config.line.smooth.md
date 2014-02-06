@@ -16,5 +16,7 @@ When `true`, the segments between data points are [interpolated in a cardinal sp
 		.line([5, 3, 6, 7, 4, 2])
 		.render()
 
+*[Try it.](http://jsfiddle.net/forio/9b3BL/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

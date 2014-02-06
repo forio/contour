@@ -10,8 +10,10 @@ When `outerRadius` is null, the radius from the center of the pie to the outer e
 
 		new Narwhal({
 		  el: '.myPieChart',
-		  pie: { outerRadius: 200 }
+		  pie: { outerRadius: 100 }
 		})
+
+*[Try it.](http://jsfiddle.net/forio/73hPM/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

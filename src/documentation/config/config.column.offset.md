@@ -2,7 +2,7 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-The horiztonal distance between the start of the xAxis and the first column in the column chart, in pixels.
+The horiztonal distance between the start of the range band and the start of the drawn column, in pixels.
 
 **Example:**
 
@@ -10,6 +10,8 @@ The horiztonal distance between the start of the xAxis and the first column in t
 			el: '.myColumnChart',
 			column: { offset: 15 }
 		})
+
+*[Try it.](http://jsfiddle.net/forio/svKGj/)*
 
 **Notes:**
 
@@ -22,8 +24,8 @@ For example:
 	    column: { offset: 15 }
 	  })
 	.cartesian()
-	.column(data)
-	.column(otherData, { columnWidth: 40, offset: 30 } )
+	.column(data, { columnWidth: 10 })
+	.column(otherData, { columnWidth: 40, offset: 30 })
 	.render()
 
 

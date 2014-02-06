@@ -14,6 +14,8 @@ The height of the container for this Narwhal instance, in pixels.
 	.line(data)
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/s8Vua/)*
+
 **Notes:**
 
 If `height` is undefined, [`defaultAspect`](#config_config.chart.defaultAspect) determines the height. However, if `height` is defined, it takes precendence over [`defaultAspect`](#config_config.chart.defaultAspect).
