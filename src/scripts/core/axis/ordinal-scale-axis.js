@@ -92,6 +92,9 @@
         },
 
         rangeBand: function () {
+            var band = this._scale.rangeBand();
+            if (!band) _.nw.warn('rangeBand is 0, you may have too many points in in the domain for the size of the chart (ie. chartWidth = ' + this.options.chart.plotWidth + 'px and ' + (this._domain.length) + ' X-axis points (plus paddings) means less than 1 pixel per band and there\'re no half pixels');
+
             return this._scale.rangeBand();
         },
 
