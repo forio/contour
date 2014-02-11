@@ -9,6 +9,13 @@
         }
     };
 
+    var logging = {
+        warn: function (msg) {
+            if (console && console.log)
+                console.log(msg);
+        }
+    };
+
     var numberHelpers = {
         firstAndLast: function (ar) {
             return [ar[0], ar[ar.length-1]];
@@ -202,6 +209,7 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, ajaxHelpers, debuggingHelpers, domHelpers, generalHelpers);
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
+        ajaxHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
 
 })();
