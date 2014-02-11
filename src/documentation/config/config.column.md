@@ -16,9 +16,7 @@ To override any of the default configuration options in a column chart, include 
 	.column(data)
 	.render()	
 
-Example
-
-http://jsfiddle.net/seqfr/1/
+*[Try it.](http://jsfiddle.net/forio/pG9Dx/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

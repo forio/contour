@@ -19,5 +19,7 @@ The supported orientations are:
 	.line(data)
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/zbA9W/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

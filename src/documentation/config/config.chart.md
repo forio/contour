@@ -16,5 +16,7 @@ To override any of the default configuration options in a `chart`, include the `
 	.line(data)
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/7jqF4/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

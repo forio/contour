@@ -17,6 +17,8 @@ The horizontal distance between each data series in the *same* column visualizat
           ])
         .render()
 
+*[Try it.](http://jsfiddle.net/forio/PCBLZ/)*
+
 **Notes:**
 
 Use [`columnWidth`](#config_config.column.columnWidth) and [`offset`](#config_config.column.offset) to set the distance between columns in *different* column visualizations.

@@ -8,11 +8,13 @@ The maximum value for the domain of the yAxis.
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    yAxis: { max: 100 }
+	    yAxis: { max: 300 }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/Vc7VT/)*
 
 **Notes:**
 

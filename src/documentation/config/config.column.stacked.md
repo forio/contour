@@ -17,6 +17,10 @@ Whether a single column visualization that has data with multiple series is disp
 		  ])
 		.render()
 
+TODO: this works fine in master, but is producing odd results on the yAxis (similar to https://github.com/forio/forio-narwhal/issues/77) with the version that's on forio.com/tools (that jsfiddle examples are using)
+
+*[Try it.](http://jsfiddle.net/forio/7XAC5/))*
+
 <% if(notes) { %><%= notes %><% } %>
 
 

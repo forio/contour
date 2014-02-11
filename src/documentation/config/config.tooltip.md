@@ -19,5 +19,7 @@ A tooltip is only useful if there is another visualization in this Narwhal insta
 	.tooltip()
 	.render() 
 
+*[Try it.](http://jsfiddle.net/forio/7fAP2/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

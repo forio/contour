@@ -9,12 +9,14 @@ The amount of whitespace (padding), in pixels, between the lower edge of the con
 	new Narwhal({
 	    el: ".myChart",
 	    chart: {
-	      margin: { bottom: 10 } 
+	      margin: { bottom: 100 } 
 	    }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/EKzLt/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

@@ -13,11 +13,17 @@ The supported orientations are:
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    xAxis: { orient: "top" }
+	    xAxis: { orient: "top",
+                 innerTickSize: 6, 
+                 firstAndLast: false
+               }
 	  })
 	.cartesian()
 	.line(data)
+	.tooltip()
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/agX8r/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

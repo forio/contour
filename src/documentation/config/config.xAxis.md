@@ -18,5 +18,7 @@ An xAxis is only useful if your Narwhal instance uses a [cartesian](#cartesian) 
 	.line(data)
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/67GrJ/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

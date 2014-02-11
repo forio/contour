@@ -8,11 +8,15 @@ An array containing the values for the locations of the tick marks on this axis 
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    yAxis: { tickValues: [0, 2, 4, 6, 7, 8]}
+	    yAxis: { tickValues: [0, 2, 4, 6, 7, 8],
+	             smartAxis: false }
 	  })
 	.cartesian()
 	.line([1, 2, 4, 5, 6, 7, 8])
+	.tooltip()
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/zS6aX/)*
 
 **Notes:**
 

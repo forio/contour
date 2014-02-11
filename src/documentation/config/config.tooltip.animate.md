@@ -10,12 +10,14 @@ When `false`, the tooltip appears instantaneously (`false`).
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    tooltip: { showTime: 500, animate: true }
+	    tooltip: { showTime: 1000, animate: true }
 	  })
 	.cartesian()
 	.line(data)
 	.tooltip()
 	.render() 
+
+*[Try it.](http://jsfiddle.net/forio/e7Q3u/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

@@ -8,5 +8,7 @@ The container of this Narwhal instance has its dimensions determined by [`defaul
 
 The `margin` configuration property needs to include at least one of [`top`](#config_config.chart.margin.top), [`bottom`](#config_config.chart.margin.bottom), [`right`](#config_config.chart.margin.right), and [`left`](#config_config.chart.margin.left).
 
+*[Try it.](http://jsfiddle.net/forio/EKzLt/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

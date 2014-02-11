@@ -2,7 +2,7 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-If `width` is undefined, use this `defaultWidth` to determine the width of the container for this Narwhal instance, in pixels.
+If [`width`](#config_config.chart.width) is undefined, use this `defaultWidth` to determine the width of the container for this Narwhal instance, in pixels.
 
 **Example:**
 
@@ -14,7 +14,7 @@ If `width` is undefined, use this `defaultWidth` to determine the width of the c
 	.line(data)
 	.render()
 
-
+TODO: defaultWidth not being respected within jsfiddle container?
 
 <% if(notes) { %><%= notes %><% } %>
 

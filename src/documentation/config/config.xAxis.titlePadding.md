@@ -8,12 +8,13 @@ The distance below the axis and [`chart.padding.bottom`](#config_config.chart.pa
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    chart: { padding: { bottom: 0 } }
-	    xAxis: { title: 'Index', titlePadding: 10}
+	    xAxis: { title: 'Index', titlePadding: 40 }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/BJNd8/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

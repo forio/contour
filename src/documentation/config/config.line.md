@@ -16,5 +16,7 @@ To override any of the default configuration options in a line chart, include th
 	.line(data)
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/3xH4P/)*
+
 <% if(notes) { %><%= notes %><% } %>
 

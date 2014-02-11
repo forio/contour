@@ -14,6 +14,7 @@ Whether to label only the first and last values on the axis (`true`), or to labe
 	.line(data)
 	.render()
 
+*[Try it.](http://jsfiddle.net/forio/2mWM8/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

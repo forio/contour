@@ -8,7 +8,7 @@ Whether a single bar visualization that has data with multiple series is display
 
 		new Narwhal({
 		    el: '.myBarChart',
-		    column: { stacked: true }
+		    bar: { stacked: true }
 		  })
 		.cartesian()
 		.horizontal()
@@ -17,6 +17,8 @@ Whether a single bar visualization that has data with multiple series is display
 		    {name: 'series2', data: [5,6,7,8]}
 		  ])
 		.render()
+
+*[Try it.](http://jsfiddle.net/forio/B5B2Y/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

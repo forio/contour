@@ -16,5 +16,7 @@ To override any of the default configuration options in an area chart, include t
 	.area(data)
 	.render()	
 
+*[Try it.](http://jsfiddle.net/forio/fK6z2/){"_blank"}*
+
 <% if(notes) { %><%= notes %><% } %>
 

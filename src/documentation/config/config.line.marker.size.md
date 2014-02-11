@@ -16,6 +16,8 @@ The radius of each data point in a line chart, in pixels.
       .line([5, 3, 6, 7, 4, 2])
       .render()
 
+*[Try it.](http://jsfiddle.net/forio/RPjwk/)*
+
 **Notes:**
 
 The `size` can be any non-negative number. 

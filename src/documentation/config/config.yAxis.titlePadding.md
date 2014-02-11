@@ -8,12 +8,13 @@ The distance to the left of the axis and [`chart.padding.left`](#config_config.c
 
 	new Narwhal({
 	    el: ".myLineChart",
-	    chart: { padding: { left: 0 } }
-	    yAxis: { title: 'Value', titlePadding: 10}
+	    yAxis: { title: 'Value', titlePadding: 40 }
 	  })
 	.cartesian()
 	.line(data)
 	.render()
+
+*[Try it.](http://jsfiddle.net/forio/C5Xm2/)*
 
 <% if(notes) { %><%= notes %><% } %>
 
