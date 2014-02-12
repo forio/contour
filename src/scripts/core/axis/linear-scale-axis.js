@@ -12,6 +12,7 @@
             delete this._scale;
         },
 
+        /*jshint eqnull:true*/
         scale: function (domain) {
             this._domain = domain ? this._getAxisDomain(domain) : this._getAxisDomain(this.data);
             if(!this._scale) {
@@ -28,7 +29,7 @@
 
         axis: function () {
             var options = this.options.xAxis;
-            var formatLabel = d3.format(options.labels.format || 'd');
+            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'd');
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickSize(options.innerTickSize, options.outerTickSize)

@@ -184,5 +184,17 @@ describe('Ordinal xAxis', function () {
 
     });
 
+    it('should use the label formatting function to format tick labels if defined', function () {
+        var text = 'format';
+        // this function should get called once per label
+        var formatter = function (label, index, fullCollection) { return text; };
+        narwhal = createNarwhal({xAxis:  { firstAndLast: false, labels: { formatter: formatter }}});
+
+        narwhal.nullVis([1,2,3]).render();
+        expect($el.find('.x.axis .tick text').eq(0).text()).toBe(text);
+        expect($el.find('.x.axis .tick text').eq(1).text()).toBe(text);
+        expect($el.find('.x.axis .tick text').eq(2).text()).toBe(text);
+    });
+
 
 });

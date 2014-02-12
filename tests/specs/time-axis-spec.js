@@ -83,6 +83,24 @@ describe('time Axis', function () {
         expect(xLabels.eq(2).text()).toBe('12:00');
     });
 
+    it('should used formatter function if defined', function () {
+        var text = 'some text for the axis';
+        var formatter = function () { return text; };
+        narwhal = createNarwhal({ xAxis: { firstAndLast: false, labels: { formatter: formatter } }})
+            .nullVis([
+                { x: new Date('10/11/2013 10:00'), y: 10 },
+                { x: new Date('10/11/2013 11:00'), y: 20 },
+                { x: new Date('10/11/2013 12:00'), y: 30 }
+            ])
+            .render();
+
+        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        expect(xLabels.eq(0).text()).toBe(text);
+        expect(xLabels.eq(1).text()).toBe(text);
+        expect(xLabels.eq(2).text()).toBe(text);
+
+    });
+
     describe('with the linearDomain options set to true', function () {
         it('should partition the x axis in equal steps regardless of the actual date/time', function () {
             var data = [
