@@ -26,6 +26,11 @@ describe('Cartesian frame', function () {
             var narwhal = createNarwhal();
             expect(narwhal.render).toThrow();
         });
+
+        it('should ensure rotatedFrame is set to false', function () {
+            var narwhal = createNarwhal({ chart: { rotatedFrame: true }});
+            expect(narwhal.options.chart.rotatedFrame).toBe(false);
+        });
     });
 
     function assert_hasDefaultEmptyYScale(narwhal) {

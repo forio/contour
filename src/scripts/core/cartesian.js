@@ -74,7 +74,14 @@
 
             init: function (options) {
 
-                this.options = _.merge({}, defaults, options);
+                // readonly properties (ie. user cannot modify)
+                var readOnlyProps = {
+                    chart: {
+                        rotatedFrame: false
+                    }
+                };
+
+                this.options = _.merge({}, defaults, options, readOnlyProps);
 
                 if (!this.options.xAxis.firstAndLast) {
                     this.options.chart.padding.right += 15;
