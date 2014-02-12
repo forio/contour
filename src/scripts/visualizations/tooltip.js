@@ -120,9 +120,10 @@
 
         this.tooltipElement = this.container
             .style('position', 'relative')
-            .append('div');
+            .selectAll('.nw-tooltip').data([1]);
 
         this.tooltipElement
+            .enter().append('div')
             .attr('class', 'nw-tooltip')
             .style('opacity', 0)
             .append('div')
@@ -139,7 +140,7 @@
     /*
     * Adds a tooltip on hover to all other visualizations in the Narwhal instance.
     *
-    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips. 
+    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips.
     *
     * ### Example:
     *
@@ -151,7 +152,7 @@
     *
     * @name tooltip(data, options)
     * @param {object|array} data Ignored!
-    * @param {object} options Options particular to this visualization that override the defaults. 
+    * @param {object} options Options particular to this visualization that override the defaults.
     * @api public
     *
     */
