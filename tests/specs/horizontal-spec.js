@@ -13,6 +13,13 @@ describe('Horizontal frame', function () {
         return narwhal;
     }
 
+    describe('constructor', function () {
+        it('should ensure rotatedFrame is set to true', function () {
+            var narwhal = createNarwhal({ chart: { rotatedFrame: false }}).cartesian().horizontal();
+            expect(narwhal.options.chart.rotatedFrame).toBe(true);
+        });
+    });
+
     describe('render', function () {
         beforeEach(function () {
             var options = {
