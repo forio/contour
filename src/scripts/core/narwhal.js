@@ -27,7 +27,9 @@
                 bottom: 0,
                 left: 0
             },
-            // with in pixels of the plot area (area inside the axis if any). This gets calculated on render
+            // automatically false by default anyway; adding here to help generate docs
+            rotatedFrame: false,
+            // width in pixels of the plot area (area inside the axis if any). This gets calculated on render
             plotWidth: undefined,
             // height in pixels of the plot area (area inside the axis if any). This gets calculated on render
             plotHeight: undefined,
