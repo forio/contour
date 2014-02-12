@@ -16,7 +16,7 @@
             var options = this.options.yAxis;
             var domain = this._scale.domain();
             var ticksHint = Math.ceil(Math.log(domain[1]) / Math.log(10));
-            var format = d3.format(options.labels.format || ',.0f');
+            var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
 
             var axis = d3.svg.axis()
                 .scale(this._scale)

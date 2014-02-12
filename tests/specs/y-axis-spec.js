@@ -86,7 +86,7 @@ describe('default yAxis', function () {
         expect(_.all(ticks, function (t) { return $(t).attr('dy') === '0'; })).toBe(true);
     });
 
-    describe('with smart y axis (dafault)', function () {
+    describe('with smart y axis', function () {
         it('should round the max tick value to a nice value', function () {
             narwhal.nullVis([1,2,3,4]).render();
 
@@ -117,6 +117,20 @@ describe('default yAxis', function () {
                 nw.setData([1,2,3,50]).render();
                 var ticks = $el.find('.y.axis .tick text');
                 expect(+ticks.last().text()).toBe(55);
+            });
+        });
+
+        describe('with label formatter function set', function () {
+            it('should use the function to format tick labels', function () {
+                var text = 'format';
+                narwhal = createNarwhal({yAxis:  { smartAxis: true, labels: {
+                    formatter: function () { return text; }
+                }}});
+
+                narwhal.nullVis([1,2,3]).render();
+                expect($el.find('.y.axis .tick text').eq(0).text()).toBe(text);
+                expect($el.find('.y.axis .tick text').eq(1).text()).toBe(text);
+                expect($el.find('.y.axis .tick text').eq(2).text()).toBe(text);
             });
         });
     });
@@ -224,6 +238,20 @@ describe('default yAxis', function () {
 
             expect(narwhal.yScale(500)).toBe(0);
             expect(narwhal.yScale(-2)).toBe(narwhal.options.chart.plotHeight);
+        });
+    });
+
+    describe('with label formatter function set', function () {
+        it('should use the function to format tick labels', function () {
+            var text = 'format';
+            // this function should get called once per label
+            var formatter = function (label, index, fullCollection) { return text; };
+            narwhal = createNarwhal({yAxis:  { smartAxis: false, labels: { formatter: formatter }}});
+
+            narwhal.nullVis([1,2,3]).render();
+            expect($el.find('.y.axis .tick text').eq(0).text()).toBe(text);
+            expect($el.find('.y.axis .tick text').eq(1).text()).toBe(text);
+            expect($el.find('.y.axis .tick text').eq(2).text()).toBe(text);
         });
     });
 

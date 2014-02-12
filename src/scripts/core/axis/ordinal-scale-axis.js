@@ -39,15 +39,14 @@
 
         axis: function () {
             var options = this.options.xAxis;
+            var tickFormat = options.labels.formatter || function (d) { return _.isDate(d) ? d.getDate() : d; };
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .innerTickSize(options.innerTickSize)
                 .outerTickSize(options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickValues(this.options.xAxis.categories)
-                .tickFormat(function (d ,i) {
-                    return _.isDate(d) ? d.getDate() : d;
-                });
+                .tickFormat(tickFormat);
 
             if (this.options.xAxis.firstAndLast) {
                 // show only first and last tick
