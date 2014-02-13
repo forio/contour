@@ -14,19 +14,29 @@
         var opt = options.column;
         var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
-        var x = this.xScale;
-        var y = this.yScale;
+        var _this = this;
+        var x = function (v) { return Math.round(_this.xScale(v)); };
+        var y = function (v) { return Math.round(_this.yScale(v)); };
         var dataKey = function (d) { return d.data; };
         var chartOffset = _.nw.getValue(opt.offset, 0, this);
         var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
         var enter = _.partialRight((options.column.stacked ? stacked : grouped), true);
         var update = options.column.stacked ? stacked : grouped;
+        var filteredData = _.map(data, function (series, j) {
+            return {
+                name: series.name,
+                data: _.filter(series.data, function (d, i) {
+                    return i === 0 ? true : x(d.x) !== x(series.data[i-1].x);
+                })
+            };
+        });
+
         var stack = d3.layout.stack().values(function (d) {
             return d.data;
         });
 
         var series = layer.selectAll('g.series')
-                .data(stack(data));
+                .data(stack(filteredData));
 
         series.enter()
             .append('g')
