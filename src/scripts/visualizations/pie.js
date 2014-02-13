@@ -14,7 +14,7 @@
     function renderer(data, layer, options) {
         var duration = 400;
         var w = options.chart.plotWidth, h = options.chart.plotHeight;
-        var padding = _.nw.getValue(options.pie.piePadding, 0, this);
+        var padding = _.nw.clamp(_.nw.getValue(options.pie.piePadding, 0, this), 0, h/2 - 2);
         var numSeries = data.length;
         var proposedRadius = (Math.min(w / numSeries, h) / 2) - padding;
         var radius = _.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius) ;
