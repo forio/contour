@@ -10,6 +10,7 @@
     */
 
     function dateDiff(d1, d2) {
+        if (!d1 || !d2) return 0;
         var diff = d1.getTime() - d2.getTime();
         return diff / (24*60*60*1000);
     }
