@@ -25,7 +25,8 @@
         });
 
         renderPaths();
-        renderMarkers();
+        if (options.line.marker.enable)
+            renderMarkers();
         renderTooltipTrackers();
 
 
