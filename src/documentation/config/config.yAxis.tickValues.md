@@ -1,4 +1,4 @@
-#### **tickValues** : {<%= type %>}
+#### **tickValues** : { array }
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 

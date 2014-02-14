@@ -1,4 +1,4 @@
-#### **plotWidth** : {<%= type %>}
+#### **plotWidth** : { integer }
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 

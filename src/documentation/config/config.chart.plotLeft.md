@@ -1,4 +1,4 @@
-#### **plotLeft** : {<%= type %>}
+#### **plotLeft** : { integer }
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 

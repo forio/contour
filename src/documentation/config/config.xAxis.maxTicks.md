@@ -1,4 +1,4 @@
-#### **maxTicks** : {<%= type %>}
+#### **maxTicks** : { integer }
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 

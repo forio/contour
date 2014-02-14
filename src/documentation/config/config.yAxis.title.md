@@ -1,4 +1,4 @@
-#### **title** : {<%= type %>}
+#### **title** : { string }
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
