@@ -171,7 +171,7 @@
     };
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
-        _visualizations: [],
+        _visualizations: undefined,
 
         // Initializes the instance of Narwhal
         init: function (options) {
@@ -180,7 +180,7 @@
             // after all components/visualizations have been added
             this.options = options || {};
 
-            this._visualizations.length = 0;
+            this._visualizations = [];
 
             return this;
         },
