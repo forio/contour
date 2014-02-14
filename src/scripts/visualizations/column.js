@@ -91,12 +91,13 @@
             col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
                 .attr('width', width);
 
-            if (enter)
+            if (enter) {
                 col.attr('y', _.nw.clampLeft(h, 0))
                     .attr('height', 0);
-            else
+            } else {
                 col.attr('height', function (d) { return h - y(d.y); })
                     .attr('y', function (d) { return y(d.y); });
+            }
         }
     }
 
