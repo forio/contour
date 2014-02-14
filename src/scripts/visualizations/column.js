@@ -70,33 +70,34 @@
         }
 
         function stacked(col, enter) {
+            var base = y(0);
+
             col.attr('x', function (d) { return x(d.x) + chartOffset; })
                 .attr('width', function () { return rangeBand; });
 
             if (enter) {
-                col
-                    .attr('y', function (d) { return h; })
+                col.attr('y', function (d) { return d.y >= 0 ? base : base; })
                     .attr('height', function (d) { return 0; });
             } else {
-                col
-                    .attr('y', function (d) { return y(d.y) + y(d.y0) - h; })
-                    .attr('height', function (d) { return h - y(d.y); });
+                col.attr('y', function (d) { return d.y >= 0 ? y(d.y) + y(d.y0) - base : y(d.y0) ; })
+                    .attr('height', function (d) { return d.y >=0 ? base - y(d.y) : y(d.y) - base; });
             }
         }
 
         function grouped(col, enter) {
             var width = rangeBand / data.length - opt.groupPadding;
             var offset = function (d, i) { return rangeBand / data.length * i; };
+            var base = y(0);
 
             col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
                 .attr('width', width);
 
             if (enter) {
-                col.attr('y', _.nw.clampLeft(h, 0))
+                col.attr('y', base)
                     .attr('height', 0);
             } else {
-                col.attr('height', function (d) { return h - y(d.y); })
-                    .attr('y', function (d) { return y(d.y); });
+                col.attr('y', function (d) { return d.y >= 0 ? y(d.y) : base; })
+                    .attr('height', function (d) { return d.y >= 0 ? base - y(d.y) : y(d.y) - base; });
             }
         }
     }
