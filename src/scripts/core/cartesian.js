@@ -37,7 +37,7 @@
         yAxis: {
             /* @param: {linear|smart|log} */
             // type: 'smart',
-            min: 0,
+            min: undefined,
             max: undefined,
             smartAxis: true,
             innerTickSize: 6,
@@ -150,7 +150,8 @@
             computeYScale: function () {
                 if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
-                var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
+                var absMin = this.yDomain[0] > 0 ? 0 : undefined;
+                var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, absMin, this.options.yAxis.max);
 
                 if(!this.yScale) {
                     this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
