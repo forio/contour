@@ -25,6 +25,13 @@
         }
     };
 
+    var logging = {
+        warn: function (msg) {
+            if (console && console.log)
+                console.log(msg);
+        }
+    };
+
     var numberHelpers = {
         firstAndLast: function (ar) {
             return [ar[0], ar[ar.length-1]];
@@ -44,6 +51,14 @@
 
         clampRight: function (val, high) {
             return val > high ? high : val;
+        },
+
+        degToRad: function (deg) {
+            return deg * Math.PI / 180;
+        },
+
+        radToDeg: function (rad) {
+            return rad * 180 / Math.PI;
         },
 
         linearRegression: function (dataSrc) {
@@ -210,7 +225,8 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, ajaxHelpers, debuggingHelpers, domHelpers, generalHelpers);
+    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
+        ajaxHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
 
 })();
 
@@ -243,7 +259,9 @@
                 bottom: 0,
                 left: 0
             },
-            // with in pixels of the plot area (area inside the axis if any). This gets calculated on render
+            // automatically false by default anyway; adding here to help generate docs
+            rotatedFrame: false,
+            // width in pixels of the plot area (area inside the axis if any). This gets calculated on render
             plotWidth: undefined,
             // height in pixels of the plot area (area inside the axis if any). This gets calculated on render
             plotHeight: undefined,
@@ -385,7 +403,7 @@
     };
 
     Narwhal.prototype = _.extend(Narwhal.prototype, {
-        _visualizations: [],
+        _visualizations: undefined,
 
         // Initializes the instance of Narwhal
         init: function (options) {
@@ -394,7 +412,7 @@
             // after all components/visualizations have been added
             this.options = options || {};
 
-            this._visualizations.length = 0;
+            this._visualizations = [];
 
             return this;
         },
@@ -604,7 +622,7 @@
             var domain = this._scale.domain();
             var tickValues = options.tickValues;
             var numTicks = this.numTicks(domain, options.min, options.max);
-            var format = d3.format(options.labels.format);
+            var format = options.labels.formatter || d3.format(options.labels.format);
 
             return d3.svg.axis()
                 .scale(this._scale)
@@ -667,12 +685,12 @@
 
         xAxis: {
             /* type of axis {ordinal|linear|time} */
-            type: 'ordinal',
+            type: undefined, // defaults is ordinal (needs to be undefined here so overrides work)
             innerTickSize: 0,
             outerTickSize: 0,
             tickPadding: 6,
             maxTicks: undefined,
-            title: undefined, 
+            title: undefined,
             titlePadding: 4,
             /* padding between ranges (ie. columns) expressed in percentage of rangeBand width */
             innerRangePadding: 0.1,
@@ -681,7 +699,7 @@
             firstAndLast: true,
             orient: 'bottom',
             labels: {
-                // format: 'd'
+                format: 'd'
             },
             linearDomain: false,     // specify if a time domain should be treated linearly or ....
         },
@@ -689,7 +707,7 @@
         yAxis: {
             /* @param: {linear|smart|log} */
             // type: 'smart',
-            min: 0,
+            min: undefined,
             max: undefined,
             smartAxis: true,
             innerTickSize: 6,
@@ -697,7 +715,7 @@
             tickPadding: 4,
             tickValues: undefined,
             ticks: undefined,
-            title: undefined, 
+            title: undefined,
             titlePadding: 4,
             nicing: true,
             orient: 'left',
@@ -726,7 +744,14 @@
 
             init: function (options) {
 
-                this.options = _.merge({}, defaults, options);
+                // readonly properties (ie. user cannot modify)
+                var readOnlyProps = {
+                    chart: {
+                        rotatedFrame: false
+                    }
+                };
+
+                this.options = _.merge({}, defaults, options, readOnlyProps);
 
                 if (!this.options.xAxis.firstAndLast) {
                     this.options.chart.padding.right += 15;
@@ -740,16 +765,28 @@
 
 
             adjustPadding: function () {
-                var options = this.options.yAxis;
-                var yLabels = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), options.min, options.max);
-                var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
-                var yAxisText = _.map(yLabels, format).join('<br>');
-                var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
-                var xLabelBounds = _.nw.textBounds('jgitlhHJKQWE', '.x.axis');
+                var xOptions = this.options.xAxis;
+                var yOptions = this.options.yAxis;
                 var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
+                if (!this.options.chart.padding.bottom) {
+                    var xLabels = this.xDomain;
+                    var xAxisText = xLabels.join('<br>');
+                    var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
+                    var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
+                    var em = regularXBounds.height;
+                    var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
+                    var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
+                    this.options.chart.padding.bottom = this.options.chart.padding.bottom || maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelHeightUsed + Math.ceil(em * Math.cos(_.nw.degToRad(ang)));
+                }
 
-                this.options.chart.padding.left = this.options.chart.padding.left ||  maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
-                this.options.chart.padding.bottom = this.options.chart.padding.bottom ||maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelBounds.height;
+                if (!this.options.chart.padding.left) {
+                    var yLabels = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
+
+                    var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
+                    var yAxisText = _.map(yLabels, format).join('<br>');
+                    var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
+                    this.options.chart.padding.left = this.options.chart.padding.left ||  maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
+                }
             },
 
             adjustTitlePadding: function () {
@@ -783,7 +820,8 @@
             computeYScale: function () {
                 if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
-                var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min, this.options.yAxis.max);
+                var absMin = this.yDomain[0] > 0 ? 0 : undefined;
+                var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, absMin, this.options.yAxis.max);
 
                 if(!this.yScale) {
                     this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
@@ -992,7 +1030,7 @@
                     var lines = gr.selectAll('.grid-line')
                         .data(function (d) { return d; });
 
-                    lines.transition().duration(400)
+                    lines.transition().duration(400 * this.options.chart.animations)
                         .attr('x1', 0)
                         .attr('x2', function () {
                             return w;
@@ -1094,7 +1132,7 @@
 
 })();
 
-Narwhal.version = '0.0.45';
+Narwhal.version = '0.0.46';
 (function () {
 
     var helpers = {
@@ -1105,9 +1143,9 @@ Narwhal.version = '0.0.45';
             //  [{ x: date, y: 1}, {x: date, y: 2}]
             //  [{ data: [ x: date, y: 1]}, {data: [x: date, y: 100]}]
             // if we get no data, we return an ordinal scale
-            var isTimeData = _.isArray(data) && data.length > 0 && data[0].data ?
+            var isTimeData = options.xAxis.type === 'time' || (_.isArray(data) && data.length > 0 && data[0].data ?
                 data[0].data[0].x && _.isDate(data[0].data[0].x) :
-                _.isArray(data) && data.length > 0 && data[0].x && _.isDate(data[0].x);
+                _.isArray(data) && data.length > 0 && data[0].x && _.isDate(data[0].x));
 
 
             if (isTimeData && options.xAxis.type !== 'ordinal') {
@@ -1156,6 +1194,7 @@ Narwhal.version = '0.0.45';
             delete this._scale;
         },
 
+        /*jshint eqnull:true*/
         scale: function (domain) {
             this._domain = domain ? this._getAxisDomain(domain) : this._getAxisDomain(this.data);
             if(!this._scale) {
@@ -1172,7 +1211,7 @@ Narwhal.version = '0.0.45';
 
         axis: function () {
             var options = this.options.xAxis;
-            var formatLabel = d3.format(options.labels.format || 'd');
+            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'd');
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickSize(options.innerTickSize, options.outerTickSize)
@@ -1245,7 +1284,7 @@ Narwhal.version = '0.0.45';
             var options = this.options.yAxis;
             var domain = this._scale.domain();
             var ticksHint = Math.ceil(Math.log(domain[1]) / Math.log(10));
-            var format = d3.format(options.labels.format || ',.0f');
+            var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
 
             var axis = d3.svg.axis()
                 .scale(this._scale)
@@ -1303,7 +1342,7 @@ Narwhal.version = '0.0.45';
 
     OrdinalScale.prototype = {
         init: function () {
-            this.isCategorized = true;// _.isArray(this.options.xAxis.categories);
+            this.isCategorized = true;
             delete this._scale;
         },
 
@@ -1320,15 +1359,14 @@ Narwhal.version = '0.0.45';
 
         axis: function () {
             var options = this.options.xAxis;
+            var tickFormat = options.labels.formatter || function (d) { return _.isDate(d) ? d.getDate() : d; };
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .innerTickSize(options.innerTickSize)
                 .outerTickSize(options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickValues(this.options.xAxis.categories)
-                .tickFormat(function (d ,i) {
-                    return _.isDate(d) ? d.getDate() : d;
-                });
+                .tickFormat(tickFormat);
 
             if (this.options.xAxis.firstAndLast) {
                 // show only first and last tick
@@ -1338,7 +1376,28 @@ Narwhal.version = '0.0.45';
             return axis;
         },
 
+        /* jshint eqnull:true */
         postProcessAxis: function (axisGroup) {
+            var options = this.options.xAxis;
+            if (!options.labels || options.labels.rotation == null) return;
+
+            var deg = options.labels.rotation;
+            var rad = _.nw.degToRad(deg);
+            var lineCenter = 0.71; // center of text line is at .31em
+            var cos = Math.cos(rad);
+            var sin = Math.sin(rad);
+            var positive = options.labels.rotation > 0;
+            var anchor = options.labels.rotation < 0 ? 'end' : options.labels.rotation > 0 ? 'start' : 'middle';
+            var labels = axisGroup.selectAll('.tick text')
+                .style({'text-anchor': anchor})
+                .attr('transform', function (d, i, j) {
+                    var x = d3.select(this).attr('x') || 0;
+                    var y = d3.select(this).attr('y') || 0;
+                    return 'rotate(' + options.labels.rotation + ' ' + x + ',' + y + ')';
+                })
+                .attr('dy', function (d, i, j) {
+                    return (cos * lineCenter + (0.31)).toFixed(4) + 'em';
+                });
         },
 
         update: function (domain, data) {
@@ -1352,6 +1411,9 @@ Narwhal.version = '0.0.45';
         },
 
         rangeBand: function () {
+            var band = this._scale.rangeBand();
+            if (!band) _.nw.warn('rangeBand is 0, you may have too many points in in the domain for the size of the chart (ie. chartWidth = ' + this.options.chart.plotWidth + 'px and ' + (this._domain.length) + ' X-axis points (plus paddings) means less than 1 pixel per band and there\'re no half pixels');
+
             return this._scale.rangeBand();
         },
 
@@ -1445,6 +1507,7 @@ Narwhal.version = '0.0.45';
     */
 
     function dateDiff(d1, d2) {
+        if (!d1 || !d2) return 0;
         var diff = d1.getTime() - d2.getTime();
         return diff / (24*60*60*1000);
     }
@@ -2039,19 +2102,29 @@ Narwhal.version = '0.0.45';
         var opt = options.column;
         var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
-        var x = this.xScale;
-        var y = this.yScale;
+        var _this = this;
+        var x = function (v) { return Math.round(_this.xScale(v)); };
+        var y = function (v) { return Math.round(_this.yScale(v)); };
         var dataKey = function (d) { return d.data; };
         var chartOffset = _.nw.getValue(opt.offset, 0, this);
         var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
         var enter = _.partialRight((options.column.stacked ? stacked : grouped), true);
         var update = options.column.stacked ? stacked : grouped;
+        var filteredData = _.map(data, function (series, j) {
+            return {
+                name: series.name,
+                data: _.filter(series.data, function (d, i) {
+                    return i === 0 ? true : x(d.x) !== x(series.data[i-1].x);
+                })
+            };
+        });
+
         var stack = d3.layout.stack().values(function (d) {
             return d.data;
         });
 
         var series = layer.selectAll('g.series')
-                .data(stack(data));
+                .data(stack(filteredData));
 
         series.enter()
             .append('g')
@@ -2085,33 +2158,35 @@ Narwhal.version = '0.0.45';
         }
 
         function stacked(col, enter) {
+            var base = y(0);
+
             col.attr('x', function (d) { return x(d.x) + chartOffset; })
                 .attr('width', function () { return rangeBand; });
 
             if (enter) {
-                col
-                    .attr('y', function (d) { return h; })
+                col.attr('y', function (d) { return d.y >= 0 ? base : base; })
                     .attr('height', function (d) { return 0; });
             } else {
-                col
-                    .attr('y', function (d) { return y(d.y) + y(d.y0) - h; })
-                    .attr('height', function (d) { return h - y(d.y); });
+                col.attr('y', function (d) { return d.y >= 0 ? y(d.y) + y(d.y0) - base : y(d.y0) ; })
+                    .attr('height', function (d) { return d.y >=0 ? base - y(d.y) : y(d.y) - base; });
             }
         }
 
         function grouped(col, enter) {
             var width = rangeBand / data.length - opt.groupPadding;
             var offset = function (d, i) { return rangeBand / data.length * i; };
+            var base = y(0);
 
             col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
                 .attr('width', width);
 
-            if (enter)
-                col.attr('y', _.nw.clampLeft(h, 0))
+            if (enter) {
+                col.attr('y', base)
                     .attr('height', 0);
-            else
-                col.attr('height', function (d) { return h - y(d.y); })
-                    .attr('y', function (d) { return y(d.y); });
+            } else {
+                col.attr('y', function (d) { return d.y >= 0 ? y(d.y) : base; })
+                    .attr('height', function (d) { return d.y >= 0 ? base - y(d.y) : y(d.y) - base; });
+            }
         }
     }
 
@@ -2177,12 +2252,17 @@ Narwhal.version = '0.0.45';
         /*jshint eqnull:true */
         var data = _.map(rawData, function (s) {
             return _.extend(s, {
-                data: _.filter(s.data, function (d) { return d.y != null; })
+                data: _.filter(s.data, function (d, i) {
+                    if (i === 0 && d.y != null) return true;
+                    var differentX = x(s.data[i-1]) !== x(d); // && y(s.data[i-1]) !== y(d);
+                    return d.y != null && differentX;
+                })
             });
         });
 
         renderPaths();
-        renderMarkers();
+        if (options.line.marker.enable)
+            renderMarkers();
         renderTooltipTrackers();
 
 
@@ -2333,7 +2413,7 @@ Narwhal.version = '0.0.45';
     function renderer(data, layer, options) {
         var duration = 400;
         var w = options.chart.plotWidth, h = options.chart.plotHeight;
-        var padding = _.nw.getValue(options.pie.piePadding, 0, this);
+        var padding = _.nw.clamp(_.nw.getValue(options.pie.piePadding, 0, this), 0, h/2 - 2);
         var numSeries = data.length;
         var proposedRadius = (Math.min(w / numSeries, h) / 2) - padding;
         var radius = _.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius) ;
@@ -2469,9 +2549,11 @@ Narwhal.version = '0.0.45';
                 .attr('cx', x)
                 .attr('cy', h);
 
-        dots
-            .transition().duration(duration)
-            .attr('r', opt.radius)
+        if (options.chart.animations) {
+            dots.transition().duration(duration);
+        }
+
+        dots.attr('r', opt.radius)
             .attr('cx', x)
             .attr('cy', y);
 
@@ -2677,9 +2759,10 @@ Narwhal.version = '0.0.45';
 
         this.tooltipElement = this.container
             .style('position', 'relative')
-            .append('div');
+            .selectAll('.nw-tooltip').data([1]);
 
         this.tooltipElement
+            .enter().append('div')
             .attr('class', 'nw-tooltip')
             .style('opacity', 0)
             .append('div')
@@ -2696,7 +2779,7 @@ Narwhal.version = '0.0.45';
     /*
     * Adds a tooltip on hover to all other visualizations in the Narwhal instance.
     *
-    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips. 
+    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips.
     *
     * ### Example:
     *
@@ -2708,7 +2791,7 @@ Narwhal.version = '0.0.45';
     *
     * @name tooltip(data, options)
     * @param {object|array} data Ignored!
-    * @param {object} options Options particular to this visualization that override the defaults. 
+    * @param {object} options Options particular to this visualization that override the defaults.
     * @api public
     *
     */
