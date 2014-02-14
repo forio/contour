@@ -1,4 +1,4 @@
-#### **ticks** : {<%= type %>}
+#### **ticks** : { integer }
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
