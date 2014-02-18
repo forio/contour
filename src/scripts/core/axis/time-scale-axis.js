@@ -99,7 +99,7 @@
             if (this.options.xAxis.labels.formatter) return this.options.xAxis.labels.formatter;
 
             var spanDays = dateDiff(this._domain[this._domain.length-1], this._domain[0]);
-            var daysThreshold = this.options.xAxis.maxTicks || 5;
+            var daysThreshold = this.options.xAxis.maxTicks || 1;
             if (spanDays < daysThreshold) return d3.time.format('%H:%M');
 
             return d3.time.format('%d %b');

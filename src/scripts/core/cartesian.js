@@ -26,7 +26,7 @@
             innerRangePadding: 0.1,
             /* padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width */
             outerRangePadding: 0.1,
-            firstAndLast: true,
+            firstAndLast: false,
             orient: 'bottom',
             labels: {
                 format: 'd'
