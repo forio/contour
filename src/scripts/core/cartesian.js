@@ -39,7 +39,7 @@
             // type: 'smart',
             min: undefined,
             max: undefined,
-            smartAxis: true,
+            smartAxis: false,
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
@@ -151,7 +151,7 @@
                 if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
                 var absMin = this.yDomain[0] > 0 ? 0 : undefined;
-                var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, absMin, this.options.yAxis.max);
+                var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min || absMin, this.options.yAxis.max);
 
                 if(!this.yScale) {
                     this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
