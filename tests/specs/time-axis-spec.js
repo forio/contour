@@ -14,8 +14,25 @@ describe('time Axis', function () {
         return narwhal;
     }
 
+
+
+
+    it('should show all tick labels by ', function () {
+        narwhal = createNarwhal({ xAxis: { firstAndLast: undefined }})
+            .nullVis([
+                { x: new Date('10/11/2013'), y: 10 },
+                { x: new Date('10/12/2013'), y: 20 },
+                { x: new Date('10/13/2013'), y: 30 }
+            ])
+            .render();
+
+        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        expect(xLabels.length).toBe(3);
+    });
+
+
     it('should only show first and last tick labels by default', function () {
-        narwhal = createNarwhal()
+        narwhal = createNarwhal({ xAxis: { firstAndLast: true }})
             .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
@@ -68,8 +85,26 @@ describe('time Axis', function () {
         expect(xLabels.length).toBe(2);
     });
 
+    it('should show date only format when x values span more than 24 hrs. ', function () {
+        var data = [
+            { x: new Date('10/11/2013'), y: 10 },
+            { x: new Date('10/12/2013'), y: 20 },
+            { x: new Date('10/13/2013'), y: 30 }
+        ];
+        narwhal = createNarwhal()
+            .nullVis(data)
+            .render();
+
+        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        var formatter = d3.time.format('%d %b'); // ie. 11 Oct
+        expect(xLabels.length).toBe(3);
+        expect(xLabels.eq(0).text()).toBe(formatter(data[0].x));
+        expect(xLabels.eq(1).text()).toBe(formatter(data[1].x));
+        expect(xLabels.eq(2).text()).toBe(formatter(data[2].x));
+    });
+
     it('should print hrs, when xDomain is all in the same day', function () {
-        narwhal = createNarwhal({ xAxis: { firstAndLast: false }})
+        narwhal = createNarwhal()
             .nullVis([
                 { x: new Date('10/11/2013 10:00'), y: 10 },
                 { x: new Date('10/11/2013 11:00'), y: 20 },

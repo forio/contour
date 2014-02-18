@@ -92,9 +92,22 @@ describe('Ordinal xAxis', function () {
     });
 
     describe('with simple ordinal data (no categories)', function () {
-        it('should only show first and last tick labels by default', function () {
-           // var config = { xAxis: { firstAndLast: true } };
-            narwhal = createNarwhal()
+        it('should only show all tick labels by default (firstAndLast should default to false)', function () {
+            var config = { xAxis: { firstAndLast: undefined } };
+            narwhal = createNarwhal(config)
+                .nullVis([10, 20, 30])
+                .render();
+
+            var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
+            expect(xLabels.length).toBe(3);
+            expect($(xLabels[0]).text()).toBe('0');
+            expect($(xLabels[1]).text()).toBe('1');
+            expect($(xLabels[2]).text()).toBe('2');
+        });
+
+        it('should only show first and last tick labels if firstAndLast is set to true', function () {
+            var config = { xAxis: { firstAndLast: true } };
+            narwhal = createNarwhal(config)
                 .nullVis([10, 20, 30])
                 .render();
 

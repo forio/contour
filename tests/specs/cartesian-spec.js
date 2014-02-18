@@ -86,18 +86,20 @@ describe('Cartesian frame', function () {
             narwhal = createNarwhal();
         });
 
-        it('should be an ordinal scaling', function () {
+        it('should be an ordinal/linear scaling', function () {
             narwhal = createNarwhal({chart: { width: 131 } , xAxis: { innerRangePadding: 0, outerRangePadding: 0 }});
             narwhal.nullVis([0,1,2,3,4,5,6,7,8,9]).render();
 
-            // TODO: NEED TO FIX THIS TEST
-
-            expect(narwhal.xScale(0)).toEqual(0);
-            expect(narwhal.xScale(1)).toEqual(10);
-            expect(narwhal.xScale(2)).toEqual(20);
-            expect(narwhal.xScale(3)).toEqual(30);
-
-            expect(narwhal.xScale(9)).toEqual(90);
+            // this distance should be constant for all
+            var dist = narwhal.xScale(1) - narwhal.xScale(0);
+            expect(narwhal.xScale(2)).toEqual(narwhal.xScale(1) + dist);
+            expect(narwhal.xScale(3)).toEqual(narwhal.xScale(2) + dist);
+            expect(narwhal.xScale(4)).toEqual(narwhal.xScale(3) + dist);
+            expect(narwhal.xScale(5)).toEqual(narwhal.xScale(4) + dist);
+            expect(narwhal.xScale(6)).toEqual(narwhal.xScale(5) + dist);
+            expect(narwhal.xScale(7)).toEqual(narwhal.xScale(6) + dist);
+            expect(narwhal.xScale(8)).toEqual(narwhal.xScale(7) + dist);
+            expect(narwhal.xScale(9)).toEqual(narwhal.xScale(8) + dist);
         });
     });
 
