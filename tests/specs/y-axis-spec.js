@@ -96,20 +96,6 @@ describe('default yAxis', function () {
             expect(lastTicks.text()).toBe('5');
         });
 
-        it('should use the domain min and max when no min/max options are set ', function () {
-            nw = createNarwhal({
-                yAxis: {
-                    min: null, // the default is 0, so wee need to remove it
-                    //max: null, // by default we don't have max, is just here for clarity
-                }
-            }).nullVis([10,20,30]).render(); // we should get and axis with ticks at 10, 15, 20, 25, 30
-            d3.timer.flush();
-
-            var ticks = $el.find('.y.axis .tick text');
-            expect(+ticks.eq(0).text()).toBe(10);
-            expect(+ticks.eq(2).text()).toBe(33); // smart axis is 10% above (birddle test)
-        });
-
         describe('calling setYDomain', function () {
             it('should recalculate yAxis and ticks with new domain', function () {
                 nw = createNarwhal({}).nullVis([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
@@ -136,32 +122,7 @@ describe('default yAxis', function () {
     });
 
     describe('without smartYAxis', function () {
-        it('should use the domain min and max when no min/max options are set ', function () {
-            nw = createNarwhal({
-                yAxis: {
-                    min: null, // the default is 0, so wee need to remove it
-                    smartAxis: false,
-                }
-            }).nullVis([10,20,30]).render(); // d3 generates ticks every 2 so we get 10, 12, 14, 16 .... 30 (11 ticks total)
 
-            var ticks = $el.find('.y.axis .tick text');
-            expect(+ticks.eq(0).text()).toBe(10);
-            expect(+ticks.eq(10).text()).toBe(30);
-        });
-
-        it('should use domain min when no options.min is defined', function () {
-            nw = createNarwhal({
-                yAxis: {
-                    min: null, // the default is 0, so wee need to remove it
-                    max: 50,
-                    smartAxis: false
-                }
-            }).nullVis([10,20,30]).render(); // we should get and axis with ticks every 5 at 10, 15, 20, 25 .. 50 (9 total)
-
-            var ticks = $el.find('.y.axis .tick text');
-            expect(+ticks.eq(0).text()).toBe(10);
-            expect(+ticks.eq(8).text()).toBe(50);
-        });
     });
 
 
