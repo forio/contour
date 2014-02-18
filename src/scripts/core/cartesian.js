@@ -15,7 +15,7 @@
 
         xAxis: {
             /* type of axis {ordinal|linear|time} */
-            type: undefined, // defaults is ordinal (needs to be undefined here so overrides work)
+            type: null, // defaults is ordinal (needs to be null here so overrides work)
             innerTickSize: 0,
             outerTickSize: 0,
             tickPadding: 6,
