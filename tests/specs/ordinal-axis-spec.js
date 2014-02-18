@@ -15,11 +15,11 @@ describe('Ordinal xAxis', function () {
     });
 
 
-    it('should not have any Tick marks by default', function () {
+    it('should have any Tick marks of 6px by default', function () {
         narwhal.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.x.axis ');
-        expect(_.all(ticks.find('.tick line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '0'; })).toBe(true);
+        expect(_.all(ticks.find('.tick line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '6'; })).toBe(true);
         expect(ticks.find('.domain').attr('d')).toContain('M0');
     });
 
