@@ -33,16 +33,18 @@ describe('Cartesian frame', function () {
         });
     });
 
-    function assert_hasDefaultEmptyYScale(narwhal) {
+    function assert_hasDefaultEmptyYScale(narwhal, maxValue) {
         var h = narwhal.options.chart.plotHeight;
+        maxValue = maxValue || 10;
 
         expect(narwhal.yScale(0)).toEqual(h);
-        expect(narwhal.yScale(11)).toEqual(0);
+        expect(narwhal.yScale(maxValue)).toEqual(0);
     }
 
     it('without data should provide default axis', function () {
         var narwhal = createNarwhal().render();
-        assert_hasDefaultEmptyYScale(narwhal);
+        // default y Axis goes from 0 to 10
+        assert_hasDefaultEmptyYScale(narwhal, 10);
     });
 
     it('with empty array data should provide default axis', function () {
@@ -238,12 +240,17 @@ describe('Cartesian frame', function () {
             createNarwhal({
                 chart: {
                     gridlines: 'horizontal'
+                },
+                yAxis: {
+                    smartAxis: false
                 }
             }).nullVis([10,20,30]);
 
             narwhal.render();
 
-            expect($el.find('.y.axis .grid-line').length).toBe(1);
+            // should render 1 horizontal line per tick (except 0 wich is the x axis)
+            // for data 10,20,30 we get ticks every 5 so 5,10,15,20,25,30
+            expect($el.find('.y.axis .grid-line').length).toBe(6);
         });
 
         it('should render only gridlines at ticks for smart axis', function () {
