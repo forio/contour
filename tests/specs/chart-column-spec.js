@@ -30,7 +30,7 @@ describe('Column chart', function () {
         it('should set the hight of each column to the corresponding yScale value', function () {
             var nw = createNarwhal().column(data).render();
             var rects = $el.find('rect');
-            var y = function (d) { return nw.options.chart.plotHeight - nw.yScale(d); };
+            var y = function (d) { return nw.yScale(0) - Math.round(nw.yScale(d)); };
 
             expect(+rects.eq(0).attr('height')).toBe(y(data[0]));
             expect(+rects.eq(1).attr('height')).toBe(y(data[1]));
