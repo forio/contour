@@ -80,7 +80,7 @@
     }
 
     barRender.defaults = defaults;
-    /*
+    /**
     * Adds a bar chart (horizontal columns) to the Narwhal instance.
     *
     * You can use this visualization to render both stacked and grouped charts (controlled through the _options_).

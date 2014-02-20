@@ -93,7 +93,7 @@
     renderer.defaults = defaults;
 
 
-    /*
+    /**
     * Adds a pie chart to the Narwhal instance.
     *
     * ### Example:

@@ -104,7 +104,7 @@
 
     render.defaults = defaults;
 
-    /*
+    /**
     * Adds a column chart (vertical columns) to the Narwhal instance.
     *
     * This visualization requires `.cartesian()`.

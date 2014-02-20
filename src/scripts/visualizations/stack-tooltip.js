@@ -1,6 +1,6 @@
 (function () {
-    /*
-    * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Narwhal instance. 
+    /**
+    * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Narwhal instance.
     * Requires a second display element (`<div>`) for the legend in the html.
     *
     * ### Example:
