@@ -760,7 +760,7 @@
 
 
                 var extraPadding = {};
-                if (!this.options.xAxis.firstAndLast) {
+                if (!this.options.xAxis && this.options.xAxis.firstAndLast) {
                     extraPadding = { chart : { padding: { right: 15 }}};
                 }
 
@@ -1141,7 +1141,7 @@
 
 })();
 
-Narwhal.version = '0.0.48';
+Narwhal.version = '0.0.49';
 (function () {
 
     var helpers = {
