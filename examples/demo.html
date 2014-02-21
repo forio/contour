@@ -36,7 +36,7 @@
 
     <style>
         .chart {
-            width: 400px;
+            width: 600px;
 /*            height: 300px;
             width: 400px;*/
             margin: 10px 0;
@@ -111,90 +111,39 @@ var generateSeries = function (numSeries) {
     return series;
 }
 
+    var series = [];
 
-
-var config = {
-
-    el: '.chart',
-    chart: {
-        gridlines: 'none',
-        animations: true
-    },
-
-    xAxis: {
-        firstAndLast: false,
-        innerTickSize: 5,
-        outerTickSize: 3,
-        // categories: [1,2,3,4,5,6,7],
-
-        labels: {
-            format: '0.1f',
+    //series defined as 3x10 array of random (x,y) pairs
+    for(var j=0; j<3; j++) {
+        var data = [];
+        series.push({ data: data });
+        for(var k=0; k<100; k++) {
+            data.push({x: Math.random() * 1000, y: Math.random() * 1000 });
         }
+    }
 
-    },
+    var data = [
+        { x: new Date('1/1/2000'), y: 5},
+        { x: new Date('2/1/2000'), y: 3},
+        { x: new Date('3/1/2000'), y: 6},
+        { x: new Date('4/1/2000'), y: 7},
+        { x: new Date('5/1/2000'), y: 4},
+        { x: new Date('6/1/2000'), y: 2}
+    ];
 
-    yAxis: {
-        smartAxis: false,
-        nicing: false,
-
-        // tickValues: [10, 20, 100, 140, 150],
-        // max:150,
-        labels: {
-            format: ',.0f'
-
-            // formatter: function (d) { return 'a' }
-        },
-        title: 'Values'
-    },
-
-    column: {
-        // stacked: false
-    },
-
-    tooltip: {
-        formatter: function (d) {
-            return d.y + ' Narwhals swimming in the sea';
-        }
-    },
-
-};
-
-
-var data = [
-    { name: 'abc', data: [1, 2, 4,3,5,6]},
-    { name: 'xxx', data: [3, 2, 4,1,8,4]}
-    ]
-
-    var d2 = [
-                        { x: 1, y: 10},
-                        { x: 2, y: null},
-                        { x: 3}
-                    ];
-
-
-// data = [
-// { x: new Date(2013, 1, 1), y: 100 },
-// { x: new Date(2013, 1, 2), y: 120 },
-// { x: new Date(2013, 1, 3), y: 130 },
-// { x: new Date(2013, 1, 4), y: 110 },
-// ]
-
-
-
-
-var chart = new Narwhal(config)
-    .cartesian()
-    // .horizontal()
-    // .bar(data)
-    // .column(data, {stacked: true})
-    .line(d2)
-    // .scatter(data)
-    // .trendLine(data)
-    // .stackTooltip(data, { el: '.legend' })
-    // .pie([{ x: 'Alpha', y: 10}, { x: 'Beta', y: 30}, {x: 'Gamma', y: 40}, {x: 'Kappa', y: 20}])
-    .tooltip()
-    .render();
-
+    new Narwhal({
+            el: '.chart',
+            xAxis: {
+                firstAndLast:false,
+                title: 'Time',
+            },
+            yAxis: {
+                title: 'Value'
+            }
+        })
+        .cartesian()
+        .line(data)
+        .render();
 
 
 
