@@ -85,7 +85,7 @@
 
 
                 var extraPadding = {};
-                if (!this.options.xAxis.firstAndLast) {
+                if (!this.options.xAxis && this.options.xAxis.firstAndLast) {
                     extraPadding = { chart : { padding: { right: 15 }}};
                 }
 
