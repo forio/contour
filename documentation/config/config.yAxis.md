@@ -1,6 +1,24 @@
 #### **yAxis** : {object}
 
-TODO: Insert description here
+
+
+To override any of the default configuration options in a yAxis, include the `yAxis` configuration object in the configuration options that you pass to your Narwhal constructor.
+
+A yAxis is only useful if your Narwhal instance uses a [cartesian](#cartesian) frame.
+
+**Example:**
+
+	new Narwhal({
+	    el: ".myLineChart",
+	    yAxis: {
+	      // yAxis-specific configuration options
+	    }
+	  })
+	.cartesian()
+	.line(data)
+	.render()
+
+*[Try it.](http://jsfiddle.net/forio/Te6ew/)*
 
 
 

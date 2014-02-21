@@ -24,6 +24,10 @@
 .narwhal-chart .grid-line {
   stroke: #cfcfcf;
 }
+.narwhal-chart .trend-line {
+  stroke-width: 1px;
+  stroke: #05f;
+}
 .cool {
   stroke: #000;
   stroke-width: 0;
@@ -41,6 +45,7 @@
   border: solid 1px transparent;
   border-radius: 8px;
   pointer-events: none;
+  transition: all 0.05s ease-out;
 }
 .nw-tooltip .text {
   opacity: 1;

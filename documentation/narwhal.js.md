@@ -2,7 +2,19 @@
 
 ## Narwhal() visualizations object
 
-Narwhal visualization constructor
+Create a set of related visualizations by calling the Narwhal visualization constructor. This creates a Narwhal instance, based on the core Narwhal object.
+
+  * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Narwhal instance will be rendered.
+  * Set the frame for this Narwhal instance (e.g. `.cartesian()`).
+  * Add one or more specific visualizations to this Narwhal instance (e.g. `.scatter()`, `.trend-line()`). Pass each visualization constructor the data it displays.
+  * Invoke an action for this Narwhal instance (e.g. `.render()`).
+
+### Example:
+
+    new Narwhal({el: 'myChart'})
+      .cartesian()
+      .line([1,3,2,5])
+      .render()
 
 See: {@link config}
 
@@ -12,44 +24,88 @@ See: {@link config}
 
 ## export(ctorName, renderer)
 
-Adds a visualization to be rendered in the instance of Narwhal
-This is the main way to expose visualizations to be used
+Adds a new kind of visualization to the core Narwhal object.
+The *renderer* function is called when you add this visualization to instances of Narwhal.
+
+### Example:
+
+    Narwhal.export("exampleVisualization", function(data, layer) {
+          //function body to create exampleVisualization
+          //for example using SVG and/or D3
+    });
+
+    //to include the visualization into a specific Narwhal instance
+    new Narwhal(options)
+          .exampleVisualization(data)
+          .render()
 
 See: options
 
 ### Params:
 
-* **String** *ctorName* Name of the visualization to be used as a contructor name
+* **String** *ctorName* Name of the visualization, used as a constructor name.
 
-* **Function** *renderer* Function that will be called to render the visualization. The function will recieve the data that was passed in to the constructor function
+* **Function** *renderer* Function called when this visualization is added to a Narwhal instance. This function receives the data that is passed in to the constructor.
 
 ## expose()
 
 Exposes functionality to the core Narwhal object.
-This is used to add base functionality to be used by viasualizations
-for example the `cartesian` frame is implemented exposing functionality.
+Use this to add *functionality* that will be available for any visualizations.
 
-Example:
+###Example:
 
     Narwhal.expose("example", {
-         // when included in the instance, this will expose `.transformData` to the visualizations
-        transformData: function(data) { .... }
+         // when included in the instance, the function `.myFunction` is available in the visualizations
+        myFunction: function(data) { .... }
     });
 
-    // To include the functionality into a specific instance
+    Narwhal.export("visualizationThatUsesMyFunction", function(data, layer) {
+          //function body including call to this.myFunction(data)
+    });
+
+    // to include the functionality into a specific instance
     new Narwhal(options)
           .example()
-          .visualizationsThatUsesTransformDataFunction()
+          .visualizationThatUsesMyFunction()
           .render()
 
-## .render()
+## render()
 
-Renders all the composed visualizations into the DOM.
-This calls to render all the visualizations that were composed into the instance
+Renders this Narwhal instance and all its visualizations into the DOM.
 
 Example:
 
-    new Narwhal({ el:'.chart' })
+    new Narwhal({ el:'.myChart' })
           .pie([1,2,3])
           .render()
+
+## .setData()
+
+Set's the same data set into all visualizations for an instance
+
+Example:
+
+    var data = [1,2,3,4,5];
+    var chart = new Narwhal({ el:'.myChart' })
+          .scatter(data)
+          .trendLine(data);
+
+    data.push(10);
+    chart.setData(data)
+          .render();
+
+## .select()
+
+Returns a VisualizationContainer object for the visualization at a given index (0-based)
+
+Example:
+
+    var chart = new Narwhal({ el:'.myChart' })
+          .pie([1,2,3])
+          .render()
+
+    var myPie = chart.select(0)
+
+    // do something with the visualization like updateing its data set
+    myPie.setData([6,7,8,9]).render()
 

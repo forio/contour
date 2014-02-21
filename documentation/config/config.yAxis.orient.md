@@ -1,6 +1,25 @@
 #### **orient** : {string}
 
-TODO: Insert description here
-
-
 *default: left* 
+
+The orientation of the axis and its tick marks.
+
+The supported orientations are:
+
+* `left`: vertical axis with ticks to the left of the axis
+* `right`: vertical axis with ticks to the right of the axis
+
+**Example:**
+
+	new Narwhal({
+	    el: ".myLineChart",
+	    yAxis: { orient: "right" }
+	  })
+	.cartesian()
+	.line(data)
+	.render()
+
+*[Try it.](http://jsfiddle.net/forio/zbA9W/)*
+
+
+

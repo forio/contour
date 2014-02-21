@@ -1,6 +1,9 @@
 #### **stacked** : {boolean}
 
-This is the stacked property of the area chart.
-
-
 *default: true* 
+
+TODO: Description pending https://github.com/forio/forio-narwhal/issues/77.
+
+
+
+

@@ -254,8 +254,8 @@
             },
             // padding between the chart area and the inner plot area */
             padding: {
-                top: 0,
-                right: 0,
+                top: null,
+                right: null,
                 bottom: 0,
                 left: 0
             },
@@ -405,6 +405,8 @@
     Narwhal.prototype = _.extend(Narwhal.prototype, {
         _visualizations: undefined,
 
+        _extraOptions: undefined,
+
         // Initializes the instance of Narwhal
         init: function (options) {
             // for now, just  store this options here...
@@ -412,6 +414,7 @@
             // after all components/visualizations have been added
             this.options = options || {};
 
+            this._extraOptions = [];
             this._visualizations = [];
 
             return this;
@@ -463,8 +466,10 @@
 
         composeOptions: function () {
             var allDefaults = _.merge({}, defaults);
+            var mergeExtraOptions = function (opt) { _.merge(allDefaults, opt); };
             var mergeDefaults = function (vis) { _.merge(allDefaults, vis.renderer.defaults); };
 
+            _.each(this._extraOptions, mergeExtraOptions);
             _.each(this._visualizations, mergeDefaults);
 
             // compose the final list of options right before start rendering
@@ -751,11 +756,15 @@
                     }
                 };
 
-                this.options = _.merge({}, defaults, options, readOnlyProps);
+                this.options = options || {};
 
+
+                var extraPadding = {};
                 if (!this.options.xAxis.firstAndLast) {
-                    this.options.chart.padding.right += 15;
+                    extraPadding = { chart : { padding: { right: 15 }}};
                 }
+
+                this._extraOptions.push(_.merge({}, defaults,readOnlyProps, extraPadding));
 
                 return this;
             },
@@ -1132,7 +1141,7 @@
 
 })();
 
-Narwhal.version = '0.0.47';
+Narwhal.version = '0.0.48';
 (function () {
 
     var helpers = {
