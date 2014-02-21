@@ -4,18 +4,18 @@ This example shows how to create your first chart with Narwhal.
 
 ###Including Narwhal
 
-Narwhal requires the following files: 
+Narwhal requires the following files:
 
 * `narwhal.min.css`: the Narwhal stylesheet
 * `d3.js`: the data manipulation library underlying many of Narwhal's visualizations
 * `lodash.js`: utilities and performance enhancements used by Narwhal
 * `narwhal.min.js`: the Narwhal visualization library
 
-See the [Download]() page for information on how to download or reference these libraries. 
+See the [Get Narwhal](get_narwhal.html) page for information on how to download or reference these libraries.
 
-You have two options for including these libraries: reference our copies, or download and load from your own domain. 
+You have two options for including these libraries: reference our copies, or download and load from your own domain.
 
-* If you reference ours, `yourPath` is `http://{TBW}`. 
+* If you reference ours, `yourPath` is `http://{TBW}`.
 * If you load from your own domain, `yourPath` is the location on your server, for example `/vendor/forio/js/`.
 
 		<html>
@@ -25,10 +25,10 @@ You have two options for including these libraries: reference our copies, or dow
 		      <script src="yourPath/lodash.js"></script>
 		      <script src="yourPath/narwhal.min.js"></script>
 		  </head>
-		
+
 		  <body>
 		  </body>
-		
+
 		</html>
 
 ###Your first Narwhal visualization
@@ -54,7 +54,7 @@ Once you have included Narwhal in your webpage you can create your first visuali
 	* An instruction for all visualizations in this Narwhal instance to be displayed: `.render()`.
 
 	So your complete webpage may look like this:
-			
+
 		<html>
 		  <head>
 			<link rel="stylesheet" href="yourPath/narwhal.min.css">
@@ -62,11 +62,11 @@ Once you have included Narwhal in your webpage you can create your first visuali
 			<script src="yourPath/lodash.js"></script>
 			<script src="yourPath/narwhal.min.js"></script>
 		  </head>
-		
+
 		  <body>
-		
+
 			<div class="myFirstChart" style="width:80%; height:300px;"></div>
-		
+
 			<script>
 				new Narwhal({
 					el: '.myFirstChart'
@@ -75,16 +75,16 @@ Once you have included Narwhal in your webpage you can create your first visuali
 				.line([1, 2, 3, 4, 5, 4, 3, 2, 1])
 				.render();
 			</script>
-				
+
 		  </body>
-		</html>		
+		</html>
 
 4. You should now see your Narwhal visualization on your webpage:
 
 ![QuickStart](quickstart.png)
 
-**What's next?** 
+**What's next?**
 
-* Browse the [example visualization]() for inspiration
+* Browse the [example visualization](showcase.html) for inspiration
 * Review the reference documentation for any questions: select from the visualizations and configuration options on the left
 
