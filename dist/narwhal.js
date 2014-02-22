@@ -254,8 +254,8 @@
             },
             // padding between the chart area and the inner plot area */
             padding: {
-                top: 0,
-                right: 0,
+                top: null,
+                right: null,
                 bottom: 0,
                 left: 0
             },
@@ -405,6 +405,8 @@
     Narwhal.prototype = _.extend(Narwhal.prototype, {
         _visualizations: undefined,
 
+        _extraOptions: undefined,
+
         // Initializes the instance of Narwhal
         init: function (options) {
             // for now, just  store this options here...
@@ -412,6 +414,7 @@
             // after all components/visualizations have been added
             this.options = options || {};
 
+            this._extraOptions = [];
             this._visualizations = [];
 
             return this;
@@ -463,8 +466,10 @@
 
         composeOptions: function () {
             var allDefaults = _.merge({}, defaults);
+            var mergeExtraOptions = function (opt) { _.merge(allDefaults, opt); };
             var mergeDefaults = function (vis) { _.merge(allDefaults, vis.renderer.defaults); };
 
+            _.each(this._extraOptions, mergeExtraOptions);
             _.each(this._visualizations, mergeDefaults);
 
             // compose the final list of options right before start rendering
@@ -685,8 +690,8 @@
 
         xAxis: {
             /* type of axis {ordinal|linear|time} */
-            type: undefined, // defaults is ordinal (needs to be undefined here so overrides work)
-            innerTickSize: 0,
+            type: null, // defaults is ordinal (needs to be null here so overrides work)
+            innerTickSize: 6,
             outerTickSize: 0,
             tickPadding: 6,
             maxTicks: undefined,
@@ -696,7 +701,7 @@
             innerRangePadding: 0.1,
             /* padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width */
             outerRangePadding: 0.1,
-            firstAndLast: true,
+            firstAndLast: false,
             orient: 'bottom',
             labels: {
                 format: 'd'
@@ -709,7 +714,7 @@
             // type: 'smart',
             min: undefined,
             max: undefined,
-            smartAxis: true,
+            smartAxis: false,
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
@@ -751,11 +756,15 @@
                     }
                 };
 
-                this.options = _.merge({}, defaults, options, readOnlyProps);
+                this.options = options || {};
 
+
+                var extraPadding = {};
                 if (!this.options.xAxis.firstAndLast) {
-                    this.options.chart.padding.right += 15;
+                    extraPadding = { chart : { padding: { right: 15 }}};
                 }
+
+                this._extraOptions.push(_.merge({}, defaults,readOnlyProps, extraPadding));
 
                 return this;
             },
@@ -821,7 +830,7 @@
                 if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
                 var absMin = this.yDomain[0] > 0 ? 0 : undefined;
-                var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, absMin, this.options.yAxis.max);
+                var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min || absMin, this.options.yAxis.max);
 
                 if(!this.yScale) {
                     this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
@@ -1132,7 +1141,7 @@
 
 })();
 
-Narwhal.version = '0.0.46';
+Narwhal.version = '0.0.48';
 (function () {
 
     var helpers = {
@@ -1596,7 +1605,7 @@ Narwhal.version = '0.0.46';
             if (this.options.xAxis.labels.formatter) return this.options.xAxis.labels.formatter;
 
             var spanDays = dateDiff(this._domain[this._domain.length-1], this._domain[0]);
-            var daysThreshold = this.options.xAxis.maxTicks || 5;
+            var daysThreshold = this.options.xAxis.maxTicks || 1;
             if (spanDays < daysThreshold) return d3.time.format('%H:%M');
 
             return d3.time.format('%d %b');
@@ -1955,7 +1964,7 @@ Narwhal.version = '0.0.46';
 
     renderer.defaults = defaults;
 
-    /*
+    /**
     * Adds an area chart to the Narwhal instance.
     *
     * Area charts are stacked by default when the _data_ includes multiple series.
@@ -2061,7 +2070,7 @@ Narwhal.version = '0.0.46';
     }
 
     barRender.defaults = defaults;
-    /*
+    /**
     * Adds a bar chart (horizontal columns) to the Narwhal instance.
     *
     * You can use this visualization to render both stacked and grouped charts (controlled through the _options_).
@@ -2192,7 +2201,7 @@ Narwhal.version = '0.0.46';
 
     render.defaults = defaults;
 
-    /*
+    /**
     * Adds a column chart (vertical columns) to the Narwhal instance.
     *
     * This visualization requires `.cartesian()`.
@@ -2375,7 +2384,7 @@ Narwhal.version = '0.0.46';
     render.defaults = defaults;
 
 
-    /*
+    /**
     * Adds a line chart to the Narwhal instance.
     *
     * This visualization requires `.cartesian()`.
@@ -2492,7 +2501,7 @@ Narwhal.version = '0.0.46';
     renderer.defaults = defaults;
 
 
-    /*
+    /**
     * Adds a pie chart to the Narwhal instance.
     *
     * ### Example:
@@ -2562,7 +2571,7 @@ Narwhal.version = '0.0.46';
 
     ScatterPlot.defaults = defaults;
 
-    /*
+    /**
     * Adds a scatter plot to the Narwhal instance.
     *
     * This visualization requires `.cartesian()`.
@@ -2586,8 +2595,8 @@ Narwhal.version = '0.0.46';
 })();
 
 (function () {
-    /*
-    * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Narwhal instance. 
+    /**
+    * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Narwhal instance.
     * Requires a second display element (`<div>`) for the legend in the html.
     *
     * ### Example:
@@ -2776,7 +2785,7 @@ Narwhal.version = '0.0.46';
     render.defaults = defaults;
 
 
-    /*
+    /**
     * Adds a tooltip on hover to all other visualizations in the Narwhal instance.
     *
     * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips.
@@ -2842,7 +2851,7 @@ Narwhal.version = '0.0.46';
 
     ctor.defaults = {};
 
-    /*
+    /**
     * Adds a trend line to the Narwhal instance, based on linear regression.
     *
     * This visualization requires `.cartesian()`.

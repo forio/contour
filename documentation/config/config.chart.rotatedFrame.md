@@ -1,6 +1,10 @@
 #### **rotatedFrame** : {boolean}
 
-TODO: Insert description here
+*default: false* 
+
+Whether or not the visualization has been rotated.
+
+**Notes:** Read only.
 
 
-*default: true* 
+

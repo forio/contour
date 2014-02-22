@@ -38,7 +38,7 @@
 
     ctor.defaults = {};
 
-    /*
+    /**
     * Adds a trend line to the Narwhal instance, based on linear regression.
     *
     * This visualization requires `.cartesian()`.

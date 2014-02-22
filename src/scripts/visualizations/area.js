@@ -67,7 +67,7 @@
 
     renderer.defaults = defaults;
 
-    /*
+    /**
     * Adds an area chart to the Narwhal instance.
     *
     * Area charts are stacked by default when the _data_ includes multiple series.

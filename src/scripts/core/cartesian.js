@@ -81,11 +81,15 @@
                     }
                 };
 
-                this.options = _.merge({}, defaults, options, readOnlyProps);
+                this.options = options || {};
 
+
+                var extraPadding = {};
                 if (!this.options.xAxis.firstAndLast) {
-                    this.options.chart.padding.right += 15;
+                    extraPadding = { chart : { padding: { right: 15 }}};
                 }
+
+                this._extraOptions.push(_.merge({}, defaults,readOnlyProps, extraPadding));
 
                 return this;
             },

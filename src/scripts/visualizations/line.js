@@ -143,7 +143,7 @@
     render.defaults = defaults;
 
 
-    /*
+    /**
     * Adds a line chart to the Narwhal instance.
     *
     * This visualization requires `.cartesian()`.

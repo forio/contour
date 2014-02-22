@@ -137,7 +137,7 @@
     render.defaults = defaults;
 
 
-    /*
+    /**
     * Adds a tooltip on hover to all other visualizations in the Narwhal instance.
     *
     * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips.

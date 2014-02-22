@@ -22,8 +22,8 @@
             },
             // padding between the chart area and the inner plot area */
             padding: {
-                top: 0,
-                right: 0,
+                top: null,
+                right: null,
                 bottom: 0,
                 left: 0
             },
@@ -173,6 +173,8 @@
     Narwhal.prototype = _.extend(Narwhal.prototype, {
         _visualizations: undefined,
 
+        _extraOptions: undefined,
+
         // Initializes the instance of Narwhal
         init: function (options) {
             // for now, just  store this options here...
@@ -180,6 +182,7 @@
             // after all components/visualizations have been added
             this.options = options || {};
 
+            this._extraOptions = [];
             this._visualizations = [];
 
             return this;
@@ -231,8 +234,10 @@
 
         composeOptions: function () {
             var allDefaults = _.merge({}, defaults);
+            var mergeExtraOptions = function (opt) { _.merge(allDefaults, opt); };
             var mergeDefaults = function (vis) { _.merge(allDefaults, vis.renderer.defaults); };
 
+            _.each(this._extraOptions, mergeExtraOptions);
             _.each(this._visualizations, mergeDefaults);
 
             // compose the final list of options right before start rendering

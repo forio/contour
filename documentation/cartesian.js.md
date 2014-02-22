@@ -1,61 +1,63 @@
 
 
-## .cartesian()
+## cartesian()()
 
-Provides a cartesian frame to the Narwhal instance
+Provides a Cartesian frame to the Narwhal instance.
 
-Example:
+###Example:
 
     new Narwhal(options)
           .cartesian();
 
-Now new visualizations have accecss to the cartesian frame functionality
-
-## this.xScale()(value)
+## xScale(value)
 
 Provides a scaling function based on the xAxis values.
 
-Example:
+###Example:
 
     var scaledValue = this.xScale(100);
 
 ### Params:
 
-* **Number|String** *value* The value to be scaled
+* **Number|String** *value* The value to be scaled.
 
 ### Return:
 
-* **Number** The scaled value according to the current xAxis settings
+* **Number** The scaled value according to the current xAxis settings.
 
-## this.yScale()(value)
+## yScale(value)
 
-Provides a scaling function based on the xAxis values.
+Provides a scaling function based on the yAxis values.
 
-Example:
+###Example:
 
-    var scaledValue = this.xScale(100);
+    var scaledValue = this.yScale(100);
 
 ### Params:
 
-* **Number** *value* The value to be scaled
+* **Number** *value* The value to be scaled.
 
 ### Return:
 
-* **Number** The scaled value according to the current yAxis settings
+* **Number** The scaled value according to the current yAxis settings.
 
-Modifies the domain for the y axis.
+## setYDomain(domain)
 
-Example:
+Modifies the domain for the yAxis.
+
+###Example:
 
     this.setYDomain([100, 200]);
 
 ### Params:
 
-* **Array** *domain* The domain array represeting the min and max values of to be visible in the y Axis
+* **Array** *domain* The domain array representing the min and max values visible on the yAxis.
 
-Redraws the yAxis with the new settings and domain
+## redrawYAxis()
 
-Example:
+Redraws the yAxis with the new settings and domain.
 
-    this.redrawYAxis(;
+###Example:
+
+    this.redrawYAxis();
 
