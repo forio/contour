@@ -1,29 +1,26 @@
 ##QuickStart
 
-This example shows how to create your first chart with Narwhal.
+This example shows how to create your first chart with Forio Contour.
 
-###Including Narwhal
+###Including Contour
 
-Narwhal requires the following files:
+Forio Contour requires the following files:
 
-* `narwhal.min.css`: the Narwhal stylesheet
-* `d3.js`: the data manipulation library underlying many of Narwhal's visualizations
-* `lodash.js`: utilities and performance enhancements used by Narwhal
-* `narwhal.min.js`: the Narwhal visualization library
+* `contour.min.css`: the Forio Contour stylesheet
+* `d3.js`: the data manipulation library underlying many of Contour's visualizations
+* `lodash.js`: utilities and performance enhancements used by Contour
+* `contour.min.js`: the Contour visualization library
 
-See the [Get Narwhal](get_narwhal.html) page for information on how to download or reference these libraries.
+See the [Get Contour](get_narwhal.html) page for information on how to download or reference these libraries.
 
-You have two options for including these libraries: reference our copies, or download and load from your own domain.
-
-* If you reference ours, `yourPath` is `http://{TBW}`.
-* If you load from your own domain, `yourPath` is the location on your server, for example `/vendor/forio/js/`.
+Once you've downloaded Contour, you can load it from your own domain. In the example, `yourPath` is the location on your server, for example `/vendor/forio/js/`.
 
 		<html>
 		  <head>
-		    <link rel="stylesheet" href="yourPath/narwhal.min.css">
+		    <link rel="stylesheet" href="yourPath/contour.min.css">
 		      <script src="yourPath/d3.min.js"></script>
 		      <script src="yourPath/lodash.js"></script>
-		      <script src="yourPath/narwhal.min.js"></script>
+		      <script src="yourPath/contour.min.js"></script>
 		  </head>
 
 		  <body>
@@ -31,36 +28,36 @@ You have two options for including these libraries: reference our copies, or dow
 
 		</html>
 
-###Your first Narwhal visualization
+###Your first Forio Contour visualization
 
-Once you have included Narwhal in your webpage you can create your first visualization. We'll start with a line chart.
+Once you have included Contour in your webpage you can create your first visualization. We'll start with a line chart.
 
 1. Add a `div` to your webpage and give it a `class`. Then set the `width` and `height` to be the width and height of your chart.
 
 		<div class="myFirstChart" style="width:80%; height:300px;"></div>
 
-2. To create one or more visualizations, create a new Narwhal instance within the JavaScript tag, `<script> </script>`, anywhere in your webpage. You can pass in a set of configuration options. At minimum, you should pass in the element whose name matches the `class` in your `div`.
+2. To create one or more visualizations, create a new Contour instance within the JavaScript tag, `<script> </script>`, anywhere in your webpage. You can pass in a set of configuration options. At minimum, you should pass in the element whose name matches the `class` in your `div`.
 
 		<script>
-			new Narwhal({
+			new Contour({
 				el: '.myFirstChart'
 			})
 		</script>
 
-3. To display this Narwhal instance on your webpage, you need to add three more pieces to its definition:
+3. To display this Contour instance on your webpage, you need to add three more pieces to its definition:
 
-	* The type of frame for all visualizations in this Narwhal instance: `.cartesian()`.
-	* The particular visualization you want in this Narwhal instance, including its data: `.line(data)`. (Each Narwhal instance can display multiple visualizations. In this example, we'll just make one.)
-	* An instruction for all visualizations in this Narwhal instance to be displayed: `.render()`.
+	* The type of frame for all visualizations in this Contour instance: `.cartesian()`.
+	* The particular visualization you want in this Contour instance, including its data: `.line(data)`. (Each Contour instance can display multiple visualizations. In this example, we'll just make one.)
+	* An instruction for all visualizations in this Contour instance to be displayed: `.render()`.
 
 	So your complete webpage may look like this:
 
 		<html>
 		  <head>
-			<link rel="stylesheet" href="yourPath/narwhal.min.css">
+			<link rel="stylesheet" href="yourPath/contour.min.css">
 			<script src="yourPath/d3.min.js"></script>
 			<script src="yourPath/lodash.js"></script>
-			<script src="yourPath/narwhal.min.js"></script>
+			<script src="yourPath/contour.min.js"></script>
 		  </head>
 
 		  <body>
@@ -68,7 +65,7 @@ Once you have included Narwhal in your webpage you can create your first visuali
 			<div class="myFirstChart" style="width:80%; height:300px;"></div>
 
 			<script>
-				new Narwhal({
+				new Contour({
 					el: '.myFirstChart'
 				})
 				.cartesian()
@@ -79,7 +76,7 @@ Once you have included Narwhal in your webpage you can create your first visuali
 		  </body>
 		</html>
 
-4. You should now see your Narwhal visualization on your webpage:
+4. You should now see your Contour visualization on your webpage:
 
 ![QuickStart](quickstart.png)
 

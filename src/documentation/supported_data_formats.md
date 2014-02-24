@@ -1,6 +1,6 @@
 ##Supported Data Formats
 
-For each visualization that you add to a Narwhal instance (`.line()`, `.area()`, etc.), you pass the data series to be displayed into the visualization constructor. 
+For each visualization that you add to a Contour instance (`.line()`, `.area()`, etc.), you pass the data series to be displayed into the visualization constructor. 
 
 There are several valid formats for each data series.
 
@@ -16,20 +16,20 @@ For example:
 
 	.line([{x:23, y:45}, {x:34, y:22}, {x:45, y:78}])
 
-**Array of scalars.** You can also pass a single series as an array of scalars. Narwhal automatically converts this to an array of `{x, y}` pairs, for `x` starting at `0`.
+**Array of scalars.** You can also pass a single series as an array of scalars. Contour automatically converts this to an array of `{x, y}` pairs, for `x` starting at `0`.
 
 Use the format: 
 
 	[y1, y2, y3]
 	
-	//Narwhal converts automatically to:
+	// Contour converts automatically to:
 	[{x:0, y:y1}, {x:1, y:y2}, {x:2, y:y3}]
 
 For example:
 
 	.line([3, 4, 5])
 
-	//Narwhal converts automatically to:
+	// Contour converts automatically to:
 	.line([{x:0, y:3}, {x:1, y:4}, {x:2, y:5}])
 
 
@@ -47,7 +47,7 @@ Use the format:
 	  {
 	    name: 'mySeries2',
 	    data: [y1, y2, y3]
-	    	// Narwhal will automatically convert this series to
+	    	// Contour will automatically convert this series to
 	    	// [{x:0, y:y1}, {x:1, y:y2}, {x:2, y:y3}]
 	  }
 	]
@@ -62,12 +62,12 @@ For example:
 	  {
 	    name: 'Customer B',
 	    data: [12, 15, 24]
-	    	// Narwhal will automatically convert this series to
+	    	// Contour will automatically convert this series to
 	    	// [{x:0, y:12}, {x:1, y:15}, {x:2, y:24}]
 	  }
 	])
 
-**Array of single series data.** You can also pass in multiple series as an array of `[<any format for single series data>]`. Narwhal automatically converts this to an array of `{ name: '<series name>', data: '<any format for single series data>' }`, where the series names are `series 1`, `series 2`, etc.
+**Array of single series data.** You can also pass in multiple series as an array of `[<any format for single series data>]`. Contour automatically converts this to an array of `{ name: '<series name>', data: '<any format for single series data>' }`, where the series names are `series 1`, `series 2`, etc.
 
 Use the format:
 
@@ -83,7 +83,7 @@ For example:
 	  [{x:1, y:4}, {x:3, y:7}, {x:5, y:2}]
 	])
 
-Narwhal converts this automatically to:
+Contour converts this automatically to:
 
 	.line([
 	  {
@@ -98,5 +98,5 @@ Narwhal converts this automatically to:
 
 ###Advantages of Automatic Conversion
 
-It might seem excessive to have Narwhal automatically convert all data series to such a verbose format. However, this conversion makes [exposing and exporting](#narwhal) much easier. As the author of an `.expose()` or `.export()` function, you always know exactly what form of data you'll be receiving. 
+It might seem excessive to have Contour automatically convert all data series to such a verbose format. However, this conversion makes [exposing and exporting](#narwhal) much easier. As the author of an `.expose()` or `.export()` function, you always know exactly what form of data you'll be receiving. 
 
