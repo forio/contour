@@ -28,8 +28,12 @@ describe('Cartesian frame', function () {
         });
 
         it('should ensure rotatedFrame is set to false', function () {
-            var narwhal = createNarwhal({ chart: { rotatedFrame: true }});
-            expect(narwhal.options.chart.rotatedFrame).toBe(false);
+            var _opt;
+            Narwhal.export('test', function (layer, data, options) {
+                _opt = options;
+            });
+            createNarwhal({ chart: { rotatedFrame: true }}).test([]).render();
+            expect(_opt.chart.rotatedFrame).toBe(false);
         });
     });
 
@@ -76,9 +80,13 @@ describe('Cartesian frame', function () {
 
     describe('datum', function () {
         it('should handle the case of normalzing an array of data', function () {
-            var narwhal = createNarwhal();
-            var datums = narwhal.datum({ name: 'series name', data: [1,2,3]});
-            expect(datums[0]).toEqual({y:1, x: 0});
+            var _data;
+            Narwhal.export('normalizeData', function (data, layer, options) {
+                _data = data;
+            });
+            var narwhal = createNarwhal().normalizeData([1,2,3]).render();
+
+            expect(_data[0].data[0]).toEqual({y:1, x: 0});
         });
     });
 

@@ -83,13 +83,14 @@
 
                 this.options = options || {};
 
+                _.merge(this.options, readOnlyProps);
 
                 var extraPadding = {};
                 if (!this.options.xAxis || !this.options.xAxis.firstAndLast) {
                     extraPadding = { chart : { padding: { right: 15 }}};
                 }
 
-                this._extraOptions.push(_.merge({}, defaults,readOnlyProps, extraPadding));
+                this._extraOptions.push(_.merge({}, defaults, extraPadding));
 
                 return this;
             },
