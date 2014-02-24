@@ -1,0 +1,11 @@
+---
+ name: Line Chart Sine Wave
+ description: Data series in Narwhal don't have to be based on data collected in the field &mdash; you can have your data series represent common mathematical functions and use Narwhal as a graphing tool.
+ authors:
+   - Forio
+ resources:
+   - http://d3js.org/d3.v3.js
+   - http://forio.com/tools/narwhal/narwhal.js
+   - http://forio.com/tools/narwhal/narwhal.min.css
+ normalize_css: no
+ ...
