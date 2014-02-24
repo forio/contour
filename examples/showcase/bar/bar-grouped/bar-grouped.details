@@ -1,0 +1,11 @@
+---
+ name: Grouped Bar Chart
+ description: Grouped bar charts show data from different groups of data next to each other in the same category. The resulting bars allow you to easily compare between elements of the same category. Grouped bar charts are the default in Narwhal. The `stack-tooltip` visualization adds a legend so that you can see the values of data from all groups at once.
+ authors:
+   - Forio
+ resources:
+   - http://d3js.org/d3.v3.js
+   - http://forio.com/tools/narwhal/narwhal.js
+   - http://forio.com/tools/narwhal/narwhal.min.css
+ normalize_css: no
+ ...

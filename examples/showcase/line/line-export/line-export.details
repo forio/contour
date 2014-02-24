@@ -1,0 +1,11 @@
+---
+ name: Line Chart with Custom Marker
+ description: In Narwhal, it's easy to create your own visualizations and add them to the core Narwhal object. Use the `export()` function to create the new kind of visualization. Then, add this new visualization to an instance of Narwhal. Here we've created a custom visualization that adds a horizontal line to the line chart, helping users to see how the data compare.
+ authors:
+   - Forio
+ resources:
+   - http://d3js.org/d3.v3.js
+   - http://forio.com/tools/narwhal/narwhal.js
+   - http://forio.com/tools/narwhal/narwhal.min.css
+ normalize_css: no
+ ...
