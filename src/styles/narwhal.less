@@ -13,11 +13,14 @@
 @tooltip-border-color: transparent;
 @tooltip-text-color: #fff;
 
-@s1-color: #5097fc;
-@s2-color: #fc4e51;
-@s3-color: #7decbb;
-@s4-color: #33363b;
-@s5-color: #999b9d;
+
+@palette1: #010202 #EE2E2F #008C48 #185AA9 #F47D23 #662C91 #A21D21 #B43894;
+@palette2: #737373 #F15A60 #7AC36A #5A9BD4 #FAA75B #9E67AB #CE7058 #D77FB4;
+@palette3: #CCCCCC #F2AFAD #D9E4AA #B8D2EC #B8D2EC #F3D1B0 #D5B2D4 #EBC0DA;
+@palette4: #010202 #942300 #006550 #C76C16 #5B4C00 #E1B79A #6F8E3B #8ACCC0;
+@palette5: #363694 #EBEBF4 #D7D7EA #C2C2DF #AFAFD4 #9A9AC9 #8686BF #7272B4;
+@palette6: #1F497D #EEECE1 #4F81BD #C0504D #9BBB59 #8064A2 #4BACC6 #F79646;
+
 
 
 .narwhal-chart {
@@ -89,4 +92,10 @@
     }
 }
 
-.make-series-colors();
+.make-series-colors('', @palette1);
+.make-series-colors('.palette-1', @palette1);
+.make-series-colors('.palette-2', @palette2);
+.make-series-colors('.palette-3', @palette3);
+.make-series-colors('.palette-4', @palette4);
+.make-series-colors('.palette-5', @palette5);
+.make-series-colors('.palette-6', @palette6);

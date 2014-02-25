@@ -9,14 +9,14 @@
     font-size: 16px;
 }
 
+.make-series-colors(@namespace, @colorList) {
 
-.make-series-colors() {
-    .make-color(@index, @list) when (@index < 6) {
+    .make-color(@index, @list) when (@index < 9) {
         @{list} {
-            @color: 's@{index}-color';
-            color: @@color;
+            @color-def: extract(@colorList, @index);
+            color: extract(@colorList, @index);
             &.line, .line {
-                stroke: @@color;
+                stroke: @color-def;
                 stroke-width: @data-line-width;
                 fill: none;
             }
@@ -32,15 +32,19 @@
             .area,
             .arc
              {
-                fill: @@color;
+                fill: @color-def;
             }
         }
     }
 
-    .make-color(1, ~'.s-1');
-    .make-color(2, ~'.s-2');
-    .make-color(3, ~'.s-3');
-    .make-color(4, ~'.s-4');
-    .make-color(5, ~'.s-5');
+    .make-color(1, ~'@{namespace}.s-1');
+    .make-color(2, ~'@{namespace}.s-2');
+    .make-color(3, ~'@{namespace}.s-3');
+    .make-color(4, ~'@{namespace}.s-4');
+    .make-color(5, ~'@{namespace}.s-5');
+    .make-color(6, ~'@{namespace}.s-6');
+    .make-color(7, ~'@{namespace}.s-7');
+    .make-color(8, ~'@{namespace}.s-8');
 
 }
+
