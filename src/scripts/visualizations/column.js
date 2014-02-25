@@ -10,6 +10,7 @@
     };
 
     function render(data, layer, options) {
+        if (!this.xScale) throw new Error('Column Chart requires .cartesian() to be included in the instance.');
         var duration = 400;
         var opt = options.column;
         var w = options.chart.plotWidth;

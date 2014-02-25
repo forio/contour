@@ -10,6 +10,7 @@
     };
 
     function ScatterPlot(data, layer, options) {
+        if (!this.xScale) throw new Error('Scatter Chart requires .cartesian() to be included in the instance.');
         var opt = options.scatter;
         var halfRangeBand = this.rangeBand / 2;
         var duration = 400;
