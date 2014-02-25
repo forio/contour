@@ -59,11 +59,11 @@
   white-space: nowrap;
 }
 .s-1 {
-  color: #010202;
+  color: #ee2e2f;
 }
 .s-1.line,
 .s-1 .line {
-  stroke: #010202;
+  stroke: #ee2e2f;
   stroke-width: 2px;
   fill: none;
 }
@@ -77,14 +77,14 @@
 .s-1 .dot,
 .s-1 .area,
 .s-1 .arc {
-  fill: #010202;
+  fill: #ee2e2f;
 }
 .s-2 {
-  color: #ee2e2f;
+  color: #008c48;
 }
 .s-2.line,
 .s-2 .line {
-  stroke: #ee2e2f;
+  stroke: #008c48;
   stroke-width: 2px;
   fill: none;
 }
@@ -98,14 +98,14 @@
 .s-2 .dot,
 .s-2 .area,
 .s-2 .arc {
-  fill: #ee2e2f;
+  fill: #008c48;
 }
 .s-3 {
-  color: #008c48;
+  color: #185aa9;
 }
 .s-3.line,
 .s-3 .line {
-  stroke: #008c48;
+  stroke: #185aa9;
   stroke-width: 2px;
   fill: none;
 }
@@ -119,14 +119,14 @@
 .s-3 .dot,
 .s-3 .area,
 .s-3 .arc {
-  fill: #008c48;
+  fill: #185aa9;
 }
 .s-4 {
-  color: #185aa9;
+  color: #f47d23;
 }
 .s-4.line,
 .s-4 .line {
-  stroke: #185aa9;
+  stroke: #f47d23;
   stroke-width: 2px;
   fill: none;
 }
@@ -140,14 +140,14 @@
 .s-4 .dot,
 .s-4 .area,
 .s-4 .arc {
-  fill: #185aa9;
+  fill: #f47d23;
 }
 .s-5 {
-  color: #f47d23;
+  color: #662c91;
 }
 .s-5.line,
 .s-5 .line {
-  stroke: #f47d23;
+  stroke: #662c91;
   stroke-width: 2px;
   fill: none;
 }
@@ -161,14 +161,14 @@
 .s-5 .dot,
 .s-5 .area,
 .s-5 .arc {
-  fill: #f47d23;
+  fill: #662c91;
 }
 .s-6 {
-  color: #662c91;
+  color: #a21d21;
 }
 .s-6.line,
 .s-6 .line {
-  stroke: #662c91;
+  stroke: #a21d21;
   stroke-width: 2px;
   fill: none;
 }
@@ -182,14 +182,14 @@
 .s-6 .dot,
 .s-6 .area,
 .s-6 .arc {
-  fill: #662c91;
+  fill: #a21d21;
 }
 .s-7 {
-  color: #a21d21;
+  color: #b43894;
 }
 .s-7.line,
 .s-7 .line {
-  stroke: #a21d21;
+  stroke: #b43894;
   stroke-width: 2px;
   fill: none;
 }
@@ -203,14 +203,14 @@
 .s-7 .dot,
 .s-7 .area,
 .s-7 .arc {
-  fill: #a21d21;
+  fill: #b43894;
 }
 .s-8 {
-  color: #b43894;
+  color: #010202;
 }
 .s-8.line,
 .s-8 .line {
-  stroke: #b43894;
+  stroke: #010202;
   stroke-width: 2px;
   fill: none;
 }
@@ -224,14 +224,14 @@
 .s-8 .dot,
 .s-8 .area,
 .s-8 .arc {
-  fill: #b43894;
+  fill: #010202;
 }
 .palette-1.s-1 {
-  color: #010202;
+  color: #ee2e2f;
 }
 .palette-1.s-1.line,
 .palette-1.s-1 .line {
-  stroke: #010202;
+  stroke: #ee2e2f;
   stroke-width: 2px;
   fill: none;
 }
@@ -245,14 +245,14 @@
 .palette-1.s-1 .dot,
 .palette-1.s-1 .area,
 .palette-1.s-1 .arc {
-  fill: #010202;
+  fill: #ee2e2f;
 }
 .palette-1.s-2 {
-  color: #ee2e2f;
+  color: #008c48;
 }
 .palette-1.s-2.line,
 .palette-1.s-2 .line {
-  stroke: #ee2e2f;
+  stroke: #008c48;
   stroke-width: 2px;
   fill: none;
 }
@@ -266,14 +266,14 @@
 .palette-1.s-2 .dot,
 .palette-1.s-2 .area,
 .palette-1.s-2 .arc {
-  fill: #ee2e2f;
+  fill: #008c48;
 }
 .palette-1.s-3 {
-  color: #008c48;
+  color: #185aa9;
 }
 .palette-1.s-3.line,
 .palette-1.s-3 .line {
-  stroke: #008c48;
+  stroke: #185aa9;
   stroke-width: 2px;
   fill: none;
 }
@@ -287,14 +287,14 @@
 .palette-1.s-3 .dot,
 .palette-1.s-3 .area,
 .palette-1.s-3 .arc {
-  fill: #008c48;
+  fill: #185aa9;
 }
 .palette-1.s-4 {
-  color: #185aa9;
+  color: #f47d23;
 }
 .palette-1.s-4.line,
 .palette-1.s-4 .line {
-  stroke: #185aa9;
+  stroke: #f47d23;
   stroke-width: 2px;
   fill: none;
 }
@@ -308,14 +308,14 @@
 .palette-1.s-4 .dot,
 .palette-1.s-4 .area,
 .palette-1.s-4 .arc {
-  fill: #185aa9;
+  fill: #f47d23;
 }
 .palette-1.s-5 {
-  color: #f47d23;
+  color: #662c91;
 }
 .palette-1.s-5.line,
 .palette-1.s-5 .line {
-  stroke: #f47d23;
+  stroke: #662c91;
   stroke-width: 2px;
   fill: none;
 }
@@ -329,14 +329,14 @@
 .palette-1.s-5 .dot,
 .palette-1.s-5 .area,
 .palette-1.s-5 .arc {
-  fill: #f47d23;
+  fill: #662c91;
 }
 .palette-1.s-6 {
-  color: #662c91;
+  color: #a21d21;
 }
 .palette-1.s-6.line,
 .palette-1.s-6 .line {
-  stroke: #662c91;
+  stroke: #a21d21;
   stroke-width: 2px;
   fill: none;
 }
@@ -350,14 +350,14 @@
 .palette-1.s-6 .dot,
 .palette-1.s-6 .area,
 .palette-1.s-6 .arc {
-  fill: #662c91;
+  fill: #a21d21;
 }
 .palette-1.s-7 {
-  color: #a21d21;
+  color: #b43894;
 }
 .palette-1.s-7.line,
 .palette-1.s-7 .line {
-  stroke: #a21d21;
+  stroke: #b43894;
   stroke-width: 2px;
   fill: none;
 }
@@ -371,14 +371,14 @@
 .palette-1.s-7 .dot,
 .palette-1.s-7 .area,
 .palette-1.s-7 .arc {
-  fill: #a21d21;
+  fill: #b43894;
 }
 .palette-1.s-8 {
-  color: #b43894;
+  color: #010202;
 }
 .palette-1.s-8.line,
 .palette-1.s-8 .line {
-  stroke: #b43894;
+  stroke: #010202;
   stroke-width: 2px;
   fill: none;
 }
@@ -392,14 +392,14 @@
 .palette-1.s-8 .dot,
 .palette-1.s-8 .area,
 .palette-1.s-8 .arc {
-  fill: #b43894;
+  fill: #010202;
 }
 .palette-2.s-1 {
-  color: #737373;
+  color: #f15a60;
 }
 .palette-2.s-1.line,
 .palette-2.s-1 .line {
-  stroke: #737373;
+  stroke: #f15a60;
   stroke-width: 2px;
   fill: none;
 }
@@ -413,14 +413,14 @@
 .palette-2.s-1 .dot,
 .palette-2.s-1 .area,
 .palette-2.s-1 .arc {
-  fill: #737373;
+  fill: #f15a60;
 }
 .palette-2.s-2 {
-  color: #f15a60;
+  color: #7ac36a;
 }
 .palette-2.s-2.line,
 .palette-2.s-2 .line {
-  stroke: #f15a60;
+  stroke: #7ac36a;
   stroke-width: 2px;
   fill: none;
 }
@@ -434,14 +434,14 @@
 .palette-2.s-2 .dot,
 .palette-2.s-2 .area,
 .palette-2.s-2 .arc {
-  fill: #f15a60;
+  fill: #7ac36a;
 }
 .palette-2.s-3 {
-  color: #7ac36a;
+  color: #5a9bd4;
 }
 .palette-2.s-3.line,
 .palette-2.s-3 .line {
-  stroke: #7ac36a;
+  stroke: #5a9bd4;
   stroke-width: 2px;
   fill: none;
 }
@@ -455,14 +455,14 @@
 .palette-2.s-3 .dot,
 .palette-2.s-3 .area,
 .palette-2.s-3 .arc {
-  fill: #7ac36a;
+  fill: #5a9bd4;
 }
 .palette-2.s-4 {
-  color: #5a9bd4;
+  color: #faa75b;
 }
 .palette-2.s-4.line,
 .palette-2.s-4 .line {
-  stroke: #5a9bd4;
+  stroke: #faa75b;
   stroke-width: 2px;
   fill: none;
 }
@@ -476,14 +476,14 @@
 .palette-2.s-4 .dot,
 .palette-2.s-4 .area,
 .palette-2.s-4 .arc {
-  fill: #5a9bd4;
+  fill: #faa75b;
 }
 .palette-2.s-5 {
-  color: #faa75b;
+  color: #9e67ab;
 }
 .palette-2.s-5.line,
 .palette-2.s-5 .line {
-  stroke: #faa75b;
+  stroke: #9e67ab;
   stroke-width: 2px;
   fill: none;
 }
@@ -497,14 +497,14 @@
 .palette-2.s-5 .dot,
 .palette-2.s-5 .area,
 .palette-2.s-5 .arc {
-  fill: #faa75b;
+  fill: #9e67ab;
 }
 .palette-2.s-6 {
-  color: #9e67ab;
+  color: #ce7058;
 }
 .palette-2.s-6.line,
 .palette-2.s-6 .line {
-  stroke: #9e67ab;
+  stroke: #ce7058;
   stroke-width: 2px;
   fill: none;
 }
@@ -518,14 +518,14 @@
 .palette-2.s-6 .dot,
 .palette-2.s-6 .area,
 .palette-2.s-6 .arc {
-  fill: #9e67ab;
+  fill: #ce7058;
 }
 .palette-2.s-7 {
-  color: #ce7058;
+  color: #d77fb4;
 }
 .palette-2.s-7.line,
 .palette-2.s-7 .line {
-  stroke: #ce7058;
+  stroke: #d77fb4;
   stroke-width: 2px;
   fill: none;
 }
@@ -539,14 +539,14 @@
 .palette-2.s-7 .dot,
 .palette-2.s-7 .area,
 .palette-2.s-7 .arc {
-  fill: #ce7058;
+  fill: #d77fb4;
 }
 .palette-2.s-8 {
-  color: #d77fb4;
+  color: #737373;
 }
 .palette-2.s-8.line,
 .palette-2.s-8 .line {
-  stroke: #d77fb4;
+  stroke: #737373;
   stroke-width: 2px;
   fill: none;
 }
@@ -560,14 +560,14 @@
 .palette-2.s-8 .dot,
 .palette-2.s-8 .area,
 .palette-2.s-8 .arc {
-  fill: #d77fb4;
+  fill: #737373;
 }
 .palette-3.s-1 {
-  color: #cccccc;
+  color: #f2afad;
 }
 .palette-3.s-1.line,
 .palette-3.s-1 .line {
-  stroke: #cccccc;
+  stroke: #f2afad;
   stroke-width: 2px;
   fill: none;
 }
@@ -581,14 +581,14 @@
 .palette-3.s-1 .dot,
 .palette-3.s-1 .area,
 .palette-3.s-1 .arc {
-  fill: #cccccc;
+  fill: #f2afad;
 }
 .palette-3.s-2 {
-  color: #f2afad;
+  color: #d9e4aa;
 }
 .palette-3.s-2.line,
 .palette-3.s-2 .line {
-  stroke: #f2afad;
+  stroke: #d9e4aa;
   stroke-width: 2px;
   fill: none;
 }
@@ -602,14 +602,14 @@
 .palette-3.s-2 .dot,
 .palette-3.s-2 .area,
 .palette-3.s-2 .arc {
-  fill: #f2afad;
+  fill: #d9e4aa;
 }
 .palette-3.s-3 {
-  color: #d9e4aa;
+  color: #b8d2ec;
 }
 .palette-3.s-3.line,
 .palette-3.s-3 .line {
-  stroke: #d9e4aa;
+  stroke: #b8d2ec;
   stroke-width: 2px;
   fill: none;
 }
@@ -623,7 +623,7 @@
 .palette-3.s-3 .dot,
 .palette-3.s-3 .area,
 .palette-3.s-3 .arc {
-  fill: #d9e4aa;
+  fill: #b8d2ec;
 }
 .palette-3.s-4 {
   color: #b8d2ec;
@@ -647,11 +647,11 @@
   fill: #b8d2ec;
 }
 .palette-3.s-5 {
-  color: #b8d2ec;
+  color: #f3d1b0;
 }
 .palette-3.s-5.line,
 .palette-3.s-5 .line {
-  stroke: #b8d2ec;
+  stroke: #f3d1b0;
   stroke-width: 2px;
   fill: none;
 }
@@ -665,14 +665,14 @@
 .palette-3.s-5 .dot,
 .palette-3.s-5 .area,
 .palette-3.s-5 .arc {
-  fill: #b8d2ec;
+  fill: #f3d1b0;
 }
 .palette-3.s-6 {
-  color: #f3d1b0;
+  color: #d5b2d4;
 }
 .palette-3.s-6.line,
 .palette-3.s-6 .line {
-  stroke: #f3d1b0;
+  stroke: #d5b2d4;
   stroke-width: 2px;
   fill: none;
 }
@@ -686,14 +686,14 @@
 .palette-3.s-6 .dot,
 .palette-3.s-6 .area,
 .palette-3.s-6 .arc {
-  fill: #f3d1b0;
+  fill: #d5b2d4;
 }
 .palette-3.s-7 {
-  color: #d5b2d4;
+  color: #ebc0da;
 }
 .palette-3.s-7.line,
 .palette-3.s-7 .line {
-  stroke: #d5b2d4;
+  stroke: #ebc0da;
   stroke-width: 2px;
   fill: none;
 }
@@ -707,14 +707,14 @@
 .palette-3.s-7 .dot,
 .palette-3.s-7 .area,
 .palette-3.s-7 .arc {
-  fill: #d5b2d4;
+  fill: #ebc0da;
 }
 .palette-3.s-8 {
-  color: #ebc0da;
+  color: #cccccc;
 }
 .palette-3.s-8.line,
 .palette-3.s-8 .line {
-  stroke: #ebc0da;
+  stroke: #cccccc;
   stroke-width: 2px;
   fill: none;
 }
@@ -728,14 +728,14 @@
 .palette-3.s-8 .dot,
 .palette-3.s-8 .area,
 .palette-3.s-8 .arc {
-  fill: #ebc0da;
+  fill: #cccccc;
 }
 .palette-4.s-1 {
-  color: #010202;
+  color: #942300;
 }
 .palette-4.s-1.line,
 .palette-4.s-1 .line {
-  stroke: #010202;
+  stroke: #942300;
   stroke-width: 2px;
   fill: none;
 }
@@ -749,14 +749,14 @@
 .palette-4.s-1 .dot,
 .palette-4.s-1 .area,
 .palette-4.s-1 .arc {
-  fill: #010202;
+  fill: #942300;
 }
 .palette-4.s-2 {
-  color: #942300;
+  color: #006550;
 }
 .palette-4.s-2.line,
 .palette-4.s-2 .line {
-  stroke: #942300;
+  stroke: #006550;
   stroke-width: 2px;
   fill: none;
 }
@@ -770,14 +770,14 @@
 .palette-4.s-2 .dot,
 .palette-4.s-2 .area,
 .palette-4.s-2 .arc {
-  fill: #942300;
+  fill: #006550;
 }
 .palette-4.s-3 {
-  color: #006550;
+  color: #c76c16;
 }
 .palette-4.s-3.line,
 .palette-4.s-3 .line {
-  stroke: #006550;
+  stroke: #c76c16;
   stroke-width: 2px;
   fill: none;
 }
@@ -791,14 +791,14 @@
 .palette-4.s-3 .dot,
 .palette-4.s-3 .area,
 .palette-4.s-3 .arc {
-  fill: #006550;
+  fill: #c76c16;
 }
 .palette-4.s-4 {
-  color: #c76c16;
+  color: #5b4c00;
 }
 .palette-4.s-4.line,
 .palette-4.s-4 .line {
-  stroke: #c76c16;
+  stroke: #5b4c00;
   stroke-width: 2px;
   fill: none;
 }
@@ -812,14 +812,14 @@
 .palette-4.s-4 .dot,
 .palette-4.s-4 .area,
 .palette-4.s-4 .arc {
-  fill: #c76c16;
+  fill: #5b4c00;
 }
 .palette-4.s-5 {
-  color: #5b4c00;
+  color: #e1b79a;
 }
 .palette-4.s-5.line,
 .palette-4.s-5 .line {
-  stroke: #5b4c00;
+  stroke: #e1b79a;
   stroke-width: 2px;
   fill: none;
 }
@@ -833,14 +833,14 @@
 .palette-4.s-5 .dot,
 .palette-4.s-5 .area,
 .palette-4.s-5 .arc {
-  fill: #5b4c00;
+  fill: #e1b79a;
 }
 .palette-4.s-6 {
-  color: #e1b79a;
+  color: #6f8e3b;
 }
 .palette-4.s-6.line,
 .palette-4.s-6 .line {
-  stroke: #e1b79a;
+  stroke: #6f8e3b;
   stroke-width: 2px;
   fill: none;
 }
@@ -854,14 +854,14 @@
 .palette-4.s-6 .dot,
 .palette-4.s-6 .area,
 .palette-4.s-6 .arc {
-  fill: #e1b79a;
+  fill: #6f8e3b;
 }
 .palette-4.s-7 {
-  color: #6f8e3b;
+  color: #8accc0;
 }
 .palette-4.s-7.line,
 .palette-4.s-7 .line {
-  stroke: #6f8e3b;
+  stroke: #8accc0;
   stroke-width: 2px;
   fill: none;
 }
@@ -875,14 +875,14 @@
 .palette-4.s-7 .dot,
 .palette-4.s-7 .area,
 .palette-4.s-7 .arc {
-  fill: #6f8e3b;
+  fill: #8accc0;
 }
 .palette-4.s-8 {
-  color: #8accc0;
+  color: #010202;
 }
 .palette-4.s-8.line,
 .palette-4.s-8 .line {
-  stroke: #8accc0;
+  stroke: #010202;
   stroke-width: 2px;
   fill: none;
 }
@@ -896,14 +896,14 @@
 .palette-4.s-8 .dot,
 .palette-4.s-8 .area,
 .palette-4.s-8 .arc {
-  fill: #8accc0;
+  fill: #010202;
 }
 .palette-5.s-1 {
-  color: #363694;
+  color: #ebebf4;
 }
 .palette-5.s-1.line,
 .palette-5.s-1 .line {
-  stroke: #363694;
+  stroke: #ebebf4;
   stroke-width: 2px;
   fill: none;
 }
@@ -917,14 +917,14 @@
 .palette-5.s-1 .dot,
 .palette-5.s-1 .area,
 .palette-5.s-1 .arc {
-  fill: #363694;
+  fill: #ebebf4;
 }
 .palette-5.s-2 {
-  color: #ebebf4;
+  color: #d7d7ea;
 }
 .palette-5.s-2.line,
 .palette-5.s-2 .line {
-  stroke: #ebebf4;
+  stroke: #d7d7ea;
   stroke-width: 2px;
   fill: none;
 }
@@ -938,14 +938,14 @@
 .palette-5.s-2 .dot,
 .palette-5.s-2 .area,
 .palette-5.s-2 .arc {
-  fill: #ebebf4;
+  fill: #d7d7ea;
 }
 .palette-5.s-3 {
-  color: #d7d7ea;
+  color: #c2c2df;
 }
 .palette-5.s-3.line,
 .palette-5.s-3 .line {
-  stroke: #d7d7ea;
+  stroke: #c2c2df;
   stroke-width: 2px;
   fill: none;
 }
@@ -959,14 +959,14 @@
 .palette-5.s-3 .dot,
 .palette-5.s-3 .area,
 .palette-5.s-3 .arc {
-  fill: #d7d7ea;
+  fill: #c2c2df;
 }
 .palette-5.s-4 {
-  color: #c2c2df;
+  color: #afafd4;
 }
 .palette-5.s-4.line,
 .palette-5.s-4 .line {
-  stroke: #c2c2df;
+  stroke: #afafd4;
   stroke-width: 2px;
   fill: none;
 }
@@ -980,14 +980,14 @@
 .palette-5.s-4 .dot,
 .palette-5.s-4 .area,
 .palette-5.s-4 .arc {
-  fill: #c2c2df;
+  fill: #afafd4;
 }
 .palette-5.s-5 {
-  color: #afafd4;
+  color: #9a9ac9;
 }
 .palette-5.s-5.line,
 .palette-5.s-5 .line {
-  stroke: #afafd4;
+  stroke: #9a9ac9;
   stroke-width: 2px;
   fill: none;
 }
@@ -1001,14 +1001,14 @@
 .palette-5.s-5 .dot,
 .palette-5.s-5 .area,
 .palette-5.s-5 .arc {
-  fill: #afafd4;
+  fill: #9a9ac9;
 }
 .palette-5.s-6 {
-  color: #9a9ac9;
+  color: #8686bf;
 }
 .palette-5.s-6.line,
 .palette-5.s-6 .line {
-  stroke: #9a9ac9;
+  stroke: #8686bf;
   stroke-width: 2px;
   fill: none;
 }
@@ -1022,14 +1022,14 @@
 .palette-5.s-6 .dot,
 .palette-5.s-6 .area,
 .palette-5.s-6 .arc {
-  fill: #9a9ac9;
+  fill: #8686bf;
 }
 .palette-5.s-7 {
-  color: #8686bf;
+  color: #7272b4;
 }
 .palette-5.s-7.line,
 .palette-5.s-7 .line {
-  stroke: #8686bf;
+  stroke: #7272b4;
   stroke-width: 2px;
   fill: none;
 }
@@ -1043,14 +1043,14 @@
 .palette-5.s-7 .dot,
 .palette-5.s-7 .area,
 .palette-5.s-7 .arc {
-  fill: #8686bf;
+  fill: #7272b4;
 }
 .palette-5.s-8 {
-  color: #7272b4;
+  color: #363694;
 }
 .palette-5.s-8.line,
 .palette-5.s-8 .line {
-  stroke: #7272b4;
+  stroke: #363694;
   stroke-width: 2px;
   fill: none;
 }
@@ -1064,14 +1064,14 @@
 .palette-5.s-8 .dot,
 .palette-5.s-8 .area,
 .palette-5.s-8 .arc {
-  fill: #7272b4;
+  fill: #363694;
 }
 .palette-6.s-1 {
-  color: #1f497d;
+  color: #eeece1;
 }
 .palette-6.s-1.line,
 .palette-6.s-1 .line {
-  stroke: #1f497d;
+  stroke: #eeece1;
   stroke-width: 2px;
   fill: none;
 }
@@ -1085,14 +1085,14 @@
 .palette-6.s-1 .dot,
 .palette-6.s-1 .area,
 .palette-6.s-1 .arc {
-  fill: #1f497d;
+  fill: #eeece1;
 }
 .palette-6.s-2 {
-  color: #eeece1;
+  color: #4f81bd;
 }
 .palette-6.s-2.line,
 .palette-6.s-2 .line {
-  stroke: #eeece1;
+  stroke: #4f81bd;
   stroke-width: 2px;
   fill: none;
 }
@@ -1106,14 +1106,14 @@
 .palette-6.s-2 .dot,
 .palette-6.s-2 .area,
 .palette-6.s-2 .arc {
-  fill: #eeece1;
+  fill: #4f81bd;
 }
 .palette-6.s-3 {
-  color: #4f81bd;
+  color: #c0504d;
 }
 .palette-6.s-3.line,
 .palette-6.s-3 .line {
-  stroke: #4f81bd;
+  stroke: #c0504d;
   stroke-width: 2px;
   fill: none;
 }
@@ -1127,14 +1127,14 @@
 .palette-6.s-3 .dot,
 .palette-6.s-3 .area,
 .palette-6.s-3 .arc {
-  fill: #4f81bd;
+  fill: #c0504d;
 }
 .palette-6.s-4 {
-  color: #c0504d;
+  color: #9bbb59;
 }
 .palette-6.s-4.line,
 .palette-6.s-4 .line {
-  stroke: #c0504d;
+  stroke: #9bbb59;
   stroke-width: 2px;
   fill: none;
 }
@@ -1148,14 +1148,14 @@
 .palette-6.s-4 .dot,
 .palette-6.s-4 .area,
 .palette-6.s-4 .arc {
-  fill: #c0504d;
+  fill: #9bbb59;
 }
 .palette-6.s-5 {
-  color: #9bbb59;
+  color: #8064a2;
 }
 .palette-6.s-5.line,
 .palette-6.s-5 .line {
-  stroke: #9bbb59;
+  stroke: #8064a2;
   stroke-width: 2px;
   fill: none;
 }
@@ -1169,14 +1169,14 @@
 .palette-6.s-5 .dot,
 .palette-6.s-5 .area,
 .palette-6.s-5 .arc {
-  fill: #9bbb59;
+  fill: #8064a2;
 }
 .palette-6.s-6 {
-  color: #8064a2;
+  color: #4bacc6;
 }
 .palette-6.s-6.line,
 .palette-6.s-6 .line {
-  stroke: #8064a2;
+  stroke: #4bacc6;
   stroke-width: 2px;
   fill: none;
 }
@@ -1190,14 +1190,14 @@
 .palette-6.s-6 .dot,
 .palette-6.s-6 .area,
 .palette-6.s-6 .arc {
-  fill: #8064a2;
+  fill: #4bacc6;
 }
 .palette-6.s-7 {
-  color: #4bacc6;
+  color: #f79646;
 }
 .palette-6.s-7.line,
 .palette-6.s-7 .line {
-  stroke: #4bacc6;
+  stroke: #f79646;
   stroke-width: 2px;
   fill: none;
 }
@@ -1211,14 +1211,14 @@
 .palette-6.s-7 .dot,
 .palette-6.s-7 .area,
 .palette-6.s-7 .arc {
-  fill: #4bacc6;
+  fill: #f79646;
 }
 .palette-6.s-8 {
-  color: #f79646;
+  color: #1f497d;
 }
 .palette-6.s-8.line,
 .palette-6.s-8 .line {
-  stroke: #f79646;
+  stroke: #1f497d;
   stroke-width: 2px;
   fill: none;
 }
@@ -1232,5 +1232,5 @@
 .palette-6.s-8 .dot,
 .palette-6.s-8 .area,
 .palette-6.s-8 .arc {
-  fill: #f79646;
+  fill: #1f497d;
 }
