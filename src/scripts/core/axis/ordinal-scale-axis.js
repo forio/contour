@@ -40,7 +40,8 @@
         axis: function () {
             var options = this.options.xAxis;
             var optFormat = (options.labels.format ? d3.format(options.labels.format) : 0);
-            var tickFormat = options.labels.formatter || optFormat || function (d) { return _.isDate(d) ? d.getDate() : d; };
+
+            var tickFormat = options.labels.formatter || (!this.isCategorized ? optFormat : 0) || function (d) { return _.isDate(d) ? d.getDate() : d; };
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .innerTickSize(options.innerTickSize)
