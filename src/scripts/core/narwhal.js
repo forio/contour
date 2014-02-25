@@ -199,7 +199,7 @@
             var calcWidth = this.options.chart.width;
             var ratio = this.options.chart.aspect || this.options.chart.defaultAspect;
 
-            return !!containerHeight ?  containerHeight : Math.round(calcWidth * ratio);
+            return !!containerHeight && containerHeight > 1 ?  containerHeight : Math.round(calcWidth * ratio);
         },
 
         calcMetrics: function () {
