@@ -22,6 +22,8 @@
         var series = layer.selectAll('.series')
             .data(data);
 
+        series.attr('class', classFn);
+
         series.enter().append('svg:g')
             .attr('class', classFn);
 
@@ -30,20 +32,23 @@
         var dots = series.selectAll('.dot')
             .data(function (d) { return d.data; });
 
-        dots
-            .enter().append('circle')
+        dots.enter().append('circle')
                 .attr('class', 'dot tooltip-tracker')
                 .attr('r', opt.radius)
                 .attr('cx', x)
                 .attr('cy', h);
 
         if (options.chart.animations) {
-            dots.transition().duration(duration);
+            dots.transition().duration(duration)
+                .attr('r', opt.radius)
+                .attr('cx', x)
+                .attr('cy', y);
+        } else {
+            dots.attr('r', opt.radius)
+                .attr('cx', x)
+                .attr('cy', y);
         }
 
-        dots.attr('r', opt.radius)
-            .attr('cx', x)
-            .attr('cy', y);
 
         dots.exit().remove();
     }
