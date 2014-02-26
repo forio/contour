@@ -760,7 +760,7 @@
 
 
                 var extraPadding = {};
-                if (!this.options.xAxis.firstAndLast) {
+                if (!this.options.xAxis || !this.options.xAxis.firstAndLast) {
                     extraPadding = { chart : { padding: { right: 15 }}};
                 }
 
@@ -772,6 +772,10 @@
             xDomain: [],
             yDomain: [],
 
+            _getYScaledDomain: function () {
+                var absMin = this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
+                return _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min || absMin, this.options.yAxis.max);
+            },
 
             adjustPadding: function () {
                 var xOptions = this.options.xAxis;
@@ -789,7 +793,11 @@
                 }
 
                 if (!this.options.chart.padding.left) {
-                    var yLabels = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
+
+                    var yDomainScaled = this._getYScaledDomain();
+                    // var yDomainScaled = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
+                    var tmpScale = d3.scale.linear().domain(yDomainScaled);
+                    var yLabels = tmpScale.ticks(yOptions.ticks);
 
                     var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
                     var yAxisText = _.map(yLabels, format).join('<br>');
@@ -829,8 +837,7 @@
             computeYScale: function () {
                 if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
-                var absMin = this.yDomain[0] > 0 ? 0 : undefined;
-                var yScaleDomain = _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min || absMin, this.options.yAxis.max);
+                var yScaleDomain = this._getYScaledDomain();
 
                 if(!this.yScale) {
                     this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
@@ -1141,7 +1148,7 @@
 
 })();
 
-Narwhal.version = '0.0.48';
+Narwhal.version = '0.0.50';
 (function () {
 
     var helpers = {

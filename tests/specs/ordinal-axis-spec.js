@@ -25,14 +25,21 @@ describe('Ordinal xAxis', function () {
 
 
     it('should change padding between axis and first rangeBand using outerRangePadding', function () {
+        /// TODO:
+        /// This test is very brittle, and the actual scale is dependent on with chart width
+        /// so it has to have the width: 402... we need to fix this
         function getScale (inner, outer) {
-            narwhal = createNarwhal({ xAxis: { innerRangePadding: inner, outerRangePadding: outer }}) .nullVis([10, 20, 30]).render();
+            narwhal = createNarwhal({
+                    chart: { width: 402 },
+                    xAxis: { innerRangePadding: inner, outerRangePadding: outer }
+                })
+                .nullVis([10, 20, 30]).render();
             return narwhal.xAxis().scale();
         }
 
         var scale = getScale(0, 0);
 
-        expect(scale(0)).toBe(0);
+        expect(scale(0)).toBe(1);
 
         scale = getScale(0, 0.5);
         var width = scale.rangeBand();
@@ -40,18 +47,28 @@ describe('Ordinal xAxis', function () {
     });
 
     it('should change padding between columns using innerRangePadding', function () {
+        /// TODO: find a better way to test this without hardcoding the expected result... the problem
+        /// is that this is dependent on the plotWidth, that varies depending on the axis labels, etc.
+
+        var data = [10, 20, 30];
         function getScale (inner, outer) {
-            narwhal = createNarwhal({ xAxis: { innerRangePadding: inner, outerRangePadding: outer }}) .nullVis([10, 20, 30]).render();
+            narwhal = createNarwhal({
+                    chart: { width: 400 },
+                    xAxis: { innerRangePadding: inner, outerRangePadding: outer }
+                })
+                .nullVis(data).render();
             return narwhal.xAxis().scale();
         }
 
         var scale = getScale(0, 0);
+        // with 0 inner range padding, we should get the second range (scale(1)) at exaclty the width of the columns
         var width = scale.rangeBand();
-        expect(scale(1)).toBe(width);
+        expect(scale(1)).toBe(120);
 
         scale = getScale(0, 0.5);
         width = scale.rangeBand();
-        expect(scale(1)).toBe(width * 1.5 + 1);
+        // with 50% inner padding, we should get the second range (scale(1)) at 1 1/2 the width of the columns
+        expect(scale(1)).toBe(135);
     });
 
     describe('with options.xAxis.min set', function () {

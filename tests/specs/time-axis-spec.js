@@ -151,7 +151,7 @@ describe('time Axis', function () {
             var w = narwhal.options.chart.plotWidth;
 
             expect(narwhal.xScale(data[0].x)).toBe(0);
-            expect(narwhal.xScale(data[1].x)).toBe(w/2);
+            expect(narwhal.xScale(data[1].x)).toBe(Math.round(w/2));
             expect(narwhal.xScale(data[2].x)).toBe(w);
 
         });

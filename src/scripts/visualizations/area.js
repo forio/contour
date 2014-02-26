@@ -10,6 +10,9 @@
     };
 
     function renderer(data, layer, options) {
+
+        if (!this.xScale) throw new Error('Area Chart requires .cartesian() to be included in the instance.');
+
         var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2; }, this);
         var y = _.bind(function (val) { return this.yScale(val); }, this);
         var h = options.chart.plotHeight;

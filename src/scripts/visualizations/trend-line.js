@@ -2,6 +2,7 @@
 
 
     function ctor(data, layer, options) {
+        if (!this.xScale) throw new Error('Trend Line requires .cartesian() to be included in the instance.');
         var duration = 400;
         var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);
         var y = _.bind(function(d) { return this.yScale(d); }, this);

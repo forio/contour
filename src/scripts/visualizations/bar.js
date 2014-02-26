@@ -8,6 +8,9 @@
     };
 
     function barRender(data, layer, options) {
+
+        if (!options.chart.rotatedFrame) throw new Error('Bar Chart requires .horizontal() to be included in the instance');
+
         var duration = 400;
         var x = this.xScale;
         var y = this.yScale;
