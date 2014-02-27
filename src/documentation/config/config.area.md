@@ -2,12 +2,12 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-To override any of the default configuration options in an area chart, include the `area` configuration object in the configuration options that you pass to your Narwhal constructor.
+To override any of the default configuration options in an area chart, include the `area` configuration object in the configuration options that you pass to your Contour constructor.
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myAreaChart",
+	new Contour({
+	    el: '.myAreaChart',
 	    area: {
 	      // area-specific configuration options
 	    }
@@ -16,7 +16,7 @@ To override any of the default configuration options in an area chart, include t
 	.area(data)
 	.render()	
 
-*[Try it.](http://jsfiddle.net/forio/fK6z2/){"_blank"}*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.area/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

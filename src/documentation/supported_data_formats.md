@@ -96,7 +96,15 @@ Contour converts this automatically to:
 	  }
 	])
 
+###Additional Data
+
+Sometimes your data has additional dimensions. If that's the case, use the most verbose format and make sure that two of your dimensions are `x` and `y`, but include any others that you would like. For example: 
+
+	var myData = { name: 'many-dimensional-series', data: [{x:1, y:1, z:2}, {x:2, y:7, z:8}, {x:3, y:5, z:4}] }
+
+Then, you can access the additional data by index, for example `data[0].z` returns `2`. See the [Scatter Plot Customization]() in the showcase for an example of this.
+
 ###Advantages of Automatic Conversion
 
-It might seem excessive to have Contour automatically convert all data series to such a verbose format. However, this conversion makes [exposing and exporting](#narwhal) much easier. As the author of an `.expose()` or `.export()` function, you always know exactly what form of data you'll be receiving. 
+It might seem excessive to have Contour automatically convert all data series to such a verbose format. However, this conversion makes [exposing and exporting](#contour) much easier. As the author of an `.expose()` or `.export()` function, you always know exactly what form of data you'll be receiving. 
 

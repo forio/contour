@@ -2,8 +2,9 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-TODO: Description pending https://github.com/forio/forio-narwhal/issues/77.
+When multiple data series are specified for an area chart, the data series are automatically stacked (`true`).
 
+**Notes:** Read only.
 
 <% if(notes) { %><%= notes %><% } %>
 

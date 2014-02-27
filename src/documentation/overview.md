@@ -7,6 +7,6 @@ Contour is Forio's visualization library. Built on top of the popular [D3](http:
 * Browse the [Example Visualizations](showcase.html) for inspiration
 * Follow the [QuickStart](#quickstart) to make your first chart in minutes
 * Review the reference documentation for any questions: select from the visualizations and configuration options on the left
-* [Contribute](http://github.com/forio/forio-narwhal) your own Contour extensions and help build our data visualization community
+* [Contribute](http://github.com/forio/contour) your own Contour extensions and help build our data visualization community
 
 
