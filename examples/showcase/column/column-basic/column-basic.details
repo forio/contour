@@ -1,0 +1,11 @@
+---
+ name: Basic Column Chart
+ description: Create basic column charts by adding .cartesian() and .column() in your Narwhal instance. Use configuration options to set properties of the visualizations and axes.
+ authors:
+   - Forio
+ resources:
+   - http://d3js.org/d3.v3.js
+   - http://forio.com/tools/narwhal/narwhal.js
+   - http://forio.com/tools/narwhal/narwhal.min.css
+ normalize_css: no
+ ...

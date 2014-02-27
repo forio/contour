@@ -24,14 +24,17 @@
 var main = [
     { key: 'overview', text: 'Overview', path: 'overview.md' },
     { key: 'quickstart', text: 'QuickStart', path: 'quickstart.md'},
-    { key: 'examples_index', text: 'Example Visualizations', path: '../examples/index.html'},
-    { key: 'examples_extensions', text: 'Example Extensions', path: '../examples/extensions.html'},
+// moved these to github.com/forio/contour-showcase/
+//    { key: 'examples_index', text: 'Example Visualizations', path: '../examples/index.html'},
+//    { key: 'examples_extensions', text: 'Example Extensions', path: '../examples/extensions.html'},
     { key: 'key_concepts', text: 'Key Concepts', path: 'key_concepts.md'},
     { key: 'supported_data_formats', text: 'Supported Data Formats', path: 'supported_data_formats.md'},
     { key: '', text: '&nbsp;', path: ''},
-    { key: 'narwhal', text: 'Narwhal', path: 'narwhal.js.md' },
+    { key: 'narwhal', text: 'Contour', path: 'narwhal.js.md' },
     { key: 'cartesian', text: 'cartesian', path: 'cartesian.js.md' },
     { key: 'horizontal-frame', text: 'horizontal', path: 'horizontal-frame.js.md' },
+    { key: '', text: '&nbsp;', path: ''},
+    { key: '', text: 'Visualizations', path: ''},
     { key: 'line', text: 'line', path: 'line.js.md' },
     { key: 'bar', text: 'bar', path: 'bar.js.md' },
     { key: 'area', text: 'area', path: 'area.js.md' },
@@ -41,6 +44,10 @@ var main = [
     { key: 'trend-line', text: 'trendLine', path: 'trend-line.js.md' },
     { key: 'tooltip', text: 'tooltip', path: 'tooltip.js.md' },
     { key: 'stack-tooltip', text: 'stackTooltip', path: 'stack-tooltip.js.md' },
+    { key: '', text: '&nbsp;', path: ''},
+    { key: 'connector', text: 'Connectors', path: ''},
+    { key: 'connector-csv', text: '&nbsp;&nbsp;CSV', path: ''},
+    { key: '', text: '&nbsp;', path: ''}
 ];
 
 var navLITemplate = '<li class="nav-element"><% if(path) { %><a href="#<%- key %>" data-path="<%- path %>"><%= text %></a><% } else { %><%= text %> <% } %></li>';

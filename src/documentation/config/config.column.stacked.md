@@ -6,7 +6,7 @@ Whether a single column visualization that has data with multiple series is disp
 
 **Example:**
 
-		new Narwhal({
+		new Contour({
 		    el: '.myColumnChart',
 		    column: { stacked: true }
 		  })
@@ -17,7 +17,7 @@ Whether a single column visualization that has data with multiple series is disp
 		  ])
 		.render()
 
-*[Try it.](http://jsfiddle.net/forio/7XAC5/))*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.column.stacked/))*
 
 <% if(notes) { %><%= notes %><% } %>
 

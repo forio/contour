@@ -11,9 +11,9 @@ Forio Contour requires the following files:
 * `lodash.js`: utilities and performance enhancements used by Contour
 * `contour.min.js`: the Contour visualization library
 
-See the [Get Contour](get_narwhal.html) page for information on how to download or reference these libraries.
+See the [Get Contour](get_contour.html) page for information on how to download or reference these libraries.
 
-Once you've downloaded Contour, you can load it from your own domain. In the example, `yourPath` is the location on your server, for example `/vendor/forio/js/`.
+Once you've downloaded Forio Contour, you can load it from your own domain. In the example, `yourPath` is the location on your server, for example `/vendor/forio/js/`.
 
 		<html>
 		  <head>
@@ -82,6 +82,6 @@ Once you have included Contour in your webpage you can create your first visuali
 
 **What's next?**
 
-* Browse the [example visualization](showcase.html) for inspiration
+* Browse the [example visualizations](showcase.html) for inspiration
 * Review the reference documentation for any questions: select from the visualizations and configuration options on the left
 
