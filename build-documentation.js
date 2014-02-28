@@ -31,12 +31,19 @@ var options = {
 var allFiles = getSourceFileList(options.src);
 var filesToCopy = ['index.html', 'docs.css', 'markdown.js', 'overview.md', 'quickstart.md', 'key_concepts.md', 'supported_data_formats.md', 'quickstart.png'];
 
+ensureDirectory();
+
 generatePerFileDoc(allFiles);
 generateAllFilesDoc(allFiles);
 generateConfigObjectDoc(allFiles);
 
 copyDocViewer(filesToCopy);
 
+
+function ensureDirectory() {
+    function ensure(dir) { if (!fs.existsSync(dir)) fs.mkdirSync(dir); }
+    _.each([docFolder, configDocFolder], ensure);
+}
 
 function copyDocViewer(srcFiles) {
     srcFiles.forEach(function (file) {
