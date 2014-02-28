@@ -64,7 +64,10 @@
             }
 
             // update
-            el = series.select('.line');
+            el = series
+                .attr('class', function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; })
+                .select('.line')
+                ;
 
             if (options.chart.animations) {
                 el.transition().duration(duration)
