@@ -30,7 +30,9 @@
         series.exit().remove();
 
         var dots = series.selectAll('.dot')
-            .data(function (d) { return d.data; });
+            .data(function (d) { return d.data; }, function (d) {
+                return options.scatter.dataKey ? d[options.scatter.dataKey] : d.x;
+            });
 
         dots.enter().append('circle')
                 .attr('class', 'dot tooltip-tracker')
