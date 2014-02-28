@@ -41,6 +41,7 @@
         setDomain: function (domain) {
             this._scale.domain(domain);
             this._niceTheScale();
+            return this._scale;
         },
 
         update: function (domain, dataSrc) {
