@@ -36,7 +36,7 @@ module.exports = function (grunt) {
         less: {
             dev: {
                 files: {
-                    'examples/css/narwhal.css': 'src/styles/narwhal.less'
+                    'examples/css/contour.css': 'src/styles/contour.less'
                 }
             },
             // to generate distribution uncompressed versions
@@ -47,8 +47,8 @@ module.exports = function (grunt) {
                     yuicompress: false // Off until calc() bug is addressed.  https://github.com/yui/yuicompressor/issues/59
                 },
                 files: {
-                    'dist/narwhal.css': 'src/styles/narwhal.less',
-                    'examples/css/narwhal.css': 'src/styles/narwhal.less'
+                    'dist/contour.css': 'src/styles/contour.less',
+                    'examples/css/contour.css': 'src/styles/contour.less'
                 }
             },
             production: {
@@ -58,8 +58,8 @@ module.exports = function (grunt) {
                     yuicompress: false // Off until calc() bug is addressed.  https://github.com/yui/yuicompressor/issues/59
                 },
                 files: {
-                    'dist/narwhal.min.css': 'src/styles/narwhal.less',
-                    'examples/css/narwhal.min.css': 'src/styles/narwhal.less'
+                    'dist/contour.min.css': 'src/styles/contour.less',
+                    'examples/css/contour.min.css': 'src/styles/contour.less'
                 }
             }
         },
@@ -67,8 +67,8 @@ module.exports = function (grunt) {
             libs: [
             ],
             core: [
-                'src/scripts/core/narwhal-utils.js',
-                'src/scripts/core/narwhal.js',
+                'src/scripts/core/contour-utils.js',
+                'src/scripts/core/contour.js',
                 'src/scripts/core/axis/y-axis.js',
                 'src/scripts/core/cartesian.js',
                 'src/scripts/core/version.js',
@@ -93,7 +93,7 @@ module.exports = function (grunt) {
         concat: {
             all: {
                 src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>', '<%= scripts.connectors %>', 'src/scripts/footer.js'],
-                dest: 'dist/narwhal.js'
+                dest: 'dist/contour.js'
             }
         },
         uglify: {
@@ -106,7 +106,7 @@ module.exports = function (grunt) {
             },
             production: {
                 files: {
-                    'dist/narwhal.min.js': ['dist/narwhal.js']
+                    'dist/contour.min.js': ['dist/contour.js']
                 }
             }
         }
@@ -128,7 +128,7 @@ module.exports = function (grunt) {
         var pkg = require('./package.json');
         this.data.forEach(function (f) {
             console.log('Updating ' + f + ' to version ' + pkg.version);
-            grunt.file.write(f, "Narwhal.version = '" + pkg.version + "';");
+            grunt.file.write(f, "Contour.version = '" + pkg.version + "';");
         });
     });
 

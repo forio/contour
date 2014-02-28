@@ -9,8 +9,8 @@
         }
     }
 
-    if(!d3) throw new Error('You need to include d3.js before Narwhal. Go to http://d3js.org/');
-    if(!_ || !_.merge) throw new Error('You need to include lodash.js before Narwhal. Go to http://lodash.com/');
+    if(!d3) throw new Error('You need to include d3.js before Contour. Go to http://d3js.org/');
+    if(!_ || !_.merge) throw new Error('You need to include lodash.js before Contour. Go to http://lodash.com/');
 
 
 
@@ -101,12 +101,12 @@
     };
 
     var stringHelpers = {
-        // measure text inside a narwhal chart container
+        // measure text inside a Contour chart container
         textBounds: function (text, css) {
             var body = document.getElementsByTagName('body')[0];
             var wrapper = document.createElement('span');
             var dummy = document.createElement('span');
-            wrapper.className = 'narwhal-chart';
+            wrapper.className = 'contour-chart';
             dummy.style.position = 'absolute';
             dummy.style.width = 'auto';
             dummy.style.height = 'auto';
@@ -303,7 +303,7 @@
     * @see {@link config}
     *
     */
-    function Narwhal (options) {
+    function Countour (options) {
         this.init(options);
 
         return this;
@@ -329,7 +329,7 @@
     * @param {Function} renderer Function called when this visualization is added to a Narwhal instance. This function receives the data that is passed in to the constructor.
     * @see options
     */
-    Narwhal.export = function (ctorName, renderer) {
+    Contour.export = function (ctorName, renderer) {
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
 
@@ -350,14 +350,14 @@
         }
 
 
-        Narwhal.prototype[ctorName] = function (data, options) {
+        Contour.prototype[ctorName] = function (data, options) {
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
 
             data = data || [];
             sortSeries(data);
-            vis = new Narwhal.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
+            vis = new Contour.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
             this._visualizations.push(vis);
 
             return this;
@@ -386,7 +386,7 @@
     *           .visualizationThatUsesMyFunction()
     *           .render()
     */
-    Narwhal.expose = function (ctorName, functionalityConstructor) {
+    Contour.expose = function (ctorName, functionalityConstructor) {
         var ctor = function () {
             var functionality = typeof functionalityConstructor === 'function' ? new functionalityConstructor() : functionalityConstructor;
             // extend the --instance-- we don't want all charts to be overriden...
@@ -397,12 +397,12 @@
             return this;
         };
 
-        Narwhal.prototype[ctorName] = ctor;
+        Contour.prototype[ctorName] = ctor;
 
         return this;
     };
 
-    Narwhal.prototype = _.extend(Narwhal.prototype, {
+    Contour.prototype = _.extend(Contour.prototype, {
         _visualizations: undefined,
 
         _extraOptions: undefined,
@@ -431,7 +431,7 @@
             var calcWidth = this.options.chart.width;
             var ratio = this.options.chart.aspect || this.options.chart.defaultAspect;
 
-            return !!containerHeight ?  containerHeight : Math.round(calcWidth * ratio);
+            return !!containerHeight && containerHeight > 1 ?  containerHeight : Math.round(calcWidth * ratio);
         },
 
         calcMetrics: function () {
@@ -522,7 +522,7 @@
                     .append('svg')
                     .attr('viewBox', '0 0 ' + chartOpt.width + ' ' + chartOpt.height)
                     .attr('preserveAspectRatio', 'xMinYMin')
-                    .attr('class', 'narwhal-chart')
+                    .attr('class', 'contour-chart')
                     .attr('height', chartOpt.height)
                     .append('g')
                         .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
@@ -604,7 +604,7 @@
 
 
     // export to our context
-    root.Narwhal = Narwhal;
+    root.Contour = Contour;
 
 })();
 
@@ -651,6 +651,7 @@
         setDomain: function (domain) {
             this._scale.domain(domain);
             this._niceTheScale();
+            return this._scale;
         },
 
         update: function (domain, dataSrc) {
@@ -758,13 +759,14 @@
 
                 this.options = options || {};
 
+                _.merge(this.options, readOnlyProps);
 
                 var extraPadding = {};
                 if (!this.options.xAxis || !this.options.xAxis.firstAndLast) {
                     extraPadding = { chart : { padding: { right: 15 }}};
                 }
 
-                this._extraOptions.push(_.merge({}, defaults,readOnlyProps, extraPadding));
+                this._extraOptions.push(_.merge({}, defaults, extraPadding));
 
                 return this;
             },
@@ -1144,11 +1146,12 @@
         };
     };
 
-    Narwhal.expose('cartesian', cartesian);
+    Contour.expose('cartesian', cartesian);
 
 })();
 
-Narwhal.version = '0.0.50';
+Contour.version = '0.0.50';
+
 (function () {
 
     var helpers = {
@@ -1320,14 +1323,20 @@ Narwhal.version = '0.0.50';
             if(!this._scale) {
                 if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
 
-                this._scale = d3.scale.log().domain(domain).clamp(true);
+                this._scale = d3.scale.log();
+                this.setDomain(domain).clamp(true);
 
                 setRange(this._scale, this.options);
             }
 
             return this._scale;
+        },
 
-        }
+        update: function (domain, dataSrc) {
+            this.data = dataSrc;
+            if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
+            this.setDomain(domain).clamp(true);
+        },
     });
 
     _.extend(_.nw, { LogYAxis: LogYAxis });
@@ -1375,7 +1384,9 @@ Narwhal.version = '0.0.50';
 
         axis: function () {
             var options = this.options.xAxis;
-            var tickFormat = options.labels.formatter || function (d) { return _.isDate(d) ? d.getDate() : d; };
+            var optFormat = (options.labels.format ? d3.format(options.labels.format) : 0);
+
+            var tickFormat = options.labels.formatter || (!this.isCategorized ? optFormat : 0) || function (d) { return _.isDate(d) ? d.getDate() : d; };
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .innerTickSize(options.innerTickSize)
@@ -1809,7 +1820,7 @@ Narwhal.version = '0.0.50';
     * @function .horiztonal
     * @param {TBW} frame TBW
     */
-    Narwhal.expose('horizontal', frame);
+    Contour.expose('horizontal', frame);
 
 })();
 
@@ -1898,7 +1909,7 @@ Narwhal.version = '0.0.50';
 
     };
 
-    Narwhal.VisualizationContainer = VisInstanceContainer;
+    Contour.VisualizationContainer = VisInstanceContainer;
 
 })();
 
@@ -1914,6 +1925,9 @@ Narwhal.version = '0.0.50';
     };
 
     function renderer(data, layer, options) {
+
+        if (!this.xScale) throw new Error('Area Chart requires .cartesian() to be included in the instance.');
+
         var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2; }, this);
         var y = _.bind(function (val) { return this.yScale(val); }, this);
         var h = options.chart.plotHeight;
@@ -1972,7 +1986,7 @@ Narwhal.version = '0.0.50';
     renderer.defaults = defaults;
 
     /**
-    * Adds an area chart to the Narwhal instance.
+    * Adds an area chart to the Contour instance.
     *
     * Area charts are stacked by default when the _data_ includes multiple series.
     *
@@ -1980,7 +1994,7 @@ Narwhal.version = '0.0.50';
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .area([1,2,3,4])
     *           .render();
@@ -1991,7 +2005,7 @@ Narwhal.version = '0.0.50';
     * @api public
     *
     */
-    Narwhal.export('area', renderer);
+    Contour.export('area', renderer);
 
 })();
 
@@ -2005,6 +2019,9 @@ Narwhal.version = '0.0.50';
     };
 
     function barRender(data, layer, options) {
+
+        if (!options.chart.rotatedFrame) throw new Error('Bar Chart requires .horizontal() to be included in the instance');
+
         var duration = 400;
         var x = this.xScale;
         var y = this.yScale;
@@ -2078,7 +2095,7 @@ Narwhal.version = '0.0.50';
 
     barRender.defaults = defaults;
     /**
-    * Adds a bar chart (horizontal columns) to the Narwhal instance.
+    * Adds a bar chart (horizontal columns) to the Contour instance.
     *
     * You can use this visualization to render both stacked and grouped charts (controlled through the _options_).
     *
@@ -2086,7 +2103,7 @@ Narwhal.version = '0.0.50';
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .horizontal()
     *           .bar([1,2,3,4])
@@ -2098,7 +2115,7 @@ Narwhal.version = '0.0.50';
     * @api public
     *
     */
-    Narwhal.export('bar', barRender);
+    Contour.export('bar', barRender);
 
 })();
 
@@ -2114,6 +2131,7 @@ Narwhal.version = '0.0.50';
     };
 
     function render(data, layer, options) {
+        if (!this.xScale) throw new Error('Column Chart requires .cartesian() to be included in the instance.');
         var duration = 400;
         var opt = options.column;
         var w = options.chart.plotWidth;
@@ -2209,13 +2227,13 @@ Narwhal.version = '0.0.50';
     render.defaults = defaults;
 
     /**
-    * Adds a column chart (vertical columns) to the Narwhal instance.
+    * Adds a column chart (vertical columns) to the Contour instance.
     *
     * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .column([1,2,3,4])
     *           .render();
@@ -2226,13 +2244,13 @@ Narwhal.version = '0.0.50';
     * @api public
     *
     */
-    Narwhal.export('column', render);
+    Contour.export('column', render);
 
 })();
 
 (function () {
 
-    Narwhal.export('coolNarwhal', function (data, layer) {
+    Contour.export('coolNarwhal', function (data, layer) {
         layer.append('path')
             .attr('class', 'cool')
             .attr('opacity', 0)
@@ -2260,6 +2278,7 @@ Narwhal.version = '0.0.50';
 
 
     function render(rawData, layer, options, id) {
+        if (!this.xScale) throw new Error('Line Chart requires .cartesian() to be included in the instance.');
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
@@ -2311,7 +2330,10 @@ Narwhal.version = '0.0.50';
             }
 
             // update
-            el = series.select('.line');
+            el = series
+                .attr('class', function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; })
+                .select('.line')
+                ;
 
             if (options.chart.animations) {
                 el.transition().duration(duration)
@@ -2392,13 +2414,13 @@ Narwhal.version = '0.0.50';
 
 
     /**
-    * Adds a line chart to the Narwhal instance.
+    * Adds a line chart to the Contour instance.
     *
     * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .line([1,2,3,4])
     *           .render();
@@ -2409,7 +2431,7 @@ Narwhal.version = '0.0.50';
     * @api public
     *
     */
-    Narwhal.export('line', render);
+    Contour.export('line', render);
 
 })();
 
@@ -2509,11 +2531,11 @@ Narwhal.version = '0.0.50';
 
 
     /**
-    * Adds a pie chart to the Narwhal instance.
+    * Adds a pie chart to the Contour instance.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .pie([1,2,3,4])
     *           .render();
     *
@@ -2523,7 +2545,7 @@ Narwhal.version = '0.0.50';
     * @api public
     *
     */
-    Narwhal.export('pie', renderer);
+    Contour.export('pie', renderer);
 
 })();
 
@@ -2539,6 +2561,7 @@ Narwhal.version = '0.0.50';
     };
 
     function ScatterPlot(data, layer, options) {
+        if (!this.xScale) throw new Error('Scatter Chart requires .cartesian() to be included in the instance.');
         var opt = options.scatter;
         var halfRangeBand = this.rangeBand / 2;
         var duration = 400;
@@ -2550,28 +2573,35 @@ Narwhal.version = '0.0.50';
         var series = layer.selectAll('.series')
             .data(data);
 
+        series.attr('class', classFn);
+
         series.enter().append('svg:g')
             .attr('class', classFn);
 
         series.exit().remove();
 
         var dots = series.selectAll('.dot')
-            .data(function (d) { return d.data; });
+            .data(function (d) { return d.data; }, function (d) {
+                return options.scatter.dataKey ? d[options.scatter.dataKey] : d.x;
+            });
 
-        dots
-            .enter().append('circle')
+        dots.enter().append('circle')
                 .attr('class', 'dot tooltip-tracker')
                 .attr('r', opt.radius)
                 .attr('cx', x)
                 .attr('cy', h);
 
         if (options.chart.animations) {
-            dots.transition().duration(duration);
+            dots.transition().duration(duration)
+                .attr('r', opt.radius)
+                .attr('cx', x)
+                .attr('cy', y);
+        } else {
+            dots.attr('r', opt.radius)
+                .attr('cx', x)
+                .attr('cy', y);
         }
 
-        dots.attr('r', opt.radius)
-            .attr('cx', x)
-            .attr('cy', y);
 
         dots.exit().remove();
     }
@@ -2579,13 +2609,13 @@ Narwhal.version = '0.0.50';
     ScatterPlot.defaults = defaults;
 
     /**
-    * Adds a scatter plot to the Narwhal instance.
+    * Adds a scatter plot to the Contour instance.
     *
     * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.chart'})
+    *     new Contour({el: '.chart'})
     *           .cartesian()
     *           .scatter([1,2,3,4])
     *           .render();
@@ -2596,19 +2626,19 @@ Narwhal.version = '0.0.50';
     * @api public
     *
     */
-    Narwhal.export('scatter', ScatterPlot);
+    Contour.export('scatter', ScatterPlot);
 
 
 })();
 
 (function () {
     /**
-    * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Narwhal instance.
+    * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Contour instance.
     * Requires a second display element (`<div>`) for the legend in the html.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .column(stackedColData)
     *           .stackedTooltip(stackedColData, {el: '.myChartLegend'})
@@ -2620,7 +2650,7 @@ Narwhal.version = '0.0.50';
     * @api public
     *
     */
-    Narwhal.export('stackTooltip', function (data, layer, options) {
+    Contour.export('stackTooltip', function (data, layer, options) {
 
         var valueFormatter = this.yAxis().tickFormat();
         var tooltip = d3.select(options.stackTooltip.el);
@@ -2750,7 +2780,7 @@ Narwhal.version = '0.0.50';
             var formatters = [
                 function (d) { return options.formatter ? _.partial(options.formatter, d) : null; },
                 function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return 'x: ' + d.x + '<br>' + 'y: ' + d.y; }, d) : null; },
-                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return d.x + '<br>' + d.y; }, d.data) : null; },
+                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return 'x: ' + d.x + '<br>' + 'y: ' + d.y; }, d.data) : null; },
                 function (d) { return d.hasOwnProperty('value') ? _.partial(function (d) { return d.value; }, d) : null;  },
                 function () { return function () { return 'NA'; }; }
             ];
@@ -2793,13 +2823,13 @@ Narwhal.version = '0.0.50';
 
 
     /**
-    * Adds a tooltip on hover to all other visualizations in the Narwhal instance.
+    * Adds a tooltip on hover to all other visualizations in the Contour instance.
     *
-    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Narwhal instance for which to show the tooltips.
+    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Contour instance for which to show the tooltips.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .line([2, 4, 3, 5, 7])
     *           .tooltip()
@@ -2811,7 +2841,7 @@ Narwhal.version = '0.0.50';
     * @api public
     *
     */
-    Narwhal.export('tooltip', render);
+    Contour.export('tooltip', render);
 
 
 })();
@@ -2822,6 +2852,7 @@ Narwhal.version = '0.0.50';
 
 
     function ctor(data, layer, options) {
+        if (!this.xScale) throw new Error('Trend Line requires .cartesian() to be included in the instance.');
         var duration = 400;
         var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);
         var y = _.bind(function(d) { return this.yScale(d); }, this);
@@ -2859,13 +2890,13 @@ Narwhal.version = '0.0.50';
     ctor.defaults = {};
 
     /**
-    * Adds a trend line to the Narwhal instance, based on linear regression.
+    * Adds a trend line to the Contour instance, based on linear regression.
     *
     * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .trendLine([2,4,3,5,7])
     *           .render();
@@ -2876,17 +2907,17 @@ Narwhal.version = '0.0.50';
     * @api public
     *
     */
-    Narwhal.export('trendLine', ctor);
+    Contour.export('trendLine', ctor);
 
 })();
 
 // exports for commonJS and requireJS styles
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
-    module.exports = Narwhal;
+    module.exports = Contour;
 } else {
-    root.Narwhal = Narwhal;
+    root.Contour = Contour;
     if ( typeof define === "function" && define.amd ) {
-        define( "narwhal", [], function () { return Narwhal; } );
+        define( "contour", [], function () { return Contour; } );
     }
 }
 })();

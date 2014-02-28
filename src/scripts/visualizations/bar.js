@@ -84,7 +84,7 @@
 
     barRender.defaults = defaults;
     /**
-    * Adds a bar chart (horizontal columns) to the Narwhal instance.
+    * Adds a bar chart (horizontal columns) to the Contour instance.
     *
     * You can use this visualization to render both stacked and grouped charts (controlled through the _options_).
     *
@@ -92,7 +92,7 @@
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .horizontal()
     *           .bar([1,2,3,4])
@@ -104,6 +104,6 @@
     * @api public
     *
     */
-    Narwhal.export('bar', barRender);
+    Contour.export('bar', barRender);
 
 })();

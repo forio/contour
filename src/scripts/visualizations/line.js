@@ -148,13 +148,13 @@
 
 
     /**
-    * Adds a line chart to the Narwhal instance.
+    * Adds a line chart to the Contour instance.
     *
     * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .line([1,2,3,4])
     *           .render();
@@ -165,6 +165,6 @@
     * @api public
     *
     */
-    Narwhal.export('line', render);
+    Contour.export('line', render);
 
 })();

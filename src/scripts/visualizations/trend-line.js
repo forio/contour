@@ -40,13 +40,13 @@
     ctor.defaults = {};
 
     /**
-    * Adds a trend line to the Narwhal instance, based on linear regression.
+    * Adds a trend line to the Contour instance, based on linear regression.
     *
     * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .trendLine([2,4,3,5,7])
     *           .render();
@@ -57,6 +57,6 @@
     * @api public
     *
     */
-    Narwhal.export('trendLine', ctor);
+    Contour.export('trendLine', ctor);
 
 })();

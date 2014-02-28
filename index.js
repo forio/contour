@@ -1,1 +1,1 @@
-module.exports = require('./dist/narwhal');
+module.exports = require('./dist/contour');

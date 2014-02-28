@@ -106,13 +106,13 @@
     render.defaults = defaults;
 
     /**
-    * Adds a column chart (vertical columns) to the Narwhal instance.
+    * Adds a column chart (vertical columns) to the Contour instance.
     *
     * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .column([1,2,3,4])
     *           .render();
@@ -123,6 +123,6 @@
     * @api public
     *
     */
-    Narwhal.export('column', render);
+    Contour.export('column', render);
 
 })();

@@ -83,6 +83,6 @@
 
     };
 
-    Narwhal.VisualizationContainer = VisInstanceContainer;
+    Contour.VisualizationContainer = VisInstanceContainer;
 
 })();

@@ -1,10 +1,10 @@
 // exports for commonJS and requireJS styles
 if ( typeof module === "object" && module && typeof module.exports === "object" ) {
-    module.exports = Narwhal;
+    module.exports = Contour;
 } else {
-    root.Narwhal = Narwhal;
+    root.Contour = Contour;
     if ( typeof define === "function" && define.amd ) {
-        define( "narwhal", [], function () { return Narwhal; } );
+        define( "contour", [], function () { return Contour; } );
     }
 }
 })();

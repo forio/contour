@@ -1,1 +1,1 @@
-Narwhal.version = '0.0.50';
+Contour.version = '0.0.50';

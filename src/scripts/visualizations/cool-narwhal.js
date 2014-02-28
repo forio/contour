@@ -1,6 +1,6 @@
 (function () {
 
-    Narwhal.export('coolNarwhal', function (data, layer) {
+    Contour.export('coolNarwhal', function (data, layer) {
         layer.append('path')
             .attr('class', 'cool')
             .attr('opacity', 0)

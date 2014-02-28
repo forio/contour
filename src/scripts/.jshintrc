@@ -3,7 +3,7 @@
     "strict": false,
     "globals": {
         "_": true,
-        "Narwhal": true,
+        "Contour": true,
         "d3": true
     }
 }

@@ -17,7 +17,7 @@ var propTemplatePath = docSrcFolder + 'prop-template.md';
 
 var options = {
     src: [
-        'src/scripts/core/narwhal.js',
+        'src/scripts/core/contour.js',
         'src/scripts/core/cartesian.js',
         'src/scripts/core/horizontal-frame.js',
         'src/scripts/core/**/*.js',

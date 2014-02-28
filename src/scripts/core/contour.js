@@ -71,7 +71,7 @@
     * @see {@link config}
     *
     */
-    function Narwhal (options) {
+    function Countour (options) {
         this.init(options);
 
         return this;
@@ -97,7 +97,7 @@
     * @param {Function} renderer Function called when this visualization is added to a Narwhal instance. This function receives the data that is passed in to the constructor.
     * @see options
     */
-    Narwhal.export = function (ctorName, renderer) {
+    Contour.export = function (ctorName, renderer) {
 
         if (typeof renderer !== 'function') throw new Error('Invalid render function for ' + ctorName + ' visualization');
 
@@ -118,14 +118,14 @@
         }
 
 
-        Narwhal.prototype[ctorName] = function (data, options) {
+        Contour.prototype[ctorName] = function (data, options) {
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
 
             data = data || [];
             sortSeries(data);
-            vis = new Narwhal.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
+            vis = new Contour.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
             this._visualizations.push(vis);
 
             return this;
@@ -154,7 +154,7 @@
     *           .visualizationThatUsesMyFunction()
     *           .render()
     */
-    Narwhal.expose = function (ctorName, functionalityConstructor) {
+    Contour.expose = function (ctorName, functionalityConstructor) {
         var ctor = function () {
             var functionality = typeof functionalityConstructor === 'function' ? new functionalityConstructor() : functionalityConstructor;
             // extend the --instance-- we don't want all charts to be overriden...
@@ -165,12 +165,12 @@
             return this;
         };
 
-        Narwhal.prototype[ctorName] = ctor;
+        Contour.prototype[ctorName] = ctor;
 
         return this;
     };
 
-    Narwhal.prototype = _.extend(Narwhal.prototype, {
+    Contour.prototype = _.extend(Contour.prototype, {
         _visualizations: undefined,
 
         _extraOptions: undefined,
@@ -290,7 +290,7 @@
                     .append('svg')
                     .attr('viewBox', '0 0 ' + chartOpt.width + ' ' + chartOpt.height)
                     .attr('preserveAspectRatio', 'xMinYMin')
-                    .attr('class', 'narwhal-chart')
+                    .attr('class', 'contour-chart')
                     .attr('height', chartOpt.height)
                     .append('g')
                         .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
@@ -372,6 +372,6 @@
 
 
     // export to our context
-    root.Narwhal = Narwhal;
+    root.Contour = Contour;
 
 })();

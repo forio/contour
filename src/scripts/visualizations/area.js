@@ -71,7 +71,7 @@
     renderer.defaults = defaults;
 
     /**
-    * Adds an area chart to the Narwhal instance.
+    * Adds an area chart to the Contour instance.
     *
     * Area charts are stacked by default when the _data_ includes multiple series.
     *
@@ -79,7 +79,7 @@
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .area([1,2,3,4])
     *           .render();
@@ -90,6 +90,6 @@
     * @api public
     *
     */
-    Narwhal.export('area', renderer);
+    Contour.export('area', renderer);
 
 })();

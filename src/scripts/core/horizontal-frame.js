@@ -160,6 +160,6 @@
     * @function .horiztonal
     * @param {TBW} frame TBW
     */
-    Narwhal.expose('horizontal', frame);
+    Contour.expose('horizontal', frame);
 
 })();

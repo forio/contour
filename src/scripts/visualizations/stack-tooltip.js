@@ -1,11 +1,11 @@
 (function () {
     /**
-    * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Narwhal instance.
+    * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Contour instance.
     * Requires a second display element (`<div>`) for the legend in the html.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .column(stackedColData)
     *           .stackedTooltip(stackedColData, {el: '.myChartLegend'})
@@ -17,7 +17,7 @@
     * @api public
     *
     */
-    Narwhal.export('stackTooltip', function (data, layer, options) {
+    Contour.export('stackTooltip', function (data, layer, options) {
 
         var valueFormatter = this.yAxis().tickFormat();
         var tooltip = d3.select(options.stackTooltip.el);

@@ -85,12 +85,12 @@
     };
 
     var stringHelpers = {
-        // measure text inside a narwhal chart container
+        // measure text inside a Contour chart container
         textBounds: function (text, css) {
             var body = document.getElementsByTagName('body')[0];
             var wrapper = document.createElement('span');
             var dummy = document.createElement('span');
-            wrapper.className = 'narwhal-chart';
+            wrapper.className = 'contour-chart';
             dummy.style.position = 'absolute';
             dummy.style.width = 'auto';
             dummy.style.height = 'auto';

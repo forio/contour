@@ -94,11 +94,11 @@
 
 
     /**
-    * Adds a pie chart to the Narwhal instance.
+    * Adds a pie chart to the Contour instance.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *           .pie([1,2,3,4])
     *           .render();
     *
@@ -108,6 +108,6 @@
     * @api public
     *
     */
-    Narwhal.export('pie', renderer);
+    Contour.export('pie', renderer);
 
 })();

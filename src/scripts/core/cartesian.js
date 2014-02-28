@@ -470,6 +470,6 @@
         };
     };
 
-    Narwhal.expose('cartesian', cartesian);
+    Contour.expose('cartesian', cartesian);
 
 })();

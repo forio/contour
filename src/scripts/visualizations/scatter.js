@@ -58,13 +58,13 @@
     ScatterPlot.defaults = defaults;
 
     /**
-    * Adds a scatter plot to the Narwhal instance.
+    * Adds a scatter plot to the Contour instance.
     *
     * This visualization requires `.cartesian()`.
     *
     * ### Example:
     *
-    *     new Narwhal({el: '.chart'})
+    *     new Contour({el: '.chart'})
     *           .cartesian()
     *           .scatter([1,2,3,4])
     *           .render();
@@ -75,7 +75,7 @@
     * @api public
     *
     */
-    Narwhal.export('scatter', ScatterPlot);
+    Contour.export('scatter', ScatterPlot);
 
 
 })();
