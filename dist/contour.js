@@ -303,7 +303,7 @@
     * @see {@link config}
     *
     */
-    function Countour (options) {
+    function Contour (options) {
         this.init(options);
 
         return this;
@@ -1150,8 +1150,7 @@
 
 })();
 
-Contour.version = '0.0.50';
-
+Contour.version = '0.0.51';
 (function () {
 
     var helpers = {
