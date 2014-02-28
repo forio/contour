@@ -36,14 +36,20 @@
             if(!this._scale) {
                 if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
 
-                this._scale = d3.scale.log().domain(domain).clamp(true);
+                this._scale = d3.scale.log();
+                this.setDomain(domain).clamp(true);
 
                 setRange(this._scale, this.options);
             }
 
             return this._scale;
+        },
 
-        }
+        update: function (domain, dataSrc) {
+            this.data = dataSrc;
+            if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
+            this.setDomain(domain).clamp(true);
+        },
     });
 
     _.extend(_.nw, { LogYAxis: LogYAxis });
