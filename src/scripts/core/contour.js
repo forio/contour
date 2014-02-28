@@ -71,7 +71,7 @@
     * @see {@link config}
     *
     */
-    function Countour (options) {
+    function Contour (options) {
         this.init(options);
 
         return this;
