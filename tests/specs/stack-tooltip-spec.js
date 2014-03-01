@@ -8,10 +8,10 @@ describe('Stacked Tooltip', function () {
         el = $el.get(0);
     });
 
-    function createNarwhal(options) {
+    function createContour(options) {
         options = _.extend({ el: el }, options);
-        narwhal = new Narwhal(options).cartesian();
-        return narwhal;
+        contour = new Contour(options).cartesian();
+        return contour;
     }
 
 
@@ -22,7 +22,7 @@ describe('Stacked Tooltip', function () {
                 { name: 's2', data: [4,5,3] },
                 { name: 's3', data: [4,null,4] }
             ];
-        nw = createNarwhal().bar(data).stackedTooltip(data, {el: tooltip.get(0)});
+        nw = createContour().bar(data).stackedTooltip(data, {el: tooltip.get(0)});
 
         // NEED A GOOD WAY TO TEST MOUSE EVENTS FOR TOOLTIPS!!
     });

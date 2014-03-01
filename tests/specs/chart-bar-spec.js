@@ -6,10 +6,10 @@ describe('Bar chart', function () {
         el = $el.get(0);
     });
 
-    function createNarwhal(options) {
+    function createinstance(options) {
         options = _.extend({ el: el, chart: { animations: false } }, options);
-        var narwhal = new Narwhal(options).cartesian().horizontal();
-        return narwhal;
+        var instance = new Contour(options).cartesian().horizontal();
+        return instance;
     }
 
     describe('given simple data', function () {
@@ -19,27 +19,27 @@ describe('Bar chart', function () {
         });
 
         it('should create one rect per data point', function () {
-            createNarwhal().bar(data).render();
+            createinstance().bar(data).render();
             var rects = $el.find('rect');
             expect(rects.length).toBe(3);
         });
 
         it('should add the Bar class to each Bar', function () {
-            createNarwhal().bar(data).render();
+            createinstance().bar(data).render();
             var rects = $el.find('rect');
 
             expect(rects.filter('.bar').length).toBe(3);
         });
 
         it('should add the tooltip-tracker class to each Bar', function () {
-            createNarwhal().bar(data).render();
+            createinstance().bar(data).render();
             var rects = $el.find('rect');
 
             expect(rects.filter('.tooltip-tracker').length).toBe(3);
         });
 
         it('should set the width of each Bar to the corresponding yScale value', function () {
-            var nw = createNarwhal().bar(data).render();
+            var nw = createinstance().bar(data).render();
             var rects = $el.find('rect');
             var x = function (d) { return nw.yScale(d); };
 
@@ -98,7 +98,7 @@ describe('Bar chart', function () {
 
         describe('without stacking', function () {
             beforeEach(function () {
-                nw = createNarwhal().bar([
+                nw = createinstance().bar([
                     { name: 's1', data: [1,2,3] },
                     { name: 's2', data: [4,4,4] }
                 ]).render();
@@ -115,7 +115,7 @@ describe('Bar chart', function () {
 
         describe('with stacking', function () {
             beforeEach(function () {
-                nw = createNarwhal().bar([
+                nw = createinstance().bar([
                     { name: 's1', data: [1,2,3] },
                     { name: 's2', data: [4,4,4] }
                 ], { stacked: true }).render();
@@ -133,7 +133,7 @@ describe('Bar chart', function () {
 
     describe('given multiple series with uneven data (ie. null values in some series)', function () {
         beforeEach(function () {
-            nw = createNarwhal().bar([
+            nw = createinstance().bar([
                 { name: 's1', data: [1,null,3] },
                 { name: 's2', data: [4,5,3] },
                 { name: 's3', data: [4,null,4] }

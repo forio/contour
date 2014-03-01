@@ -1,24 +1,24 @@
 describe('time Axis', function () {
 
     var $el, el;
-    var narwhal;
+    var instance;
 
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
     });
 
-    function createNarwhal(options) {
+    function createinstance(options) {
         options = _.extend({ el: el }, options);
-        narwhal = new Narwhal(options).cartesian();
-        return narwhal;
+        instance = new Contour(options).cartesian();
+        return instance;
     }
 
 
 
 
     it('should show all tick labels by ', function () {
-        narwhal = createNarwhal({ xAxis: { firstAndLast: undefined }})
+        instance = createinstance({ xAxis: { firstAndLast: undefined }})
             .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
@@ -26,13 +26,13 @@ describe('time Axis', function () {
             ])
             .render();
 
-        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        var xLabels = $(instance.svg.selectAll('.x.axis .tick text')[0]);
         expect(xLabels.length).toBe(3);
     });
 
 
     it('should only show first and last tick labels by default', function () {
-        narwhal = createNarwhal({ xAxis: { firstAndLast: true }})
+        instance = createinstance({ xAxis: { firstAndLast: true }})
             .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
@@ -40,12 +40,12 @@ describe('time Axis', function () {
             ])
             .render();
 
-        var xLabels = narwhal.svg.selectAll('.x.axis .tick text')[0];
+        var xLabels = instance.svg.selectAll('.x.axis .tick text')[0];
         expect(xLabels.length).toBe(2);
     });
 
     it('should set text-anchor:left to first label and text-anchor:end to last label only when firstAndLast is set to true', function () {
-        narwhal = createNarwhal({ xAxis: { firstAndLast: true }})
+        instance = createinstance({ xAxis: { firstAndLast: true }})
             .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
@@ -53,13 +53,13 @@ describe('time Axis', function () {
             ])
             .render();
 
-        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        var xLabels = $(instance.svg.selectAll('.x.axis .tick text')[0]);
         expect(xLabels.eq(0).css('text-anchor')).toBe('start');
         expect(xLabels.eq(1).css('text-anchor')).toBe('end');
     });
 
     it('should set text-anchor:middle on first and last labels only when firstAndLast is set to false', function () {
-        narwhal = createNarwhal({ xAxis: { firstAndLast: false }})
+        instance = createinstance({ xAxis: { firstAndLast: false }})
             .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
@@ -67,13 +67,13 @@ describe('time Axis', function () {
             ])
             .render();
 
-        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        var xLabels = $(instance.svg.selectAll('.x.axis .tick text')[0]);
         expect(xLabels.eq(0).css('text-anchor')).toBe('middle');
         expect(xLabels.eq(2).css('text-anchor')).toBe('middle');
     });
 
     it('should top the number of ticks to options.xAxis.maxTicks if pressent', function () {
-        narwhal = createNarwhal({ xAxis: { firstAndLast: false, maxTicks: 2 }})
+        instance = createinstance({ xAxis: { firstAndLast: false, maxTicks: 2 }})
             .nullVis([
                 { x: new Date('10/11/2013'), y: 10 },
                 { x: new Date('10/12/2013'), y: 20 },
@@ -81,7 +81,7 @@ describe('time Axis', function () {
             ])
             .render();
 
-        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        var xLabels = $(instance.svg.selectAll('.x.axis .tick text')[0]);
         expect(xLabels.length).toBe(2);
     });
 
@@ -91,11 +91,11 @@ describe('time Axis', function () {
             { x: new Date('10/12/2013'), y: 20 },
             { x: new Date('10/13/2013'), y: 30 }
         ];
-        narwhal = createNarwhal()
+        instance = createinstance()
             .nullVis(data)
             .render();
 
-        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        var xLabels = $(instance.svg.selectAll('.x.axis .tick text')[0]);
         var formatter = d3.time.format('%d %b'); // ie. 11 Oct
         expect(xLabels.length).toBe(3);
         expect(xLabels.eq(0).text()).toBe(formatter(data[0].x));
@@ -104,7 +104,7 @@ describe('time Axis', function () {
     });
 
     it('should print hrs, when xDomain is all in the same day', function () {
-        narwhal = createNarwhal()
+        instance = createinstance()
             .nullVis([
                 { x: new Date('10/11/2013 10:00'), y: 10 },
                 { x: new Date('10/11/2013 11:00'), y: 20 },
@@ -112,7 +112,7 @@ describe('time Axis', function () {
             ])
             .render();
 
-        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        var xLabels = $(instance.svg.selectAll('.x.axis .tick text')[0]);
         expect(xLabels.eq(0).text()).toBe('10:00');
         expect(xLabels.eq(1).text()).toBe('11:00');
         expect(xLabels.eq(2).text()).toBe('12:00');
@@ -121,7 +121,7 @@ describe('time Axis', function () {
     it('should used formatter function if defined', function () {
         var text = 'some text for the axis';
         var formatter = function () { return text; };
-        narwhal = createNarwhal({ xAxis: { firstAndLast: false, labels: { formatter: formatter } }})
+        instance = createinstance({ xAxis: { firstAndLast: false, labels: { formatter: formatter } }})
             .nullVis([
                 { x: new Date('10/11/2013 10:00'), y: 10 },
                 { x: new Date('10/11/2013 11:00'), y: 20 },
@@ -129,7 +129,7 @@ describe('time Axis', function () {
             ])
             .render();
 
-        var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
+        var xLabels = $(instance.svg.selectAll('.x.axis .tick text')[0]);
         expect(xLabels.eq(0).text()).toBe(text);
         expect(xLabels.eq(1).text()).toBe(text);
         expect(xLabels.eq(2).text()).toBe(text);
@@ -143,16 +143,16 @@ describe('time Axis', function () {
                     { x: new Date('10/11/2013 11:00'), y: 20 },
                     { x: new Date('12/11/2013 10:00'), y: 30 }
                 ];
-            var narwhal = createNarwhal({ chart: { width: 400 }, xAxis: { linearDomain: true, firstAndLast: false }})
+            var instance = createinstance({ chart: { width: 400 }, xAxis: { linearDomain: true, firstAndLast: false }})
                 .nullVis(data)
                 .render();
 
-            var xLabels = $(narwhal.svg.selectAll('.x.axis .tick text')[0]);
-            var w = narwhal.options.chart.plotWidth;
+            var xLabels = $(instance.svg.selectAll('.x.axis .tick text')[0]);
+            var w = instance.options.chart.plotWidth;
 
-            expect(narwhal.xScale(data[0].x)).toBe(0);
-            expect(narwhal.xScale(data[1].x)).toBe(Math.round(w/2));
-            expect(narwhal.xScale(data[2].x)).toBe(w);
+            expect(instance.xScale(data[0].x)).toBe(0);
+            expect(instance.xScale(data[1].x)).toBe(Math.round(w/2));
+            expect(instance.xScale(data[2].x)).toBe(w);
 
         });
     });

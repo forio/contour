@@ -4,11 +4,11 @@ describe('Visualizations', function () {
     var data = [1,2,3];
 
 
-    function createNarwhal(options) {
+    function createContour(options) {
         $el.empty();
         options = _.extend({ el: el, chart: { animations: false } }, options);
-        var narwhal = new Narwhal(options).cartesian();
-        return narwhal;
+        var contour = new Contour(options).cartesian();
+        return contour;
     }
 
     describe('Line Chart', function () {
@@ -19,17 +19,17 @@ describe('Visualizations', function () {
 
         describe('without animations', function () {
             beforeEach(function () {
-                nw = createNarwhal();
+                nw = createContour();
             });
 
-            it('should add a constructor function to the Narwhal prototype', function () {
-                expect(Narwhal.prototype.line).toBeDefined();
+            it('should add a constructor function to the Contour prototype', function () {
+                expect(Contour.prototype.line).toBeDefined();
             });
 
 
             describe('constructor', function () {
 
-                it('should return this (Narwhal instance)', function () {
+                it('should return this (Contour instance)', function () {
                     expect(nw.line(data)).toEqual(nw);
                 });
 
@@ -87,7 +87,7 @@ describe('Visualizations', function () {
                 });
 
                 it('should add a path per series', function (){
-                    nw = createNarwhal();
+                    nw = createContour();
                     nw.line([{
                         name: 's1',
                         data: [1,2,3]
@@ -119,7 +119,7 @@ describe('Visualizations', function () {
 
             describe('render with special case data', function () {
                 it('should not render markers when the data Y is null or undefined', function () {
-                    nw = createNarwhal().line([
+                    nw = createContour().line([
                         { x: 1, y: 10},
                         { x: 2, y: null},
                         { x: 3}
@@ -136,7 +136,7 @@ describe('Visualizations', function () {
         describe('with animations', function () {
             beforeEach(function () {
                 jasmine.Clock.useMock();
-                nw = new Narwhal({ el: el, chart: { animations: true }}).cartesian();
+                nw = new Contour({ el: el, chart: { animations: true }}).cartesian();
                 nw.line([1,2,3,4]);
             });
 

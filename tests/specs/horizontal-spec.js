@@ -1,22 +1,22 @@
 describe('Horizontal frame', function () {
     var $el, el;
-    var narwhal;
+    var contour;
 
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
     });
 
-    function createNarwhal(options) {
+    function createContour(options) {
         options = _.extend({ el: el }, options);
-        narwhal = new Narwhal(options);
-        return narwhal;
+        contour = new Contour(options);
+        return contour;
     }
 
     describe('constructor', function () {
         it('should ensure rotatedFrame is set to true', function () {
-            var narwhal = createNarwhal({ chart: { rotatedFrame: false }}).cartesian().horizontal();
-            expect(narwhal.options.chart.rotatedFrame).toBe(true);
+            var contour = createContour({ chart: { rotatedFrame: false }}).cartesian().horizontal();
+            expect(contour.options.chart.rotatedFrame).toBe(true);
         });
     });
 
@@ -34,33 +34,33 @@ describe('Horizontal frame', function () {
                 }
             };
 
-            createNarwhal(options)
+            createContour(options)
                 .cartesian()
                 .horizontal();
         });
 
         describe('yScale', function () {
             it('should go from 0 to width', function () {
-                narwhal.nullVis([1,2,3]).render();
-                var w = narwhal.options.chart.plotWidth;
+                contour.nullVis([1,2,3]).render();
+                var w = contour.options.chart.plotWidth;
 
-                expect(narwhal.yScale(0)).toBe(0);
-                expect(narwhal.yScale(3)).toBe(w);
+                expect(contour.yScale(0)).toBe(0);
+                expect(contour.yScale(3)).toBe(w);
             });
 
         });
 
         describe('xScale', function () {
             it('should be inverted (first index should be below --greater Y coord-- then the last index)', function () {
-                narwhal.nullVis([1,2,3]).render();
+                contour.nullVis([1,2,3]).render();
 
-                expect(narwhal.xScale(0)).toBeGreaterThan(narwhal.xScale(2));
+                expect(contour.xScale(0)).toBeGreaterThan(contour.xScale(2));
             });
         });
 
         describe('yAxis', function () {
             it('should render the horizontal axis titles below the axis labels', function () {
-                narwhal.render();
+                contour.render();
 
                 var textBounds = _.nw.textBounds('ABC', '.y.tick');
                 var title = $el.find('.y.axis-title');
@@ -71,7 +71,7 @@ describe('Horizontal frame', function () {
 
         describe('xAxis', function () {
             it('should render the vertical axis titles to the left of the axis labels', function () {
-                narwhal.render();
+                contour.render();
 
                 var textBounds = _.nw.textBounds('ABC', '.x.tick');
                 var title = $el.find('.x.axis-title');

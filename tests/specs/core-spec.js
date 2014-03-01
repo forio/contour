@@ -1,20 +1,20 @@
-describe('Narwhal', function () {
+describe('Contour', function () {
     var $el, el;
-    var narwhal;
+    var contour;
 
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
     });
 
-    function createNarwhal(options) {
+    function createContour(options) {
         options = _.extend({ el: el }, options);
-        narwhal = new Narwhal(options);
-        return narwhal;
+        contour = new Contour(options);
+        return contour;
     }
 
     it('should add export functionality to Narwha function object (static method)', function () {
-        expect(Narwhal.export).toBeDefined();
+        expect(Contour.export).toBeDefined();
     });
 
     describe('export', function () {
@@ -24,20 +24,20 @@ describe('Narwhal', function () {
         });
 
         it('should throw if passed and invalid constructor', function () {
-            expect(_.bind(Narwhal.export, Narwhal, 'some', 'thing')).toThrow();
-            expect(_.bind(Narwhal.export, Narwhal, 'some')).toThrow();
-            expect(_.bind(Narwhal.export, Narwhal, 'some', exportedVisRenderer)).not.toThrow();
+            expect(_.bind(Contour.export, contour, 'some', 'thing')).toThrow();
+            expect(_.bind(Contour.export, contour, 'some')).toThrow();
+            expect(_.bind(Contour.export, contour, 'some', exportedVisRenderer)).not.toThrow();
         });
 
         it('should add functionality to Narwal\'s prototype', function () {
-            Narwhal.export('someFunc', exportedVisRenderer);
+            Contour.export('someFunc', exportedVisRenderer);
 
-            expect(Narwhal.prototype.someFunc).toBeDefined();
+            expect(Contour.prototype.someFunc).toBeDefined();
         });
 
         it('should generate an chainable constructor for the visualization', function () {
-            Narwhal.export('somethingElse', exportedVisRenderer);
-            var target = createNarwhal();
+            Contour.export('somethingElse', exportedVisRenderer);
+            var target = createContour();
             expect(target.somethingElse()).toBe(target);
         });
 
@@ -45,11 +45,11 @@ describe('Narwhal', function () {
 
             it('should always bind normalized data if data is array', function () {
                 var dataParam;
-                Narwhal.export('something', function (data) {
+                Contour.export('something', function (data) {
                     dataParam = data;
                 });
 
-                var target = createNarwhal();
+                var target = createContour();
                 target.something([1,2,3]).render();
 
                 expect(dataParam[0].name).toBe('series 1');
@@ -59,11 +59,11 @@ describe('Narwhal', function () {
             });
 
             it('it should normalize to category strings when categories are defined', function () {
-                Narwhal.export('something', function (data) {
+                Contour.export('something', function (data) {
                     dataParam = data;
                 });
 
-                var target = createNarwhal({
+                var target = createContour({
                     xAxis: {
                         categories: [1, 2, 3]
                     }
@@ -78,11 +78,11 @@ describe('Narwhal', function () {
             });
 
             it('when categories array is given, should normalize the data with categories', function () {
-                Narwhal.export('something', function (data) {
+                Contour.export('something', function (data) {
                     dataParam = data;
                 });
 
-                var target = createNarwhal({
+                var target = createContour({
                     xAxis: {
                         categories: ['a', 'b', 'c']
                     }
@@ -99,18 +99,18 @@ describe('Narwhal', function () {
 
             it('should bind unmodified constructor data when data is not an array', function () {
                 var dataParam;
-                Narwhal.export('something', function (data) {
+                Contour.export('something', function (data) {
                     dataParam = data;
                 });
 
-                var target = createNarwhal();
+                var target = createContour();
                 target.something('some parameter').render();
                 expect(dataParam).toBe('some parameter');
             });
 
             it('should sort time based data', function () {
                 var dataParam;
-                Narwhal.export('something', function (data) {
+                Contour.export('something', function (data) {
                     dataParam = data;
                 });
 
@@ -121,7 +121,7 @@ describe('Narwhal', function () {
                     { x: new Date('2012-01-01 10:00'), y: 10 }
                 ];
 
-                createNarwhal()
+                createContour()
                     .something(data)
                     .render();
 
@@ -139,9 +139,9 @@ describe('Narwhal', function () {
         it('should merge default options defined in render function', function () {
             function render() {}
             render.defaults = { vis: { xyz: 10} };
-            Narwhal.export('vis', render);
+            Contour.export('vis', render);
 
-            nw = new Narwhal({}).vis().render();
+            nw = new Contour({}).vis().render();
             expect(nw.options.vis).toBeDefined();
             expect(nw.options.vis.xyz).toBe(10);
         });
@@ -149,15 +149,15 @@ describe('Narwhal', function () {
         it('should allow to override default options defined in render function', function () {
             function render() {};
             render.defaults = { vis: { xyz: 10} };
-            Narwhal.export('vis', render);
+            Contour.export('vis', render);
 
-            nw = new Narwhal({ vis: { xyz: 30 } }).vis().render();
+            nw = new Contour({ vis: { xyz: 30 } }).vis().render();
             expect(nw.options.vis).toBeDefined();
             expect(nw.options.vis.xyz).toBe(30);
         });
 
         it('should not override global config options if options are specificed for the visualization', function () {
-            // if the options are passed to the Narwhal constructor, then the instance gets the merged version of the
+            // if the options are passed to the Contour constructor, then the instance gets the merged version of the
             // conig object, but if the options are passed in to the visualization as a second parameter, only
             // that visualization should get the version of the config merged with the options.
 
@@ -166,9 +166,9 @@ describe('Narwhal', function () {
                 calls.push({data: data, opt: options.vis });
             }
 
-            Narwhal.export('vis', render);
+            Contour.export('vis', render);
 
-            nw = new Narwhal({})
+            nw = new Contour({})
                 .vis([{name: 's1', data: [1]}], { option1: 10 })
                 .vis([{name: 's2', data:[2]}], { option1: 20 })
                 .render();
@@ -187,8 +187,8 @@ describe('Narwhal', function () {
         // this is no longer valid, the visualizations array is a provate var now
         xit('should provide a visualizations array in the options', function () {
 
-            createNarwhal();
-            expect(narwhal.visualizations).toBeDefined();
+            createContour();
+            expect(Contour.visualizations).toBeDefined();
         });
     });
 
@@ -196,9 +196,9 @@ describe('Narwhal', function () {
     describe('expose', function () {
         it('should not expose passed in object, until the constructor is called', function () {
             // extend the prototype, exposing a new constructor myTest
-            Narwhal.expose('myTest', { someFunction: $.noop });
+            Contour.expose('myTest', { someFunction: $.noop });
 
-            var target = createNarwhal();
+            var target = createContour();
 
             expect(target.myTest).toBeDefined();
 
@@ -212,26 +212,26 @@ describe('Narwhal', function () {
         });
 
         it('should make the new object available in the instance', function () {
-            Narwhal.expose('myTest', { someFunction: $.noop });
+            Contour.expose('myTest', { someFunction: $.noop });
 
-            var target = createNarwhal();
+            var target = createContour();
             expect(target.myTest).toBeDefined();
         });
 
-        it('should NOT affect other instance of Narwhal', function () {
-            Narwhal.expose('myTest', { someFunction: $.noop });
+        it('should NOT affect other instance of Contour', function () {
+            Contour.expose('myTest', { someFunction: $.noop });
 
-            var target = createNarwhal();
+            var target = createContour();
             target.myTest();
-            var other = createNarwhal();
+            var other = createContour();
             expect(other.someFunction).not.toBeDefined();
             expect(target.someFunction).toBeDefined();
         });
 
         it('should return the instance (this) after calling the constructor', function () {
-            Narwhal.expose('myTest', { some: $.noop });
+            Contour.expose('myTest', { some: $.noop });
 
-            var target = createNarwhal();
+            var target = createContour();
             var result = target.myTest();
             expect(result).toEqual(target);
         });
@@ -256,12 +256,12 @@ describe('Narwhal', function () {
         });
 
         it('should create an svg element inside the container', function () {
-            createNarwhal().render();
+            createContour().render();
             expect($el.find('svg').length).toEqual(1);
         });
 
         it('should take the dimensions from the options', function () {
-            createNarwhal({ chart: { width: 100, height: 200 } }).render();
+            createContour({ chart: { width: 100, height: 200 } }).render();
 
             var bounds = getBounds();
             expect(bounds.width).toEqual(100);
@@ -269,14 +269,14 @@ describe('Narwhal', function () {
         });
 
         it('should default to width=400 if no option is given and no container has no width', function () {
-            createNarwhal().render();
+            createContour().render();
 
             var bounds = getBounds();
             expect(bounds.width).toEqual(400);
         });
 
         it('should default to height=247 if no option is given and no container has no height', function () {
-            createNarwhal().render();
+            createContour().render();
 
             var bounds = getBounds();
             expect(bounds.height).toEqual(247);
@@ -284,7 +284,7 @@ describe('Narwhal', function () {
 
         it('should get the container width if it has it', function () {
             $el.css({width: '120px', height: '30px '});
-            createNarwhal().render();
+            createContour().render();
 
             var bounds = getBounds();
             expect(bounds.width).toEqual(120);
@@ -292,14 +292,14 @@ describe('Narwhal', function () {
 
         it('should get the container height if it has it', function () {
             $el.css({width: '120px', height: '30px '});
-            createNarwhal().render();
+            createContour().render();
 
             var bounds = getBounds();
             expect(bounds.height).toEqual(30);
         });
 
         it('should calculate height if width & aspect are specificed', function () {
-            createNarwhal({ chart: { width: 100, aspect: 2 }}).render();
+            createContour({ chart: { width: 100, aspect: 2 }}).render();
 
             var bounds = getBounds();
             expect(bounds.height).toEqual(200);
@@ -307,14 +307,14 @@ describe('Narwhal', function () {
 
         it('should calculate height from container width & aspect are specificed', function () {
             $el.css({ width: '100px' });
-            createNarwhal({ chart: { aspect: 1.5 }}).render();
+            createContour({ chart: { aspect: 1.5 }}).render();
 
             var bounds = getBounds();
             expect(bounds.height).toEqual(150);
         });
 
         it('should include a viewbox & preserveAspectRatio attributes for the svg', function () {
-            createNarwhal({ chart: { width: 100, height: 200 } }).render();
+            createContour({ chart: { width: 100, height: 200 } }).render();
 
             // cant use jquery to get the viewBox... svg is not supposed to be supported in jquery
             // http://bugs.jquery.com/ticket/11166
@@ -327,7 +327,7 @@ describe('Narwhal', function () {
         });
 
         it('should position chart area using the provided margins', function () {
-            createNarwhal({
+            createContour({
                 chart: {
                     width: 100,
                     height: 100,
@@ -343,7 +343,7 @@ describe('Narwhal', function () {
         it('should call visualizations to render!', function () {
             var mock = createVisMock('something', _.noop);
 
-            createNarwhal().something().render();
+            createContour().something().render();
 
             expect(mock.render).toHaveBeenCalled();
         });
@@ -353,22 +353,22 @@ describe('Narwhal', function () {
     function createVisMock(name, fn) {
         var mock = { render: fn || function () {} };
         spyOn(mock, 'render');
-        Narwhal.export(name, mock.render);
+        Contour.export(name, mock.render);
 
         return mock;
     }
 
     describe('renderVisualizations', function () {
 
-        it('should call each visualization with the context of the narwhal instance', function () {
+        it('should call each visualization with the context of the Contour instance', function () {
             var context = null;
             var mock = { render: function () { context = this; }};
             spyOn(mock, 'render').andCallThrough();
-            Narwhal.export('something', mock.render);
+            Contour.export('something', mock.render);
             // createVisMock('something', function () {
             //     context = this;
             // });
-            var target = createNarwhal().something().render();
+            var target = createContour().something().render();
             expect(context).toEqual(target);
         });
     });

@@ -1,16 +1,16 @@
 describe('The Basic Tooltip', function () {
     var $el, el;
-    var narwhal;
+    var instance;
 
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
     });
 
-    function createNarwhal(options) {
+    function createinstance(options) {
         options = _.extend({ el: el }, options);
-        narwhal = new Narwhal(options).cartesian();
-        return narwhal;
+        instance = new Contour(options).cartesian();
+        return instance;
     }
 
     function triggerMouseEvent(type, domElemenet) {
@@ -23,7 +23,7 @@ describe('The Basic Tooltip', function () {
     }
 
     it('should create hidden a dom element when created', function () {
-        createNarwhal()
+        createinstance()
             .tooltip()
             .render();
 
@@ -34,7 +34,7 @@ describe('The Basic Tooltip', function () {
     });
 
     xit('should show the dom element on mouseOver', function () {
-        createNarwhal()
+        createinstance()
             .line([10,20])
             .tooltip()
             .render();

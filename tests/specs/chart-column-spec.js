@@ -7,28 +7,28 @@ describe('Column chart', function () {
         el = $el.get(0);
     });
 
-    function createNarwhal(options) {
+    function createinstance(options) {
         options = _.extend({ el: el, chart: { animations: false } }, options);
-        var narwhal = new Narwhal(options).cartesian();
-        return narwhal;
+        var instance = new Contour(options).cartesian();
+        return instance;
     }
 
     describe('render', function () {
         it('should create one rect per data point', function () {
-            createNarwhal().column(data).render();
+            createinstance().column(data).render();
             var rects = $el.find('rect');
             expect(rects.length).toBe(3);
         });
 
         it('should add the column class to each column', function () {
-            createNarwhal().column(data).render();
+            createinstance().column(data).render();
             var rects = $el.find('rect');
 
             expect(rects.filter('.column').length).toBe(3);
         });
 
         it('should set the hight of each column to the corresponding yScale value', function () {
-            var nw = createNarwhal().column(data).render();
+            var nw = createinstance().column(data).render();
             var rects = $el.find('rect');
             var y = function (d) { return nw.yScale(0) - Math.round(nw.yScale(d)); };
 
@@ -42,7 +42,7 @@ describe('Column chart', function () {
 
             it('should move the columns by \'offset\' if specified', function () {
                 var offset = 50;
-                var nw = createNarwhal({
+                var nw = createinstance({
                     column: { offset: offset , stacked: true }
                 }).column(data).render();
 
@@ -52,10 +52,10 @@ describe('Column chart', function () {
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });
 
-            it('should call the offset function with Narwhal instance context if specified', function () {
+            it('should call the offset function with instance instance context if specified', function () {
                 var ctx;
                 var offset = function () { ctx = this; return 50; };
-                var nw = createNarwhal({
+                var nw = createinstance({
                     column: { offset: offset , stacked: true }
                 }).column(data).render();
 
@@ -63,7 +63,7 @@ describe('Column chart', function () {
             });
 
             it('should user columnWidth value to get the width for each column', function () {
-                createNarwhal({
+                createinstance({
                     column: { columnWidth: 1.5 , stacked: true }
                 }).column(data).render();
 
@@ -74,7 +74,7 @@ describe('Column chart', function () {
             });
 
             it('should user columnWidth function to get the width for each column', function () {
-                createNarwhal({
+                createinstance({
                     column: { columnWidth: function () { return 1.5; }, stacked: true }
                 }).column(data).render();
 
@@ -91,7 +91,7 @@ describe('Column chart', function () {
 
             it('should move the columns by \'offset\' if specified', function () {
                 var offset = 50;
-                var nw = createNarwhal({
+                var nw = createinstance({
                     column: { offset: offset, stacked: false }
                 }).column(data).render();
 
@@ -102,7 +102,7 @@ describe('Column chart', function () {
             });
 
             it('should user columnWidth function to get the width for each column in the group', function () {
-                createNarwhal({
+                createinstance({
                     column: { padding: 1, columnWidth: function () { return 3; }, stacked: false }
                 }).column([{data: [1,2,3]}, {data: [4,5,6]}]).render();
 
