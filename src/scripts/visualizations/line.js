@@ -18,7 +18,7 @@
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
         var h = options.chart.plotHeight;
         var duration = 400;
-        /*jshint eqnull:true */
+        // jshint eqnull:true 
         var data = _.map(rawData, function (s) {
             return _.extend(s, {
                 data: _.filter(s.data, function (d, i) {
@@ -161,7 +161,7 @@
     *
     * @name line(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */

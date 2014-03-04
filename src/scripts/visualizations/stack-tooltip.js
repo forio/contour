@@ -13,7 +13,7 @@
     *
     * @name stackTooltip(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-    * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector of the container in which the tooltip should be rendered.
+    * @param {object} options Configuration options particular to this visualization that override the defaults. Requires an `el` option with the selector of the container in which to render the tooltip.
     * @api public
     *
     */
@@ -24,7 +24,7 @@
 
         tooltip.classed('stack-tooltip', true);
 
-        /*jshint eqnull:true*/
+        // jshint eqnull:true
         var onMouseOver = function (d) {
             var isNull = function (p) {
                 return !(p && p.y != null);
@@ -40,7 +40,8 @@
             tooltip.html(text).style({display: 'block'});
         };
 
-        var onMouseOut = function (/* datum */) {
+        var onMouseOut = function (// datum 
+                                    ) {
             tooltip.html('');
         };
 

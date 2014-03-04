@@ -152,7 +152,7 @@
     *
     * @name tooltip(data, options)
     * @param {object|array} data Ignored!
-    * @param {object} options Options particular to this visualization that override the defaults.
+    * @param {object} options Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */

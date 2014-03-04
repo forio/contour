@@ -14,7 +14,7 @@
         },
 
         xAxis: {
-            /* type of axis {ordinal|linear|time} */
+            // type of axis {ordinal|linear|time}
             type: null, // defaults is ordinal (needs to be null here so overrides work)
             innerTickSize: 6,
             outerTickSize: 0,
@@ -22,9 +22,9 @@
             maxTicks: undefined,
             title: undefined,
             titlePadding: 4,
-            /* padding between ranges (ie. columns) expressed in percentage of rangeBand width */
+            // padding between ranges (ie. columns) expressed in percentage of rangeBand width
             innerRangePadding: 0.1,
-            /* padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width */
+            // padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width 
             outerRangePadding: 0.1,
             firstAndLast: false,
             orient: 'bottom',
@@ -35,7 +35,7 @@
         },
 
         yAxis: {
-            /* @param: {linear|smart|log} */
+            // @param: {linear|smart|log}
             // type: 'smart',
             min: undefined,
             max: undefined,
@@ -59,14 +59,14 @@
 
 
     /**
-    * Provides a Cartesian frame to the Narwhal instance.
+    * Provides a Cartesian frame to the Contour instance.
     *
     * ###Example:
     *
-    *     new Narwhal(options)
+    *     new Contour(options)
     *           .cartesian();
     *
-    * @name cartesian()
+    * @name cartesian
     */
     var cartesian = function () {
         return {
