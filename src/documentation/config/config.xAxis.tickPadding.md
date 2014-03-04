@@ -6,18 +6,15 @@ The distance between the end of the tick mark and the label of the tick mark, in
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    xAxis: { innerTickSize: 6, 
-                 tickPadding: 25,
-                 firstAndLast: false                
-               }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        xAxis: { tickPadding: 25 }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/abzJE/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.tickPadding/)*
 
 **Notes:**
 

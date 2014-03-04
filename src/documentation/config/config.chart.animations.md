@@ -10,15 +10,15 @@ When `false`, renders the visualization by drawing the data points and the line 
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myChart",
-	    chart: { animations: true }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myChart',
+        chart: { animations: false }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/QfqbZ/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.animations/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

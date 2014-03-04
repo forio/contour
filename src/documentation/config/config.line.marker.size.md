@@ -6,17 +6,17 @@ The radius of each data point in a line chart, in pixels.
 
 **Example:**
 
-	new Narwhal({
-	    el: '.myChart',
-	    line: { 
-	        marker : { size: 10 }
-	      } 
+    new Contour({
+        el: '.myLineChart',
+        line: { 
+            marker : { size: 10 }
+        } 
       })
-      .cartesian()
-      .line([5, 3, 6, 7, 4, 2])
-      .render()
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/RPjwk/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.line.marker.size/)*
 
 **Notes:**
 

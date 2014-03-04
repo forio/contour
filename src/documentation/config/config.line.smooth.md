@@ -8,15 +8,15 @@ When `true`, the segments between data points are [interpolated in a cardinal sp
 
 **Example:**
 
-		new Narwhal({
-		    el: '.myLineChart',
-		    line: { smooth: true }
-		  })
-		.cartesian()
-		.line([5, 3, 6, 7, 4, 2])
-		.render()
+    new Contour({
+        el: '.myLineChart',
+        line: { smooth: true }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/9b3BL/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.line.smooth/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

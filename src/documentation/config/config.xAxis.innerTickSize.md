@@ -6,16 +6,15 @@ The length of the tick marks, in pixels, offset from the axis.
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    xAxis: { innerTickSize: 15,
-	    		 firstAndLast: false }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        xAxis: { innerTickSize: 15 }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/LU6du/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.innerTickSize/)*
 
 **Notes:**
 

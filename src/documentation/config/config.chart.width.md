@@ -2,19 +2,19 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-The width of the container for this Narwhal instance, in pixels. 
+The width of the container for this Contour instance, in pixels. 
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myChart",
-	    chart: { width: 200 }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myChart',
+        chart: { width: 200 }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/5SBJ8/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.width/)*
 
 **Notes:**
 

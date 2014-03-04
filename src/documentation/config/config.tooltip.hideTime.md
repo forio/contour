@@ -6,8 +6,8 @@ The amount of time, in milliseconds, for the tooltip to disappear after the mous
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
+	new Contour({
+	    el: '.myLineChart',
 	    tooltip: { hideTime: 800 }
 	  })
 	.cartesian()
@@ -15,7 +15,7 @@ The amount of time, in milliseconds, for the tooltip to disappear after the mous
 	.tooltip()
 	.render()
 
-*[Try it.](http://jsfiddle.net/forio/sNRgL/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.tooltip.hideTime/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

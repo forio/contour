@@ -11,19 +11,15 @@ The supported orientations are:
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    xAxis: { orient: "top",
-                 innerTickSize: 6, 
-                 firstAndLast: false
-               }
-	  })
-	.cartesian()
-	.line(data)
-	.tooltip()
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        xAxis: { orient: 'top' }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/agX8r/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.orient/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

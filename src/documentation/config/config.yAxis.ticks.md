@@ -8,20 +8,18 @@ Tick marks are evenly spaced along the domain at multiples of 1, 2, 5, 10, or 10
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    chart: { margin : { left: 20 } },
-        yAxis: { ticks: 4, smartAxis: false }
-	  })
-	.cartesian()
-		//for this data set, 
+    new Contour({
+        el: '.myLineChart',
+        yAxis: { ticks: 4 }
+      })
+    .cartesian()
+    	//for this data set, 
 		//ticks: 4 draws tick marks at 0, 2, 4, 6, 8
 		//ticks: 15 draws tick marks at 0.5, 1, 1.5, 2, 2.5, etc.
-	.line([1, 2, 4, 5, 6, 7, 8])
-	.tooltip()
-	.render()
+    .line([1, 2, 4, 5, 6, 7, 8])
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/GaF5p/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.ticks/)*
 
 **Notes:**
 

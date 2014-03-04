@@ -2,21 +2,19 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-The amount of whitespace (padding), in pixels, between the lower edge of any visualizations in this Narwhal instance (for example, the labels or axis titles) and the inner plot area (for example, the axes).
+The amount of whitespace (padding), in pixels, between the lower edge of any visualizations in this Contour instance (for example, the labels or axis titles) and the inner plot area (for example, the axes).
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myChart",
-	    chart: {
-	      padding: { bottom: 100 } 
-	    }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myChart',
+        chart: { padding: { bottom: 100 } }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/RUeJ4/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.padding.bottom/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

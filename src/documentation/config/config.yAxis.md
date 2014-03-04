@@ -2,23 +2,23 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-To override any of the default configuration options in a yAxis, include the `yAxis` configuration object in the configuration options that you pass to your Narwhal constructor.
+To override any of the default configuration options in a yAxis, include the `yAxis` configuration object in the configuration options that you pass to your Contour constructor.
 
-A yAxis is only useful if your Narwhal instance uses a [cartesian](#cartesian) frame.
+A yAxis is only useful if your Contour instance uses a [cartesian](#cartesian) frame.
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    yAxis: {
-	      // yAxis-specific configuration options
-	    }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        yAxis: {
+          // yAxis-specific configuration options
+        }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/Te6ew/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

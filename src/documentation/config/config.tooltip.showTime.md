@@ -6,8 +6,8 @@ The amount of time, in milliseconds, for the tooltip to appear and reach [`opaci
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
+    new Contour({
+	    el: '.myLineChart',
 	    tooltip: { showTime: 1000 }
 	  })
 	.cartesian()
@@ -15,7 +15,7 @@ The amount of time, in milliseconds, for the tooltip to appear and reach [`opaci
 	.tooltip()
 	.render() 
 
-*[Try it.](http://jsfiddle.net/forio/Xb8Y6/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.tooltip.showTime/)*
 
 **Notes:**
 

@@ -6,12 +6,14 @@ The distance from the edge of the chart to the [`outerRadius`](#config_config.pi
 
 **Example:**
 
-		new Narwhal({
-		  el: '.myPieChart',
-		  pie: { piePadding: 100 }
-		})
+    new Contour({
+        el: '.myPieChart',
+        pie: { piePadding: 100 }
+    })
+    .pie(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/8b4E2/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.pie.piePadding/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

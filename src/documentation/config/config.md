@@ -1,22 +1,22 @@
 #### **config** : {<%= type %>}
 
-The Narwhal configuration object is a set of configuration options. 
+The Contour configuration object is a set of configuration options. 
 
 Each set of options can be added:
 
-* to the configuration options object that you pass in to the Narwhal constructor; this will override the configuration defaults
+* to the configuration options object that you pass in to the Contour constructor; this will override the configuration defaults
 
-		new Narwhal({
-	      el: ".myColumnChart",
+		new Contour({
+	      el: '.myColumnChart',
 	      column: {
 	      // column-specific configuration options
 	      }
 	    })
 
-* to the configuration options object that you pass in to the particular visualization when you add that visualization to your Narwhal instance; this will override the configuration options object passed in to the Narwhal constructor
+* to the configuration options object that you pass in to the particular visualization when you add that visualization to your Contour instance; this will override the configuration options object passed in to the Contour constructor
 
-		new Narwhal({
-		  el: ".myColumnChart",
+		new Contour({
+		  el: '.myColumnChart',
 		  column: { columnWidth: 50 }
 		})
 		.cartesian()

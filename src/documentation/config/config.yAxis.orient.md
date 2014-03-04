@@ -11,15 +11,15 @@ The supported orientations are:
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    yAxis: { orient: "right" }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        yAxis: { orient: 'right' }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/zbA9W/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.orient/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

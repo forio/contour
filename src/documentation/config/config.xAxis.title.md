@@ -6,15 +6,15 @@ The title to display for this axis.
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    xAxis: { title: 'Index'}
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        xAxis: { title: 'Index' }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/34M75/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.title/)*
 
 **Notes:**
 

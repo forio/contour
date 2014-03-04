@@ -10,15 +10,15 @@ Use the [`innerRangePadding`](#config_config.xAxis.innerRangePadding) to set the
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myColumnChart",
-	    xAxis: { outerRangePadding: 0.8 }
-	  })
-	.cartesian()
-	.column(data)
-	.render()
+    new Contour({
+        el: '.myColumnChart',
+        xAxis: { outerRangePadding: 0.8 }
+      })
+    .cartesian()
+    .column(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/R8KEn/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.outerRangePadding/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

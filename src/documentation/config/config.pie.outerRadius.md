@@ -8,12 +8,14 @@ When `outerRadius` is null, the radius from the center of the pie to the outer e
 
 **Example:**
 
-		new Narwhal({
-		  el: '.myPieChart',
-		  pie: { outerRadius: 100 }
-		})
+    new Contour({
+        el: '.myPieChart',
+        pie: { outerRadius: 100 }
+    })
+    .pie(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/73hPM/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.pie.outerRadius/)*
 
 <% if(notes) { %><%= notes %><% } %>
 
