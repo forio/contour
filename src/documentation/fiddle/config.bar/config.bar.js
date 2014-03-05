@@ -8,6 +8,7 @@
         }
       })
     .cartesian()
+    .horizontal()
     .bar(data)
     .render()
 })();
