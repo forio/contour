@@ -27,5 +27,7 @@ When `true`, extends the domain so that it starts and ends on ["nice, round" val
 
 The [`smartAxis`](#config_config.yAxis.smartAxis) configuration option has the highest precedence in specifying locations of tick marks. If [`smartAxis`](#config_config.yAxis.smartAxis) is `true`, `nicing` is ignored.
 
+See also: [`smartAxis`](#config_config.yAxis.smartAxis), [`min`](#config_config.yAxis.min), [`max`](#config_config.yAxis.max), [`tickValues`](#config_config.yAxis.tickValues), [`ticks`](#config_config.yAxis.ticks).
+
 <% if(notes) { %><%= notes %><% } %>
 

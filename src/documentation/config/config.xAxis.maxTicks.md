@@ -4,7 +4,7 @@
 
 The maximum number of tick marks to display on the axis.
 
-Where the ticks are placed is determined based on the number of elements in the data series and the value of [`firstAndLast`](#config_config.xAxis.firstAndLast). 
+Where the ticks are placed is determined based on the number and value of elements in the data series. 
 
 **Example:**
 
@@ -17,6 +17,10 @@ Where the ticks are placed is determined based on the number of elements in the 
     .render()
 
 *[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.maxTicks/)*
+
+**Notes:**
+
+`maxTicks` serves at the upper bound. For example, when [`firstAndLast`](#config_config.xAxis.firstAndLast) is set to `true`, there are two tick marks, even if `maxTicks` is set much higher. 
 
 <% if(notes) { %><%= notes %><% } %>
 
