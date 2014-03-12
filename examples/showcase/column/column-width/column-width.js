@@ -7,7 +7,7 @@
         { name: 'Second Series', data: [5,3,2,7,1,6,5] }
     ];
 
-    new Narwhal({
+    new Contour({
             el: '.myChart',
             xAxis: {
                 title: 'Index or Category',
@@ -21,7 +21,7 @@
         .column(colDataWide, { 
             columnWidth: function () { return this.rangeBand / 3 * 2; }
         } )
-        // create grouping by adding a second column visualization to this Narwhal instance
+        // create grouping by adding a second column visualization to this Contour instance
         // add an offset so that this visualization doesn't overlap with the first one
         .column(colDataNarrow, { 
             columnWidth: function() { return this.rangeBand / 3; },

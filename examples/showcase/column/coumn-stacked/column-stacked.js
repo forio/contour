@@ -7,7 +7,7 @@
         { name: 'Fourth Series', data: [5,3,2,5,1,6,5] }
     ];
 
-    new Narwhal({
+    new Contour({
             el: '.column-stacked',
             xAxis: {
                 title: 'Index or Category',

@@ -1,5 +1,5 @@
 (function () {
-    new Narwhal({
+    new Contour({
             el: '.pie-donut',
             pie: { innerRadius: 30 }
         })

@@ -1,6 +1,6 @@
 (function () {
 
-    Narwhal.export('lineMarker', function (data, layer) {
+    Contour.export('lineMarker', function (data, layer) {
             var y = this.yScale(data);
             // use d3 to draw the path for this visualization
             layer.append('path')
@@ -8,7 +8,7 @@
                 .attr('stroke', '#000');     
     });
 
-    new Narwhal({
+    new Contour({
             el: '.line-export',
             xAxis: {
                 title: 'Index',

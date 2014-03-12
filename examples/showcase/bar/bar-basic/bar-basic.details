@@ -1,11 +1,11 @@
 ---
  name: Basic Bar Chart
- description: Create basic bar charts by adding .cartesian(), .horizontal(), and .bar() in your Narwhal instance. Use configuration options to set properties of the visualizations and axes.
+ description: Create basic bar charts by adding .cartesian(), .horizontal(), and .bar() in your Contour instance. Use configuration options to set properties of the visualizations and axes.
  authors:
    - Forio
  resources:
    - http://d3js.org/d3.v3.js
-   - http://forio.com/tools/narwhal/narwhal.js
-   - http://forio.com/tools/narwhal/narwhal.min.css
+   - http://forio.com/tools/contour/contour.js
+   - http://forio.com/tools/contour/contour.min.css
  normalize_css: no
  ...

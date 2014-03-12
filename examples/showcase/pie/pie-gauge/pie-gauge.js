@@ -1,6 +1,6 @@
 (function () {
 
-    Narwhal.export('donutTextOneValue', function (data, layer, options) {
+    Contour.export('donutTextOneValue', function (data, layer, options) {
 
         // This visualization is only for single-element gauges, that is, 
         // donut (pie) charts with one data series, one value visible, and the remainder hidden.
@@ -25,7 +25,7 @@
 
     var data = [.82, .18];
 
-    new Narwhal({
+    new Contour({
             el: '.pie-gauge',
             pie: { piePadding: 15, innerRadius: 100, outerRadius: 300 }
         })

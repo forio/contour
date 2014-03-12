@@ -9,7 +9,7 @@
         { x: new Date('6/1/2000'), y: 2}
     ];
 
-    new Narwhal({
+    new Contour({
             el: '.line-dates',
             xAxis: {
                 title: 'Index',

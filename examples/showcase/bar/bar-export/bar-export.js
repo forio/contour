@@ -1,5 +1,5 @@
 (function () {
-    Narwhal.export('customTooltipSingleSeries', function (data, layer) {
+    Contour.export('customTooltipSingleSeries', function (data, layer) {
     	// data[0] is the first data series.
     	// because our data, below, only includes one data series, 
     	// we can get the data series values 
@@ -17,7 +17,7 @@
 
     var data = [1, 2, 3, 4, 5, 4, 3, 2, 1];
 
-    new Narwhal({
+    new Contour({
         el: '.bar-export',
       })
     .cartesian()
