@@ -24,7 +24,7 @@
             titlePadding: 4,
             // padding between ranges (ie. columns) expressed in percentage of rangeBand width
             innerRangePadding: 0.1,
-            // padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width 
+            // padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width
             outerRangePadding: 0.1,
             firstAndLast: false,
             orient: 'bottom',
@@ -180,7 +180,7 @@
             *
             *     var scaledValue = this.xScale(100);
             *
-        * @function xScale
+            * @function xScale
             * @param {Number|String} value The value to be scaled.
             * @return {Number} The scaled value according to the current xAxis settings.
             */
@@ -193,7 +193,7 @@
             *
             *     var scaledValue = this.yScale(100);
             *
-        * @function yScale
+            * @function yScale
             * @param {Number} value The value to be scaled.
             * @return {Number} The scaled value according to the current yAxis settings.
             */
@@ -206,8 +206,8 @@
             *
             *     this.setYDomain([100, 200]);
             *
-        * @function setYDomain
-        * @param {Array} domain The domain array representing the min and max values visible on the yAxis.       */
+            * @function setYDomain
+            * @param {Array} domain The domain array representing the min and max values visible on the yAxis.       */
             setYDomain: function (domain) {
                 this.yScaleGenerator.setDomain(domain);
             },
@@ -219,7 +219,7 @@
             *
             *     this.redrawYAxis();
             *
-        * @function redrawYAxis
+            * @function redrawYAxis
             */
             redrawYAxis: function () {
                 this.svg.select(".y.axis").call(this.yAxis());
