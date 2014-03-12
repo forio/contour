@@ -283,24 +283,23 @@
 
 
     /**
-    * Create a set of related visualizations by calling the Narwhal visualization constructor. This creates a Narwhal instance, based on the core Narwhal object.
+    * Creates a Contour instance, based on the core Contour object. This instance can contain a set of related visualizations.
     *
-    *   * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Narwhal instance will be rendered.
-    *   * Set the frame for this Narwhal instance (e.g. `.cartesian()`).
-    *   * Add one or more specific visualizations to this Narwhal instance (e.g. `.scatter()`, `.trend-line()`). Pass each visualization constructor the data it displays.
-    *   * Invoke an action for this Narwhal instance (e.g. `.render()`).
+    *   * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Contour instance will be rendered.
+    *   * Set the frame for this Contour instance (e.g. `.cartesian()`).
+    *   * Add one or more specific visualizations to this Contour instance (e.g. `.scatter()`, `.trend-line()`). Pass each visualization constructor the data it displays. Pass configuration options if desired.
+    *   * Invoke an action for this Contour instance (e.g. `.render()`).
     *
     * ### Example:
     *
-    *     new Narwhal({el: 'myChart'})
+    *     new Contour({el: 'myChart'})
     *       .cartesian()
     *       .line([1,3,2,5])
     *       .render()
     *
     *
-    * @class Narwhal() visualizations object
-    * @param {object} options The global options object
-    * @see {@link config}
+    * @class Contour() visualizations object
+    * @param {object} options The global configuration options object
     *
     */
     function Contour (options) {
@@ -310,24 +309,23 @@
     }
 
     /**
-    * Adds a new kind of visualization to the core Narwhal object.
-    * The *renderer* function is called when you add this visualization to instances of Narwhal.
+    * Adds a new kind of visualization to the core Contour object.
+    * The *renderer* function is called when you add this visualization to instances of Contour.
     *
     * ### Example:
     *
-    *     Narwhal.export("exampleVisualization", function(data, layer) {
+    *     Contour.export("exampleVisualization", function(data, layer) {
     *           //function body to create exampleVisualization
     *           //for example using SVG and/or D3
     *     });
     *
-    *     //to include the visualization into a specific Narwhal instance
-    *     new Narwhal(options)
+    *     //to include the visualization into a specific Contour instance
+    *     new Contour(options)
     *           .exampleVisualization(data)
     *           .render()
     *
     * @param {String} ctorName Name of the visualization, used as a constructor name.
-    * @param {Function} renderer Function called when this visualization is added to a Narwhal instance. This function receives the data that is passed in to the constructor.
-    * @see options
+    * @param {Function} renderer Function called when this visualization is added to a Contour instance. This function receives the data that is passed in to the constructor.
     */
     Contour.export = function (ctorName, renderer) {
 
@@ -366,22 +364,22 @@
 
 
     /**
-    * Exposes functionality to the core Narwhal object.
+    * Exposes functionality to the core Contour object.
     * Use this to add *functionality* that will be available for any visualizations.
     *
     * ###Example:
     *
-    *     Narwhal.expose("example", {
+    *     Contour.expose("example", {
     *          // when included in the instance, the function `.myFunction` is available in the visualizations
     *         myFunction: function(data) { .... }
     *     });
     *
-    *     Narwhal.export("visualizationThatUsesMyFunction", function(data, layer) {
+    *     Contour.export("visualizationThatUsesMyFunction", function(data, layer) {
     *           //function body including call to this.myFunction(data)
     *     });
     *
     *     // to include the functionality into a specific instance
-    *     new Narwhal(options)
+    *     new Contour(options)
     *           .example()
     *           .visualizationThatUsesMyFunction()
     *           .render()
@@ -483,11 +481,11 @@
         },
 
         /**
-        * Renders this Narwhal instance and all its visualizations into the DOM.
+        * Renders this Contour instance and all its visualizations into the DOM.
         *
         * Example:
         *
-        *     new Narwhal({ el:'.myChart' })
+        *     new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
         *           .render()
         *
@@ -553,12 +551,14 @@
         },
 
         /**
-        * Set's the same data set into all visualizations for an instance
+        * Sets the same data into all visualizations for a Contour instance. Useful for creating interactive
+        * visualizations: call after getting the additional data from the user.
         *
-        * Example:
+        * ###Example:
         *
         *     var data = [1,2,3,4,5];
-        *     var chart = new Narwhal({ el:'.myChart' })
+        *     var chart = new Contour({ el:'.myChart' })
+        *           .cartesian()
         *           .scatter(data)
         *           .trendLine(data);
         *
@@ -566,7 +566,7 @@
         *     chart.setData(data)
         *           .render();
         *
-        * @function .setData
+        * @function setData
         *
         */
         setData: function (data) {
@@ -576,20 +576,20 @@
         },
 
         /**
-        * Returns a VisualizationContainer object for the visualization at a given index (0-based)
+        * Returns a VisualizationContainer object for the visualization at a given index (0-based).
         *
-        * Example:
+        * ###Example:
         *
-        *     var chart = new Narwhal({ el:'.myChart' })
+        *     var chart = new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
         *           .render()
         *
         *     var myPie = chart.select(0)
         *
-        *     // do something with the visualization like updateing its data set
+        *     // do something with the visualization, for example updating its data set
         *     myPie.setData([6,7,8,9]).render()
         *
-        * @function .select
+        * @function select
         *
         */
         select: function (index) {
@@ -690,7 +690,7 @@
         },
 
         xAxis: {
-            /* type of axis {ordinal|linear|time} */
+            // type of axis {ordinal|linear|time}
             type: null, // defaults is ordinal (needs to be null here so overrides work)
             innerTickSize: 6,
             outerTickSize: 0,
@@ -698,9 +698,9 @@
             maxTicks: undefined,
             title: undefined,
             titlePadding: 4,
-            /* padding between ranges (ie. columns) expressed in percentage of rangeBand width */
+            // padding between ranges (ie. columns) expressed in percentage of rangeBand width
             innerRangePadding: 0.1,
-            /* padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width */
+            // padding between all ranges (ie. columns) and the axis (left & right) expressed in percentage of rangeBand width 
             outerRangePadding: 0.1,
             firstAndLast: false,
             orient: 'bottom',
@@ -711,7 +711,7 @@
         },
 
         yAxis: {
-            /* @param: {linear|smart|log} */
+            // @param: {linear|smart|log}
             // type: 'smart',
             min: undefined,
             max: undefined,
@@ -735,14 +735,14 @@
 
 
     /**
-    * Provides a Cartesian frame to the Narwhal instance.
+    * Provides a Cartesian frame to the Contour instance.
     *
     * ###Example:
     *
-    *     new Narwhal(options)
+    *     new Contour(options)
     *           .cartesian();
     *
-    * @name cartesian()
+    * @name cartesian
     */
     var cartesian = function () {
         return {
@@ -1150,7 +1150,7 @@
 
 })();
 
-Contour.version = '0.0.52';
+Contour.version = '0.0.53';
 (function () {
 
     var helpers = {
@@ -1801,24 +1801,23 @@ Contour.version = '0.0.52';
     };
 
     /**
-    * Sets the visualization frame to be "horizontal".
-    * The xAxis is set vertical and the yAxis is set horizontal.
+    * Sets the visualization frame so that the xAxis is vertical and the yAxis is horizontal.
     *
-    * This visualization requires *.cartesian()*.
+    * This visualization requires `.cartesian()`.
     *
-    * This visualization is a prerequiste for rendering bar charts (*.bar()*).
+    * This visualization is a prerequiste for rendering bar charts (`.bar()`).
     *
     * ###Example:
     *
-    *     new Narwhal({el: '.myChart'})
+    *     new Contour({el: '.myChart'})
     *        .cartesian()
     *        .horizontal()
     *        .bar([1, 2, 3, 4, 5, 4, 3, 2, 1])
     *        .render()
     *
-    * @function .horiztonal
-    * @param {TBW} frame TBW
+    * @function horiztonal
     */
+
     Contour.expose('horizontal', frame);
 
 })();
@@ -2000,7 +1999,7 @@ Contour.version = '0.0.52';
     *
     * @name area(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */
@@ -2110,7 +2109,7 @@ Contour.version = '0.0.52';
     *
     * @name bar(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */
@@ -2239,7 +2238,7 @@ Contour.version = '0.0.52';
     *
     * @name column(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */
@@ -2283,7 +2282,7 @@ Contour.version = '0.0.52';
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
         var h = options.chart.plotHeight;
         var duration = 400;
-        /*jshint eqnull:true */
+        // jshint eqnull:true 
         var data = _.map(rawData, function (s) {
             return _.extend(s, {
                 data: _.filter(s.data, function (d, i) {
@@ -2426,7 +2425,7 @@ Contour.version = '0.0.52';
     *
     * @name line(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */
@@ -2540,7 +2539,7 @@ Contour.version = '0.0.52';
     *
     * @name pie(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats. The data elements are summed and then divided. In the example, `.pie([1,2,3,4])` makes four pie slices: 1/10, 2/10, 3/10, and 4/10.
-    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */
@@ -2621,7 +2620,7 @@ Contour.version = '0.0.52';
     *
     * @name scatter(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */
@@ -2645,7 +2644,7 @@ Contour.version = '0.0.52';
     *
     * @name stackTooltip(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
-    * @param {object} options Options particular to this visualization that override the defaults. The `el` option must contain the selector of the container in which the tooltip should be rendered.
+    * @param {object} options Configuration options particular to this visualization that override the defaults. Requires an `el` option with the selector of the container in which to render the tooltip.
     * @api public
     *
     */
@@ -2656,7 +2655,7 @@ Contour.version = '0.0.52';
 
         tooltip.classed('stack-tooltip', true);
 
-        /*jshint eqnull:true*/
+        // jshint eqnull:true
         var onMouseOver = function (d) {
             var isNull = function (p) {
                 return !(p && p.y != null);
@@ -2672,7 +2671,8 @@ Contour.version = '0.0.52';
             tooltip.html(text).style({display: 'block'});
         };
 
-        var onMouseOut = function (/* datum */) {
+        var onMouseOut = function (// datum 
+                                    ) {
             tooltip.html('');
         };
 
@@ -2836,7 +2836,7 @@ Contour.version = '0.0.52';
     *
     * @name tooltip(data, options)
     * @param {object|array} data Ignored!
-    * @param {object} options Options particular to this visualization that override the defaults.
+    * @param {object} options Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */
@@ -2902,7 +2902,7 @@ Contour.version = '0.0.52';
     *
     * @name trendLine(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats. A linear regression is performed on the _data series_ and the resulting trend line is displayed.
-    * @param {object} [options] Options particular to this visualization that override the defaults.
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
     * @api public
     *
     */
