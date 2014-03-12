@@ -1,4 +1,4 @@
-.narwhal-chart .axis {
+.contour-chart .axis {
   stroke: #666666;
   stroke-width: 1px;
   fill: none;
@@ -6,14 +6,14 @@
   font-family: "Consolas", "Monaco", monospace;
   font-size: 13px;
 }
-.narwhal-chart .axis text {
+.contour-chart .axis text {
   stroke: none;
   fill: #666666;
 }
-.narwhal-chart .axis.x .tick line {
+.contour-chart .axis.x .tick line {
   stroke: #666666;
 }
-.narwhal-chart .axis-title {
+.contour-chart .axis-title {
   font-family: "Consolas", "Monaco", monospace;
   font-size: 13px;
   font-size: 14px;
@@ -21,10 +21,10 @@
   stroke: none;
   fill: #666666;
 }
-.narwhal-chart .grid-line {
+.contour-chart .grid-line {
   stroke: #cfcfcf;
 }
-.narwhal-chart .trend-line {
+.contour-chart .trend-line {
   stroke-width: 1px;
   stroke: #05f;
 }

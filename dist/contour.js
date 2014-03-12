@@ -1150,7 +1150,7 @@
 
 })();
 
-Contour.version = '0.0.53';
+Contour.version = '0.0.54';
 (function () {
 
     var helpers = {
