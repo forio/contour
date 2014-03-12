@@ -4,19 +4,23 @@
 
 The maximum number of tick marks to display on the axis.
 
-Where the ticks are placed is determined based on the number of elements in the data series and the value of [`firstAndLast`](#config_config.xAxis.firstAndLast). 
+Where the ticks are placed is determined based on the number and value of elements in the data series. 
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    xAxis: { maxTicks: 4 }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        xAxis: { maxTicks: 4 }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-TODO: confirm the interaction between maxTicks and firstAndLast is working correctly; which one overrides which and how is unclear
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.maxTicks/)*
+
+**Notes:**
+
+`maxTicks` serves at the upper bound. For example, when [`firstAndLast`](#config_config.xAxis.firstAndLast) is set to `true`, there are two tick marks, even if `maxTicks` is set much higher. 
 
 <% if(notes) { %><%= notes %><% } %>
 

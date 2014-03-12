@@ -8,12 +8,14 @@ The pie chart is completely filled in when `innerRadius` is `0` or null. The pie
 
 **Example:**
 
-		new Narwhal({
-			el: '.myPieChart',
-			pie: { innerRadius: 60 }
-		})
+    new Contour({
+        el: '.myPieChart',
+        pie: { innerRadius: 60 }
+    })
+    .pie(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/kSfQ8/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.pie.innerRadius/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

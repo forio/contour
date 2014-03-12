@@ -8,17 +8,17 @@ When `false`, show only the line segments drawn between the data points.
 
 **Example:**
 
-	new Narwhal({
-	    el: '.myChart',
-	    line: { 
-	        marker : { enable: false }
-	      } 
+    new Contour({
+        el: '.myLineChart',
+        line: { 
+            marker : { enable: false }
+        } 
       })
-      .cartesian()
-      .line([5, 3, 6, 7, 4, 2])
-      .render()
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/vtjLE/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.line.marker.enable/)*
 
 **Notes:**
 

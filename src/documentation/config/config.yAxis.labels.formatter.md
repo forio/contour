@@ -2,11 +2,27 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-A function that formats each value. The function should return a valid [format](#config_config.yAxis.labels.format), that is a string (that could vary based on each value).
+A function that formats each value. The function should return a string which is a valid [format](#config_config.yAxis.labels.format). (The returned string can vary based on each value.)
 
 The general form of a specifier is `[​[fill]align][sign][symbol][0][width][,][.precision][type]`. The exact definitions are identical to those [used in D3](https://github.com/mbostock/d3/wiki/Formatting#wiki-d3_format).
 
-*[Try it.](http://jsfiddle.net/forio/8z7gs/)*
+**Example:**
+
+    new Contour({
+        el: '.myLineChart',
+        yAxis: { 
+            labels : 
+                { formatter: 
+                    function (datum) { return datum + '%' }
+                }
+        }
+      })
+    .cartesian()
+    .line(data)
+    .tooltip()
+    .render()
+
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.labels.formatter/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

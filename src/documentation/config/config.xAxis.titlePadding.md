@@ -6,15 +6,15 @@ The distance below the axis and [`chart.padding.bottom`](#config_config.chart.pa
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    xAxis: { title: 'Index', titlePadding: 40 }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        xAxis: { title: 'Index', titlePadding: 40 }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/BJNd8/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.titlePadding/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

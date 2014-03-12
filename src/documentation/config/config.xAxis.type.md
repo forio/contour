@@ -10,15 +10,15 @@ How the xAxis should be scaled. The available options are:
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    xAxis: { type: 'ordinal' }
-	  })
-	.cartesian()
-	.line([{x:0, y:5}, {x:1, y:3}, {x:3, y:7}, {x:10, y:4}])
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        xAxis: { type: 'ordinal' }
+      })
+    .cartesian()
+    .line([{x:0, y:5}, {x:1, y:3}, {x:3, y:7}, {x:10, y:4}])
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/gYL6y/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.type/)*
 
 **Notes:**
 

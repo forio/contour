@@ -6,16 +6,15 @@ The distance between the end of the tick mark (which is offset `innerTickSize` f
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    yAxis: { tickPadding: 20,
-	    		 smartAxis: false }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        yAxis: { tickPadding: 25 }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/Ws4Vm/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.tickPadding/)*
 
 **Notes:**
 

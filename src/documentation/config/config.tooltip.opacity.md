@@ -6,8 +6,8 @@ How opaque the tooltip should be, expressed as a percentage between `0` (complet
 
  **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
+    new Contour({
+	    el: '.myLineChart',
 	    tooltip: { opacity: 0.3 }
 	  })
 	.cartesian()
@@ -15,7 +15,7 @@ How opaque the tooltip should be, expressed as a percentage between `0` (complet
 	.tooltip()
 	.render()
  
-*[Try it.](http://jsfiddle.net/forio/fLR9X/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.tooltip.opacity/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

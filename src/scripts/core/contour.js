@@ -51,24 +51,23 @@
 
 
     /**
-    * Create a set of related visualizations by calling the Narwhal visualization constructor. This creates a Narwhal instance, based on the core Narwhal object.
+    * Creates a Contour instance, based on the core Contour object. This instance can contain a set of related visualizations.
     *
-    *   * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Narwhal instance will be rendered.
-    *   * Set the frame for this Narwhal instance (e.g. `.cartesian()`).
-    *   * Add one or more specific visualizations to this Narwhal instance (e.g. `.scatter()`, `.trend-line()`). Pass each visualization constructor the data it displays.
-    *   * Invoke an action for this Narwhal instance (e.g. `.render()`).
+    *   * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Contour instance will be rendered.
+    *   * Set the frame for this Contour instance (e.g. `.cartesian()`).
+    *   * Add one or more specific visualizations to this Contour instance (e.g. `.scatter()`, `.trend-line()`). Pass each visualization constructor the data it displays. Pass configuration options if desired.
+    *   * Invoke an action for this Contour instance (e.g. `.render()`).
     *
     * ### Example:
     *
-    *     new Narwhal({el: 'myChart'})
+    *     new Contour({el: 'myChart'})
     *       .cartesian()
     *       .line([1,3,2,5])
     *       .render()
     *
     *
-    * @class Narwhal() visualizations object
-    * @param {object} options The global options object
-    * @see {@link config}
+    * @class Contour() visualizations object
+    * @param {object} options The global configuration options object
     *
     */
     function Contour (options) {
@@ -78,24 +77,23 @@
     }
 
     /**
-    * Adds a new kind of visualization to the core Narwhal object.
-    * The *renderer* function is called when you add this visualization to instances of Narwhal.
+    * Adds a new kind of visualization to the core Contour object.
+    * The *renderer* function is called when you add this visualization to instances of Contour.
     *
     * ### Example:
     *
-    *     Narwhal.export("exampleVisualization", function(data, layer) {
+    *     Contour.export("exampleVisualization", function(data, layer) {
     *           //function body to create exampleVisualization
     *           //for example using SVG and/or D3
     *     });
     *
-    *     //to include the visualization into a specific Narwhal instance
-    *     new Narwhal(options)
+    *     //to include the visualization into a specific Contour instance
+    *     new Contour(options)
     *           .exampleVisualization(data)
     *           .render()
     *
     * @param {String} ctorName Name of the visualization, used as a constructor name.
-    * @param {Function} renderer Function called when this visualization is added to a Narwhal instance. This function receives the data that is passed in to the constructor.
-    * @see options
+    * @param {Function} renderer Function called when this visualization is added to a Contour instance. This function receives the data that is passed in to the constructor.
     */
     Contour.export = function (ctorName, renderer) {
 
@@ -134,22 +132,22 @@
 
 
     /**
-    * Exposes functionality to the core Narwhal object.
+    * Exposes functionality to the core Contour object.
     * Use this to add *functionality* that will be available for any visualizations.
     *
     * ###Example:
     *
-    *     Narwhal.expose("example", {
+    *     Contour.expose("example", {
     *          // when included in the instance, the function `.myFunction` is available in the visualizations
     *         myFunction: function(data) { .... }
     *     });
     *
-    *     Narwhal.export("visualizationThatUsesMyFunction", function(data, layer) {
+    *     Contour.export("visualizationThatUsesMyFunction", function(data, layer) {
     *           //function body including call to this.myFunction(data)
     *     });
     *
     *     // to include the functionality into a specific instance
-    *     new Narwhal(options)
+    *     new Contour(options)
     *           .example()
     *           .visualizationThatUsesMyFunction()
     *           .render()
@@ -251,11 +249,11 @@
         },
 
         /**
-        * Renders this Narwhal instance and all its visualizations into the DOM.
+        * Renders this Contour instance and all its visualizations into the DOM.
         *
         * Example:
         *
-        *     new Narwhal({ el:'.myChart' })
+        *     new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
         *           .render()
         *
@@ -321,12 +319,14 @@
         },
 
         /**
-        * Set's the same data set into all visualizations for an instance
+        * Sets the same data into all visualizations for a Contour instance. Useful for creating interactive
+        * visualizations: call after getting the additional data from the user.
         *
-        * Example:
+        * ###Example:
         *
         *     var data = [1,2,3,4,5];
-        *     var chart = new Narwhal({ el:'.myChart' })
+        *     var chart = new Contour({ el:'.myChart' })
+        *           .cartesian()
         *           .scatter(data)
         *           .trendLine(data);
         *
@@ -334,7 +334,7 @@
         *     chart.setData(data)
         *           .render();
         *
-        * @function .setData
+        * @function setData
         *
         */
         setData: function (data) {
@@ -344,20 +344,20 @@
         },
 
         /**
-        * Returns a VisualizationContainer object for the visualization at a given index (0-based)
+        * Returns a VisualizationContainer object for the visualization at a given index (0-based).
         *
-        * Example:
+        * ###Example:
         *
-        *     var chart = new Narwhal({ el:'.myChart' })
+        *     var chart = new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
         *           .render()
         *
         *     var myPie = chart.select(0)
         *
-        *     // do something with the visualization like updateing its data set
+        *     // do something with the visualization, for example updating its data set
         *     myPie.setData([6,7,8,9]).render()
         *
-        * @function .select
+        * @function select
         *
         */
         select: function (index) {

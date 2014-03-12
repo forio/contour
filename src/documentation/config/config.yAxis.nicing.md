@@ -10,22 +10,24 @@ When `true`, extends the domain so that it starts and ends on ["nice, round" val
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    yAxis: { nicing: true, smartAxis: false }
-	  })
-	.cartesian()
-		//for this data set, 
-		//nicing: true draws the top tick mark at 8.2 
-		//nicing: false draws the top tick mark at 9 
-	.line([0.8, 2, 4, 5, 8.2]) 
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        yAxis: { nicing: false }
+      })
+    .cartesian()
+	//for this data set, 
+	//nicing: false draws the top tick mark at 8.2 
+	//nicing: true draws the top tick mark at 9    
+    .line([0.8, 2, 4, 5, 8.2])
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/q5tLG/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.nicing/)*
 
 **Notes:**
 
 The [`smartAxis`](#config_config.yAxis.smartAxis) configuration option has the highest precedence in specifying locations of tick marks. If [`smartAxis`](#config_config.yAxis.smartAxis) is `true`, `nicing` is ignored.
+
+See also: [`smartAxis`](#config_config.yAxis.smartAxis), [`min`](#config_config.yAxis.min), [`max`](#config_config.yAxis.max), [`tickValues`](#config_config.yAxis.tickValues), [`ticks`](#config_config.yAxis.ticks).
 
 <% if(notes) { %><%= notes %><% } %>
 

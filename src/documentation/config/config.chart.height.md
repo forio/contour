@@ -2,19 +2,19 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-The height of the container for this Narwhal instance, in pixels. 
+The height of the container for this Contour instance, in pixels. 
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myChart",
-	    chart: { height: 600 }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myChart',
+        chart: { height: 600 }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/s8Vua/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.height/)*
 
 **Notes:**
 

@@ -2,19 +2,19 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-If [`width`](#config_config.chart.width) is undefined, use this `defaultWidth` to determine the width of the container for this Narwhal instance, in pixels.
+If [`width`](#config_config.chart.width) is undefined, use this `defaultWidth` to determine the width of the container for this Contour instance, in pixels.
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myChart",
-	    chart: { defaultWidth: 250 }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myChart',
+        chart: { defaultWidth: 250 }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-TODO: defaultWidth not being respected within jsfiddle container?
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.defaultWidth/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

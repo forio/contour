@@ -8,8 +8,8 @@ In general the tooltip is drawn above and to the left of the data point. It is a
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
+	new Contour({
+	    el: '.myLineChart',
 	    tooltip: { distance: 40 }
 	  })
 	.cartesian()
@@ -17,7 +17,7 @@ In general the tooltip is drawn above and to the left of the data point. It is a
 	.tooltip()
 	.render()
 
-*[Try it.](http://jsfiddle.net/forio/63nte/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.tooltip.distance/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

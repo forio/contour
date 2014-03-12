@@ -6,15 +6,15 @@ The title to display for this axis.
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    yAxis: { title: 'Value', titlePadding: 40 }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        yAxis: { title: 'Value', titlePadding: 40 }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/C5Xm2/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.title/)*
 
 **Notes:**
 

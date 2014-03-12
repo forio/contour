@@ -6,15 +6,15 @@ Whether to label only the first and last values on the axis (`true`), or to labe
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myLineChart",
-	    xAxis: { firstAndLast: false }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myLineChart',
+        xAxis: { firstAndLast: true }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/2mWM8/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.firstAndLast/)*
 
 <% if(notes) { %><%= notes %><% } %>
 

@@ -13,15 +13,15 @@ Options for drawing gridlines are:
 
 **Example:**
 
-	new Narwhal({
-	    el: ".myChart",
-	    chart: { gridlines: 'both' }
-	  })
-	.cartesian()
-	.line(data)
-	.render()
+    new Contour({
+        el: '.myChart',
+        chart: { gridlines: 'both' }
+      })
+    .cartesian()
+    .line(data)
+    .render()
 
-*[Try it.](http://jsfiddle.net/forio/hAAbY/)*
+*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.gridlines/)*
 
 **Notes:**
 

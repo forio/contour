@@ -13,6 +13,7 @@ To override any of the default configuration options in a bar chart, include the
 	    }
 	  })
 	.cartesian()
+	.horizontal()
 	.bar(data)
 	.render()	
 	
