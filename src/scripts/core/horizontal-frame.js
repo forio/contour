@@ -27,8 +27,8 @@
             var yLabel = _.nw.textBounds('ABC', '.y.axis');
             var maxTickSize = function (options) { return Math.max(options.outerTickSize, options.innerTickSize); };
 
-            this.options.chart.padding.left = maxTickSize(this.options.xAxis) + this.options.xAxis.tickPadding + xLabel.width;
-            this.options.chart.padding.bottom = maxTickSize(this.options.yAxis) + this.options.yAxis.tickPadding + yLabel.height;
+            this.options.chart.internalPadding.left = this.options.chart.padding.left || maxTickSize(this.options.xAxis) + this.options.xAxis.tickPadding + xLabel.width;
+            this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || maxTickSize(this.options.yAxis) + this.options.yAxis.tickPadding + yLabel.height;
         },
 
         adjustTitlePadding: function () {
@@ -36,19 +36,19 @@
             if (this.options.xAxis.title || this.options.yAxis.title) {
                 if(this.options.xAxis.title) {
                     titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
-                    this.options.chart.padding.left += titleBounds.height + this.options.xAxis.titlePadding;
+                    this.options.chart.internalPadding.left += titleBounds.height + this.options.xAxis.titlePadding;
                 }
 
                 if(this.options.yAxis.title) {
                     titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
-                    this.options.chart.padding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
+                    this.options.chart.internalPadding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
                 }
             }
         },
 
         renderYAxis: function () {
             var yAxis = this.yAxis();
-            var x = this.options.chart.padding.left;
+            var x = this.options.chart.internalPadding.left;
             var y = this.options.chart.padding.top + this.options.chart.plotHeight;
 
             this._yAxisGroup = this.svg.selectAll('.y.axis')
@@ -70,7 +70,7 @@
         },
 
         renderXAxis: function () {
-            var x = this.options.chart.padding.left;
+            var x = this.options.chart.internalPadding.left;
             var y = this.options.chart.padding.top;
             var xAxis = this.xAxis();
 
@@ -103,7 +103,7 @@
             if (this.options.xAxis.title) {
                 bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
                 x = this.options.chart.rotatedFrame ? -bounds.height : this.options.chart.plotWidth;
-                y = this.options.chart.rotatedFrame ? -this.options.chart.padding.left : this.options.chart.padding.bottom - lineHeightAdjustment;
+                y = this.options.chart.rotatedFrame ? -this.options.chart.internalPadding.left : this.options.chart.internalPadding.bottom - lineHeightAdjustment;
 
                 rotation = this.options.chart.rotatedFrame ? '-90' : '0';
                 this._xAxisGroup.append('text')
@@ -122,8 +122,8 @@
                 anchor = this.options.chart.rotatedFrame ? 'end' : 'middle';
                 x = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : 0;
                 y = this.options.chart.rotatedFrame ?
-                    this.options.chart.padding.bottom:
-                    -this.options.chart.padding.left + this.titleOneEm - lineHeightAdjustment;
+                    this.options.chart.internalPadding.bottom:
+                    -this.options.chart.internalPadding.left + this.titleOneEm - lineHeightAdjustment;
 
                 rotation = this.options.chart.rotatedFrame ? '0' : '-90';
 
