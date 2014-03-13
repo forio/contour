@@ -32,6 +32,7 @@
     <script src="../src/scripts/visualizations/scatter.js"></script>
     <script src="../src/scripts/visualizations/cool-narwhal.js"></script>
     <script src="../src/scripts/visualizations/trend-line.js"></script>
+    <script src="../src/scripts/visualizations/legend.js"></script>
 
 
     <style>
@@ -47,14 +48,8 @@
 
         }
 
-
-        .legend {
+        .stacked-legend {
             height: 1.5em;
-        }
-
-
-        .s-2 {
-            opacity: .7
         }
 
         .grid-line {
@@ -74,7 +69,7 @@
 <div class="container">
     <h2>contour</h2>
 
-    <div class="legend"></div>
+    <div class="stacked-legend"></div>
     <div class="chart"></div>
     <div id="res"></div>
 
@@ -131,6 +126,7 @@ var generateSeries = function (numSeries) {
         { x: new Date('6/1/2000'), y: 2}
     ];
 
+    var datasrc = [{data: [1,2,3,4,5]},{data: [5,4,2,1,5]}];
     chart = new Contour({
             el: '.chart',
             xAxis: {
@@ -142,7 +138,11 @@ var generateSeries = function (numSeries) {
             }
         })
         .cartesian()
-        .line([{data: [1,2,3,4,5]},{data: [5,4,2,1,5]}])
+        .line(datasrc)
+        .legend(datasrc, {
+
+        })
+        .tooltip()
         .render();
 
 
