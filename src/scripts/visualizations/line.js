@@ -18,7 +18,7 @@
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
         var h = options.chart.plotHeight;
         var duration = 400;
-        // jshint eqnull:true 
+        // jshint eqnull:true
         var data = _.map(rawData, function (s) {
             return _.extend(s, {
                 data: _.filter(s.data, function (d, i) {
@@ -34,6 +34,7 @@
             renderMarkers();
         renderTooltipTrackers();
 
+        function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + d.name; }; };
 
         function renderPaths() {
             var startLine = d3.svg.line()
@@ -51,7 +52,7 @@
 
             // enter
             var el = series.enter().append('svg:g')
-                .attr('class', function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; })
+                .attr('class',seriesClassName('series'))
                 .append('path')
                     .attr('class', 'line');
 
@@ -65,7 +66,7 @@
 
             // update
             el = series
-                .attr('class', function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; })
+                .attr('class', seriesClassName('series'))
                 .select('.line')
                 ;
 
@@ -90,7 +91,7 @@
                 .data(data);
 
             markers.enter().append('g')
-                .attr('class', function (d, i) { return 'line-chart-markers markers s-' + (i+1); });
+                .attr('class', seriesClassName('line-chart-markers markers'));
 
             markers.exit().remove();
 
