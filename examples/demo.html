@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <title>Example on How to User Narwhal</title>
     <link rel="stylesheet" href="../examples/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../examples/css/narwhal.css">
+    <link rel="stylesheet" href="../examples/css/contour.css">
 
     <script src="../examples/js/vendor/d3.js"></script>
 
     <script src="../examples/js/vendor/lodash.js"></script>
 
-    <script src="../src/scripts/core/narwhal-utils.js" ></script>
+    <script src="../src/scripts/core/contour-utils.js" ></script>
     <script src="../src/scripts/core/axis/ordinal-scale-axis.js" ></script>
     <script src="../src/scripts/core/axis/time-scale-axis.js" ></script>
     <script src="../src/scripts/core/axis/linear-scale-axis.js" ></script>
@@ -18,7 +18,7 @@
     <script src="../src/scripts/core/axis/smart-y-axis.js" ></script>
     <script src="../src/scripts/core/axis/log-y-axis.js" ></script>
     <script src="../src/scripts/core/axis/axis-scale-factory.js" ></script>
-    <script src="../src/scripts/core/narwhal.js"></script>
+    <script src="../src/scripts/core/contour.js"></script>
     <script src="../src/scripts/core/visualization-container.js"></script>
     <script src="../src/scripts/core/cartesian.js"></script>
     <script src="../src/scripts/core/horizontal-frame.js"></script>
@@ -72,7 +72,7 @@
 <body>
 
 <div class="container">
-    <h2>Narwhal</h2>
+    <h2>contour</h2>
 
     <div class="legend"></div>
     <div class="chart"></div>
@@ -131,7 +131,7 @@ var generateSeries = function (numSeries) {
         { x: new Date('6/1/2000'), y: 2}
     ];
 
-    new Narwhal({
+    chart = new Contour({
             el: '.chart',
             xAxis: {
                 firstAndLast:false,
@@ -142,7 +142,7 @@ var generateSeries = function (numSeries) {
             }
         })
         .cartesian()
-        .line(data)
+        .line([{data: [1,2,3,4,5]},{data: [5,4,2,1,5]}])
         .render();
 
 
