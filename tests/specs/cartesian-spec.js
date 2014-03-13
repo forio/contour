@@ -182,7 +182,7 @@ describe('Cartesian frame', function () {
             createinstance().nullVis([1,2,3]).render();
             var axis = $el.find('.x.axis');
             var y = instance.options.chart.plotHeight + instance.options.chart.padding.top;
-            var x = instance.options.chart.padding.left;
+            var x = instance.options.chart.internalPadding.left;
 
             expect(axis.length).toEqual(1);
             expect(axis.attr('transform')).toEqual('translate(' + x + ',' + y + ')');
@@ -190,16 +190,16 @@ describe('Cartesian frame', function () {
 
         it('should adjust bottom padding and plot height to fit the xAxis and labels', function () {
             createinstance().nullVis([1,2,3]).render();
-            var y = instance.options.chart.height - instance.options.chart.padding.bottom - instance.options.chart.padding.top;
+            var y = instance.options.chart.height - instance.options.chart.internalPadding.bottom - instance.options.chart.padding.top;
 
-            expect(instance.options.chart.padding.bottom).toBeGreaterThan(0);
+            expect(instance.options.chart.internalPadding.bottom).toBeGreaterThan(0);
             expect(instance.options.chart.plotHeight).toEqual(y);
         });
 
         it('should render an yAxis at the left of the chart', function () {
             createinstance().nullVis([1,2,3]).render();
             var axis = $el.find('.y.axis');
-            var x = instance.options.chart.padding.left;
+            var x = instance.options.chart.internalPadding.left;
             var y = instance.options.chart.padding.top;
 
             expect(axis.length).toEqual(1);
@@ -208,9 +208,9 @@ describe('Cartesian frame', function () {
 
         it('should position the yAxis at the left with some padding', function () {
             createinstance().nullVis([1,2,3]).render();
-            var x = instance.options.chart.width - instance.options.chart.padding.left - instance.options.chart.padding.right;
+            var x = instance.options.chart.width - instance.options.chart.internalPadding.left - instance.options.chart.padding.right;
 
-            expect(instance.options.chart.padding.left).toBeGreaterThan(0);
+            expect(instance.options.chart.internalPadding.left).toBeGreaterThan(0);
             expect(instance.options.chart.plotWidth).toEqual(x);
         });
 
