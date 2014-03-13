@@ -212,9 +212,9 @@
 
             this.options = _.merge(options, {
                 chart: {
-                    plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.padding.left - options.chart.padding.right,
-                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.padding.bottom,
-                    plotLeft: options.chart.margin.left + options.chart.padding.left,
+                    plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.internalPadding.left - options.chart.padding.right,
+                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.internalPadding.bottom,
+                    plotLeft: options.chart.margin.left + options.chart.internalPadding.left,
                     plotTop: options.chart.margin.top + options.chart.padding.top
                 }
             });
@@ -301,7 +301,7 @@
             return this.svg.append('g')
                 .attr('vis-id', id)
                 .attr('vis-type', vis.type)
-                .attr('transform', 'translate(' + this.options.chart.padding.left + ',' + this.options.chart.padding.top + ')');
+                .attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + this.options.chart.padding.top + ')');
         },
 
         renderVisualizations: function () {
