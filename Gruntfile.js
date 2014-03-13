@@ -117,7 +117,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('production', function (type) {
         type = type ? type : 'patch';
-        ['bumpup:' + type, 'ver', 'concat', 'uglify', 'less:production', 'tagrelease'].forEach(function (task) {
+        ['bumpup:' + type, 'ver', 'concat', 'uglify', 'less:production', 'less:uncompressed', 'tagrelease'].forEach(function (task) {
             grunt.task.run(task);
         });
     });
