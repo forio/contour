@@ -48,7 +48,7 @@
             if(options.line.smooth) line.interpolate('cardinal');
 
             var series = layer.selectAll('g.series')
-                    .data(data);
+                    .data(data, function (d) { return d.name; });
 
             // enter
             var el = series.enter().append('svg:g')
@@ -88,7 +88,7 @@
 
         function renderMarkers() {
             var markers = layer.selectAll('.line-chart-markers')
-                .data(data);
+                .data(data, function (d) { return d.name; });
 
             markers.enter().append('g')
                 .attr('class', seriesClassName('line-chart-markers markers'));
@@ -119,7 +119,7 @@
         function renderTooltipTrackers() {
             var trackerSize = 10;
             var markers = layer.selectAll('.tooltip-trackers')
-                .data(data);
+                .data(data, function (d) { return d.name; });
 
             markers.enter().append('g')
                 .attr('class', function (d, i) { return 'tooltip-trackers s-' + (i+1); });
