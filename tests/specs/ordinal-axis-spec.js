@@ -206,9 +206,9 @@ describe('Ordinal xAxis', function () {
 
         it('should adjust bottom padding and plot height to fit the title', function () {
             createinstance({ xAxis: { title: 'hello world' }}).nullVis([1,2,3]).render();
-            var y = instance.options.chart.height - instance.options.chart.padding.bottom - instance.options.chart.padding.top;
+            var y = instance.options.chart.height - instance.options.chart.internalPadding.bottom - instance.options.chart.padding.top;
 
-            expect(instance.options.chart.padding.bottom).toBeGreaterThan(0);
+            expect(instance.options.chart.internalPadding.bottom).toBeGreaterThan(0);
             expect(instance.options.chart.plotHeight).toEqual(y);
         });
 

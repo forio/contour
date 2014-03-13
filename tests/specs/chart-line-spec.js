@@ -83,7 +83,7 @@ describe('Visualizations', function () {
 
                 it('should be translated to the plot area', function () {
                     var padding = nw.options.chart.padding;
-                    expect($el.find('g[vis-id="1"]').attr('transform')).toEqual('translate(' + padding.left +',' + padding.top +')');
+                    expect($el.find('g[vis-id="1"]').attr('transform')).toEqual('translate(' + nw.options.chart.internalPadding.left +',' + padding.top +')');
                 });
 
                 it('should add a path per series', function (){
