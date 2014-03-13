@@ -65,6 +65,7 @@
 
             var deg = options.labels.rotation;
             var rad = _.nw.degToRad(deg);
+            var sign = deg > 0 ? 1 : deg < 0 ? -1 : 0;
             var lineCenter = 0.71; // center of text line is at .31em
             var cos = Math.cos(rad);
             var sin = Math.sin(rad);
@@ -78,7 +79,10 @@
                     return 'rotate(' + options.labels.rotation + ' ' + x + ',' + y + ')';
                 })
                 .attr('dy', function (d, i, j) {
-                    return (cos * lineCenter + (0.31)).toFixed(4) + 'em';
+                    return (cos * lineCenter).toFixed(4) + 'em';
+                })
+                .attr('dx', function (d, i, j) {
+                    return -(sin * lineCenter - 0.31 * sign).toFixed(4) + 'em';
                 });
         },
 
