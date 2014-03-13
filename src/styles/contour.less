@@ -8,6 +8,7 @@
 @data-bar-color: steelblue; //@data-line-color;
 
 @axis-title-font-size: 14px;
+@leged-font-size: 13px;
 
 @tooltip-background-color: #555;
 @tooltip-border-color: transparent;
@@ -22,8 +23,13 @@
 @palette6: #EEECE1 #4F81BD #C0504D #9BBB59 #8064A2 #4BACC6 #F79646 #1F497D;
 
 
+.chart-container {
+    position: relative;
+}
 
 .contour-chart {
+
+    position: relative;
 
     .series .line {
         fill:none
@@ -62,6 +68,51 @@
     .trend-line {
         stroke-width: 1px;
         stroke: #05f;
+    }
+
+
+
+
+    .legend-wrapper {
+        position: relative;
+        pointer-events: none;
+
+        body {
+            position: relative;
+        }
+    }
+
+
+}
+
+.legend {
+    position: absolute;
+    display: inline-block;
+    border: solid 1px #bbb;
+    margin: 5px;
+    padding: 0 5px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 4px;
+    .mono-font();
+    font-size: @leged-font-size;
+
+
+    .legend-key {
+        display: inline-block;
+        width: .9em;
+        height: .9em;
+        border-radius: 2em;
+        margin-right: 5px;
+        margin-bottom: -.1em;
+    }
+
+    .legend-entry {
+        display: inline-block;
+        margin: 0 .4em;
+        &.vertical {
+            display: block;
+            margin: .2em .2em;
+        }
     }
 }
 
