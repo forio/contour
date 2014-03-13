@@ -119,7 +119,9 @@
                 var em = regularXBounds.height;
                 var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
                 var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
-                this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelHeightUsed;
+                this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
+                    maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
+                    xLabelHeightUsed;
 
                 // left padding calculations
                 var yDomainScaled = this._getYScaledDomain();
@@ -130,7 +132,9 @@
                 var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
                 var yAxisText = _.map(yLabels, format).join('<br>');
                 var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
-                this.options.chart.internalPadding.left = this.options.chart.padding.left ||  maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
+                this.options.chart.internalPadding.left = this.options.chart.padding.left ||
+                    maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) +
+                    yLabelBounds.width;
             },
 
             adjustTitlePadding: function () {
