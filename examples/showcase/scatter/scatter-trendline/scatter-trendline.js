@@ -18,7 +18,7 @@
         }
     }
 
-    new Narwhal({
+    new Contour({
             el: '.scatter-trendline',
             xAxis: {
                 title: 'Value'

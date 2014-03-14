@@ -1,5 +1,5 @@
 (function () {
-    new Narwhal({
+    new Contour({
             el: '.pie-series',
             pie: { piePadding: 15 }
         })

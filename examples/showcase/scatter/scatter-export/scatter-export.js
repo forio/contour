@@ -13,7 +13,7 @@
         }
     }
 
-    new Narwhal({
+    new Contour({
             el: '.scatter-export',
             xAxis: {
                 title: 'Value'

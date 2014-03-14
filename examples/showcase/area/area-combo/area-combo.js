@@ -3,7 +3,7 @@
         { data: [10,20,5,14,54,23,12,45] }
     ];
 
-    new Narwhal({
+    new Contour({
             el: '.area-combo',
             xAxis: {
                 title: 'Index',

@@ -14,7 +14,7 @@
         }
     ];
 
-    new Narwhal({
+    new Contour({
             el: '.bar-grouped',
             xAxis: {
                 title: 'Category',

@@ -1,5 +1,5 @@
 (function () {
-    new Narwhal({
+    new Contour({
             el: '.area-basic',
             xAxis: {
                 title: 'Index',
