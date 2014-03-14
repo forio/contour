@@ -259,6 +259,10 @@
                 bottom: 0,
                 left: 0
             },
+            internalPadding: {
+                bottom: undefined,
+                left: undefined
+            },
             // automatically false by default anyway; adding here to help generate docs
             rotatedFrame: false,
             // width in pixels of the plot area (area inside the axis if any). This gets calculated on render
@@ -795,7 +799,9 @@
                 var em = regularXBounds.height;
                 var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
                 var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
-                this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelHeightUsed;
+                this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
+                    maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
+                    xLabelHeightUsed;
 
                 // left padding calculations
                 var yDomainScaled = this._getYScaledDomain();
@@ -806,7 +812,9 @@
                 var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
                 var yAxisText = _.map(yLabels, format).join('<br>');
                 var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
-                this.options.chart.internalPadding.left = this.options.chart.padding.left ||  maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
+                this.options.chart.internalPadding.left = this.options.chart.padding.left ||
+                    maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) +
+                    yLabelBounds.width;
             },
 
             adjustTitlePadding: function () {
@@ -1153,7 +1161,7 @@
 
 })();
 
-Contour.version = '0.0.57';
+Contour.version = '0.0.58';
 (function () {
 
     var helpers = {
@@ -1412,6 +1420,7 @@ Contour.version = '0.0.57';
 
             var deg = options.labels.rotation;
             var rad = _.nw.degToRad(deg);
+            var sign = deg > 0 ? 1 : deg < 0 ? -1 : 0;
             var lineCenter = 0.71; // center of text line is at .31em
             var cos = Math.cos(rad);
             var sin = Math.sin(rad);
@@ -1425,7 +1434,10 @@ Contour.version = '0.0.57';
                     return 'rotate(' + options.labels.rotation + ' ' + x + ',' + y + ')';
                 })
                 .attr('dy', function (d, i, j) {
-                    return (cos * lineCenter + (0.31)).toFixed(4) + 'em';
+                    return (cos * lineCenter).toFixed(4) + 'em';
+                })
+                .attr('dx', function (d, i, j) {
+                    return -(sin * lineCenter - 0.31 * sign).toFixed(4) + 'em';
                 });
         },
 
@@ -1689,8 +1701,8 @@ Contour.version = '0.0.57';
             var yLabel = _.nw.textBounds('ABC', '.y.axis');
             var maxTickSize = function (options) { return Math.max(options.outerTickSize, options.innerTickSize); };
 
-            this.options.chart.padding.left = maxTickSize(this.options.xAxis) + this.options.xAxis.tickPadding + xLabel.width;
-            this.options.chart.padding.bottom = maxTickSize(this.options.yAxis) + this.options.yAxis.tickPadding + yLabel.height;
+            this.options.chart.internalPadding.left = this.options.chart.padding.left || maxTickSize(this.options.xAxis) + this.options.xAxis.tickPadding + xLabel.width;
+            this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || maxTickSize(this.options.yAxis) + this.options.yAxis.tickPadding + yLabel.height;
         },
 
         adjustTitlePadding: function () {
@@ -1698,19 +1710,19 @@ Contour.version = '0.0.57';
             if (this.options.xAxis.title || this.options.yAxis.title) {
                 if(this.options.xAxis.title) {
                     titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
-                    this.options.chart.padding.left += titleBounds.height + this.options.xAxis.titlePadding;
+                    this.options.chart.internalPadding.left += titleBounds.height + this.options.xAxis.titlePadding;
                 }
 
                 if(this.options.yAxis.title) {
                     titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
-                    this.options.chart.padding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
+                    this.options.chart.internalPadding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
                 }
             }
         },
 
         renderYAxis: function () {
             var yAxis = this.yAxis();
-            var x = this.options.chart.padding.left;
+            var x = this.options.chart.internalPadding.left;
             var y = this.options.chart.padding.top + this.options.chart.plotHeight;
 
             this._yAxisGroup = this.svg.selectAll('.y.axis')
@@ -1732,7 +1744,7 @@ Contour.version = '0.0.57';
         },
 
         renderXAxis: function () {
-            var x = this.options.chart.padding.left;
+            var x = this.options.chart.internalPadding.left;
             var y = this.options.chart.padding.top;
             var xAxis = this.xAxis();
 
@@ -1765,7 +1777,7 @@ Contour.version = '0.0.57';
             if (this.options.xAxis.title) {
                 bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
                 x = this.options.chart.rotatedFrame ? -bounds.height : this.options.chart.plotWidth;
-                y = this.options.chart.rotatedFrame ? -this.options.chart.padding.left : this.options.chart.padding.bottom - lineHeightAdjustment;
+                y = this.options.chart.rotatedFrame ? -this.options.chart.internalPadding.left : this.options.chart.internalPadding.bottom - lineHeightAdjustment;
 
                 rotation = this.options.chart.rotatedFrame ? '-90' : '0';
                 this._xAxisGroup.append('text')
@@ -1784,8 +1796,8 @@ Contour.version = '0.0.57';
                 anchor = this.options.chart.rotatedFrame ? 'end' : 'middle';
                 x = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : 0;
                 y = this.options.chart.rotatedFrame ?
-                    this.options.chart.padding.bottom:
-                    -this.options.chart.padding.left + this.titleOneEm - lineHeightAdjustment;
+                    this.options.chart.internalPadding.bottom:
+                    -this.options.chart.internalPadding.left + this.titleOneEm - lineHeightAdjustment;
 
                 rotation = this.options.chart.rotatedFrame ? '0' : '-90';
 
@@ -2262,6 +2274,109 @@ Contour.version = '0.0.57';
                 .duration(2000)
                 .attr('opacity', 1);
     });
+
+})();
+
+(function () {
+
+    var defaults = {
+        legend: {
+            vAlign: 'middle',
+            hAlign: 'right',
+            // position: 'inside',
+            direction: 'vertical',
+            formatter: function (d) {
+                return d.name;
+            }
+        }
+    };
+
+
+    var positioners = {
+        horizontal: {
+            right: function (bounds, options) { return options.chart.plotWidth - bounds.width; },
+            left: function () { return 0; }
+        },
+
+        vertical: {
+            top: function (bounds, options) { return bounds.height; },
+            bottom: function (bounds, options) { return options.chart.plotHeight; }
+        },
+    };
+
+    function validAlignmentClasses(options) {
+        var classes = [];
+        if(['top', 'middle', 'bottom'].indexOf(options.legend.vAlign) != -1) {
+            classes.push(options.legend.vAlign);
+        } else {
+            classes.push('top');
+        }
+
+        if(['left', 'center', 'right'].indexOf(options.legend.hAlign) != -1) {
+            classes.push(options.legend.hAlign);
+        } else {
+            classes.push('right');
+        }
+
+        return classes;
+    }
+
+    function Legend(data, layer, options) {
+        var legend = this.container.selectAll('.legend').data([null]);
+        var em = _.nw.textBounds('series', '.legend.legend-entry');
+        var count = data.length;
+        var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
+        var mid = (options.chart.plotHeight - legendHeight) / 2;
+
+        var container = legend.enter()
+            .append('div')
+            .attr('class', function () {
+                return ['legend'].concat(validAlignmentClasses(options)).join(' ');
+            })
+            .attr('style', function () {
+                var styles = [];
+
+                if (options.legend.vAlign === 'top') {
+                    styles.push('top: 0');
+                } else if (options.legend.vAlign === 'middle') {
+                    styles.push('top: ' + mid + 'px');
+                } else {
+                    styles.push('bottom: ' + (options.chart.internalPadding.bottom + 5) + 'px');
+                }
+
+                if (options.legend.hAlign === 'left') {
+                    styles.push('left: ' + options.chart.plotLeft + 'px');
+                } else if (options.legend.hAlign === 'center') {
+                    styles.push('margin-left: auto; margin-right: auto; width: ' + options.chart.plotWidth + 'px; padding-left:' + options.chart.plotLeft);
+                } else {
+                    styles.push('right: 10px');
+                }
+
+                return styles.join(';');
+            });
+
+        var entries = container.selectAll('.legend-entry')
+            .data(data, function (d) { return d.name; });
+
+        var enter = entries.enter()
+            .append('div')
+            .attr('class', function () {
+                return 'legend-entry' + (options.legend.direction === 'vertical' ? ' vertical' : '');
+            });
+
+        entries.append('span')
+            .attr('class', function (d, i) { return 'legend-key s-' + (i+1) + ' ' + d.name; });
+
+        entries.append('span')
+            .attr('class', 'series-name')
+            .text(options.legend.formatter);
+
+        entries.exit()
+            .remove();
+    }
+
+    Legend.defaults = defaults;
+    Contour.export('legend', Legend);
 
 })();
 
