@@ -63,7 +63,6 @@ describe('Linear axis scale', function () {
 
     });
 
-
     it('should use not use nicing if min || max are defined', function () {
         var opt = {
             xAxis: {
@@ -73,5 +72,15 @@ describe('Linear axis scale', function () {
         };
 
         expect(createAxis(opt).scale().domain()).toEqual([3, 297]);
+    });
+
+    it('should use tickValues if defined', function () {
+        opt = {
+            xAxis: {
+                tickValues: [2,4,6]
+            }
+        };
+
+        expect(createAxis(opt).axis().tickValues()).toEqual([2,4,6]);
     });
 });
