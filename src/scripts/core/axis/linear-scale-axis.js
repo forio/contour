@@ -38,9 +38,11 @@
                     return _.isDate(d) ? d.getDate() : formatLabel(d);
                 });
 
-            if (this.options.xAxis.firstAndLast) {
+            if (options.firstAndLast) {
                 // show only first and last tick
                 axis.tickValues(_.nw.firstAndLast(this._domain));
+            } else if (options.tickValues) {
+                axis.tickValues(options.tickValues);
             }
 
             return axis;
