@@ -1,0 +1,12 @@
+---
+ name: Line Chart Sine Wave
+ description: Data series in Contour don't have to be based on data collected in the field &mdash; you can have your data series represent common mathematical functions and use Contour as a graphing tool.
+ authors:
+   - Forio
+ resources:
+   - http://d3js.org/d3.v3.js
+   - http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js
+   - http://forio.com/tools/contour/contour.js
+   - http://forio.com/tools/contour/contour.min.css
+ normalize_css: no
+ ...

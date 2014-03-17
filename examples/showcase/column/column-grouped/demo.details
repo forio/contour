@@ -1,0 +1,12 @@
+---
+ name: Grouped Column Chart
+ description: Grouped column charts show data from different groups of data next to each other in the same category. The resulting columns allow you to easily compare between elements of the same category. Grouped column charts are the default in Forio Contour. The `stackTooltip` visualization adds a legend so that you can see the values of data from all groups at once.
+ authors:
+   - Forio
+ resources:
+   - http://d3js.org/d3.v3.js
+   - http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js
+   - http://forio.com/tools/contour/contour.js
+   - http://forio.com/tools/contour/contour.min.css
+ normalize_css: no
+ ...
