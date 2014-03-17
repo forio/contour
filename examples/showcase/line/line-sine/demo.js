@@ -1,4 +1,6 @@
+
 $(function () {
+    var pi = Math.PI;
 
     new Contour({
             el: '.line-sine',
@@ -21,3 +23,4 @@ $(function () {
         .tooltip()
         .render();
 });
+

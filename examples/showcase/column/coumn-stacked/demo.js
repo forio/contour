@@ -17,7 +17,7 @@ $(function () {
             }
         })
         .cartesian()
-        .column(stackedColData)
+        .column(stackedColData, { stacked: true })
         .stackTooltip(stackedColData, { el: '.column-stack-tooltip' })
         .render();
 });

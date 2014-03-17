@@ -18,6 +18,6 @@ $(function () {
         })
         .cartesian()
         .column(groupedColData)
-        .stackTooltip(stackedColData, { el: '.column-stack-tooltip' })
+        .stackTooltip(groupedColData, { el: '.column-stack-tooltip' })
         .render();
 });
