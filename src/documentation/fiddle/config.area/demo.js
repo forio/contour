@@ -9,5 +9,5 @@ $(function () {
       })
     .cartesian()
     .area(data)
-    .render()
+    .render();
 });
