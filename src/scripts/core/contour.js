@@ -28,8 +28,8 @@
                 left: 0
             },
             internalPadding: {
-                bottom: undefined,
-                left: undefined
+                bottom: 0,
+                left: 0
             },
             // automatically false by default anyway; adding here to help generate docs
             rotatedFrame: false,

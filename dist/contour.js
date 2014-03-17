@@ -260,8 +260,8 @@
                 left: 0
             },
             internalPadding: {
-                bottom: undefined,
-                left: undefined
+                bottom: 0,
+                left: 0
             },
             // automatically false by default anyway; adding here to help generate docs
             rotatedFrame: false,
@@ -1161,7 +1161,7 @@
 
 })();
 
-Contour.version = '0.0.59';
+Contour.version = '0.0.60';
 (function () {
 
     var helpers = {
