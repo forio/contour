@@ -8,7 +8,7 @@ $(function () {
     ];
 
     new Contour({
-            el: '.column-stacked',
+            el: '.column-grouped',
             xAxis: {
                 title: 'Index or Category',
             },

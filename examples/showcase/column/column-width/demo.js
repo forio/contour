@@ -8,7 +8,7 @@ $(function () {
     ];
 
     new Contour({
-            el: '.myChart',
+            el: '.column-width',
             xAxis: {
                 title: 'Index or Category',
             },
@@ -18,12 +18,12 @@ $(function () {
             column: { groupPadding: 15 }
         })
         .cartesian()
-        .column(colDataWide, { 
+        .column(colDataWide, {
             columnWidth: function () { return this.rangeBand / 3 * 2; }
         } )
         // create grouping by adding a second column visualization to this Contour instance
         // add an offset so that this visualization doesn't overlap with the first one
-        .column(colDataNarrow, { 
+        .column(colDataNarrow, {
             columnWidth: function() { return this.rangeBand / 3; },
             offset: function() { return this.rangeBand / 3 * 2 + 1 }
         } )
