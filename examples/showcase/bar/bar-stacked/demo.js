@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     var data = [
         {
             name: 'First Series',
@@ -31,4 +31,4 @@
         .bar(data)
         .stackTooltip(data, { el: '.bar-stack-tooltip' })
         .render();
-})();
+});

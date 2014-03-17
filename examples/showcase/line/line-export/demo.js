@@ -1,4 +1,4 @@
-(function () {
+$(function () {
 
     Contour.export('lineMarker', function (data, layer) {
             var y = this.yScale(data);
@@ -24,4 +24,4 @@
         .lineMarker(150)
         .tooltip()
         .render();
-})();
+});

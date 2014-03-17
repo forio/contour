@@ -3,10 +3,5 @@
  description: Create basic line charts by adding .cartesian() and .line() in your Contour instance. Use configuration options to set properties of the visualizations and axes.
  authors:
    - Forio
- resources:
-   - http://d3js.org/d3.v3.js
-   - http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js
-   - http://forio.com/tools/contour/contour.js
-   - http://forio.com/tools/contour/contour.min.css
  normalize_css: no
  ...

@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     var data = [1.02, 2.3, 4.75, 5.0, 6.13, 7.4, 8.9];
 
     // format follows the d3 formatting conventions
@@ -13,5 +13,5 @@
     .cartesian()
     .line(data)
     .tooltip()
-    .render()
-})();
+    .render();
+});

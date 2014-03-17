@@ -3,10 +3,5 @@
  description: To make your grouped column charts easier to read and understand, you can adjust the width of different data series, as well as the spacing between columns both within and between categories. To control the width of different data series, add one column visualization for each data series. Additionally, you can pass the configuration options to that visualization, rather than to the Contour instance as a whole.
  authors:
    - Forio
- resources:
-   - http://d3js.org/d3.v3.js
-   - http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js
-   - http://forio.com/tools/contour/contour.js
-   - http://forio.com/tools/contour/contour.min.css
  normalize_css: no
  ...

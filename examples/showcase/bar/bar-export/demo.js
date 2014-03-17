@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     Contour.export('customTooltipSingleSeries', function (data, layer) {
     	// data[0] is the first data series.
     	// because our data, below, only includes one data series, 
@@ -25,4 +25,4 @@
     .bar(data)
     .customTooltipSingleSeries(data)
     .render();
-})();
+});

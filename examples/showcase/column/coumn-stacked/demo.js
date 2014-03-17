@@ -1,4 +1,4 @@
-(function () {
+$(function () {
 
     var stackedColData = [
         { name: 'First Series', data: [6,5,3,5,7,6,3] },
@@ -20,4 +20,4 @@
         .column(stackedColData)
         .stackTooltip(stackedColData, { el: '.column-stack-tooltip' })
         .render();
-})();
+});

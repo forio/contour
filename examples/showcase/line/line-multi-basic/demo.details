@@ -3,10 +3,5 @@
  description: Each line chart visualization added to your Contour instance can include multiple data series. Simply pass an array of objects, eaching containing a name and a data series, to the line visualization.
  authors:
    - Forio
- resources:
-   - http://d3js.org/d3.v3.js
-   - http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js
-   - http://forio.com/tools/contour/contour.js
-   - http://forio.com/tools/contour/contour.min.css
  normalize_css: no
  ...

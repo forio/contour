@@ -3,10 +3,5 @@
  description: Forio Contour makes it easy to create your own visualizations and add them to the core Contour object. But you don't have to add entire new visualizations to customize your work. Here we simply use a function, rather than a static value, to determine the radius of each point in the scatter plot &mdash; effectively turning our scatter plot into a bubble chart. 
  authors:
    - Forio
- resources:
-   - http://d3js.org/d3.v3.js
-   - http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js
-   - http://forio.com/tools/contour/contour.js
-   - http://forio.com/tools/contour/contour.min.css
  normalize_css: no
  ...

@@ -1,4 +1,4 @@
-(function () {
+$(function () {
 
     var colDataWide = [
         { name: 'First Series', data: [6,5,3,5,6,4,3] }
@@ -28,4 +28,4 @@
             offset: function() { return this.rangeBand / 3 * 2 + 1 }
         } )
         .render();
-})();
+});

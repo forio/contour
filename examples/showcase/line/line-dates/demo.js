@@ -1,4 +1,4 @@
-(function () {
+$(function () {
 
     var data = [
         { x: new Date('1/1/2000'), y: 5},
@@ -22,4 +22,4 @@
         .line(data)
         .tooltip()
         .render();
-})();
+});

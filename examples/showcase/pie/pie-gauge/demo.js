@@ -1,4 +1,4 @@
-(function () {
+$(function () {
 
     Contour.export('donutTextOneValue', function (data, layer, options) {
 
@@ -33,4 +33,4 @@
         .donutTextOneValue(data)
         .tooltip()
         .render();
-})();
+});

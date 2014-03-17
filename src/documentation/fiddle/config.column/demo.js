@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     var data = [1, 2, 3, 4];
 
     new Contour({
@@ -9,5 +9,5 @@
       })
     .cartesian()
     .column(data)
-    .render()
-})();
+    .render();
+});

@@ -1,4 +1,4 @@
-(function () {
+$(function () {
 	var data = [
         { x: new Date('1/1/2000'), y: 5},
         { x: new Date('2/1/2000'), y: 3},
@@ -19,5 +19,5 @@
     .cartesian()
     .line(data)
     .tooltip()
-	.render()
-})();
+	.render();
+});

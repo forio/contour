@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     series = [];
     // series defined as 3x100 array of random (x,y) pairs
     for(var j=0; j<3; j++) {
@@ -28,4 +28,4 @@
         .scatter(series)
         .tooltip()
         .render();
-})();
+});

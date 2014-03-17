@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     new Contour({
             el: '.area-basic',
             xAxis: {
@@ -15,4 +15,4 @@
             ])
         .tooltip()
         .render();
-})();
+});

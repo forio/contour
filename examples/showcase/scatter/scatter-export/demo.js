@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     series = [];
     // series defined as 3x100 array of random (x,y,z) pairs
     // we'll plot the points (x,y) and scale the point size by z
@@ -31,4 +31,4 @@
         .scatter(series)
         .tooltip()
         .render();
-})();
+});

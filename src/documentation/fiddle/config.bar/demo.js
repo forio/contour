@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     var data = [2, 4, 6, 3, 5];
 
     new Contour({
@@ -10,5 +10,5 @@
     .cartesian()
     .horizontal()
     .bar(data)
-    .render()
-})();
+    .render();
+});

@@ -1,4 +1,4 @@
-(function () {
+$(function () {
     series = [];
     // series defined as 3x10 array of random (x,y) pairs
 
@@ -35,4 +35,4 @@
         .trendLine(series)
         .tooltip()
         .render();
-})();
+});
