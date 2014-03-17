@@ -3,7 +3,7 @@
 name: Request.HTML - jsFiddle/Github integration demo
 description: jsFiddle demo hosted on Github using HTML Request to get Ajax data
 authors:
-  - Forio Testing
+  - Forio Testing with file name of test
 ...
 */
 
