@@ -1,4 +1,5 @@
 (function () {
+    var pi = Math.PI;
 
     new Contour({
             el: '.line-sine',
