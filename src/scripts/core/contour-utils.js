@@ -6,6 +6,10 @@
         getValue: function (src, deafult, ctx, args) {
             args = Array.prototype.slice.call(arguments, 3);
             return !src ? deafult : typeof src === 'function' ? src.apply(ctx, args) : src;
+        },
+
+        seriesNameToClass: function (name) {
+            return name ? name.replace(' ', '_') : '';
         }
     };
 

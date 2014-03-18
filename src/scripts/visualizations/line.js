@@ -34,7 +34,7 @@
             renderMarkers();
         renderTooltipTrackers();
 
-        function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + d.name; }; };
+        function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
 
         function renderPaths() {
             var startLine = d3.svg.line()
