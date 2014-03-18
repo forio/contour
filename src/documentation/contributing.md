@@ -1,6 +1,6 @@
 ##Contributing
 
-Forio Contour is offered free and open source under the {TODO, with link, pending Will} license. This license allows {TODO, summary}. (take from contour-showcase/license.html)
+Forio Contour is offered free and open source under the [Apache v2](https://github.com/forio/contour/license.md) license.
 
 We chose this license in part because we want to encourage community participation in the ongoing development of Forio Contour. We're excited for you to contribute your own Contour extensions and help build our data visualization community.
 
