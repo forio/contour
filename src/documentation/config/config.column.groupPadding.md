@@ -17,7 +17,7 @@ The horizontal distance between each data series in the *same* column visualizat
           ])
         .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.column.groupPadding/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

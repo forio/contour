@@ -18,7 +18,7 @@ The vertical distance between each data series in the *same* bar visualization.
 	          ])
 	    .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.bar.padding/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

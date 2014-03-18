@@ -18,7 +18,7 @@ Use the [`outerRangePadding`](#config_config.xAxis.outerRangePadding) to set the
     .column(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.innerRangePadding/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

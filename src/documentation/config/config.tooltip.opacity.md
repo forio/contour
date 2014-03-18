@@ -15,7 +15,7 @@ How opaque the tooltip should be, expressed as a percentage between `0` (complet
 	.tooltip()
 	.render()
  
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.tooltip.opacity/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

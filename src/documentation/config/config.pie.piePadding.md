@@ -13,7 +13,7 @@ The distance from the edge of the chart to the [`outerRadius`](#config_config.pi
     .pie(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.pie.piePadding/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

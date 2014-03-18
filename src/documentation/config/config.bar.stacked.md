@@ -18,7 +18,7 @@ Whether a single bar visualization that has data with multiple series is display
 		  ])
 		.render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.bar.stacked/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

@@ -15,7 +15,7 @@ The amount of time, in milliseconds, for the tooltip to appear and reach [`opaci
 	.tooltip()
 	.render() 
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.tooltip.showTime/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

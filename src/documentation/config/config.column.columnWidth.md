@@ -13,7 +13,7 @@ The default value `this.rangeBand` refers to the width when the axis interval fo
 		  column: { columnWidth: 20 }
 		})
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.column.columnWidth/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:** 
 

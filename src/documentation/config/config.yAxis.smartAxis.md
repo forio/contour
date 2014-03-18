@@ -25,7 +25,7 @@ When `smartAxis` is `false`, tick marks are drawn for:
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.smartAxis/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

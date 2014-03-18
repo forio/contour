@@ -14,7 +14,7 @@ The title to display for this axis.
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.title/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

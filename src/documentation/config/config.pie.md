@@ -15,7 +15,7 @@ To override any of the default configuration options in a pie chart, include the
 	.pie(data)
 	.render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.pie/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

@@ -14,7 +14,7 @@ The distance between the end of the tick mark (which is offset `innerTickSize` f
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.tickPadding/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

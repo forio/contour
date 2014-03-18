@@ -11,7 +11,7 @@ The horiztonal distance between the start of the range band and the start of the
 			column: { offset: 15 }
 		})
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.column.offset/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

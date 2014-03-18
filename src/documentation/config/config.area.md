@@ -16,7 +16,7 @@ To override any of the default configuration options in an area chart, include t
 	.area(data)
 	.render()	
 
-*[Try it.](http://jsfiddle.net/gh/get/jquery/1.7.2/forio/contour/tree/master/src/documentation/fiddle/config.area/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

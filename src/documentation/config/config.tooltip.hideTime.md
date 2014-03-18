@@ -15,7 +15,7 @@ The amount of time, in milliseconds, for the tooltip to disappear after the mous
 	.tooltip()
 	.render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.tooltip.hideTime/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 
