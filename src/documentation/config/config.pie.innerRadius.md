@@ -15,7 +15,7 @@ The pie chart is completely filled in when `innerRadius` is `0` or null. The pie
     .pie(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.pie.innerRadius/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

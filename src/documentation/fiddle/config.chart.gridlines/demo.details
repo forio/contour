@@ -1,0 +1,6 @@
+---
+ name: config.chart.gridlines
+ authors:
+   - Forio
+ normalize_css: no
+ ...

@@ -21,7 +21,7 @@ The available options are:
     .tooltip()
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.labels.align/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

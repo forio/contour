@@ -16,7 +16,7 @@ When `true`, the segments between data points are [interpolated in a cardinal sp
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.line.smooth/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

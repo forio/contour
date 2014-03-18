@@ -1,0 +1,7 @@
+---
+ name: Basic Scatter Plot
+ description: Create basic scatter plots by adding .cartesian() and .scatter() in your Contour instance. Use configuration options to set properties of the axes and the plot, including the radius of the data points.
+ authors:
+   - Forio
+ normalize_css: no
+ ...

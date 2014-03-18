@@ -1,0 +1,7 @@
+---
+ name: Basic Line Chart
+ description: Create basic line charts by adding .cartesian() and .line() in your Contour instance. Use configuration options to set properties of the visualizations and axes.
+ authors:
+   - Forio
+ normalize_css: no
+ ...

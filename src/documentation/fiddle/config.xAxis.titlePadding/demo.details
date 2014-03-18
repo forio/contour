@@ -1,0 +1,6 @@
+---
+ name: config.xAxis.titlePadding
+ authors:
+   - Forio
+ normalize_css: no
+ ...

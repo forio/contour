@@ -1,0 +1,7 @@
+---
+ name: Basic Pie Chart
+ description: Create basic pie charts by adding .pie() in your Contour instance. Use configuration options to set radius and padding options.
+ authors:
+   - Forio
+ normalize_css: no
+ ...

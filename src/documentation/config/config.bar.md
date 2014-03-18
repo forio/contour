@@ -17,7 +17,7 @@ To override any of the default configuration options in a bar chart, include the
 	.bar(data)
 	.render()	
 	
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.bar/)*	
+*[Try it.](<%= jsFiddleLink %>)*	
 	
 <% if(notes) { %><%= notes %><% } %>
 

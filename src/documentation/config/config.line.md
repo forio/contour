@@ -16,7 +16,7 @@ To override any of the default configuration options in a line chart, include th
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.line/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

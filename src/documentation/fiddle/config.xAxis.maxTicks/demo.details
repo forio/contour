@@ -1,0 +1,6 @@
+---
+ name: config.xAxis.maxTicks
+ authors:
+   - Forio
+ normalize_css: no
+ ...

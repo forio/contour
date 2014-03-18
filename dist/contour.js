@@ -260,8 +260,8 @@
                 left: 0
             },
             internalPadding: {
-                bottom: undefined,
-                left: undefined
+                bottom: 0,
+                left: 0
             },
             // automatically false by default anyway; adding here to help generate docs
             rotatedFrame: false,
@@ -1161,7 +1161,7 @@
 
 })();
 
-Contour.version = '0.0.58';
+Contour.version = '0.0.61';
 (function () {
 
     var helpers = {
@@ -1249,9 +1249,11 @@ Contour.version = '0.0.58';
                     return _.isDate(d) ? d.getDate() : formatLabel(d);
                 });
 
-            if (this.options.xAxis.firstAndLast) {
+            if (options.firstAndLast) {
                 // show only first and last tick
                 axis.tickValues(_.nw.firstAndLast(this._domain));
+            } else if (options.tickValues) {
+                axis.tickValues(options.tickValues);
             }
 
             return axis;

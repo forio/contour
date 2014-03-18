@@ -1,0 +1,6 @@
+---
+ name: config.yAxis.labels.formatter
+ authors:
+   - Forio
+ normalize_css: no
+ ...

@@ -1,0 +1,7 @@
+---
+ name: Basic Line Chart, Multiple Series
+ description: Each line chart visualization added to your Contour instance can include multiple data series. Simply pass an array of objects, eaching containing a name and a data series, to the line visualization.
+ authors:
+   - Forio
+ normalize_css: no
+ ...

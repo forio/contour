@@ -14,7 +14,7 @@ The amount of whitespace (padding), in pixels, between the lower edge of any vis
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.padding.bottom/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

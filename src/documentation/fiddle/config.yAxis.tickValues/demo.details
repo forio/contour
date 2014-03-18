@@ -1,0 +1,6 @@
+---
+ name: config.yAxis.tickValues
+ authors:
+   - Forio
+ normalize_css: no
+ ...

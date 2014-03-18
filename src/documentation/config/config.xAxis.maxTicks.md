@@ -16,7 +16,7 @@ Where the ticks are placed is determined based on the number and value of elemen
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.maxTicks/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

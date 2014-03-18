@@ -1,0 +1,6 @@
+---
+ name: config.line.smooth
+ authors:
+   - Forio
+ normalize_css: no
+ ...

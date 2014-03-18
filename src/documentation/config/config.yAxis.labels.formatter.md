@@ -22,7 +22,7 @@ The general form of a specifier is `[​[fill]align][sign][symbol][0][width][,][
     .tooltip()
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.labels.formatter/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

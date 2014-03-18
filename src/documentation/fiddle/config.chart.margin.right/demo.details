@@ -1,0 +1,6 @@
+---
+ name: config.chart.margin.right
+ authors:
+   - Forio
+ normalize_css: no
+ ...

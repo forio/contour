@@ -14,7 +14,7 @@ The minimum value for the domain of the yAxis.
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.min/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

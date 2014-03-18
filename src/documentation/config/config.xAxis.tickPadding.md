@@ -14,7 +14,7 @@ The distance between the end of the tick mark and the label of the tick mark, in
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.tickPadding/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

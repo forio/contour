@@ -1,0 +1,6 @@
+---
+ name: config.xAxis.outerRangePadding
+ authors:
+   - Forio
+ normalize_css: no
+ ...

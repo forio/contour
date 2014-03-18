@@ -1,0 +1,6 @@
+---
+ name: config.yAxis.nicing
+ authors:
+   - Forio
+ normalize_css: no
+ ...

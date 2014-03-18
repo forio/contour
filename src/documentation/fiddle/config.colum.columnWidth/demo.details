@@ -1,0 +1,6 @@
+---
+ name: config.column.columnWidth
+ authors:
+   - Forio
+ normalize_css: no
+ ...

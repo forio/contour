@@ -1,0 +1,7 @@
+---
+ name: Donut Chart
+ description: If you prefer donuts to pies, it's easy to create a donut chart by simply adjusting the `innerRadius`.
+ authors:
+   - Forio
+ normalize_css: no
+ ...

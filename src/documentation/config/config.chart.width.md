@@ -14,7 +14,7 @@ The width of the container for this Contour instance, in pixels.
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.width/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

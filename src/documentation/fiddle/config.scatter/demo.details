@@ -1,0 +1,6 @@
+---
+ name: config.scatter
+ authors:
+   - Forio
+ normalize_css: no
+ ...

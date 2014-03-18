@@ -21,7 +21,7 @@ When `true`, extends the domain so that it starts and ends on ["nice, round" val
     .line([0.8, 2, 4, 5, 8.2])
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.nicing/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

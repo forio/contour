@@ -15,7 +15,7 @@ When `outerRadius` is null, the radius from the center of the pie to the outer e
     .pie(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.pie.outerRadius/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

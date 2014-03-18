@@ -1,0 +1,6 @@
+---
+ name: config.xAxis
+ authors:
+   - Forio
+ normalize_css: no
+ ...

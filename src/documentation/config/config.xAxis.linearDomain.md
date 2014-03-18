@@ -32,7 +32,7 @@ When `false`, the `time` axis is treated as a continuous domain through time, th
     .tooltip()
 	.render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.linearDomain/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

@@ -17,7 +17,7 @@ When `false`, the tooltip appears instantaneously (`false`).
 	.tooltip()
 	.render() 
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.tooltip.animate/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

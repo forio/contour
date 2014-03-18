@@ -1,0 +1,6 @@
+---
+ name: config.yAxis.smartAxis
+ authors:
+   - Forio
+ normalize_css: no
+ ...

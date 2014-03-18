@@ -1,0 +1,7 @@
+---
+ name: Line Chart, with Dates
+ description: When your data is indexed by date, Contour automatically displays the visualization appropriately. Use the JavaScript `Date` object to construct the data series values.
+ authors:
+   - Forio
+ normalize_css: no
+ ...

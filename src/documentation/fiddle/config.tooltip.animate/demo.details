@@ -1,0 +1,6 @@
+---
+ name: config.tooltip.animate
+ authors:
+   - Forio
+ normalize_css: no
+ ...

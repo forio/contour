@@ -19,7 +19,7 @@ Tick marks are evenly spaced along the domain at multiples of 1, 2, 5, 10, or 10
     .line([1, 2, 4, 5, 6, 7, 8])
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.ticks/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

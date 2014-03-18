@@ -1,0 +1,6 @@
+---
+ name: config.tooltip.hideTime
+ authors:
+   - Forio
+ normalize_css: no
+ ...

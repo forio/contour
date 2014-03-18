@@ -1,0 +1,6 @@
+---
+ name: config.xAxis.innerRangePadding
+ authors:
+   - Forio
+ normalize_css: no
+ ...

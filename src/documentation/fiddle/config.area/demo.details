@@ -1,0 +1,6 @@
+---
+ name: config.area
+ authors:
+   - Forio
+ normalize_css: no
+ ...

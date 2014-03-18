@@ -1,0 +1,6 @@
+---
+ name: config.line.marker.enable
+ authors:
+   - Forio
+ normalize_css: no
+ ...

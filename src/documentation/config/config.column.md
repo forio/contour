@@ -16,7 +16,7 @@ To override any of the default configuration options in a column chart, include 
     .column(data)
     .render()	
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.column/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

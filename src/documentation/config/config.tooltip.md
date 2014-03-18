@@ -19,7 +19,7 @@ A tooltip is only useful if there is another visualization in this Contour insta
 	.tooltip()
 	.render() 
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.tooltip/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

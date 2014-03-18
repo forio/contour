@@ -1,0 +1,6 @@
+---
+ name: config.xAxis.outerTickSize
+ authors:
+   - Forio
+ normalize_css: no
+ ...

@@ -21,7 +21,7 @@ Options for drawing gridlines are:
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.gridlines/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

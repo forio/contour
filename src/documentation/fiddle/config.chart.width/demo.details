@@ -1,0 +1,6 @@
+---
+ name: config.chart.width
+ authors:
+   - Forio
+ normalize_css: no
+ ...

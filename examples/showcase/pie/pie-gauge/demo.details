@@ -1,0 +1,7 @@
+---
+ name: Pie Chart with Custom Legend
+ description: With Forio Contour, it's easy to create your own visualizations and add them to the core Contour object. Use the `export()` function to create the new kind of visualization. Then, add this new visualization to an instance of Contour. Here we've created a custom visualization that puts the legend information in the middle of the pie chart. We've also made use of the core Contour stylesheet to make part of the chart indistinguishable from the background.
+ authors:
+   - Forio
+ normalize_css: no
+ ...

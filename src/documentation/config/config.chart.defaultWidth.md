@@ -14,7 +14,7 @@ If [`width`](#config_config.chart.width) is undefined, use this `defaultWidth` t
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.defaultWidth/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

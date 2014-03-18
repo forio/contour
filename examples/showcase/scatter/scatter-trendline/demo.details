@@ -1,0 +1,7 @@
+---
+ name: Scatter Plot with Trend Line
+ description: The trend line visualization can be added to any Forio Contour visualization, but is often most useful when applied to a scatter plot. Simply pass the same data series to the trend line as you pass to the other visualizations. 
+ authors:
+   - Forio
+ normalize_css: no
+ ...

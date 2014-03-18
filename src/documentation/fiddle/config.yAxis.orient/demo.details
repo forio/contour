@@ -1,0 +1,6 @@
+---
+ name: config.yAxis.orient
+ authors:
+   - Forio
+ normalize_css: no
+ ...

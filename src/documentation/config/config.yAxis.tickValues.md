@@ -15,7 +15,7 @@ An array containing the values for the locations of the tick marks on this axis 
     .tooltip()
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.yAxis.tickValues/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

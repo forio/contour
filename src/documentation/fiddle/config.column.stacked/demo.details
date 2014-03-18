@@ -1,0 +1,6 @@
+---
+ name: config.column.stacked
+ authors:
+   - Forio
+ normalize_css: no
+ ...

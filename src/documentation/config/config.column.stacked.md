@@ -17,7 +17,7 @@ Whether a single column visualization that has data with multiple series is disp
 		  ])
 		.render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.column.stacked/))*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 

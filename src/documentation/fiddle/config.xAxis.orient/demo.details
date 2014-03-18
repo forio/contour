@@ -1,0 +1,6 @@
+---
+ name: config.xAxis.orient
+ authors:
+   - Forio
+ normalize_css: no
+ ...

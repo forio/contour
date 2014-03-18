@@ -1,0 +1,6 @@
+---
+ name: config.chart.height
+ authors:
+   - Forio
+ normalize_css: no
+ ...

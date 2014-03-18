@@ -1,0 +1,6 @@
+---
+ name: config.chart
+ authors:
+   - Forio
+ normalize_css: no
+ ...

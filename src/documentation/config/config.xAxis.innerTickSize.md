@@ -14,7 +14,7 @@ The length of the tick marks, in pixels, offset from the axis.
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.xAxis.innerTickSize/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

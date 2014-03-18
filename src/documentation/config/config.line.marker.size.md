@@ -16,7 +16,7 @@ The radius of each data point in a line chart, in pixels.
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.line.marker.size/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

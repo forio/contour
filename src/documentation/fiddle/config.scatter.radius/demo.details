@@ -1,0 +1,6 @@
+---
+ name: config.scatter.radius
+ authors:
+   - Forio
+ normalize_css: no
+ ...

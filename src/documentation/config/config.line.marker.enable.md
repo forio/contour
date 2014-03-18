@@ -18,7 +18,7 @@ When `false`, show only the line segments drawn between the data points.
     .line(data)
     .render()
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.line.marker.enable/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 

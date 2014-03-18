@@ -14,7 +14,7 @@ The `defaultAspect` determines the height of the container for this Contour inst
     .line(data)
     .render() 
 
-*[Try it.](http://jsfiddle.net/gh/get/library/pure/forio/contour/tree/master/src/documentation/fiddle/config.chart.defaultAspect/)*
+*[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
 
