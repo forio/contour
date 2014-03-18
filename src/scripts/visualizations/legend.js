@@ -97,6 +97,25 @@
     }
 
     Legend.defaults = defaults;
+
+    /**
+    * Adds a legend to the Contour instance. One entry is added to the legend for each series in the data.
+    * 
+    * ### Example:
+    *
+    *     new Contour({el: '.myChart'})
+    *           .cartesian()
+    *           .column(data)
+    *           .legend(data)
+    *           .render();
+    *
+    * @name legend(data, options)
+    * @param {object|array} data The _data series_ for which to create a legend. This can be in any of the supported formats. 
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
+
     Contour.export('legend', Legend);
 
 })();
