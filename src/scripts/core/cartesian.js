@@ -470,7 +470,7 @@
             },
 
             getXDomain: function () {
-                var all = _.flatten(_.pluck(this._visualizations, 'xDomain'));
+                var all = _.uniq(_.flatten(_.pluck(this._visualizations, 'xDomain')));
                 return all;
             }
 
