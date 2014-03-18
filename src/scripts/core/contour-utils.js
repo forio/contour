@@ -160,6 +160,23 @@
             return data;
         },
 
+        maxTickValues: function (max, domain) {
+            var cur = 0;
+            var curIndex = 0;
+            var step = domain.length / max;
+            var values = [];
+
+            if (max > domain.length) return domain.slice();
+
+            while(curIndex < domain.length) {
+                values.push(domain[curIndex]);
+                cur += step;
+                curIndex = Math.floor(cur);
+            }
+
+            return values;
+        },
+
         isSupportedDataFormat: function (data) {
             return _.isArray(data) && (_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0]);
         }
