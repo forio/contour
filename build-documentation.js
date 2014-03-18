@@ -162,10 +162,12 @@ function generateConfigObjectDoc(files) {
 
         // we want to traverse the config file
         bfs(configObject, 'config', function (k) {
-            var fileName = (k.ctx ? k.ctx + '.' + k.key : k.key) + '.md';
+            var propId = (k.ctx ? k.ctx + '.' + k.key : k.key);
+            var fileName = propId + '.md';
             var fullPath = configDocFolder + fileName;
             var templateFileName = configTemplateDocFolder + (k.ctx ? k.ctx + '.' + k.key : k.key) + '.md';
             var template;
+            var fiddleLink = 'http://jsfiddle.net/gh/get/jquery/1.7.2/forio/contour/tree/master/src/documentation/fiddle/' + propId + '/';
 
             if(fs.existsSync(templateFileName)) {
                 template = fs.readFileSync(templateFileName, 'utf8');
@@ -185,7 +187,8 @@ function generateConfigObjectDoc(files) {
             var cooked = _.template(template)({
                 type: typeof k.ref,
                 notes: '',
-                defaultValue: k.ref === null ? 'null' : k.ref === undefined ? 'undefined' : k.ref.toString()
+                defaultValue: k.ref === null ? 'null' : k.ref === undefined ? 'undefined' : k.ref.toString(),
+                jsFiddleLink: fiddleLink
             });
 
             fs.writeFile(fullPath, cooked, 'utf8');
