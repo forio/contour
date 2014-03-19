@@ -1,5 +1,5 @@
 ---
- name: config.yAxis.labels.align
+ name: config.yAxis.labels.verticalAlign
  authors:
    - Forio
  normalize_css: no

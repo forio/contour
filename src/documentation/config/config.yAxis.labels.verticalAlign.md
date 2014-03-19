@@ -1,4 +1,4 @@
-#### **align** : {<%= type %>}
+#### **verticalAlign** : {<%= type %>}
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
@@ -14,7 +14,7 @@ The available options are:
 
     new Contour({
         el: '.myLineChart',
-        yAxis: { labels: { align: 'top'} }
+        yAxis: { labels: { verticalAlign: 'top'} }
       })
     .cartesian()
     .line(data)
@@ -24,4 +24,6 @@ The available options are:
 *[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
+
+
 

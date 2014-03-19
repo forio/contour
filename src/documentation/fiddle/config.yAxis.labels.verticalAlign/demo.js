@@ -3,7 +3,7 @@ $(function () {
 
     new Contour({
         el: '.myLineChart',
-        yAxis: { labels: { align: 'top'} }
+        yAxis: { labels: { verticalAlign: 'top'} }
       })
     .cartesian()
     .line(data)
