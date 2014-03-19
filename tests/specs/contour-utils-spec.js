@@ -81,8 +81,41 @@ describe('normalizeSeries', function () {
                 this.message = function () { return 'Expected object' + notText + ' to be normalize series and is missing: ' + missing.join(', '); };
 
                 return !missing.length;
+            },
+
+            toBeSorted: function () {
+                var actual = this.actual;
+                var notText = this.isNot ? ' not' : '';
+                var isSorted = true;
+                this.message = function () {
+                    return 'Expected series data ' + notText + ' to be sorted';
+                };
+
+                _.each(actual, function (series) {
+                    if (!series.data.length || !isSorted) return;
+                    var prev = series.data[0].x;
+                    for (var j=1, len=series.data.length; j<len; j++) {
+                        if (prev > series.data[j].x) {
+                            isSorted = false;
+                            break;
+                        }
+                    }
+                });
+
+                return isSorted;
             }
         });
+    });
+
+    it('should sort data', function () {
+        var data = [
+            { x: 3, y: 5 },
+            { x: 1, y: 5 },
+            { x: 2, y: 5 }
+        ];
+
+        var series = _.nw.normalizeSeries(data);
+        expect(series).toBeSorted();
     });
 
     it('should normalize a single array of values into an array with one series object', function () {

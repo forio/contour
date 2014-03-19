@@ -134,6 +134,7 @@
         /*jshint eqnull:true */
         // we are using != null to get null & undefined but not 0
         normalizeSeries: function (data, categories) {
+            function sortFn(a, b) { return a.x - b.x; }
             function normal(set, name) {
                 return {
                     name: name,
@@ -142,7 +143,7 @@
                         var hasCategories = categories && _.isArray(categories);
                         var val = function (v) { return v != null ? v : null; };
                         return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
-                    })
+                    }).sort(sortFn)
                 };
             }
 
