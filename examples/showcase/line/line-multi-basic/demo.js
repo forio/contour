@@ -13,10 +13,12 @@ $(function () {
             },
             yAxis: {
                 title: 'Value'
-            }
+            },
+            legend: { vAlign: 'top' }
         })
         .cartesian()
         .line(data)
+        .legend(data)
         .tooltip()
         .render();
 });

@@ -18,6 +18,6 @@ $(function () {
         })
         .cartesian()
         .column(stackedColData, { stacked: true })
-        .stackTooltip(stackedColData, { el: '.column-stack-tooltip' })
+        .legend(stackedColData, { vAlign: 'top' })
         .render();
 });
