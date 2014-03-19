@@ -160,6 +160,25 @@
             return data;
         },
 
+        // return the uniq elements in the array
+        // we are implementing our own version since this algorithm seems
+        // to be a lot faster than what lodash uses
+        uniq: function (array) {
+            var cache = {}, result = [];
+            var len = array.length;
+
+            for (var j=0; j<len; j++) {
+                var el = array[j], key = el + '';
+
+                if (!cache.hasOwnProperty(key)) {
+                    cache[key] = true;
+                    result.push(el);
+                }
+            }
+
+            return result;
+        },
+
         maxTickValues: function (max, domain) {
             var cur = 0;
             var curIndex = 0;
