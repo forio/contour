@@ -5,6 +5,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-bumpup');
+    grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-tagrelease');
 
 
@@ -107,6 +108,33 @@ module.exports = function (grunt) {
             production: {
                 files: {
                     'dist/contour.min.js': ['dist/contour.js']
+                }
+            }
+        },
+        // this task does not currently work... our tests are done in jasmine 1.3.1
+        // and grunt-contrib-jasmin only supports 2.0.0
+        // TODO: upgrade tests for jasmin 2.0
+        jasmine: {
+            contour: {
+                src: [
+                    'src/scripts/core/contour-utils.js',
+                    'src/scripts/core/contour.js',
+                    'src/scripts/core/axis/y-axis.js',
+                    'src/scripts/core/cartesian.js',
+                    'src/scripts/core/version.js',
+
+                    'src/scripts/core/**/*.js',
+                    'src/scripts/visualizations/null.js',
+                    'src/scripts/visualizations/**/*.js',
+                ],
+                options: {
+
+                    vendor: [
+                        'examples/js/vendor/d3.min.js',
+                        'examples/js/vendor/jquery.js',
+                        'examples/js/vendor/lodash.js'
+                    ],
+                    specs: 'tests/specs/*-spec.js'
                 }
             }
         }
