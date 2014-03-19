@@ -29,6 +29,6 @@ $(function () {
         .cartesian()
         .horizontal()
         .bar(data)
-        .stackTooltip(data, { el: '.bar-stack-tooltip' })
+        .legend(data)
         .render();
 });
