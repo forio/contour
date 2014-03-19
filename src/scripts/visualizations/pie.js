@@ -12,7 +12,8 @@
     };
 
     function renderer(data, layer, options) {
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+        var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var w = options.chart.plotWidth, h = options.chart.plotHeight;
         var padding = _.nw.clamp(_.nw.getValue(options.pie.piePadding, 0, this), 0, h/2 - 2);
         var numSeries = data.length;
@@ -37,7 +38,7 @@
 
         pieGroup.exit().remove();
 
-        if (options.chart.animations) {
+        if (shouldAnimate) {
             pieGroup
                 .call(renderSeries)
                 .transition().duration(duration/2)
@@ -64,7 +65,7 @@
                 .attr('d', function (d) { return startArc(d); })
                 .each(function (d) { this._current = { startAngle: d.startAngle, endAngle: d.startAngle }; });
 
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 pie.exit()
                     .remove();
 

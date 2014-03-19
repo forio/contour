@@ -3,7 +3,7 @@
     var defaults = {
         bar: {
             stacked: false,
-            padding: 2      // two px between same group bars
+            groupPadding: 2      // two px between same group bars
         }
     };
 
@@ -11,7 +11,7 @@
 
         if (!options.chart.rotatedFrame) throw new Error('Bar Chart requires .horizontal() to be included in the instance');
 
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var x = this.xScale;
         var y = this.yScale;
         var rangeBand = this.rangeBand;
@@ -35,7 +35,7 @@
             .attr('class', 'bar tooltip-tracker')
             .call(enter);
 
-        if(options.chart.animations) {
+        if(options.chart.animations && options.chart.animations.enable) {
             bars.transition().duration(duration).call(update);
             bars.exit()
                 .transition().duration(duration)
@@ -65,7 +65,7 @@
 
         function grouped(bar, enter) {
             var numSeries = data.length;
-            var height = function () { return rangeBand / numSeries - options.bar.padding; };
+            var height = function () { return rangeBand / numSeries - options.bar.groupPadding; };
             var offset = function (d, i) { return rangeBand / numSeries * i; };
 
             bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })

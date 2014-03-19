@@ -150,6 +150,7 @@
         /*jshint eqnull:true */
         // we are using != null to get null & undefined but not 0
         normalizeSeries: function (data, categories) {
+            function sortFn(a, b) { return a.x - b.x; }
             function normal(set, name) {
                 return {
                     name: name,
@@ -158,7 +159,7 @@
                         var hasCategories = categories && _.isArray(categories);
                         var val = function (v) { return v != null ? v : null; };
                         return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
-                    })
+                    }).sort(sortFn)
                 };
             }
 
@@ -277,7 +278,11 @@
 
     var defaults = {
         chart: {
-            animations: true,
+            animations: {
+                enable: true,
+                // duration of the animation in ms
+                duration: 400,
+            },
             // by default take the size of the parent container
             defaultWidth: 400,
             // height = width * ratio
@@ -737,10 +742,13 @@
         xAxis: {
             // type of axis {ordinal|linear|time}
             type: null, // defaults is ordinal (needs to be null here so overrides work)
+            categories: undefined,
             innerTickSize: 6,
             outerTickSize: 0,
             tickPadding: 6,
             maxTicks: undefined,
+            ticks: undefined,
+            tickValues: undefined,
             title: undefined,
             titlePadding: 4,
             // padding between ranges (ie. columns) expressed in percentage of rangeBand width
@@ -750,7 +758,8 @@
             firstAndLast: false,
             orient: 'bottom',
             labels: {
-                format: 'd'
+                format: 'd',
+                formatter: undefined
             },
             linearDomain: false,     // specify if a time domain should be treated linearly or ....
         },
@@ -771,7 +780,8 @@
             nicing: true,
             orient: 'left',
             labels: {
-                align: 'middle',
+                // top, middle, bottom
+                verticalAlign: 'middle',
                 format: 's', // d3 formats
                 formatter: undefined // a function that formats each value ie. function (datum) { return 'x: ' + datum.x + ', y:' + datum.y }
             }
@@ -961,6 +971,12 @@
                 this.renderGridlines();
             },
 
+            _animationDuration: function () {
+                var opt = this.options.chart.animations;
+                return opt && opt.enable ?
+                    opt.duration != null ? opt.duration : 400 :
+                    0;
+            },
 
             computeScales: function () {
                 this.computeXScale();
@@ -999,7 +1015,7 @@
                     .attr('class', 'x axis');
 
                 this._xAxisGroup
-                    .transition().duration(400 * this.options.chart.animations)
+                    .transition().duration(this._animationDuration())
                     .call(xAxis);
 
                 this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
@@ -1009,7 +1025,7 @@
 
             renderYAxis: function () {
                 var options = this.options.yAxis;
-                var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
+                var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
                 var x = this.options.chart.internalPadding.left;
                 var y = this.options.chart.padding.top;
 
@@ -1022,10 +1038,10 @@
                         .attr('class', 'y axis');
 
                 this._yAxisGroup
-                    .transition().duration(400 * this.options.chart.animations)
+                    .transition().duration(this._animationDuration())
                     .call(this.yAxis())
                     .selectAll('.tick text')
-                        .attr('dy', alignmentOffset[options.labels.align]);
+                        .attr('dy', alignmentOffset[options.labels.verticalAlign]);
 
                 return this;
             },
@@ -1109,7 +1125,7 @@
                     var lines = gr.selectAll('.grid-line')
                         .data(function (d) { return d; });
 
-                    lines.transition().duration(400 * this.options.chart.animations)
+                    lines.transition().duration(this._animationDuration())
                         .attr('x1', 0)
                         .attr('x2', function () {
                             return w;
@@ -1212,7 +1228,7 @@
 
 })();
 
-Contour.version = '0.0.62';
+Contour.version = '0.0.63';
 (function () {
 
     var helpers = {
@@ -1784,13 +1800,12 @@ Contour.version = '0.0.62';
 
             this._yAxisGroup.enter().append('g')
                 .attr('class', 'y axis')
-                .attr('transform', 'translate(' + x+ ',' + y + ')')
-                .call(yAxis);
+                .attr('transform', 'translate(' + x+ ',' + y + ')');
 
             this._yAxisGroup.exit().remove();
 
             this._yAxisGroup
-                    .transition().duration(400 * this.options.chart.animations)
+                    .transition().duration(this._animationDuration())
                     .attr('transform', 'translate(' + x+ ',' + y + ')')
                     .call(yAxis);
 
@@ -1807,13 +1822,12 @@ Contour.version = '0.0.62';
 
             this._xAxisGroup.enter().append('g')
                 .attr('class', 'x axis')
-                .attr('transform', 'translate(' + x + ',' + y + ')')
-                .call(xAxis);
+                .attr('transform', 'translate(' + x + ',' + y + ')');
 
             this._xAxisGroup.exit().remove();
 
            this._xAxisGroup
-                .transition().duration(400 * this.options.chart.animations)
+                .transition().duration(this._animationDuration())
                 .attr('transform', 'translate(' + x + ',' + y + ')')
                 .call(xAxis);
 
@@ -1991,10 +2005,11 @@ Contour.version = '0.0.62';
         }
     };
 
+    /* jshint eqnull:true */
     function renderer(data, layer, options) {
 
         if (!this.xScale) throw new Error('Area Chart requires .cartesian() to be included in the instance.');
-
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2; }, this);
         var y = _.bind(function (val) { return this.yScale(val); }, this);
         var h = options.chart.plotHeight;
@@ -2008,8 +2023,8 @@ Contour.version = '0.0.62';
 
         var area = d3.svg.area()
             .x(function(d) { return x(d.x); })
-            .y0(function (d) { return y(d.y0); })
-            .y1(function(d) { return y(d.y0 + d.y); });
+            .y0(function (d) { return options.area.stacked ? y(d.y0) : h; })
+            .y1(function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
 
         renderSeries();
 
@@ -2027,10 +2042,16 @@ Contour.version = '0.0.62';
 
             series.exit().remove();
 
-            series.select('.area')
-                .datum(function (d) { return d.data; })
-                .transition().duration(400)
-                .attr('d', area);
+            if (options.chart.animations && options.chart.animations.enable) {
+                series.select('.area')
+                    .datum(function (d) { return d.data; })
+                    .transition().duration(options.chart.animations.duration || duration)
+                    .attr('d', area);
+            } else {
+                series.select('.area')
+                    .datum(function (d) { return d.data; })
+                    .attr('d', area);
+            }
 
             renderTooltipTrackers.call(this, series);
         }
@@ -2081,7 +2102,7 @@ Contour.version = '0.0.62';
     var defaults = {
         bar: {
             stacked: false,
-            padding: 2      // two px between same group bars
+            groupPadding: 2      // two px between same group bars
         }
     };
 
@@ -2089,7 +2110,7 @@ Contour.version = '0.0.62';
 
         if (!options.chart.rotatedFrame) throw new Error('Bar Chart requires .horizontal() to be included in the instance');
 
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var x = this.xScale;
         var y = this.yScale;
         var rangeBand = this.rangeBand;
@@ -2113,7 +2134,7 @@ Contour.version = '0.0.62';
             .attr('class', 'bar tooltip-tracker')
             .call(enter);
 
-        if(options.chart.animations) {
+        if(options.chart.animations && options.chart.animations.enable) {
             bars.transition().duration(duration).call(update);
             bars.exit()
                 .transition().duration(duration)
@@ -2143,7 +2164,7 @@ Contour.version = '0.0.62';
 
         function grouped(bar, enter) {
             var numSeries = data.length;
-            var height = function () { return rangeBand / numSeries - options.bar.padding; };
+            var height = function () { return rangeBand / numSeries - options.bar.groupPadding; };
             var offset = function (d, i) { return rangeBand / numSeries * i; };
 
             bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })
@@ -2199,7 +2220,7 @@ Contour.version = '0.0.62';
 
     function render(data, layer, options) {
         if (!this.xScale) throw new Error('Column Chart requires .cartesian() to be included in the instance.');
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var opt = options.column;
         var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
@@ -2245,7 +2266,7 @@ Contour.version = '0.0.62';
             .attr('class', 'column tooltip-tracker')
             .call(enter);
 
-        if (options.chart.animations) {
+        if (options.chart.animations && options.chart.animations.enable) {
             cols.exit()
                 .transition().duration(duration)
                 .attr('y', h)
@@ -2479,7 +2500,8 @@ Contour.version = '0.0.62';
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
         var h = options.chart.plotHeight;
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+        var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         // jshint eqnull:true
         var data = _.map(rawData, function (s) {
             return _.extend(s, {
@@ -2518,7 +2540,7 @@ Contour.version = '0.0.62';
                 .append('path')
                     .attr('class', 'line');
 
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 el.attr('d', function(d) { return startLine(d.data); })
                     .transition().duration(duration)
                     .attr('d', function (d) { return line(d.data); });
@@ -2532,7 +2554,7 @@ Contour.version = '0.0.62';
                 .select('.line')
                 ;
 
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 el.transition().duration(duration)
                     .attr('d', function (d) { return line(d.data); });
             } else  {
@@ -2540,7 +2562,7 @@ Contour.version = '0.0.62';
             }
 
             // remove
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 series.exit()
                     .remove();
             } else  {
@@ -2568,7 +2590,7 @@ Contour.version = '0.0.62';
 
             dots.exit().remove();
 
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 dots.transition().delay(100).duration(duration)
                     .attr('cx', x)
                     .attr('cy', y);
@@ -2632,6 +2654,8 @@ Contour.version = '0.0.62';
 
 })();
 
+Contour.export('nullVis', _.noop);
+
 (function () {
 
     var defaults = {
@@ -2646,7 +2670,8 @@ Contour.version = '0.0.62';
     };
 
     function renderer(data, layer, options) {
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+        var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var w = options.chart.plotWidth, h = options.chart.plotHeight;
         var padding = _.nw.clamp(_.nw.getValue(options.pie.piePadding, 0, this), 0, h/2 - 2);
         var numSeries = data.length;
@@ -2671,7 +2696,7 @@ Contour.version = '0.0.62';
 
         pieGroup.exit().remove();
 
-        if (options.chart.animations) {
+        if (shouldAnimate) {
             pieGroup
                 .call(renderSeries)
                 .transition().duration(duration/2)
@@ -2698,7 +2723,7 @@ Contour.version = '0.0.62';
                 .attr('d', function (d) { return startArc(d); })
                 .each(function (d) { this._current = { startAngle: d.startAngle, endAngle: d.startAngle }; });
 
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 pie.exit()
                     .remove();
 
@@ -2759,6 +2784,8 @@ Contour.version = '0.0.62';
 
     function ScatterPlot(data, layer, options) {
         if (!this.xScale) throw new Error('Scatter Chart requires .cartesian() to be included in the instance.');
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+        var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var opt = options.scatter;
         var halfRangeBand = this.rangeBand / 2;
         var duration = 400;
@@ -2788,7 +2815,7 @@ Contour.version = '0.0.62';
                 .attr('cx', x)
                 .attr('cy', h);
 
-        if (options.chart.animations) {
+        if (shouldAnimate) {
             dots.transition().duration(duration)
                 .attr('r', opt.radius)
                 .attr('cx', x)
@@ -2892,7 +2919,7 @@ Contour.version = '0.0.62';
         }
     };
 
-    function render() {
+    function render(data, layer, options) {
 
         var clearHideTimer = function () {
             clearTimeout(this.tooltip.hideTimer);
@@ -2908,7 +2935,25 @@ Contour.version = '0.0.62';
             }
         };
 
+        // return the centroid x, y coordinates relative to the svg container
+        var getCentroid = function (element) {
+            var bbox = element.getBoundingClientRect();
+            var clientRect = element.getBoundingClientRect();
+
+            return [bbox.left + bbox.width/2, bbox.top + bbox.height/2];
+        };
+
+        function getPosition(options) {
+
+        }
+
+
         var positionTooltip = function (d) {
+            var pointOrCentroid = function () {
+                return d3.event.target.tagName === 'path' ? getCentroid(d3.event.target) : d3.mouse(this.container.node());
+            };
+            var xScale = this.xScale;
+            var yScale = this.yScale;
             var plotLeft = this.options.chart.plotLeft;
             var plotWidth = this.options.chart.plotWidth;
             var plotTop = this.options.chart.plotTop;
@@ -2916,44 +2961,64 @@ Contour.version = '0.0.62';
             var distance = this.options.tooltip.distance;
             var width = parseFloat(this.tooltipElement.style('width'));
             var height = parseFloat(this.tooltipElement.style('height'));
-            var pointX = this.xScale ? this.xScale(d.x) : d3.event.x;
-            var pointY = this.yScale ? this.yScale(d.y) : d3.event.y;
+            var pointX = xScale ? xScale(d.x) : pointOrCentroid()[0];
+            var pointY = yScale ? yScale(d.y) : pointOrCentroid()[1];
             var alignedRight;
 
-            var pos = {
-                x: plotLeft + pointX - (distance + width),
-                y: plotTop + pointY - (distance + height)
+            var clampPosition = function (pos) {
+                // Check outside plot area (left)
+                if (pos.x < plotLeft) {
+                    pos.x = plotLeft + distance;
+                }
+
+                // Check outside plot area (right)
+                if (pos.x + width > plotLeft + plotWidth) {
+                    pos.x -= (pos.x + width) - (plotLeft + plotWidth);
+                    // Don't overlap point
+                    pos.y = plotTop + pointY - (height + distance);
+                    alignedRight = true;
+                }
+
+                // Check outside the plot area (top)
+                if (pos.y < plotTop) {
+                    pos.y = plotTop + distance;
+
+                    // Don't overlap point
+                    if (alignedRight && pointY >= pos.y && pointY <= pos.y + height) {
+                        pos.y = pointY + plotTop + distance;
+                    }
+                }
+
+                // Check outside the plot area (bottom)
+                if (pos.y + height > plotTop + plotHeight) {
+                    pos.y = Math.max(plotTop, plotTop + plotHeight - (height + distance));
+                }
+
+                return pos;
             };
 
-            // Check outside plot area (left)
-            if (pos.x < plotLeft) {
-                pos.x = plotLeft + Math.max(pos.x, 0) + distance;
-            }
+            var positioner = {
+                'vertical': function verticalPositioner() {
+                    var pos = {
+                        x: plotLeft + pointX - (distance + width),
+                        y: plotTop + pointY - (distance + height)
+                    };
 
-            // Check outside plot area (right)
-            if (pos.x + width > plotLeft + plotWidth) {
-                pos.x -= (pos.x + width) - (plotLeft + plotWidth);
-                // Don't overlap point
-                pos.y = plotTop + pointY - (height + distance);
-                alignedRight = true;
-            }
+                    return clampPosition(pos);
+                },
 
-            // Check outside the plot area (top)
-            if (pos.y < plotTop) {
-                pos.y = plotTop + distance;
+                'horizontal': function horizontalPositioner() {
+                    var pos = {
+                        x: plotLeft + pointY - (distance + width),
+                        y: plotTop + pointX - (distance + height)
+                    };
 
-                // Don't overlap point
-                if (alignedRight && pointY >= pos.y && pointY <= pos.y + height) {
-                    pos.y = pointY + plotTop + distance;
+                    return clampPosition(pos);
                 }
-            }
+            };
 
-            // Check outside the plot area (bottom)
-            if (pos.y + height > plotTop + plotHeight) {
-                pos.y = Math.max(plotTop, plotTop + plotHeight - (height + distance));
-            }
+            return options.chart.rotatedFrame ? positioner.horizontal() : positioner.vertical();
 
-            return pos;
         };
 
         var onMouseOver = function (d) {
@@ -3051,7 +3116,8 @@ Contour.version = '0.0.62';
 
     function ctor(data, layer, options) {
         if (!this.xScale) throw new Error('Trend Line requires .cartesian() to be included in the instance.');
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+        var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);
         var y = _.bind(function(d) { return this.yScale(d); }, this);
         var regression = _.nw.linearRegression(_.flatten(_.pluck(data, 'data')));
@@ -3070,7 +3136,7 @@ Contour.version = '0.0.62';
 
         line.exit().remove();
 
-        if (options.chart.animations) {
+        if (shouldAnimate) {
             line.transition().duration(duration)
                 .attr('x1', x(domain[0]))
                 .attr('y1', y(lineY(domain[0])))

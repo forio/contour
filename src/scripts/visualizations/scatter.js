@@ -11,6 +11,8 @@
 
     function ScatterPlot(data, layer, options) {
         if (!this.xScale) throw new Error('Scatter Chart requires .cartesian() to be included in the instance.');
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+        var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var opt = options.scatter;
         var halfRangeBand = this.rangeBand / 2;
         var duration = 400;
@@ -40,7 +42,7 @@
                 .attr('cx', x)
                 .attr('cy', h);
 
-        if (options.chart.animations) {
+        if (shouldAnimate) {
             dots.transition().duration(duration)
                 .attr('r', opt.radius)
                 .attr('cx', x)

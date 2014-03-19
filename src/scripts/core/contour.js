@@ -4,7 +4,11 @@
 
     var defaults = {
         chart: {
-            animations: true,
+            animations: {
+                enable: true,
+                // duration of the animation in ms
+                duration: 400,
+            },
             // by default take the size of the parent container
             defaultWidth: 400,
             // height = width * ratio

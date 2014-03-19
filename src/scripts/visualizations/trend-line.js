@@ -3,7 +3,8 @@
 
     function ctor(data, layer, options) {
         if (!this.xScale) throw new Error('Trend Line requires .cartesian() to be included in the instance.');
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+        var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);
         var y = _.bind(function(d) { return this.yScale(d); }, this);
         var regression = _.nw.linearRegression(_.flatten(_.pluck(data, 'data')));
@@ -22,7 +23,7 @@
 
         line.exit().remove();
 
-        if (options.chart.animations) {
+        if (shouldAnimate) {
             line.transition().duration(duration)
                 .attr('x1', x(domain[0]))
                 .attr('y1', y(lineY(domain[0])))
