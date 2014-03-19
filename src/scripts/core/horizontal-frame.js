@@ -56,13 +56,12 @@
 
             this._yAxisGroup.enter().append('g')
                 .attr('class', 'y axis')
-                .attr('transform', 'translate(' + x+ ',' + y + ')')
-                .call(yAxis);
+                .attr('transform', 'translate(' + x+ ',' + y + ')');
 
             this._yAxisGroup.exit().remove();
 
             this._yAxisGroup
-                    .transition().duration(400 * this.options.chart.animations)
+                    .transition().duration(this._animationDuration())
                     .attr('transform', 'translate(' + x+ ',' + y + ')')
                     .call(yAxis);
 
@@ -79,13 +78,12 @@
 
             this._xAxisGroup.enter().append('g')
                 .attr('class', 'x axis')
-                .attr('transform', 'translate(' + x + ',' + y + ')')
-                .call(xAxis);
+                .attr('transform', 'translate(' + x + ',' + y + ')');
 
             this._xAxisGroup.exit().remove();
 
            this._xAxisGroup
-                .transition().duration(400 * this.options.chart.animations)
+                .transition().duration(this._animationDuration())
                 .attr('transform', 'translate(' + x + ',' + y + ')')
                 .call(xAxis);
 

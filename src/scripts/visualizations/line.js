@@ -17,7 +17,8 @@
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
         var h = options.chart.plotHeight;
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+        var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         // jshint eqnull:true
         var data = _.map(rawData, function (s) {
             return _.extend(s, {
@@ -56,7 +57,7 @@
                 .append('path')
                     .attr('class', 'line');
 
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 el.attr('d', function(d) { return startLine(d.data); })
                     .transition().duration(duration)
                     .attr('d', function (d) { return line(d.data); });
@@ -70,7 +71,7 @@
                 .select('.line')
                 ;
 
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 el.transition().duration(duration)
                     .attr('d', function (d) { return line(d.data); });
             } else  {
@@ -78,7 +79,7 @@
             }
 
             // remove
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 series.exit()
                     .remove();
             } else  {
@@ -106,7 +107,7 @@
 
             dots.exit().remove();
 
-            if (options.chart.animations) {
+            if (shouldAnimate) {
                 dots.transition().delay(100).duration(duration)
                     .attr('cx', x)
                     .attr('cy', y);

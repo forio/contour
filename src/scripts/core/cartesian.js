@@ -245,6 +245,12 @@
                 this.renderGridlines();
             },
 
+            _animationDuration: function () {
+                var opt = this.options.chart.animations;
+                return opt && opt.enable ?
+                    opt.duration != null ? opt.duration : 400 :
+                    0;
+            },
 
             computeScales: function () {
                 this.computeXScale();
@@ -283,7 +289,7 @@
                     .attr('class', 'x axis');
 
                 this._xAxisGroup
-                    .transition().duration(400 * this.options.chart.animations)
+                    .transition().duration(this._animationDuration())
                     .call(xAxis);
 
                 this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
@@ -306,7 +312,7 @@
                         .attr('class', 'y axis');
 
                 this._yAxisGroup
-                    .transition().duration(400 * this.options.chart.animations)
+                    .transition().duration(this._animationDuration())
                     .call(this.yAxis())
                     .selectAll('.tick text')
                         .attr('dy', alignmentOffset[options.labels.verticalAlign]);
@@ -393,7 +399,7 @@
                     var lines = gr.selectAll('.grid-line')
                         .data(function (d) { return d; });
 
-                    lines.transition().duration(400 * this.options.chart.animations)
+                    lines.transition().duration(this._animationDuration())
                         .attr('x1', 0)
                         .attr('x2', function () {
                             return w;

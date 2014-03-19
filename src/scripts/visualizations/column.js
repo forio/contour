@@ -11,7 +11,7 @@
 
     function render(data, layer, options) {
         if (!this.xScale) throw new Error('Column Chart requires .cartesian() to be included in the instance.');
-        var duration = 400;
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var opt = options.column;
         var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
@@ -57,7 +57,7 @@
             .attr('class', 'column tooltip-tracker')
             .call(enter);
 
-        if (options.chart.animations) {
+        if (options.chart.animations && options.chart.animations.enable) {
             cols.exit()
                 .transition().duration(duration)
                 .attr('y', h)

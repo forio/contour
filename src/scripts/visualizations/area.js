@@ -9,10 +9,11 @@
         }
     };
 
+    /* jshint eqnull:true */
     function renderer(data, layer, options) {
 
         if (!this.xScale) throw new Error('Area Chart requires .cartesian() to be included in the instance.');
-
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2; }, this);
         var y = _.bind(function (val) { return this.yScale(val); }, this);
         var h = options.chart.plotHeight;
@@ -45,10 +46,16 @@
 
             series.exit().remove();
 
-            series.select('.area')
-                .datum(function (d) { return d.data; })
-                .transition().duration(400)
-                .attr('d', area);
+            if (options.chart.animations && options.chart.animations.enable) {
+                series.select('.area')
+                    .datum(function (d) { return d.data; })
+                    .transition().duration(options.chart.animations.duration || duration)
+                    .attr('d', area);
+            } else {
+                series.select('.area')
+                    .datum(function (d) { return d.data; })
+                    .attr('d', area);
+            }
 
             renderTooltipTrackers.call(this, series);
         }
