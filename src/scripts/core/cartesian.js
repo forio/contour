@@ -50,7 +50,8 @@
             nicing: true,
             orient: 'left',
             labels: {
-                align: 'middle',
+                // top, middle, bottom
+                verticalAlign: 'middle',
                 format: 's', // d3 formats
                 formatter: undefined // a function that formats each value ie. function (datum) { return 'x: ' + datum.x + ', y:' + datum.y }
             }
@@ -288,7 +289,7 @@
 
             renderYAxis: function () {
                 var options = this.options.yAxis;
-                var alignmentOffset = { top: '.8em', middle: '.35em', bottom: '0' };
+                var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
                 var x = this.options.chart.internalPadding.left;
                 var y = this.options.chart.padding.top;
 
@@ -304,7 +305,7 @@
                     .transition().duration(400 * this.options.chart.animations)
                     .call(this.yAxis())
                     .selectAll('.tick text')
-                        .attr('dy', alignmentOffset[options.labels.align]);
+                        .attr('dy', alignmentOffset[options.labels.verticalAlign]);
 
                 return this;
             },
