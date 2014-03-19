@@ -47,12 +47,19 @@
                 .innerTickSize(options.innerTickSize)
                 .outerTickSize(options.outerTickSize)
                 .tickPadding(options.tickPadding)
-                .tickValues(this.options.xAxis.categories)
                 .tickFormat(tickFormat);
 
-            if (this.options.xAxis.firstAndLast) {
+            if (options.firstAndLast) {
                 // show only first and last tick
                 axis.tickValues(_.nw.firstAndLast(this._domain));
+            } else if (options.maxTicks) {
+                axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
+            } else if (options.tickValues) {
+                axis.tickValues(options.tickValues);
+            } else if (options.ticks) {
+                axis.ticks(options.ticks);
+            } else {
+                axis.tickValues(options.categories);
             }
 
             return axis;

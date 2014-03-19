@@ -24,8 +24,8 @@
             padding: {
                 top: null,
                 right: null,
-                bottom: 0,
-                left: 0
+                bottom: null,
+                left: null
             },
             internalPadding: {
                 bottom: 0,

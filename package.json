@@ -1,7 +1,7 @@
 {
   "name": "Narwhal",
   "description": "Forio's Visualization Library",
-  "version": "0.0.61",
+  "version": "0.0.62",
   "dependencies": {
     "lodash": "~2.4.1",
     "d3": "~3.3.0"
@@ -19,6 +19,7 @@
     "markdox": "~0.1.3",
     "async": "~0.2.9",
     "lodash": "~2.4.1",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "grunt-contrib-jasmine": "^0.6.1"
   }
 }

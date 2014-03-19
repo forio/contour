@@ -80,16 +80,16 @@ describe('default yAxis', function () {
         expect(_.all(ticks, function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
     });
 
-    it('should align the top of the label to the tick when set top in options', function () {
-        instance = createinstance({yAxis: { labels: { align: 'top' }}});
+    it('should be place the label above the tick when set top in options', function () {
+        instance = createinstance({yAxis: { labels: { verticalAlign: 'bottom' }}});
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
         expect(_.all(ticks, function (t) { return $(t).attr('dy').contains('.8em'); })).toBe(true);
     });
 
-    it('should align the bottom of the label to the tick when set bottom in options', function () {
-        instance = createinstance({yAxis: { labels: { align: 'bottom' }}});
+    it('should be place the label below the tick when set top in options', function () {
+        instance = createinstance({yAxis: { labels: { verticalAlign: 'top' }}});
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');

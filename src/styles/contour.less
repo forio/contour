@@ -85,9 +85,8 @@
 
 }
 
-.legend {
+.contour-legend {
     position: absolute;
-    display: inline-block;
     border: solid 1px #bbb;
     margin: 5px;
     padding: 0 5px;
@@ -97,19 +96,23 @@
     font-size: @leged-font-size;
 
 
-    .legend-key {
+    .contour-legend-key {
         display: inline-block;
         width: .9em;
         height: .9em;
-        border-radius: 2em;
+        border-radius: 1px;
         margin-right: 5px;
         margin-bottom: -.1em;
     }
 
-    .legend-entry {
+    .contour-legend-entry {
         display: inline-block;
+        line-height: 1.5em;
         margin: 0 .4em;
-        &.vertical {
+    }
+
+    &.vertical {
+        .contour-legend-entry {
             display: block;
             margin: .2em .2em;
         }

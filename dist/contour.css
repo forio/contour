@@ -44,9 +44,8 @@
 .contour-chart .legend-wrapper body {
   position: relative;
 }
-.legend {
+.contour-legend {
   position: absolute;
-  display: inline-block;
   border: solid 1px #bbb;
   margin: 5px;
   padding: 0 5px;
@@ -55,19 +54,20 @@
   font-family: "Consolas", "Monaco", monospace;
   font-size: 13px;
 }
-.legend .legend-key {
+.contour-legend .contour-legend-key {
   display: inline-block;
   width: .9em;
   height: .9em;
-  border-radius: 2em;
+  border-radius: 1px;
   margin-right: 5px;
   margin-bottom: -0.1em;
 }
-.legend .legend-entry {
+.contour-legend .contour-legend-entry {
   display: inline-block;
+  line-height: 1.5em;
   margin: 0 .4em;
 }
-.legend .legend-entry.vertical {
+.contour-legend.vertical .contour-legend-entry {
   display: block;
   margin: .2em .2em;
 }
@@ -110,7 +110,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.s-1.legend-key {
+.s-1.contour-legend-key {
   background-color: #ee2e2f;
 }
 .s-1.bar,
@@ -134,7 +134,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.s-2.legend-key {
+.s-2.contour-legend-key {
   background-color: #008c48;
 }
 .s-2.bar,
@@ -158,7 +158,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.s-3.legend-key {
+.s-3.contour-legend-key {
   background-color: #185aa9;
 }
 .s-3.bar,
@@ -182,7 +182,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.s-4.legend-key {
+.s-4.contour-legend-key {
   background-color: #f47d23;
 }
 .s-4.bar,
@@ -206,7 +206,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.s-5.legend-key {
+.s-5.contour-legend-key {
   background-color: #662c91;
 }
 .s-5.bar,
@@ -230,7 +230,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.s-6.legend-key {
+.s-6.contour-legend-key {
   background-color: #a21d21;
 }
 .s-6.bar,
@@ -254,7 +254,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.s-7.legend-key {
+.s-7.contour-legend-key {
   background-color: #b43894;
 }
 .s-7.bar,
@@ -278,7 +278,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.s-8.legend-key {
+.s-8.contour-legend-key {
   background-color: #010202;
 }
 .s-8.bar,
@@ -302,7 +302,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-1.s-1.legend-key {
+.palette-1.s-1.contour-legend-key {
   background-color: #ee2e2f;
 }
 .palette-1.s-1.bar,
@@ -326,7 +326,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-1.s-2.legend-key {
+.palette-1.s-2.contour-legend-key {
   background-color: #008c48;
 }
 .palette-1.s-2.bar,
@@ -350,7 +350,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-1.s-3.legend-key {
+.palette-1.s-3.contour-legend-key {
   background-color: #185aa9;
 }
 .palette-1.s-3.bar,
@@ -374,7 +374,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-1.s-4.legend-key {
+.palette-1.s-4.contour-legend-key {
   background-color: #f47d23;
 }
 .palette-1.s-4.bar,
@@ -398,7 +398,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-1.s-5.legend-key {
+.palette-1.s-5.contour-legend-key {
   background-color: #662c91;
 }
 .palette-1.s-5.bar,
@@ -422,7 +422,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-1.s-6.legend-key {
+.palette-1.s-6.contour-legend-key {
   background-color: #a21d21;
 }
 .palette-1.s-6.bar,
@@ -446,7 +446,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-1.s-7.legend-key {
+.palette-1.s-7.contour-legend-key {
   background-color: #b43894;
 }
 .palette-1.s-7.bar,
@@ -470,7 +470,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-1.s-8.legend-key {
+.palette-1.s-8.contour-legend-key {
   background-color: #010202;
 }
 .palette-1.s-8.bar,
@@ -494,7 +494,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-2.s-1.legend-key {
+.palette-2.s-1.contour-legend-key {
   background-color: #f15a60;
 }
 .palette-2.s-1.bar,
@@ -518,7 +518,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-2.s-2.legend-key {
+.palette-2.s-2.contour-legend-key {
   background-color: #7ac36a;
 }
 .palette-2.s-2.bar,
@@ -542,7 +542,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-2.s-3.legend-key {
+.palette-2.s-3.contour-legend-key {
   background-color: #5a9bd4;
 }
 .palette-2.s-3.bar,
@@ -566,7 +566,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-2.s-4.legend-key {
+.palette-2.s-4.contour-legend-key {
   background-color: #faa75b;
 }
 .palette-2.s-4.bar,
@@ -590,7 +590,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-2.s-5.legend-key {
+.palette-2.s-5.contour-legend-key {
   background-color: #9e67ab;
 }
 .palette-2.s-5.bar,
@@ -614,7 +614,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-2.s-6.legend-key {
+.palette-2.s-6.contour-legend-key {
   background-color: #ce7058;
 }
 .palette-2.s-6.bar,
@@ -638,7 +638,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-2.s-7.legend-key {
+.palette-2.s-7.contour-legend-key {
   background-color: #d77fb4;
 }
 .palette-2.s-7.bar,
@@ -662,7 +662,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-2.s-8.legend-key {
+.palette-2.s-8.contour-legend-key {
   background-color: #737373;
 }
 .palette-2.s-8.bar,
@@ -686,7 +686,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-3.s-1.legend-key {
+.palette-3.s-1.contour-legend-key {
   background-color: #f2afad;
 }
 .palette-3.s-1.bar,
@@ -710,7 +710,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-3.s-2.legend-key {
+.palette-3.s-2.contour-legend-key {
   background-color: #d9e4aa;
 }
 .palette-3.s-2.bar,
@@ -734,7 +734,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-3.s-3.legend-key {
+.palette-3.s-3.contour-legend-key {
   background-color: #b8d2ec;
 }
 .palette-3.s-3.bar,
@@ -758,7 +758,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-3.s-4.legend-key {
+.palette-3.s-4.contour-legend-key {
   background-color: #b8d2ec;
 }
 .palette-3.s-4.bar,
@@ -782,7 +782,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-3.s-5.legend-key {
+.palette-3.s-5.contour-legend-key {
   background-color: #f3d1b0;
 }
 .palette-3.s-5.bar,
@@ -806,7 +806,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-3.s-6.legend-key {
+.palette-3.s-6.contour-legend-key {
   background-color: #d5b2d4;
 }
 .palette-3.s-6.bar,
@@ -830,7 +830,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-3.s-7.legend-key {
+.palette-3.s-7.contour-legend-key {
   background-color: #ebc0da;
 }
 .palette-3.s-7.bar,
@@ -854,7 +854,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-3.s-8.legend-key {
+.palette-3.s-8.contour-legend-key {
   background-color: #cccccc;
 }
 .palette-3.s-8.bar,
@@ -878,7 +878,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-4.s-1.legend-key {
+.palette-4.s-1.contour-legend-key {
   background-color: #942300;
 }
 .palette-4.s-1.bar,
@@ -902,7 +902,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-4.s-2.legend-key {
+.palette-4.s-2.contour-legend-key {
   background-color: #006550;
 }
 .palette-4.s-2.bar,
@@ -926,7 +926,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-4.s-3.legend-key {
+.palette-4.s-3.contour-legend-key {
   background-color: #c76c16;
 }
 .palette-4.s-3.bar,
@@ -950,7 +950,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-4.s-4.legend-key {
+.palette-4.s-4.contour-legend-key {
   background-color: #5b4c00;
 }
 .palette-4.s-4.bar,
@@ -974,7 +974,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-4.s-5.legend-key {
+.palette-4.s-5.contour-legend-key {
   background-color: #e1b79a;
 }
 .palette-4.s-5.bar,
@@ -998,7 +998,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-4.s-6.legend-key {
+.palette-4.s-6.contour-legend-key {
   background-color: #6f8e3b;
 }
 .palette-4.s-6.bar,
@@ -1022,7 +1022,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-4.s-7.legend-key {
+.palette-4.s-7.contour-legend-key {
   background-color: #8accc0;
 }
 .palette-4.s-7.bar,
@@ -1046,7 +1046,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-4.s-8.legend-key {
+.palette-4.s-8.contour-legend-key {
   background-color: #010202;
 }
 .palette-4.s-8.bar,
@@ -1070,7 +1070,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-5.s-1.legend-key {
+.palette-5.s-1.contour-legend-key {
   background-color: #ebebf4;
 }
 .palette-5.s-1.bar,
@@ -1094,7 +1094,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-5.s-2.legend-key {
+.palette-5.s-2.contour-legend-key {
   background-color: #d7d7ea;
 }
 .palette-5.s-2.bar,
@@ -1118,7 +1118,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-5.s-3.legend-key {
+.palette-5.s-3.contour-legend-key {
   background-color: #c2c2df;
 }
 .palette-5.s-3.bar,
@@ -1142,7 +1142,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-5.s-4.legend-key {
+.palette-5.s-4.contour-legend-key {
   background-color: #afafd4;
 }
 .palette-5.s-4.bar,
@@ -1166,7 +1166,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-5.s-5.legend-key {
+.palette-5.s-5.contour-legend-key {
   background-color: #9a9ac9;
 }
 .palette-5.s-5.bar,
@@ -1190,7 +1190,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-5.s-6.legend-key {
+.palette-5.s-6.contour-legend-key {
   background-color: #8686bf;
 }
 .palette-5.s-6.bar,
@@ -1214,7 +1214,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-5.s-7.legend-key {
+.palette-5.s-7.contour-legend-key {
   background-color: #7272b4;
 }
 .palette-5.s-7.bar,
@@ -1238,7 +1238,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-5.s-8.legend-key {
+.palette-5.s-8.contour-legend-key {
   background-color: #363694;
 }
 .palette-5.s-8.bar,
@@ -1262,7 +1262,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-6.s-1.legend-key {
+.palette-6.s-1.contour-legend-key {
   background-color: #eeece1;
 }
 .palette-6.s-1.bar,
@@ -1286,7 +1286,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-6.s-2.legend-key {
+.palette-6.s-2.contour-legend-key {
   background-color: #4f81bd;
 }
 .palette-6.s-2.bar,
@@ -1310,7 +1310,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-6.s-3.legend-key {
+.palette-6.s-3.contour-legend-key {
   background-color: #c0504d;
 }
 .palette-6.s-3.bar,
@@ -1334,7 +1334,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-6.s-4.legend-key {
+.palette-6.s-4.contour-legend-key {
   background-color: #9bbb59;
 }
 .palette-6.s-4.bar,
@@ -1358,7 +1358,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-6.s-5.legend-key {
+.palette-6.s-5.contour-legend-key {
   background-color: #8064a2;
 }
 .palette-6.s-5.bar,
@@ -1382,7 +1382,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-6.s-6.legend-key {
+.palette-6.s-6.contour-legend-key {
   background-color: #4bacc6;
 }
 .palette-6.s-6.bar,
@@ -1406,7 +1406,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-6.s-7.legend-key {
+.palette-6.s-7.contour-legend-key {
   background-color: #f79646;
 }
 .palette-6.s-7.bar,
@@ -1430,7 +1430,7 @@
   stroke-width: 2px;
   fill: none;
 }
-.palette-6.s-8.legend-key {
+.palette-6.s-8.contour-legend-key {
   background-color: #1f497d;
 }
 .palette-6.s-8.bar,

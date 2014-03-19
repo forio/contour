@@ -6,6 +6,10 @@
         getValue: function (src, deafult, ctx, args) {
             args = Array.prototype.slice.call(arguments, 3);
             return !src ? deafult : typeof src === 'function' ? src.apply(ctx, args) : src;
+        },
+
+        seriesNameToClass: function (name) {
+            return name ? name.replace(/\s/g, '_') : '';
         }
     };
 
@@ -130,6 +134,7 @@
         /*jshint eqnull:true */
         // we are using != null to get null & undefined but not 0
         normalizeSeries: function (data, categories) {
+            function sortFn(a, b) { return a.x - b.x; }
             function normal(set, name) {
                 return {
                     name: name,
@@ -138,7 +143,7 @@
                         var hasCategories = categories && _.isArray(categories);
                         var val = function (v) { return v != null ? v : null; };
                         return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
-                    })
+                    }).sort(sortFn)
                 };
             }
 
@@ -154,6 +159,43 @@
 
             // nothing to do to the data if it's not in a supported format
             return data;
+        },
+
+        // return the uniq elements in the array
+        // we are implementing our own version since this algorithm seems
+        // to be a lot faster than what lodash uses
+        uniq: function (array) {
+            var cache = {}, result = [];
+            var len = array.length;
+
+            for (var j=0; j<len; j++) {
+                var el = array[j], key = el + '';
+
+                if (!cache.hasOwnProperty(key)) {
+                    cache[key] = true;
+                    result.push(el);
+                }
+            }
+
+            return result;
+        },
+
+        maxTickValues: function (max, domain) {
+            var len = domain.length;
+            var values = [];
+
+            if (max >= len) return domain.slice();
+
+            // return d3.scale.linear().domain(domain).ticks(max);
+
+            var tickInteval = Math.ceil((len) / (max));
+            var cur = 0;
+            while (cur < len) {
+                values.push(domain[cur]);
+                cur += tickInteval;
+            }
+
+            return values;
         },
 
         isSupportedDataFormat: function (data) {
