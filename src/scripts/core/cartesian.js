@@ -16,10 +16,13 @@
         xAxis: {
             // type of axis {ordinal|linear|time}
             type: null, // defaults is ordinal (needs to be null here so overrides work)
+            categories: undefined,
             innerTickSize: 6,
             outerTickSize: 0,
             tickPadding: 6,
             maxTicks: undefined,
+            ticks: undefined,
+            tickValues: undefined,
             title: undefined,
             titlePadding: 4,
             // padding between ranges (ie. columns) expressed in percentage of rangeBand width
@@ -29,7 +32,8 @@
             firstAndLast: false,
             orient: 'bottom',
             labels: {
-                format: 'd'
+                format: 'd',
+                formatter: undefined
             },
             linearDomain: false,     // specify if a time domain should be treated linearly or ....
         },
