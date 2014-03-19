@@ -14,6 +14,47 @@ describe('roundToNearest', function () {
     });
 });
 
+describe('maxTickValues', function () {
+    it('should return domain if domain length is less then maxTicks', function () {
+        var domain = [1,2,3];
+        expect(_.nw.maxTickValues(5, domain)).toEqual([1,2,3]);
+    });
+
+    it('should return domain if domain is empty', function () {
+        var domain = [];
+        expect(_.nw.maxTickValues(5, domain)).toEqual([]);
+    });
+
+    it('should return domain if domain length is equal to maxTicks', function () {
+        var domain = [1,2,3];
+        expect(_.nw.maxTickValues(3, domain)).toEqual([1,2,3]);
+    });
+
+    describe('when maxTicks is less than domain length', function () {
+        var ticks;
+        var domain = [1,2,3,4,5,6,7,8,9,10];
+        var maxTicks = 4;
+
+        beforeEach(function () {
+            ticks = _.nw.maxTickValues(maxTicks, domain);
+        });
+
+        it('should return maxTicks as the length of the ticks array', function () {
+            expect(ticks.length).toBe(maxTicks);
+        });
+
+        it('should return the first domain elements as tick', function () {
+            expect(ticks[0]).toEqual(domain[0]);
+        });
+
+        it('should return evenly spaced ticks', function () {
+            ticks = _.nw.maxTickValues(5, domain);
+            expect(ticks).toEqual([1,3,5,7,9]);
+        });
+
+    });
+});
+
 describe('normalizeSeries', function () {
 
     beforeEach(function () {

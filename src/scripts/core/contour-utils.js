@@ -180,17 +180,18 @@
         },
 
         maxTickValues: function (max, domain) {
-            var cur = 0;
-            var curIndex = 0;
-            var step = domain.length / max;
+            var len = domain.length;
             var values = [];
 
-            if (max > domain.length) return domain.slice();
+            if (max >= len) return domain.slice();
 
-            while(curIndex < domain.length) {
-                values.push(domain[curIndex]);
-                cur += step;
-                curIndex = Math.floor(cur);
+            // return d3.scale.linear().domain(domain).ticks(max);
+
+            var tickInteval = Math.ceil((len) / (max));
+            var cur = 0;
+            while (cur < len) {
+                values.push(domain[cur]);
+                cur += tickInteval;
             }
 
             return values;

@@ -41,6 +41,7 @@
         },
 
 
+        /* jshint eqnull:true */
         axis: function () {
             var options = this.options.xAxis;
             var tickFormat = this.getOptimalTickFormat();
@@ -55,15 +56,7 @@
             if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
                 // override the tickValues with custom array based on number of ticks
                 // we don't use D3 ticks() because you cannot force it to show a specific number of ticks
-                var customValues = [];
-                var len = this._domain.length;
-                var step = (len + 1) / this.options.xAxis.maxTicks;
-
-                for (var j=0, index = 0; j<len; j += step, index += step) {
-                    customValues.push(this._domain[Math.min(Math.ceil(index), len-1)]);
-                }
-
-                axis.tickValues(customValues);
+                axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
 
             } else if (this.options.xAxis.firstAndLast) {
                 // show only first and last tick
