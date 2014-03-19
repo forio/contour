@@ -22,6 +22,10 @@
         getValue: function (src, deafult, ctx, args) {
             args = Array.prototype.slice.call(arguments, 3);
             return !src ? deafult : typeof src === 'function' ? src.apply(ctx, args) : src;
+        },
+
+        seriesNameToClass: function (name) {
+            return name ? name.replace(/\s/g, '_') : '';
         }
     };
 
@@ -172,6 +176,43 @@
             return data;
         },
 
+        // return the uniq elements in the array
+        // we are implementing our own version since this algorithm seems
+        // to be a lot faster than what lodash uses
+        uniq: function (array) {
+            var cache = {}, result = [];
+            var len = array.length;
+
+            for (var j=0; j<len; j++) {
+                var el = array[j], key = el + '';
+
+                if (!cache.hasOwnProperty(key)) {
+                    cache[key] = true;
+                    result.push(el);
+                }
+            }
+
+            return result;
+        },
+
+        maxTickValues: function (max, domain) {
+            var len = domain.length;
+            var values = [];
+
+            if (max >= len) return domain.slice();
+
+            // return d3.scale.linear().domain(domain).ticks(max);
+
+            var tickInteval = Math.ceil((len) / (max));
+            var cur = 0;
+            while (cur < len) {
+                values.push(domain[cur]);
+                cur += tickInteval;
+            }
+
+            return values;
+        },
+
         isSupportedDataFormat: function (data) {
             return _.isArray(data) && (_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0]);
         }
@@ -256,8 +297,8 @@
             padding: {
                 top: null,
                 right: null,
-                bottom: 0,
-                left: 0
+                bottom: null,
+                left: null
             },
             internalPadding: {
                 bottom: 0,
@@ -787,34 +828,43 @@
                 return _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min || absMin, this.options.yAxis.max);
             },
 
+            /*jshint eqnull:true */
             adjustPadding: function () {
                 var xOptions = this.options.xAxis;
                 var yOptions = this.options.yAxis;
                 var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
                 // bottom padding calculations
-                var xLabels = this.xDomain;
-                var xAxisText = xLabels.join('<br>');
-                var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
-                var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
-                var em = regularXBounds.height;
-                var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
-                var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
-                this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
-                    maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
-                    xLabelHeightUsed;
+                if (this.options.chart.padding.bottom == null) {
+                    var xLabels = this.xDomain;
+                    var xAxisText = xLabels.join('<br>');
+                    var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
+                    var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
+                    var em = regularXBounds.height;
+                    var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
+                    var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
+                    this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
+                        maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
+                        xLabelHeightUsed;
+                } else {
+                    this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom;
+                }
 
                 // left padding calculations
-                var yDomainScaled = this._getYScaledDomain();
-                // var yDomainScaled = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
-                var tmpScale = d3.scale.linear().domain(yDomainScaled);
-                var yLabels = tmpScale.ticks(yOptions.ticks);
+                if (this.options.chart.padding.left == null) {
+                    var yDomainScaled = this._getYScaledDomain();
+                    // var yDomainScaled = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
+                    var tmpScale = d3.scale.linear().domain(yDomainScaled);
+                    var yLabels = tmpScale.ticks(yOptions.ticks);
 
-                var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
-                var yAxisText = _.map(yLabels, format).join('<br>');
-                var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
-                this.options.chart.internalPadding.left = this.options.chart.padding.left ||
-                    maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) +
-                    yLabelBounds.width;
+                    var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
+                    var yAxisText = _.map(yLabels, format).join('<br>');
+                    var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
+                    this.options.chart.internalPadding.left = this.options.chart.padding.left ||
+                        maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) +
+                        yLabelBounds.width;
+                } else {
+                    this.options.chart.internalPadding.left = this.options.chart.padding.left;
+                }
             },
 
             adjustTitlePadding: function () {
@@ -1150,7 +1200,8 @@
             },
 
             getXDomain: function () {
-                var all = _.flatten(_.pluck(this._visualizations, 'xDomain'));
+                var all = _.nw.uniq(_.flatten(_.pluck(this._visualizations, 'xDomain')));
+
                 return all;
             }
 
@@ -1161,7 +1212,7 @@
 
 })();
 
-Contour.version = '0.0.61';
+Contour.version = '0.0.62';
 (function () {
 
     var helpers = {
@@ -1404,12 +1455,19 @@ Contour.version = '0.0.61';
                 .innerTickSize(options.innerTickSize)
                 .outerTickSize(options.outerTickSize)
                 .tickPadding(options.tickPadding)
-                .tickValues(this.options.xAxis.categories)
                 .tickFormat(tickFormat);
 
-            if (this.options.xAxis.firstAndLast) {
+            if (options.firstAndLast) {
                 // show only first and last tick
                 axis.tickValues(_.nw.firstAndLast(this._domain));
+            } else if (options.maxTicks) {
+                axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
+            } else if (options.tickValues) {
+                axis.tickValues(options.tickValues);
+            } else if (options.ticks) {
+                axis.ticks(options.ticks);
+            } else {
+                axis.tickValues(options.categories);
             }
 
             return axis;
@@ -1581,6 +1639,7 @@ Contour.version = '0.0.61';
         },
 
 
+        /* jshint eqnull:true */
         axis: function () {
             var options = this.options.xAxis;
             var tickFormat = this.getOptimalTickFormat();
@@ -1595,15 +1654,7 @@ Contour.version = '0.0.61';
             if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
                 // override the tickValues with custom array based on number of ticks
                 // we don't use D3 ticks() because you cannot force it to show a specific number of ticks
-                var customValues = [];
-                var len = this._domain.length;
-                var step = (len + 1) / this.options.xAxis.maxTicks;
-
-                for (var j=0, index = 0; j<len; j += step, index += step) {
-                    customValues.push(this._domain[Math.min(Math.ceil(index), len-1)]);
-                }
-
-                axis.tickValues(customValues);
+                axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
 
             } else if (this.options.xAxis.firstAndLast) {
                 // show only first and last tick
@@ -1638,11 +1689,12 @@ Contour.version = '0.0.61';
         getOptimalTickFormat: function () {
             if (this.options.xAxis.labels.formatter) return this.options.xAxis.labels.formatter;
 
-            var spanDays = dateDiff(this._domain[this._domain.length-1], this._domain[0]);
+            var spanDays = Math.abs(dateDiff(this._domain[this._domain.length-1], this._domain[0]));
             var daysThreshold = this.options.xAxis.maxTicks || 1;
             if (spanDays < daysThreshold) return d3.time.format('%H:%M');
+            if (spanDays < 365) return d3.time.format('%d %b');
 
-            return d3.time.format('%d %b');
+            return d3.time.format('%Y');
         },
 
         range: function () {
@@ -2285,7 +2337,6 @@ Contour.version = '0.0.61';
         legend: {
             vAlign: 'middle',
             hAlign: 'right',
-            // position: 'inside',
             direction: 'vertical',
             formatter: function (d) {
                 return d.name;
@@ -2293,47 +2344,52 @@ Contour.version = '0.0.61';
         }
     };
 
-
-    var positioners = {
-        horizontal: {
-            right: function (bounds, options) { return options.chart.plotWidth - bounds.width; },
-            left: function () { return 0; }
-        },
-
-        vertical: {
-            top: function (bounds, options) { return bounds.height; },
-            bottom: function (bounds, options) { return options.chart.plotHeight; }
-        },
-    };
-
     function validAlignmentClasses(options) {
         var classes = [];
-        if(['top', 'middle', 'bottom'].indexOf(options.legend.vAlign) != -1) {
+        if (['top', 'middle', 'bottom'].indexOf(options.legend.vAlign) != -1) {
             classes.push(options.legend.vAlign);
         } else {
             classes.push('top');
         }
 
-        if(['left', 'center', 'right'].indexOf(options.legend.hAlign) != -1) {
+        if (['left', 'center', 'right'].indexOf(options.legend.hAlign) != -1) {
             classes.push(options.legend.hAlign);
         } else {
             classes.push('right');
+        }
+
+        if (options.legend.direction === 'vertical') {
+            classes.push('vertical');
         }
 
         return classes;
     }
 
     function Legend(data, layer, options) {
-        var legend = this.container.selectAll('.legend').data([null]);
-        var em = _.nw.textBounds('series', '.legend.legend-entry');
+        var legend = this.container.selectAll('.contour-legend').data([null]);
+        var em = _.nw.textBounds('series', '.contour-legend.contour-legend-entry');
         var count = data.length;
         var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
         var mid = (options.chart.plotHeight - legendHeight) / 2;
+        var positioner = function (selection) {
+            // adjust position of legend only when is horizontally centered
+            // since we need to have all elements in the legend to calculate its width
+            if (options.legend.hAlign !== 'center' || !selection.length) {
+                return ;
+            }
+
+            // adjust the left
+            var legendWidth = selection[0].parentNode.clientWidth;
+            var left = (options.chart.plotWidth - legendWidth) / 2 + options.chart.internalPadding.left;
+
+            d3.select(selection[0].parentNode)
+                .style('left', left + 'px');
+        };
 
         var container = legend.enter()
             .append('div')
             .attr('class', function () {
-                return ['legend'].concat(validAlignmentClasses(options)).join(' ');
+                return ['contour-legend'].concat(validAlignmentClasses(options)).join(' ');
             })
             .attr('style', function () {
                 var styles = [];
@@ -2349,7 +2405,9 @@ Contour.version = '0.0.61';
                 if (options.legend.hAlign === 'left') {
                     styles.push('left: ' + options.chart.plotLeft + 'px');
                 } else if (options.legend.hAlign === 'center') {
-                    styles.push('margin-left: auto; margin-right: auto; width: ' + options.chart.plotWidth + 'px; padding-left:' + options.chart.plotLeft);
+                    var bounds = _.nw.textBounds(this, '.contour-legend');
+
+                    styles.push('left: ' + ((options.chart.plotWidth - bounds.width) / 2 + options.chart.internalPadding.left) + 'px' );
                 } else {
                     styles.push('right: 10px');
                 }
@@ -2357,27 +2415,47 @@ Contour.version = '0.0.61';
                 return styles.join(';');
             });
 
-        var entries = container.selectAll('.legend-entry')
+        var entries = container.selectAll('.contour-legend-entry')
             .data(data, function (d) { return d.name; });
 
         var enter = entries.enter()
             .append('div')
             .attr('class', function () {
-                return 'legend-entry' + (options.legend.direction === 'vertical' ? ' vertical' : '');
+                return 'contour-legend-entry';
             });
 
         entries.append('span')
-            .attr('class', function (d, i) { return 'legend-key s-' + (i+1) + ' ' + d.name; });
+            .attr('class', function (d, i) { return 'contour-legend-key s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name); });
 
         entries.append('span')
             .attr('class', 'series-name')
-            .text(options.legend.formatter);
+            .text(options.legend.formatter)
+            .call(positioner);
 
         entries.exit()
             .remove();
     }
 
     Legend.defaults = defaults;
+
+    /**
+    * Adds a legend to the Contour instance. One entry is added to the legend for each series in the data.
+    *
+    * ### Example:
+    *
+    *     new Contour({el: '.myChart'})
+    *           .cartesian()
+    *           .column(data)
+    *           .legend(data)
+    *           .render();
+    *
+    * @name legend(data, options)
+    * @param {object|array} data The _data series_ for which to create a legend. This can be in any of the supported formats.
+    * @param {object} [options] Configuration options particular to this visualization that override the defaults.
+    * @api public
+    *
+    */
+
     Contour.export('legend', Legend);
 
 })();
@@ -2418,7 +2496,7 @@ Contour.version = '0.0.61';
             renderMarkers();
         renderTooltipTrackers();
 
-        function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + d.name; }; };
+        function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
 
         function renderPaths() {
             var startLine = d3.svg.line()
