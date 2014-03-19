@@ -44,7 +44,7 @@
 
             // Check outside plot area (left)
             if (pos.x < plotLeft) {
-                pos.x = plotLeft + Math.max(pos.x, 0) + distance;
+                pos.x = plotLeft + distance;
             }
 
             // Check outside plot area (right)
