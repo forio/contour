@@ -43,8 +43,8 @@
     }
 
     function Legend(data, layer, options) {
-        var legend = this.container.selectAll('.legend').data([null]);
-        var em = _.nw.textBounds('series', '.legend.legend-entry');
+        var legend = this.container.selectAll('.contour-legend').data([null]);
+        var em = _.nw.textBounds('series', '.contour-legend.contour-legend-entry');
         var count = data.length;
         var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
         var mid = (options.chart.plotHeight - legendHeight) / 2;
@@ -52,7 +52,7 @@
         var container = legend.enter()
             .append('div')
             .attr('class', function () {
-                return ['legend'].concat(validAlignmentClasses(options)).join(' ');
+                return ['contour-legend'].concat(validAlignmentClasses(options)).join(' ');
             })
             .attr('style', function () {
                 var styles = [];
@@ -76,17 +76,17 @@
                 return styles.join(';');
             });
 
-        var entries = container.selectAll('.legend-entry')
+        var entries = container.selectAll('.contour-legend-entry')
             .data(data, function (d) { return d.name; });
 
         var enter = entries.enter()
             .append('div')
             .attr('class', function () {
-                return 'legend-entry' + (options.legend.direction === 'vertical' ? ' vertical' : '');
+                return 'contour-legend-entry';
             });
 
         entries.append('span')
-            .attr('class', function (d, i) { return 'legend-key s-' + (i+1) + ' ' + d.name; });
+            .attr('class', function (d, i) { return 'contour-legend-key s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name); });
 
         entries.append('span')
             .attr('class', 'series-name')
