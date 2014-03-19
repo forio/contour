@@ -3,7 +3,7 @@
     var defaults = {
         bar: {
             stacked: false,
-            padding: 2      // two px between same group bars
+            groupPadding: 2      // two px between same group bars
         }
     };
 
@@ -65,7 +65,7 @@
 
         function grouped(bar, enter) {
             var numSeries = data.length;
-            var height = function () { return rangeBand / numSeries - options.bar.padding; };
+            var height = function () { return rangeBand / numSeries - options.bar.groupPadding; };
             var offset = function (d, i) { return rangeBand / numSeries * i; };
 
             bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })
