@@ -163,6 +163,21 @@
                 };
             }
 
+            var correctDataFormat = _.isArray(data) && _.all(data, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+            var correctSeriesFormat = _.isArray(data) && _.isObject(data[0]) && data[0].hasOwnProperty('data') &&
+                    data[0].hasOwnProperty('name') && _.all(data[0].data, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+
+            // do not make a new copy, if the data is already in the correct format!
+            if (correctSeriesFormat) {
+                return data;
+            }
+
+            // do the next best thing if the data is a set of points in the correct format
+            if (correctDataFormat) {
+                return [{ name: 'series 1', data: data }];
+            }
+
+            // for the rest of the cases we need to normalize to the full format of the series
             if (_.isArray(data)) {
                 if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
                     // this would be the shape for multiple series
@@ -845,18 +860,22 @@
                 var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
                 // bottom padding calculations
                 if (this.options.chart.padding.bottom == null) {
-                    var xLabels = this.xDomain;
-                    var xAxisText = xLabels.join('<br>');
-                    var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
-                    var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
-                    var em = regularXBounds.height;
-                    var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
-                    var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
-                    this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
-                        maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
-                        xLabelHeightUsed;
+                    if (xOptions.ticks !== 0) {
+                        var xLabels = this.xDomain;
+                        var xAxisText = xLabels.join('<br>');
+                        var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
+                        var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
+                        var em = regularXBounds.height;
+                        var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
+                        var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
+                        this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
+                            maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
+                            xLabelHeightUsed;
+                    } else {
+                        this.options.chart.internalPadding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0);
+                    }
                 } else {
-                    this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom;
+                    this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || 0;
                 }
 
                 // left padding calculations
@@ -1228,7 +1247,7 @@
 
 })();
 
-Contour.version = '0.0.63';
+Contour.version = '0.0.64';
 (function () {
 
     var helpers = {
@@ -1321,6 +1340,8 @@ Contour.version = '0.0.63';
                 axis.tickValues(_.nw.firstAndLast(this._domain));
             } else if (options.tickValues) {
                 axis.tickValues(options.tickValues);
+            } else if (options.ticks != null) {
+                axis.ticks(options.ticks);
             }
 
             return axis;
@@ -1461,6 +1482,7 @@ Contour.version = '0.0.63';
             return this._scale;
         },
 
+        /* jshint eqnull:true */
         axis: function () {
             var options = this.options.xAxis;
             var optFormat = (options.labels.format ? d3.format(options.labels.format) : 0);
@@ -1480,8 +1502,11 @@ Contour.version = '0.0.63';
                 axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
             } else if (options.tickValues) {
                 axis.tickValues(options.tickValues);
-            } else if (options.ticks) {
+            } else if (options.ticks != null) {
                 axis.ticks(options.ticks);
+                if (options.ticks === 0) {
+                    axis.tickValues([]);
+                }
             } else {
                 axis.tickValues(options.categories);
             }

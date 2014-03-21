@@ -102,16 +102,16 @@
   white-space: nowrap;
 }
 .s-1 {
-  color: #ee2e2f;
+  color: #2477b3;
 }
 .s-1.line,
 .s-1 .line {
-  stroke: #ee2e2f;
+  stroke: #2477b3;
   stroke-width: 2px;
   fill: none;
 }
 .s-1.contour-legend-key {
-  background-color: #ee2e2f;
+  background-color: #2477b3;
 }
 .s-1.bar,
 .s-1.column,
@@ -123,7 +123,7 @@
 .s-1 .dot,
 .s-1 .area,
 .s-1 .arc {
-  fill: #ee2e2f;
+  fill: #2477b3;
 }
 .s-2 {
   color: #008c48;
@@ -150,16 +150,16 @@
   fill: #008c48;
 }
 .s-3 {
-  color: #185aa9;
+  color: #ee2e2f;
 }
 .s-3.line,
 .s-3 .line {
-  stroke: #185aa9;
+  stroke: #ee2e2f;
   stroke-width: 2px;
   fill: none;
 }
 .s-3.contour-legend-key {
-  background-color: #185aa9;
+  background-color: #ee2e2f;
 }
 .s-3.bar,
 .s-3.column,
@@ -171,7 +171,7 @@
 .s-3 .dot,
 .s-3 .area,
 .s-3 .arc {
-  fill: #185aa9;
+  fill: #ee2e2f;
 }
 .s-4 {
   color: #f47d23;
@@ -294,16 +294,16 @@
   fill: #010202;
 }
 .palette-1.s-1 {
-  color: #ee2e2f;
+  color: #2477b3;
 }
 .palette-1.s-1.line,
 .palette-1.s-1 .line {
-  stroke: #ee2e2f;
+  stroke: #2477b3;
   stroke-width: 2px;
   fill: none;
 }
 .palette-1.s-1.contour-legend-key {
-  background-color: #ee2e2f;
+  background-color: #2477b3;
 }
 .palette-1.s-1.bar,
 .palette-1.s-1.column,
@@ -315,7 +315,7 @@
 .palette-1.s-1 .dot,
 .palette-1.s-1 .area,
 .palette-1.s-1 .arc {
-  fill: #ee2e2f;
+  fill: #2477b3;
 }
 .palette-1.s-2 {
   color: #008c48;
@@ -342,16 +342,16 @@
   fill: #008c48;
 }
 .palette-1.s-3 {
-  color: #185aa9;
+  color: #ee2e2f;
 }
 .palette-1.s-3.line,
 .palette-1.s-3 .line {
-  stroke: #185aa9;
+  stroke: #ee2e2f;
   stroke-width: 2px;
   fill: none;
 }
 .palette-1.s-3.contour-legend-key {
-  background-color: #185aa9;
+  background-color: #ee2e2f;
 }
 .palette-1.s-3.bar,
 .palette-1.s-3.column,
@@ -363,7 +363,7 @@
 .palette-1.s-3 .dot,
 .palette-1.s-3 .area,
 .palette-1.s-3 .arc {
-  fill: #185aa9;
+  fill: #ee2e2f;
 }
 .palette-1.s-4 {
   color: #f47d23;
@@ -486,16 +486,16 @@
   fill: #010202;
 }
 .palette-2.s-1 {
-  color: #f15a60;
+  color: #5a9bd4;
 }
 .palette-2.s-1.line,
 .palette-2.s-1 .line {
-  stroke: #f15a60;
+  stroke: #5a9bd4;
   stroke-width: 2px;
   fill: none;
 }
 .palette-2.s-1.contour-legend-key {
-  background-color: #f15a60;
+  background-color: #5a9bd4;
 }
 .palette-2.s-1.bar,
 .palette-2.s-1.column,
@@ -507,7 +507,7 @@
 .palette-2.s-1 .dot,
 .palette-2.s-1 .area,
 .palette-2.s-1 .arc {
-  fill: #f15a60;
+  fill: #5a9bd4;
 }
 .palette-2.s-2 {
   color: #7ac36a;
@@ -534,16 +534,16 @@
   fill: #7ac36a;
 }
 .palette-2.s-3 {
-  color: #5a9bd4;
+  color: #f15a60;
 }
 .palette-2.s-3.line,
 .palette-2.s-3 .line {
-  stroke: #5a9bd4;
+  stroke: #f15a60;
   stroke-width: 2px;
   fill: none;
 }
 .palette-2.s-3.contour-legend-key {
-  background-color: #5a9bd4;
+  background-color: #f15a60;
 }
 .palette-2.s-3.bar,
 .palette-2.s-3.column,
@@ -555,7 +555,7 @@
 .palette-2.s-3 .dot,
 .palette-2.s-3 .area,
 .palette-2.s-3 .arc {
-  fill: #5a9bd4;
+  fill: #f15a60;
 }
 .palette-2.s-4 {
   color: #faa75b;
@@ -678,16 +678,16 @@
   fill: #737373;
 }
 .palette-3.s-1 {
-  color: #f2afad;
+  color: #b8d2ec;
 }
 .palette-3.s-1.line,
 .palette-3.s-1 .line {
-  stroke: #f2afad;
+  stroke: #b8d2ec;
   stroke-width: 2px;
   fill: none;
 }
 .palette-3.s-1.contour-legend-key {
-  background-color: #f2afad;
+  background-color: #b8d2ec;
 }
 .palette-3.s-1.bar,
 .palette-3.s-1.column,
@@ -699,7 +699,7 @@
 .palette-3.s-1 .dot,
 .palette-3.s-1 .area,
 .palette-3.s-1 .arc {
-  fill: #f2afad;
+  fill: #b8d2ec;
 }
 .palette-3.s-2 {
   color: #d9e4aa;
@@ -726,16 +726,16 @@
   fill: #d9e4aa;
 }
 .palette-3.s-3 {
-  color: #b8d2ec;
+  color: #f2afad;
 }
 .palette-3.s-3.line,
 .palette-3.s-3 .line {
-  stroke: #b8d2ec;
+  stroke: #f2afad;
   stroke-width: 2px;
   fill: none;
 }
 .palette-3.s-3.contour-legend-key {
-  background-color: #b8d2ec;
+  background-color: #f2afad;
 }
 .palette-3.s-3.bar,
 .palette-3.s-3.column,
@@ -747,7 +747,7 @@
 .palette-3.s-3 .dot,
 .palette-3.s-3 .area,
 .palette-3.s-3 .arc {
-  fill: #b8d2ec;
+  fill: #f2afad;
 }
 .palette-3.s-4 {
   color: #b8d2ec;
@@ -870,16 +870,16 @@
   fill: #cccccc;
 }
 .palette-4.s-1 {
-  color: #942300;
+  color: #c76c16;
 }
 .palette-4.s-1.line,
 .palette-4.s-1 .line {
-  stroke: #942300;
+  stroke: #c76c16;
   stroke-width: 2px;
   fill: none;
 }
 .palette-4.s-1.contour-legend-key {
-  background-color: #942300;
+  background-color: #c76c16;
 }
 .palette-4.s-1.bar,
 .palette-4.s-1.column,
@@ -891,7 +891,7 @@
 .palette-4.s-1 .dot,
 .palette-4.s-1 .area,
 .palette-4.s-1 .arc {
-  fill: #942300;
+  fill: #c76c16;
 }
 .palette-4.s-2 {
   color: #006550;
@@ -918,16 +918,16 @@
   fill: #006550;
 }
 .palette-4.s-3 {
-  color: #c76c16;
+  color: #942300;
 }
 .palette-4.s-3.line,
 .palette-4.s-3 .line {
-  stroke: #c76c16;
+  stroke: #942300;
   stroke-width: 2px;
   fill: none;
 }
 .palette-4.s-3.contour-legend-key {
-  background-color: #c76c16;
+  background-color: #942300;
 }
 .palette-4.s-3.bar,
 .palette-4.s-3.column,
@@ -939,7 +939,7 @@
 .palette-4.s-3 .dot,
 .palette-4.s-3 .area,
 .palette-4.s-3 .arc {
-  fill: #c76c16;
+  fill: #942300;
 }
 .palette-4.s-4 {
   color: #5b4c00;
