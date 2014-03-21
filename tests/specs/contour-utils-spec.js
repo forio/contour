@@ -192,6 +192,35 @@ describe('normalizeSeries', function () {
         expect(s1.data[4].y).toBe(3);
     });
 
+    it('should return same instance of data if is correctly formatted (no copy)', function () {
+        var data = [
+            {
+                name: 'Series A',
+                data: [
+                    {x: 0, y: 1},
+                    {x: 1, y: 2},
+                    {x: 2, y: 3}
+                ]
+            }
+        ];
+
+        var series = _.nw.normalizeSeries(data);
+
+        expect(series).toBe(data);
+    });
+
+    it('should insert the instance of data into a series object if data is in correct format', function () {
+        var data = [
+            {x: 0, y: 1},
+            {x: 1, y: 2},
+            {x: 2, y: 3}
+        ];
+
+        var series = _.nw.normalizeSeries(data);
+
+        expect(series[0].data).toBe(data);
+    });
+
     describe('when passing a categories array', function () {
         it('should use the categories array for normalized x values', function () {
             var data = [1,2,3,4];

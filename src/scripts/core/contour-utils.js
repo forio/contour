@@ -147,6 +147,21 @@
                 };
             }
 
+            var correctDataFormat = _.isArray(data) && _.all(data, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+            var correctSeriesFormat = _.isArray(data) && _.isObject(data[0]) && data[0].hasOwnProperty('data') &&
+                    data[0].hasOwnProperty('name') && _.all(data[0].data, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+
+            // do not make a new copy, if the data is already in the correct format!
+            if (correctSeriesFormat) {
+                return data;
+            }
+
+            // do the next best thing if the data is a set of points in the correct format
+            if (correctDataFormat) {
+                return [{ name: 'series 1', data: data }];
+            }
+
+            // for the rest of the cases we need to normalize to the full format of the series
             if (_.isArray(data)) {
                 if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
                     // this would be the shape for multiple series
