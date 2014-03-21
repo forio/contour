@@ -4,7 +4,7 @@ $(function () {
         el: '.myBarChart',
         // at the height of this fiddle, 
         // max padding is 24
-        bar: { padding: 15 }
+        bar: { groupPadding: 15 }
       })
     .cartesian()
     .horizontal()

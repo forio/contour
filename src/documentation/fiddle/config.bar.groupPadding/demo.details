@@ -1,5 +1,5 @@
 ---
- name: config.bar.padding
+ name: config.bar.groupPadding
  authors:
    - Forio
  normalize_css: no
