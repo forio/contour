@@ -119,18 +119,22 @@
                 var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
                 // bottom padding calculations
                 if (this.options.chart.padding.bottom == null) {
-                    var xLabels = this.xDomain;
-                    var xAxisText = xLabels.join('<br>');
-                    var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
-                    var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
-                    var em = regularXBounds.height;
-                    var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
-                    var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
-                    this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
-                        maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
-                        xLabelHeightUsed;
+                    if (xOptions.ticks !== 0) {
+                        var xLabels = this.xDomain;
+                        var xAxisText = xLabels.join('<br>');
+                        var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
+                        var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
+                        var em = regularXBounds.height;
+                        var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
+                        var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
+                        this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
+                            maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
+                            xLabelHeightUsed;
+                    } else {
+                        this.options.chart.internalPadding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0);
+                    }
                 } else {
-                    this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom;
+                    this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || 0;
                 }
 
                 // left padding calculations
