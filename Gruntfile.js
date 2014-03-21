@@ -37,7 +37,8 @@ module.exports = function (grunt) {
         less: {
             dev: {
                 files: {
-                    'examples/css/contour.css': 'src/styles/contour.less'
+                    'examples/css/contour.css': 'src/styles/contour.less',
+                    'dist/contour.css': 'src/styles/contour.less'
                 }
             },
             // to generate distribution uncompressed versions
