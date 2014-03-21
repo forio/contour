@@ -37,6 +37,7 @@
             return this._scale;
         },
 
+        /* jshint eqnull:true */
         axis: function () {
             var options = this.options.xAxis;
             var optFormat = (options.labels.format ? d3.format(options.labels.format) : 0);
@@ -56,8 +57,11 @@
                 axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
             } else if (options.tickValues) {
                 axis.tickValues(options.tickValues);
-            } else if (options.ticks) {
+            } else if (options.ticks != null) {
                 axis.ticks(options.ticks);
+                if (options.ticks === 0) {
+                    axis.tickValues([]);
+                }
             } else {
                 axis.tickValues(options.categories);
             }

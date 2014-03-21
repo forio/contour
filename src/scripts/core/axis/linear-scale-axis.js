@@ -43,6 +43,8 @@
                 axis.tickValues(_.nw.firstAndLast(this._domain));
             } else if (options.tickValues) {
                 axis.tickValues(options.tickValues);
+            } else if (options.ticks != null) {
+                axis.ticks(options.ticks);
             }
 
             return axis;
