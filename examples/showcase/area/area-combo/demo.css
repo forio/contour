@@ -1,6 +1,11 @@
-.chart {
-    width: 400px;
+.chart-title {
+    font-size: 24px;
+    color: #444;
+    font-family: "Hevetica Neue", sans-serif;
+    text-align: center;
+    margin-left: 2.3em;
 }
 
-.area { opacity: 0.6; }
-.line { color: #5f50fc; }
+.area {
+    opacity: 0.9;
+}
