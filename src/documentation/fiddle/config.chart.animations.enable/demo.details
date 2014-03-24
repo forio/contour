@@ -1,0 +1,6 @@
+---
+ name: config.chart.animations.enable
+ authors:
+   - Forio
+ normalize_css: no
+ ...
