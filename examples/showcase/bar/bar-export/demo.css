@@ -1,3 +1,20 @@
-.chart {
-    width: 400px;
+.y.axis path {
+    stroke-width: 0;
+}
+
+.label-text {
+    font-family: monospace;
+    fill: #eee;
+}
+
+.chart-title {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 24px;
+    color: #444;
+    text-align: center;
+}
+
+.source {
+    font-size: 11px;
+    text-align: left;
 }
