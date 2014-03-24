@@ -2,7 +2,7 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-TODO: Insert description here
+**Notes:** Internal property. Read only.
 
 <% if(notes) { %><%= notes %><% } %>
 

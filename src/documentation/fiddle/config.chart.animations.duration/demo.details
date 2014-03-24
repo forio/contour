@@ -1,5 +1,5 @@
 ---
- name: config.chart.animations
+ name: config.chart.animations.duration
  authors:
    - Forio
  normalize_css: no

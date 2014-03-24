@@ -1,0 +1,6 @@
+---
+ name: config.xAxis.labels.formatter
+ authors:
+   - Forio
+ normalize_css: no
+ ...
