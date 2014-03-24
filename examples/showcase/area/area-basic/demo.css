@@ -1,3 +1,9 @@
-.chart {
-    width: 400px;
+.area {
+    opacity: 0.7;
+}
+
+.line-chart-markers .dot {
+    fill: #fff;
+    stroke-width: 2px;
+    stroke: #2477B3;
 }
