@@ -1247,7 +1247,7 @@
 
 })();
 
-Contour.version = '0.0.64';
+Contour.version = '0.0.65';
 (function () {
 
     var helpers = {
@@ -1729,6 +1729,7 @@ Contour.version = '0.0.64';
 
         getOptimalTickFormat: function () {
             if (this.options.xAxis.labels.formatter) return this.options.xAxis.labels.formatter;
+            if (this.options.xAxis.labels.format) return d3.time.format(this.options.xAxis.labels.format);
 
             var spanDays = Math.abs(dateDiff(this._domain[this._domain.length-1], this._domain[0]));
             var daysThreshold = this.options.xAxis.maxTicks || 1;
