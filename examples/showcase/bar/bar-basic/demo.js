@@ -1,16 +1,28 @@
 $(function () {
+
+    var browserPenetration =[1.14, 8.51, 18.37, 28.54, 40.88];
+
     new Contour({
             el: '.bar-basic',
             xAxis: {
-                title: 'Index or Category',
+                categories: ['Opera', 'Safari', 'Firefox', 'IE', 'Chrome']
             },
             yAxis: {
-                title: 'Value'
+                labels: {
+                    formatter: function (d) {
+                        return d + '%';
+                    }
+                }
+            },
+            tooltip: {
+                formatter: function (d) {
+                    return '<strong>' + d.x + '</strong><br>' + d.y + '%';
+                }
             }
         })
         .cartesian()
         .horizontal()
-        .bar([1, 2, 3, 4, 5, 4, 3, 2, 1])
+        .bar(browserPenetration)
         .tooltip()
         .render();
 });
