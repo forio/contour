@@ -1,3 +1,22 @@
-.chart {
-    width: 400px;
+.chart-title {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 20px;
+    color: #444;
+    text-align: center;
+}
+
+.line-marker {
+    stroke: #ddd;
+    stroke-width: 1px;
+}
+
+.expected-mark {
+    stroke: #009654;
+    opacity: 0.4;
+}
+
+.line-marker-text {
+    fill: #999;
+    font-size: 11px;
+    font-family: arial;
 }
