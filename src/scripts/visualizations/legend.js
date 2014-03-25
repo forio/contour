@@ -92,7 +92,7 @@
             });
 
         entries.append('span')
-            .attr('class', function (d, i) { return 'contour-legend-key s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name); });
+            .attr('class', function (d, i) { return 'contour-legend-key series s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name); });
 
         entries.append('span')
             .attr('class', 'series-name')
