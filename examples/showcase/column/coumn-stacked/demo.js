@@ -1,23 +1,22 @@
 $(function () {
-
     var stackedColData = [
-        { name: 'First Series', data: [6,5,3,5,7,6,3] },
-        { name: 'Second Series', data: [1,2,1,2,1,2,1] },
-        { name: 'Third Series', data: [6,5,1,5,2,3,5] },
-        { name: 'Fourth Series', data: [5,3,2,5,1,6,5] }
+        { name: 'Model XH32', data: [38000, 25342, 32532, 23542] },
+        { name: 'Model RT55-A', data: [10231, 9523, 6231, 9236] },
+        { name: 'Model BC99', data: [1325, 2533, 4250, 1252] },
+        { name: 'Model RC132-X', data: [21023, 29432, 42263, 33152] }
     ];
 
     new Contour({
             el: '.column-stacked',
             xAxis: {
-                title: 'Index or Category',
+                categories: ['Q1-2013', 'Q2-2013', 'Q3-2013', 'Q4-2013']
             },
             yAxis: {
-                title: 'Value'
+                title: 'Sales (US $)'
             }
         })
         .cartesian()
         .column(stackedColData, { stacked: true })
-        .legend(stackedColData, { vAlign: 'top' })
+        .stackTooltip(stackedColData, { el: '.column-stack-tooltip' })
         .render();
 });
