@@ -107,7 +107,7 @@ describe('normalizeSeries', function () {
         });
     });
 
-    it('should sort data if its not categorized', function () {
+    it('should sort data if its not categorized ', function () {
         var data = [
             { x: 3, y: 5 },
             { x: 1, y: 5 },
@@ -118,7 +118,7 @@ describe('normalizeSeries', function () {
         expect(series).toBeSorted();
     });
 
-    it('should sort data if its not categorized', function () {
+    it('should not sort data if its categorized', function () {
         var data = [ 5,6,7];
         var series = _.nw.normalizeSeries(data, ['d', 'x', 'a']);
         expect(series).not.toBeSorted();
