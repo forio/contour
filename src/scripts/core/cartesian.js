@@ -126,7 +126,7 @@
                         var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
                         var em = regularXBounds.height;
                         var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
-                        var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))));
+                        var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))) + em / 5) ;
                         this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
                             maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
                             xLabelHeightUsed;

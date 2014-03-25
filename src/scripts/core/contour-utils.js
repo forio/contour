@@ -100,6 +100,7 @@
             dummy.style.height = 'auto';
             dummy.style.visibility = 'hidden';
             dummy.style.lineHeight = '100%';
+            dummy.style.whiteSpace = 'nowrap';
 
             dummy.innerHTML = text;
             dummy.className = css.replace(/\./g, ' ');
