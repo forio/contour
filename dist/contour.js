@@ -154,14 +154,20 @@
             var hasCategories = !!(categories && _.isArray(categories));
             function sortFn(a, b) { return a.x - b.x; }
             function normal(set, name) {
-                return {
+                var d = {
                     name: name,
                     data: _.map(set, function (d, i) {
                         var hasX = d != null && d.hasOwnProperty('x');
                         var val = function (v) { return v != null ? v : null; };
                         return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
-                    }).sort(sortFn)
+                    })
                 };
+
+                if (!hasCategories) {
+                    d.data.sort(sortFn);
+                }
+
+                return d;
             }
 
             var correctDataFormat = _.isArray(data) && _.all(data, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
@@ -1249,7 +1255,7 @@
 
 })();
 
-Contour.version = '0.0.67';
+Contour.version = '0.0.68';
 (function () {
 
     var helpers = {
