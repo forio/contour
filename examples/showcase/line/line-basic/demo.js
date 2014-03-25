@@ -1,16 +1,32 @@
 $(function () {
 
+    var temps = [52, 53, 69, 74, 78, 89, 94, 87, 82, 73, 64];
+
     new Contour({
             el: '.line-basic',
+            chart: {
+                gridlines: 'both'
+            },
             xAxis: {
-                title: 'Index',
+                categories: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov']
             },
             yAxis: {
-                title: 'Value'
+                title: 'Degrees (F)',
+                titlePadding: 15
+            },
+            tooltip: {
+                formatter: function (d) {
+                    return '<span class="tooltip-value">' + d.y + '&deg;</span>';
+                }
+            },
+            line: {
+                marker: {
+                    size: 5
+                }
             }
         })
         .cartesian()
-        .line([{x: 0, y: 103},{x: 44, y: 103},{x: 154, y: 36},{x: 309, y: 150},{x: 376, y: 150},{x: 400, y: 171}])
+        .line(temps)
         .tooltip()
         .render();
 });
