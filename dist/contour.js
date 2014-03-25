@@ -151,13 +151,13 @@
         /*jshint eqnull:true */
         // we are using != null to get null & undefined but not 0
         normalizeSeries: function (data, categories) {
+            var hasCategories = !!(categories && _.isArray(categories));
             function sortFn(a, b) { return a.x - b.x; }
             function normal(set, name) {
                 return {
                     name: name,
                     data: _.map(set, function (d, i) {
                         var hasX = d != null && d.hasOwnProperty('x');
-                        var hasCategories = categories && _.isArray(categories);
                         var val = function (v) { return v != null ? v : null; };
                         return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
                     }).sort(sortFn)
@@ -175,6 +175,7 @@
 
             // do the next best thing if the data is a set of points in the correct format
             if (correctDataFormat) {
+                if (!hasCategories) data.sort(sortFn);
                 return [{ name: 'series 1', data: data }];
             }
 
@@ -774,7 +775,7 @@
             firstAndLast: false,
             orient: 'bottom',
             labels: {
-                format: 'd',
+                format: undefined,
                 formatter: undefined
             },
             linearDomain: false,     // specify if a time domain should be treated linearly or ....
@@ -1248,7 +1249,7 @@
 
 })();
 
-Contour.version = '0.0.66';
+Contour.version = '0.0.67';
 (function () {
 
     var helpers = {
