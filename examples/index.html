@@ -29,6 +29,27 @@
 
          }
 
+         .toolbar {
+            line-height: 2em;
+            padding: 0 .5em;
+            background-color: #ddd;
+            position: relative;
+            border-bottom: solid 1px #aaa;
+            border-top: solid 1px #aaa;
+            margin-bottom: 12px;
+         }
+
+         .chart-id {
+            display: inline-block;
+            font-weight: bold;
+            font-family: 'open sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+         }
+
+         .palette-selector {
+            float: right;
+            margin: .35em 0;
+         }
+
     </style>
 </head>
 <body>
@@ -38,9 +59,19 @@
 
 <div class="container">
     <div class="row">
-        <aside class="col-md-2 menu"></aside>
-        <div class="col-md-10">
-            <h3 class="chart-title"></h3>
+        <aside class="col-md-3 menu"></aside>
+        <div class="col-md-8">
+            <div class="toolbar">
+                <div class="chart-id"></div>
+                <select name="palette-selector" id="palette-selector" class="palette-selector">
+                    <option value="1">Palette 1</option>
+                    <option value="2">Palette 2</option>
+                    <option value="3">Palette 3</option>
+                    <option value="4">Palette 4</option>
+                    <option value="5">Palette 5</option>
+                    <option value="6">Palette 6</option>
+                </select>
+            </div>
             <iframe id="sample" frameborder="0" width="600px" height="500px"></iframe>
         </div>
     </div>
@@ -61,6 +92,7 @@
 
     function buildMenu(data) {
         var items = [];
+        var curPalette = 'palette-1';
 
         $.each(data, function (i, d) {
             var li = $('<li>').text(d).attr('data-path', d);
@@ -74,13 +106,25 @@
             document.location.hash = '#/' + path;
             loadSamples(path);
         });
+
+        $('.palette-selector').on('change', function () {
+            var iframe = d3.select('iframe').node();
+            var newPalette = 'palette-' + $(this).val();
+
+            d3.select(iframe.contentDocument)
+                .selectAll('.series')
+                    .classed(curPalette, false)
+                    .classed(newPalette, true);
+
+            curPalette = newPalette;
+        });
     }
 
     function loadSamples(path) {
         var fullPath = 'showcase/' + path;
         var frame = $('#sample');
 
-        $('.chart-title').text(path);
+        $('.chart-id').text(path);
 
         $.get(fullPath + '/demo.html', function (res) {
             var iframe = frame.get(0);
