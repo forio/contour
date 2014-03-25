@@ -40,7 +40,7 @@
         function renderPaths() {
             var startLine = d3.svg.line()
                 .x(function (d) { return x(d); })
-                .y(function () { return y({x: 0, y: 0}); });
+                .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
 
             var line = d3.svg.line()
                 .x(function (d) { return x(d); })
