@@ -1,3 +1,7 @@
-.chart {
-    width: 400px;
+.chart-title {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 24px;
+    color: #444;
+    text-align: center;
+    margin-bottom: .3em;
 }
