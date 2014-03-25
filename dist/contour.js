@@ -25,7 +25,7 @@
         },
 
         seriesNameToClass: function (name) {
-            return name ? name.replace(/\s/g, '_') : '';
+            return name || '';
         }
     };
 
@@ -1255,7 +1255,7 @@
 
 })();
 
-Contour.version = '0.0.69';
+Contour.version = '0.0.70';
 (function () {
 
     var helpers = {

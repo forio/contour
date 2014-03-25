@@ -9,7 +9,7 @@
         },
 
         seriesNameToClass: function (name) {
-            return name ? name.replace(/\s/g, '_') : '';
+            return name || '';
         }
     };
 
