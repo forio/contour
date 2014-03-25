@@ -88,7 +88,7 @@ describe('normalizeSeries', function () {
                 var notText = this.isNot ? ' not' : '';
                 var isSorted = true;
                 this.message = function () {
-                    return 'Expected series data ' + notText + ' to be sorted';
+                    return 'Expected series data ' + notText + ' to be sorted ';
                 };
 
                 _.each(actual, function (series) {
@@ -102,12 +102,12 @@ describe('normalizeSeries', function () {
                     }
                 });
 
-                return isSorted;
+                return isSorted ;
             }
         });
     });
 
-    it('should sort data', function () {
+    it('should sort data if its not categorized', function () {
         var data = [
             { x: 3, y: 5 },
             { x: 1, y: 5 },
@@ -116,6 +116,12 @@ describe('normalizeSeries', function () {
 
         var series = _.nw.normalizeSeries(data);
         expect(series).toBeSorted();
+    });
+
+    it('should sort data if its not categorized', function () {
+        var data = [ 5,6,7];
+        var series = _.nw.normalizeSeries(data, ['d', 'x', 'a']);
+        expect(series).not.toBeSorted();
     });
 
     it('should normalize a single array of values into an array with one series object', function () {
