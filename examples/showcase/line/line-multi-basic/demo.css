@@ -1,3 +1,21 @@
-.chart {
-    width: 400px;
+.chart-title {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 20px;
+    color: #444;
+    text-align: center;
 }
+
+.contour-legend {
+    margin: 10px 40px;
+}
+
+.line-chart-markers .dot {
+    fill: #fff;
+    stroke-width: 2px;
+}
+
+.line-chart-markers.s-1 .dot { stroke: #2477b3; }
+.line-chart-markers.s-2 .dot { stroke: #008C48; }
+.line-chart-markers.s-3 .dot { stroke: #EE2E2F; }
+
+
