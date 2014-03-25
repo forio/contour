@@ -32,7 +32,7 @@
             firstAndLast: false,
             orient: 'bottom',
             labels: {
-                format: 'd',
+                format: undefined,
                 formatter: undefined
             },
             linearDomain: false,     // specify if a time domain should be treated linearly or ....
