@@ -1,3 +1,17 @@
+.chart-title {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 24px;
+    color: #444;
+    text-align: center;
+}
+
 .contour-legend {
     margin-bottom: -4.5em;
+}
+
+.s-2 .column {
+    fill: #4EB3D3;
+}
+.s-2.contour-legend-key {
+    background-color: #4EB3D3;
 }
