@@ -1,7 +1,7 @@
 {
   "name": "Narwhal",
   "description": "Forio's Visualization Library",
-  "version": "0.0.68",
+  "version": "0.0.69",
   "dependencies": {
     "lodash": "~2.4.1",
     "d3": "~3.3.0"

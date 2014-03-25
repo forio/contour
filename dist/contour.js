@@ -1255,7 +1255,7 @@
 
 })();
 
-Contour.version = '0.0.68';
+Contour.version = '0.0.69';
 (function () {
 
     var helpers = {
@@ -2480,7 +2480,7 @@ Contour.version = '0.0.68';
             });
 
         entries.append('span')
-            .attr('class', function (d, i) { return 'contour-legend-key s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name); });
+            .attr('class', function (d, i) { return 'contour-legend-key series s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name); });
 
         entries.append('span')
             .attr('class', 'series-name')
