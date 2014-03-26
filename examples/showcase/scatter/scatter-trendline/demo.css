@@ -1,3 +1,10 @@
-.chart {
-    width: 400px;
+
+.contour-legend {
+    margin: 3%;
+}
+
+.r2-info {
+    font-family: monospace;
+    font-size: 14px;
+    fill: #666;
 }
