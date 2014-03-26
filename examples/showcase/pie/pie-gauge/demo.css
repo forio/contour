@@ -1,4 +1,17 @@
-.chart {
-    width: 400px;
+
+.s-2.arc {
+    /*fill: transparent;*/
+    opacity: 0.5;
+    fill: #ddd;
 }
-.s-2.arc { fill: transparent; }
+
+.center-text,
+.center-label {
+    fill: #666;
+    text-anchor: middle;
+    font-family: monospace;
+}
+
+.center-text {
+    font-size: 40;
+}
