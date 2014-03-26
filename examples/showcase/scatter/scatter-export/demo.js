@@ -8,8 +8,8 @@ $(function () {
             data: data
         });
 
-        for(var k=0; k<100; k++) {
-            data.push({x: Math.random() * 1000, y: Math.random() * 1000, z: Math.random() * 50 });
+        for(var k=0; k<30; k++) {
+            data.push({x: Math.random() * 1000, y: Math.random() * 1000, z: Math.random() * 10 });
         }
     }
 
