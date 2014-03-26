@@ -15,7 +15,7 @@ $(function () {
     new Contour({
             el: '.scatter-basic',
             xAxis: {
-                title: 'Value'
+                title: 'Sample'
             },
             yAxis: {
                 title: 'Value'
@@ -26,6 +26,5 @@ $(function () {
         })
         .cartesian()
         .scatter(series)
-        .tooltip()
         .render();
 });
