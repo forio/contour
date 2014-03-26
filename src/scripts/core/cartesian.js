@@ -477,8 +477,9 @@
                 this.xDomain = this.getXDomain();
                 this.yMin = this.yDomain[0];
                 this.yMax = this.yDomain[this.yDomain.length - 1];
+                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
                 this.dataSrc = _.flatten(
-                    _.map(this._visualizations, function (v) {
+                    _.map(dataVis, function (v) {
                         return _.flatten(_.map(v.data, _.bind(this.datum, this)));
                     }, this)
                 );
@@ -489,12 +490,14 @@
 
             getExtents: function (axis) {
                 var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
-                var all = _.flatten(_.pluck(this._visualizations, field));
+                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
+                var all = _.flatten(_.pluck(dataVis, field));
                 return all.length ? d3.extent(all) : [];
             },
 
             getXDomain: function () {
-                var all = _.nw.uniq(_.flatten(_.pluck(this._visualizations, 'xDomain')));
+                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
+                var all = _.nw.uniq(_.flatten(_.pluck(dataVis, 'xDomain')));
 
                 return all;
             }
