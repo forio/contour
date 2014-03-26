@@ -1,1 +1,1 @@
-Contour.version = '0.0.70';
+Contour.version = '0.0.71';

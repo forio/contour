@@ -1255,7 +1255,7 @@
 
 })();
 
-Contour.version = '0.0.70';
+Contour.version = '0.0.71';
 (function () {
 
     var helpers = {
@@ -2557,7 +2557,7 @@ Contour.version = '0.0.70';
         function renderPaths() {
             var startLine = d3.svg.line()
                 .x(function (d) { return x(d); })
-                .y(function () { return y({x: 0, y: 0}); });
+                .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
 
             var line = d3.svg.line()
                 .x(function (d) { return x(d); })
@@ -3076,8 +3076,8 @@ Contour.export('nullVis', _.noop);
             var options = this.options.tooltip;
             var formatters = [
                 function (d) { return options.formatter ? _.partial(options.formatter, d) : null; },
-                function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return 'x: ' + d.x + '<br>' + 'y: ' + d.y; }, d) : null; },
-                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return 'x: ' + d.x + '<br>' + 'y: ' + d.y; }, d.data) : null; },
+                function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return d.x + '<br>' + d.y; }, d) : null; },
+                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return d.x + '<br>' + d.y; }, d.data) : null; },
                 function (d) { return d.hasOwnProperty('value') ? _.partial(function (d) { return d.value; }, d) : null;  },
                 function () { return function () { return 'NA'; }; }
             ];
