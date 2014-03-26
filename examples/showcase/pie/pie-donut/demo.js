@@ -1,9 +1,27 @@
 $(function () {
+
+    var data = [
+        { x: 'S. Vettel', y: 13 },
+        { x: 'F. Alonso', y: 2 },
+        { x: 'L. Hamilton', y: 1 },
+        { x: 'K. Raikkonen', y: 1 },
+        { x: 'N. Rosberg', y: 2 }
+    ];
+
     new Contour({
             el: '.pie-donut',
-            pie: { innerRadius: 30 }
+            pie: {
+                innerRadius: 80,
+                piePadding: 20
+            },
+            tooltip: {
+                formatter: function (d) {
+                    return d.data.x + '<br>' + d.value + ' wins';
+                }
+            }
         })
-        .pie([ 1, 2, 3, 4 ])
+        .pie(data)
+        .legend(_.map(_.pluck(data, 'x'), function (x) { return { name: x, data: [] }; }))
         .tooltip()
         .render();
 });

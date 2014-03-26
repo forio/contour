@@ -1,3 +1,17 @@
-.chart {
-    width: 400px;
+.chart-title {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 20px;
+    color: #444;
+    text-align: center;
+}
+
+
+.series.arc {
+    stroke-width: 1px;
+    stroke: #fff;
+}
+
+.contour-legend {
+    margin-right: 10%;
+    margin-top: -10%;
 }
