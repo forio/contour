@@ -1,0 +1,18 @@
+.chart-title {
+    font-size: 24px;
+    color: #444;
+    font-family: "Hevetica Neue", sans-serif;
+    text-align: center;
+    margin-left: 2.3em;
+}
+
+.contour-legend {
+    margin-top: 8%;
+    margin-left: 3%;
+}
+
+.line-chart-markers .dot {
+    fill: #fff;
+    stroke-width: 2px;
+    stroke: #2477B3;
+}

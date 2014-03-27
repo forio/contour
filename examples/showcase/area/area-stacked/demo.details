@@ -1,0 +1,7 @@
+---
+ name: Stacked Area Chart
+ description: Create stacked area charts by adding .cartesian() and .area() in your Contour instance with varios series in the dataset. Use configuration options to set properties of the visualizations and axes.
+ authors:
+   - Forio
+ normalize_css: no
+ ...
