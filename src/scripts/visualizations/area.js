@@ -71,7 +71,7 @@
                     .attr('opacity', 0)
                     .attr('r', trackerSize)
                     .attr('cx', function(d) { return x(d.x); })
-                    .attr('cy', function(d) { return y(d.y0 + d.y); });
+                    .attr('cy', function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
         }
     }
 
