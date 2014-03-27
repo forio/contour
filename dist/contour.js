@@ -1228,8 +1228,9 @@
                 this.xDomain = this.getXDomain();
                 this.yMin = this.yDomain[0];
                 this.yMax = this.yDomain[this.yDomain.length - 1];
+                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
                 this.dataSrc = _.flatten(
-                    _.map(this._visualizations, function (v) {
+                    _.map(dataVis, function (v) {
                         return _.flatten(_.map(v.data, _.bind(this.datum, this)));
                     }, this)
                 );
@@ -1240,12 +1241,14 @@
 
             getExtents: function (axis) {
                 var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
-                var all = _.flatten(_.pluck(this._visualizations, field));
+                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
+                var all = _.flatten(_.pluck(dataVis, field));
                 return all.length ? d3.extent(all) : [];
             },
 
             getXDomain: function () {
-                var all = _.nw.uniq(_.flatten(_.pluck(this._visualizations, 'xDomain')));
+                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
+                var all = _.nw.uniq(_.flatten(_.pluck(dataVis, 'xDomain')));
 
                 return all;
             }
@@ -1257,7 +1260,7 @@
 
 })();
 
-Contour.version = '0.0.72';
+Contour.version = '0.0.73';
 (function () {
 
     var helpers = {
@@ -2522,6 +2525,8 @@ Contour.version = '0.0.72';
     var defaults = {
         line: {
             smooth: false,
+            animationDirection: 'left-to-right',
+            // animationDirection: 'bottom-to-top',
             marker: {
                 enable: true,
                 size: 3
@@ -2529,15 +2534,58 @@ Contour.version = '0.0.72';
         }
     };
 
+    var duration;
+    var animationDirection;
+    var animationsMap = {
+        'left-to-right': {
+            enter: function (line) {
+                var path = this;
+                path.each(function () {
+                    var totalLength = this.getTotalLength();
+                    d3.select(this)
+                        .attr('stroke-dasharray', totalLength + ' ' + totalLength)
+                        .attr('stroke-dashoffset', totalLength)
+                        .transition().duration(duration)
+                            .attr('stroke-dashoffset', 0);
+                });
+            },
 
+            update: function (line) {
+                this.attr('d', function (d) { return line(d.data); });
+                this.each(function () {
+                    var totalLength = this.getTotalLength();
+                    d3.select(this)
+                        .attr('stroke-dasharray', totalLength + ' ' + totalLength)
+                        .attr('stroke-dashoffset', totalLength)
+                        .transition().duration(duration)
+                            .attr('stroke-dashoffset', 0);
+                });
+            }
+        },
+
+        'bottom-to-top': {
+            enter: function (line) {
+                this.transition().duration(duration)
+                    .attr('d', function (d) { return line(d.data); });
+            },
+
+            update: function (line) {
+                this.transition().duration(duration)
+                    .attr('d', function (d) { return line(d.data); });
+            }
+        }
+    };
+
+    /* jshint eqnull: true */
     function render(rawData, layer, options, id) {
         if (!this.xScale) throw new Error('Line Chart requires .cartesian() to be included in the instance.');
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y); }, this);
         var h = options.chart.plotHeight;
-        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
+        animationDirection = options.line.animationDirection || 'left-to-right';
+        duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         // jshint eqnull:true
         var data = _.map(rawData, function (s) {
             return _.extend(s, {
@@ -2556,6 +2604,7 @@ Contour.version = '0.0.72';
 
         function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
 
+
         function renderPaths() {
             var startLine = d3.svg.line()
                 .x(function (d) { return x(d); })
@@ -2567,6 +2616,7 @@ Contour.version = '0.0.72';
 
             if(options.line.smooth) line.interpolate('cardinal');
 
+            var animFn = animationsMap[animationDirection];
             var series = layer.selectAll('g.series')
                     .data(data, function (d) { return d.name; });
 
@@ -2577,9 +2627,9 @@ Contour.version = '0.0.72';
                     .attr('class', 'line');
 
             if (shouldAnimate) {
-                el.attr('d', function(d) { return startLine(d.data); })
-                    .transition().duration(duration)
-                    .attr('d', function (d) { return line(d.data); });
+                var startLineFn = animationDirection === 'left-to-right' ? line : startLine;
+                var path = el.attr('d', function(d) { return startLineFn(d.data); })
+                    .call(_.partial(animFn.enter, line));
             } else {
                 el.attr('d', function (d) { return line(d.data); });
             }
@@ -2587,12 +2637,10 @@ Contour.version = '0.0.72';
             // update
             el = series
                 .attr('class', seriesClassName('series'))
-                .select('.line')
-                ;
+                .select('.line');
 
             if (shouldAnimate) {
-                el.transition().duration(duration)
-                    .attr('d', function (d) { return line(d.data); });
+                el.call(_.partial(animFn.update, line));
             } else  {
                 el.attr('d', function (d) { return line(d.data); });
             }
@@ -2621,15 +2669,17 @@ Contour.version = '0.0.72';
             dots.enter().append('circle')
                 .attr('class', 'dot')
                 .attr('r', options.line.marker.size)
-                .attr('cx', x)
-                .attr('cy', h);
+                .attr('opacity', 0);
+                // .attr('cx', x)
+                // .attr('cy', y);
 
             dots.exit().remove();
 
             if (shouldAnimate) {
-                dots.transition().delay(100).duration(duration)
+                dots.transition().delay(duration/2).duration(duration / 2)
                     .attr('cx', x)
-                    .attr('cy', y);
+                    .attr('cy', y)
+                    .attr('opacity', 1);
             } else {
                 dots.attr('cx', x)
                     .attr('cy', y);
