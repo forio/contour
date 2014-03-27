@@ -27,7 +27,7 @@
 
         var area = d3.svg.area()
             .x(function(d) { return x(d.x); })
-            .y0(function (d) { return options.area.stacked ? y(d.y0 || options.yAxis.min) : h; })
+            .y0(function (d) { return options.area.stacked ? y(d.y0 || options.yAxis.min || 0) : h; })
             .y1(function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
 
         renderSeries();
