@@ -28,6 +28,10 @@ $(function () {
                 title: 'Value (US $)'
             },
 
+            line: {
+                animationDirection: 'bottom-to-top'
+            },
+
             tooltip: {
                 formatter: function (d) {
                     return 'Average house price<br>Year: ' + d.x + '<br>' + moneyFormatter(d.y);
