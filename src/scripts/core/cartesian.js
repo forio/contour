@@ -64,7 +64,9 @@
 
 
     /**
-    * Provides a Cartesian frame to the Contour instance.
+    * Provides a Cartesian frame to the Contour instance. 
+    *
+    * This is required for all visualizations displayed in a Cartesian frame, for example line charts, bar charts, area charts, etc. It is not required otherwise; for instance, pie charts do not use a Cartesian frame.
     *
     * ###Example:
     *
