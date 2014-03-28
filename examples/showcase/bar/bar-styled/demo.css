@@ -1,0 +1,10 @@
+
+.contour-chart .series .bar {
+    fill: #083;
+}
+
+.contour-chart .x.axis text {
+    font-family: times;
+    font-size: 13px;
+    fill: #083;
+}
