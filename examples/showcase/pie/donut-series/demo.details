@@ -1,0 +1,7 @@
+---
+ name: Pie Chart Series
+ description: Just like with other Forio Contour visualizations, you can show multiple data series in one visualization. While other charts will group, stack, or simply layer the additional data, using multiple data series with a pie chart automatically creates a set of small multiples. Use the `piePadding` to adjust the distance between each chart.
+ authors:
+   - Forio
+ normalize_css: no
+ ...
