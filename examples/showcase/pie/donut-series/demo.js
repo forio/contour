@@ -49,4 +49,6 @@ $(function () {
         .legend(_.map(_.pluck(data[0].data, 'x'), function (x) { return { name: x, data: [] }; }))
         .tooltip()
         .render();
+
+    d3.selectAll('.series').classed('palette-6', true);
 });
