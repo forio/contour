@@ -1,0 +1,7 @@
+---
+ name: Basic Column Chart
+ description: Create basic column charts by adding .cartesian() and .column() in your Contour instance. Use configuration options to set properties of the visualizations and axes.
+ authors:
+   - Forio
+ normalize_css: no
+ ...
