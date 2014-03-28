@@ -1,7 +1,7 @@
 {
-  "name": "Narwhal",
+  "name": "Contour",
   "description": "Forio's Visualization Library",
-  "version": "0.0.78",
+  "version": "0.9.79",
   "dependencies": {
     "lodash": "~2.4.1",
     "d3": "~3.3.0"
