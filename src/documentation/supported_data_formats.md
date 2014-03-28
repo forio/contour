@@ -4,6 +4,8 @@ For each visualization that you add to a Contour instance (`.line()`, `.area()`,
 
 There are several valid formats for each data series.
 
+In addition to the formats below, the [Contour Data Connectors](#data-connectors) allow you to connect your visualizations to source data in different formats, such as CSV and TSV.
+
 ###Single Series
 
 **Array of {x, y} pairs.** You can pass in a single series as an array of {x, y} pairs. 

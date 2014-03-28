@@ -19,7 +19,7 @@ To create a set of visualizations:
 	* All visualizations in the same set (that is, all visualizations in the same instance of Contour) must use the same frame.
 	* Currently, the only available frame is `.cartesian()`.
 3. Then, add one or more specific visualizations to this Contour instance by calling their respective constructors. 
-	* Pass each visualization constructor the data it displays.
+	* Pass each visualization constructor the data it displays. You can specify this by hand using a [supported data format](#supported_data_formats), or use a [Contour data connector](#data-connectors) to extract your data from another format (for example, CSV or TSV files).
 4. Finally, invoke an action for this Contour instance. 
 	* Typically, this action is `.render()`, that is, make this set of visualizations visible on your webpage.
 
