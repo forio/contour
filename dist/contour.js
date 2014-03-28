@@ -1260,7 +1260,7 @@
 
 })();
 
-Contour.version = '0.0.77';
+Contour.version = '0.0.78';
 (function () {
 
     var helpers = {
@@ -2545,7 +2545,7 @@ Contour.version = '0.0.77';
                     d3.select(this)
                         .attr('stroke-dasharray', totalLength + ' ' + totalLength)
                         .attr('stroke-dashoffset', totalLength)
-                        .transition().duration(duration)
+                        .transition().duration(duration).ease('linear')
                             .attr('stroke-dashoffset', 0);
                 });
             },
@@ -2557,7 +2557,7 @@ Contour.version = '0.0.77';
                     d3.select(this)
                         .attr('stroke-dasharray', totalLength + ' ' + totalLength)
                         .attr('stroke-dashoffset', totalLength)
-                        .transition().duration(duration)
+                        .transition().duration(duration).ease('linear')
                             .attr('stroke-dashoffset', 0);
                 });
             }
@@ -2676,7 +2676,7 @@ Contour.version = '0.0.77';
             dots.exit().remove();
 
             if (shouldAnimate) {
-                dots.transition().delay(duration/2).duration(duration / 2)
+                dots.transition().delay(duration)
                     .attr('cx', x)
                     .attr('cy', y)
                     .attr('opacity', 1);
