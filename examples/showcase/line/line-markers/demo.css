@@ -1,10 +1,21 @@
 .chart-title {
     font-family: "Helvetica Neue", Arial, sans-serif;
-    font-size: 24px;
+    font-size: 20px;
     color: #444;
     text-align: center;
-    margin-bottom: .3em;
 }
+
 .chart-title .sub-title {
     font-size: 16px;
+
+}
+
+.tooltip-value {
+    font-size: 16px;
+}
+
+.line-chart-markers .dot {
+    stroke: #fff;
+    stroke-width: 3px;
+
 }

@@ -6,6 +6,10 @@
     margin-left: 2.3em;
 }
 
+.chart-title .sub-title {
+    font-size: 16px;
+}
+
 .area {
     opacity: 0.9;
 }

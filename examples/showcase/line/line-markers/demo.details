@@ -1,0 +1,7 @@
+---
+ name: Line Chart with Styled Markers
+ description: Create basic line chart by adding .cartesian() and .line() in your Contour instance, then  the data markers with CSS, by specifying fill and stroke for the markes. Use configuration options to set properties of the visualizations and axes.
+ authors:
+   - Forio
+ normalize_css: no
+ ...

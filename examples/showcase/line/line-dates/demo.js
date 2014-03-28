@@ -32,6 +32,13 @@ $(function () {
                 title: 'Value (US$)',
                 min: 4000,
                 max: 4500
+            },
+            line: {
+                animationDirection: 'bottom-to-top',
+                marker: {
+                    enable: false
+                }
+
             }
         })
         .cartesian()

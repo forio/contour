@@ -1,10 +1,12 @@
 .chart-title {
     font-family: "Helvetica Neue", Arial, sans-serif;
-    font-size: 24px;
+    font-size: 20px;
     color: #444;
     text-align: center;
-    margin-bottom: .3em;
 }
-.chart-title .sub-title {
+
+.pie-name {
+    font-family: monospace;
     font-size: 16px;
+    fill: #666;
 }

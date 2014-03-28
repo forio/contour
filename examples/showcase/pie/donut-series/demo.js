@@ -14,7 +14,7 @@ $(function () {
                     return options.pie.piePadding * (i + 1) + (pieRadius ) * i + pieRadius / 2;
                 })
                 .attr('text-anchor', 'middle')
-                .attr('y', (options.pie.piePadding + pieRadius + 25))
+                .attr('y', (options.pie.piePadding + pieRadius / 2 + 5))
                 .text(function (d) { return d.name; });
     });
 
@@ -32,10 +32,11 @@ $(function () {
     new Contour({
             el: '.pie-series',
             chart: {
-                height: 250
+                height: 230
             },
             pie: {
-                piePadding: 15
+                piePadding: 15,
+                innerRadius: 50
             },
             legend: {
                 hAlign: 'center',
@@ -49,6 +50,5 @@ $(function () {
         .tooltip()
         .render();
 
-    d3.selectAll('.series').classed('palette-5', true);
-
+    d3.selectAll('.series').classed('palette-6', true);
 });

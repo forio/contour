@@ -1,0 +1,7 @@
+---
+ name: Bar Chart with Image Background
+ description: Create basic bar charts by adding .cartesian(), .horizontal(), and .bar() in your Contour instance and add an svg image (or other kinds of images) to the instance. Use configuration options to set properties of the visualizations and axes.
+ authors:
+   - Forio
+ normalize_css: no
+ ...

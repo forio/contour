@@ -1260,7 +1260,7 @@
 
 })();
 
-Contour.version = '0.0.76';
+Contour.version = '0.9.79';
 (function () {
 
     var helpers = {
@@ -2062,7 +2062,7 @@ Contour.version = '0.0.76';
 
         var area = d3.svg.area()
             .x(function(d) { return x(d.x); })
-            .y0(function (d) { return options.area.stacked ? y(d.y0 || options.yAxis.min) : h; })
+            .y0(function (d) { return options.area.stacked ? y(d.y0 || options.yAxis.min || 0) : h; })
             .y1(function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
 
         renderSeries();
@@ -2545,7 +2545,7 @@ Contour.version = '0.0.76';
                     d3.select(this)
                         .attr('stroke-dasharray', totalLength + ' ' + totalLength)
                         .attr('stroke-dashoffset', totalLength)
-                        .transition().duration(duration)
+                        .transition().duration(duration).ease('linear')
                             .attr('stroke-dashoffset', 0);
                 });
             },
@@ -2557,7 +2557,7 @@ Contour.version = '0.0.76';
                     d3.select(this)
                         .attr('stroke-dasharray', totalLength + ' ' + totalLength)
                         .attr('stroke-dashoffset', totalLength)
-                        .transition().duration(duration)
+                        .transition().duration(duration).ease('linear')
                             .attr('stroke-dashoffset', 0);
                 });
             }
@@ -2676,7 +2676,7 @@ Contour.version = '0.0.76';
             dots.exit().remove();
 
             if (shouldAnimate) {
-                dots.transition().delay(duration/2).duration(duration / 2)
+                dots.transition().delay(duration)
                     .attr('cx', x)
                     .attr('cy', y)
                     .attr('opacity', 1);

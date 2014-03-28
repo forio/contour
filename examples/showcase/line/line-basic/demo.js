@@ -1,32 +1,18 @@
 $(function () {
 
-    var temps = [52, 53, 69, 74, 78, 89, 94, 87, 82, 73, 64];
+    // sample data set
+    var data = [22, 8, 5, 19, 11, 4, 5, 13, 20, 29, 25];
 
+    // we create a Contour instance
     new Contour({
-            el: '.line-basic',
-            chart: {
-                gridlines: 'both'
-            },
-            xAxis: {
-                categories: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov']
-            },
-            yAxis: {
-                title: 'Degrees (F)',
-                titlePadding: 15
-            },
-            tooltip: {
-                formatter: function (d) {
-                    return '<span class="tooltip-value">' + d.y + '&deg;</span>';
-                }
-            },
-            line: {
-                marker: {
-                    size: 5
-                }
-            }
-        })
-        .cartesian()
-        .line(temps)
-        .tooltip()
-        .render();
+        el: '.chart',
+    })
+    // adding a cartesian frame to the instance gives use an X and Y axis
+    // and provide scaling service for the visualizations
+    .cartesian()
+    // we now add a line visualization to the instance
+    // and we pass in the data we want to use
+    .line(data)
+    // finally we call render to draw the chart and visualizations onto the web page (DOM)
+    .render();
 });

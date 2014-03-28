@@ -1,0 +1,7 @@
+---
+ name: Styled Bar Chart
+ description: Create basic bar charts by adding .cartesian(), .horizontal(), and .bar() in your Contour instance. Use configuration options to set properties of the visualizations and axes and CSS to style the chart.
+ authors:
+   - Forio
+ normalize_css: no
+ ...
