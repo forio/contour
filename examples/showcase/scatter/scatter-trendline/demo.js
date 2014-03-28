@@ -26,7 +26,6 @@ $(function () {
             .attr('class', 'r2-info')
             .attr('x', options.chart.plotWidth)
             .attr('y', options.chart.plotHeight)
-            // .attr('dx', '-1em')
             .attr('dy', '-1em')
             .attr('text-anchor', 'end')
             .text('R2: ' + d3.format('.3f')(reg.r2));
