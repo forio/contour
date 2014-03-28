@@ -4,3 +4,7 @@
     color: #444;
     text-align: center;
 }
+
+.series .line {
+    stroke-dasharray: 5,5;
+}
