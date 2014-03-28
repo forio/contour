@@ -8,7 +8,8 @@ $(function () {
         // donut (pie) charts with one data series, one value visible, and the remainder dimed out.
         // So we can assume that there are only two elements in the data series.
         var visibleIndex = data[0].data[0].y < data[0].data[1].y ? 1 : 0;
-        var center = options.pie.piePadding + options.pie.outerRadius;
+        var posibleRadius = options.chart.plotHeight / 2;
+        var center = (options.pie.outerRadius || posibleRadius);
 
         layer.append('text')
             .attr('class', 'center-text')
@@ -29,9 +30,12 @@ $(function () {
 
     new Contour({
             el: '.pie-gauge',
-            pie: { piePadding: 15, innerRadius: 80, outerRadius: 140 },
+            pie: {
+                piePadding: 15,
+                innerRadius: 90
+            },
             tooltip: {
-                formatter: function (d) {
+                formatter: function(d) {
                     return d.data.x + ': ' + formatter(d.data.y);
                 }
             }
