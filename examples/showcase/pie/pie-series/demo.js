@@ -31,12 +31,21 @@ $(function () {
 
     new Contour({
             el: '.pie-series',
+            chart: {
+                height: 250
+            },
             pie: {
-                piePadding: 15,
+                piePadding: 15
+            },
+            legend: {
+                hAlign: 'center',
+                vAlign: 'bottom',
+                direction: 'horizontal'
             }
         })
         .pie(data)
         .pieName(data)
+        .legend(_.map(_.pluck(data[0].data, 'x'), function (x) { return { name: x, data: [] }; }))
         .tooltip()
         .render();
 });
