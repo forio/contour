@@ -45,7 +45,6 @@ $(function () {
         })
         .cartesian()
         .area(data)
-        // .line(data, { marker: { size: 3 } } )
         .legend(data)
         .render();
 
