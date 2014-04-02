@@ -76,12 +76,14 @@
         });
 
         renderPaths();
+
         if (options.line.marker.enable)
             renderMarkers();
-        renderTooltipTrackers();
+
+        if (options.tooltip && options.tooltip.enable)
+            renderTooltipTrackers();
 
         function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
-
 
         function renderPaths() {
             var startLine = d3.svg.line()
@@ -178,16 +180,18 @@
                 .data(function (d) { return d.data; }, function (d) { return d.x; });
 
             dots.enter().append('circle')
-                .attr('class', 'tooltip-tracker')
-                .attr('r', trackerSize)
-                .attr('opacity', 0)
-                .attr('cx', x)
-                .attr('cy', h);
+                .attr({
+                    'class': 'tooltip-tracker',
+                    'r': trackerSize,
+                    'opacity': 0
+                });
+
+            dots.attr({
+                'cx': x,
+                'cy': y
+            });
 
             dots.exit().remove();
-
-            dots.attr('cx', x)
-                .attr('cy', y);
         }
 
         return this;

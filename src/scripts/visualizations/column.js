@@ -51,10 +51,11 @@
 
         var offset = function (d, i) { return rangeBand / data.length * i; };
         var width = rangeBand / data.length - opt.groupPadding;
+        var cssClass = 'column' + options.tooltip.enable ? ' tooltip-tracker' : '';
 
         cols.enter()
             .append('rect')
-            .attr('class', 'column tooltip-tracker')
+            .attr('class', cssClass)
             .call(enter);
 
         if (options.chart.animations && options.chart.animations.enable) {

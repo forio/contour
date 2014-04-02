@@ -57,7 +57,9 @@
                     .attr('d', area);
             }
 
-            renderTooltipTrackers.call(this, series);
+            if (options.tooltip.enable) {
+                renderTooltipTrackers.call(this, series);
+            }
         }
 
         function renderTooltipTrackers(series){
