@@ -162,7 +162,8 @@
                     .attr('opacity', 1);
             } else {
                 dots.attr('cx', x)
-                    .attr('cy', y);
+                    .attr('cy', y)
+                    .attr('opacity', 1);
             }
         }
 
