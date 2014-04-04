@@ -54,7 +54,6 @@
         },
 
         tooltip: {
-            enable: true
         }
     };
 

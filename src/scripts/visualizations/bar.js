@@ -31,7 +31,7 @@
         var bars = series.selectAll('.bar')
             .data(function (d) { return d.data; });
 
-        var cssClass = 'bar' + options.tooltip.enable ? ' tooltip-tracker' : '';
+        var cssClass = 'bar' + (options.tooltip.enable ? ' tooltip-tracker' : '');
         bars.enter().append('rect')
             .attr('class', cssClass)
             .call(enter);

@@ -20,7 +20,7 @@
         var proposedRadius = (Math.min(w / numSeries, h) / 2) - padding;
         var radius = _.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius) ;
         var innerRadius = _.nw.getValue(options.pie.innerRadius, 0, this, radius);
-        var classFn = function (d, i) { return 'series arc' + (options.tooltip.enable ? 'tooltip-tracker' : '') + 's-' + (i+1) + ' ' + d.name; };
+        var classFn = function (d, i) { return 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.name; };
         // shape the data into angles and don't sort (ie preserve order of input array)
         var pieData = d3.layout.pie().value(function (d) { return d.y; }).sort(null);
         var translatePie = function (d,i) {
