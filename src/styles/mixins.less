@@ -15,8 +15,10 @@
         @{list} {
             @color-def: extract(@colorList, @index);
             color: extract(@colorList, @index);
+            stroke: @color-def;
+            fill: @color-def;
+
             &.line, .line {
-                stroke: @color-def;
                 stroke-width: @data-line-width;
                 fill: none;
             }
@@ -25,18 +27,8 @@
                 background-color: @color-def;
             }
 
-            &.bar,
-            &.column,
-            &.dot,
-            &.area,
-            &.arc,
-            .bar,
-            .column,
-            .dot,
-            .area,
-            .arc
-             {
-                fill: @color-def;
+            &.dot, .dot {
+                stroke-dasharray: none;
             }
         }
     }
