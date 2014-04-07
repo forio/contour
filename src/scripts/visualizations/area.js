@@ -14,8 +14,8 @@
 
         if (!this.xScale) throw new Error('Area Chart requires .cartesian() to be included in the instance.');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
-        var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2; }, this);
-        var y = _.bind(function (val) { return this.yScale(val); }, this);
+        var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2 + 0.5; }, this);
+        var y = _.bind(function (val) { return this.yScale(val) + 0.5; }, this);
         var h = options.chart.plotHeight;
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
