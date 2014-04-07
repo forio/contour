@@ -58,8 +58,8 @@
     function render(rawData, layer, options, id) {
         if (!this.xScale) throw new Error('Line Chart requires .cartesian() to be included in the instance.');
 
-        var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
-        var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+        var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
+        var y = _.bind(function (d) { return this.yScale(d.y) + 0.5; }, this);
         var h = options.chart.plotHeight;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         animationDirection = options.line.animationDirection || 'left-to-right';
