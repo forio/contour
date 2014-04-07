@@ -12,8 +12,9 @@
         if (!options.chart.rotatedFrame) throw new Error('Bar Chart requires .horizontal() to be included in the instance');
 
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
-        var x = this.xScale;
-        var y = this.yScale;
+        var _this = this;
+        var x = function (d) { return _this.xScale(d) + 0.5; };
+        var y = function (d) { return _this.yScale(d) + 0.5; };
         var rangeBand = this.rangeBand;
         var stack = d3.layout.stack().values(function (d) { return d.data; });
         var update = options.bar.stacked ? stacked : grouped;
