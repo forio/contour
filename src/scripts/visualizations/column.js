@@ -16,8 +16,8 @@
         var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
         var _this = this;
-        var x = function (v) { return Math.round(_this.xScale(v)); };
-        var y = function (v) { return Math.round(_this.yScale(v)); };
+        var x = function (v) { return Math.round(_this.xScale(v)) + 0.5; };
+        var y = function (v) { return Math.round(_this.yScale(v)) + 0.5; };
         var dataKey = function (d) { return d.data; };
         var chartOffset = _.nw.getValue(opt.offset, 0, this);
         var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
