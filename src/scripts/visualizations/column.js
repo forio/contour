@@ -17,7 +17,7 @@
         var h = options.chart.plotHeight;
         var _this = this;
         var x = function (v) { return Math.round(_this.xScale(v)) + 0.5; };
-        var y = function (v) { return Math.round(_this.yScale(v)) + 0.5; };
+        var y = function (v) { return Math.round(_this.yScale(v)) - 0.5; };
         var dataKey = function (d) { return d.data; };
         var chartOffset = _.nw.getValue(opt.offset, 0, this);
         var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
@@ -50,7 +50,7 @@
                 .data(dataKey);
 
         var offset = function (d, i) { return rangeBand / data.length * i; };
-        var width = rangeBand / data.length - opt.groupPadding;
+        var width = rangeBand / data.length - opt.groupPadding - 0.5;
         var cssClass = 'column' + (options.tooltip.enable ? ' tooltip-tracker' : '');
 
         cols.enter()
@@ -62,7 +62,7 @@
             cols.exit()
                 .transition().duration(duration)
                 .attr('y', h)
-                .attr('height', function () { return 0; })
+                .attr('height', function () { return 0.5; })
                 .remove();
             cols.transition().duration(duration)
                 .call(update);
@@ -79,7 +79,7 @@
 
             if (enter) {
                 col.attr('y', function (d) { return d.y >= 0 ? base : base; })
-                    .attr('height', function (d) { return 0; });
+                    .attr('height', function (d) { return 0.5; });
             } else {
                 col.attr('y', function (d) { return d.y >= 0 ? y(d.y) + y(d.y0) - base : y(d.y0) ; })
                     .attr('height', function (d) { return d.y >=0 ? base - y(d.y) : y(d.y) - base; });
@@ -87,8 +87,8 @@
         }
 
         function grouped(col, enter) {
-            var width = rangeBand / data.length - opt.groupPadding;
-            var offset = function (d, i) { return rangeBand / data.length * i; };
+            var width = rangeBand / data.length - opt.groupPadding + 0.5;
+            var offset = function (d, i) { return rangeBand / data.length * i + 0.5; };
             var base = y(0);
 
             col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
