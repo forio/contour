@@ -13,7 +13,7 @@
 
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var _this = this;
-        var x = function (d) { return _this.xScale(d) + 0.5; };
+        var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
         var rangeBand = this.rangeBand;
         var stack = d3.layout.stack().values(function (d) { return d.data; });
@@ -67,8 +67,8 @@
 
         function grouped(bar, enter) {
             var numSeries = data.length;
-            var height = function () { return rangeBand / numSeries - options.bar.groupPadding; };
-            var offset = function (d, i) { return rangeBand / numSeries * i; };
+            var height = function () { return rangeBand / numSeries - options.bar.groupPadding + 0.5; };
+            var offset = function (d, i) { return rangeBand / numSeries * i + 0.5; };
 
             bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })
                 .attr('x', 0)
@@ -76,7 +76,7 @@
 
             if (enter) {
                 return bar
-                    .attr('width', function (d) { return y(0); });
+                    .attr('width', function (d) { return 0.5; });
             } else {
                 return bar
                     .attr('width', function (d) { return y(d.y); });
