@@ -56,12 +56,12 @@
             if (enter) {
                 return bar
                     .attr('x', function (d) { return y(0); })
-                    .attr('width', function (d) { return y(0); });
+                    .attr('width', function (d) { return 0; });
 
             } else {
                 return bar
-                    .attr('x', function (d) { return y(d.y0 || 0); })
-                    .attr('width', function (d) { return y(d.y); });
+                    .attr('x', function (d) { return d.y >= 0 ? y(d.y0 || 0) : y(d.y + d.y0); })
+                    .attr('width', function (d) { return d.y >=0 ? y(d.y) - y(0) : y(0) - y(d.y); });
             }
         }
 
@@ -71,7 +71,7 @@
             var offset = function (d, i) { return rangeBand / numSeries * i + 0.5; };
 
             bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })
-                .attr('x', 0)
+                .attr('x', y(0))
                 .attr('height', height);
 
             if (enter) {
@@ -79,7 +79,8 @@
                     .attr('width', function (d) { return 0.5; });
             } else {
                 return bar
-                    .attr('width', function (d) { return y(d.y); });
+                    .attr('width', function (d) { return d.y >= 0 ? y(d.y) - y(0) : y(0) - y(d.y); })
+                    .attr('x', function (d) { return d.y < 0 ? y(d.y) : y(0); });
             }
         }
     }
