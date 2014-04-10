@@ -1,8 +1,8 @@
 
 .s-2.arc {
-    /*fill: transparent;*/
     opacity: 0.5;
     fill: #ddd;
+    stroke: #ddd;
 }
 
 .center-text,
