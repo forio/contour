@@ -162,11 +162,16 @@
     */
     Contour.expose = function (ctorName, functionalityConstructor) {
         var ctor = function () {
+
             var functionality = typeof functionalityConstructor === 'function' ? new functionalityConstructor() : functionalityConstructor;
             // extend the --instance-- we don't want all charts to be overriden...
             _.extend(this, _.omit(functionality, 'init'));
 
             if(functionality.init) functionality.init.call(this, this.options);
+
+            // keep a list of the included functionality into this instance
+            // so we can match and check dependencies
+            this._exposed.push(ctorName);
 
             return this;
         };
@@ -181,6 +186,8 @@
 
         _extraOptions: undefined,
 
+        _exposed: undefined,
+
         // Initializes the instance of Narwhal
         init: function (options) {
             // for now, just  store this options here...
@@ -190,6 +197,7 @@
 
             this._extraOptions = [];
             this._visualizations = [];
+            this._exposed = [];
 
             return this;
         },
@@ -326,6 +334,32 @@
             }, this);
 
             return this;
+        },
+
+        /**
+        * Assert that all the dependencies are into the Contour instance
+        * for example if a visualization requires Cartisian to be included in the instance
+        * it would call this.checkDependencies('Cartesian'), and the framework would
+        * give a helpful error message if it was not included
+        *
+        * @function checkDependencies
+        * @param {string|array} list of dependencies (as specified in the instance constructor)
+        *
+        */
+        checkDependencies: function (listOfDependencies) {
+            listOfDependencies = _.isArray(listOfDependencies) ? listOfDependencies : [listOfDependencies];
+            var _this = this;
+            var missing = [];
+
+            _.each(listOfDependencies, function (dep) {
+                if (_this._exposed.indexOf(dep) === -1) {
+                    missing.push(dep);
+                }
+            });
+
+            if (missing.length) {
+                throw new Error('Missing depeendencies in the Contour instance (ej. new Contour({}).cartesian()): [' + missing.join(', ') + ']');
+            }
         },
 
         /**
