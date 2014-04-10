@@ -815,7 +815,9 @@
 
 
     /**
-    * Provides a Cartesian frame to the Contour instance.
+    * Provides a Cartesian frame to the Contour instance. 
+    *
+    * This is required for all visualizations displayed in a Cartesian frame, for example line charts, bar charts, area charts, etc. It is not required otherwise; for instance, pie charts do not use a Cartesian frame.
     *
     * ###Example:
     *
@@ -1260,7 +1262,7 @@
 
 })();
 
-Contour.version = '0.9.79';
+Contour.version = '0.9.80';
 (function () {
 
     var helpers = {
@@ -2049,8 +2051,8 @@ Contour.version = '0.9.79';
 
         if (!this.xScale) throw new Error('Area Chart requires .cartesian() to be included in the instance.');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
-        var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2; }, this);
-        var y = _.bind(function (val) { return this.yScale(val); }, this);
+        var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2 + 0.5; }, this);
+        var y = _.bind(function (val) { return this.yScale(val) + 0.5; }, this);
         var h = options.chart.plotHeight;
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });
@@ -2062,7 +2064,7 @@ Contour.version = '0.9.79';
 
         var area = d3.svg.area()
             .x(function(d) { return x(d.x); })
-            .y0(function (d) { return options.area.stacked ? y(d.y0 || options.yAxis.min || 0) : h; })
+            .y0(function (d) { return options.area.stacked ? y(d.y0 || options.yAxis.min || 0) : y(0); })
             .y1(function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
 
         renderSeries();
@@ -2092,7 +2094,9 @@ Contour.version = '0.9.79';
                     .attr('d', area);
             }
 
-            renderTooltipTrackers.call(this, series);
+            if (options.tooltip.enable) {
+                renderTooltipTrackers.call(this, series);
+            }
         }
 
         function renderTooltipTrackers(series){
@@ -2150,8 +2154,9 @@ Contour.version = '0.9.79';
         if (!options.chart.rotatedFrame) throw new Error('Bar Chart requires .horizontal() to be included in the instance');
 
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
-        var x = this.xScale;
-        var y = this.yScale;
+        var _this = this;
+        var x = function (d) { return _this.xScale(d) - 0.5; };
+        var y = function (d) { return _this.yScale(d) + 0.5; };
         var rangeBand = this.rangeBand;
         var stack = d3.layout.stack().values(function (d) { return d.data; });
         var update = options.bar.stacked ? stacked : grouped;
@@ -2169,8 +2174,9 @@ Contour.version = '0.9.79';
         var bars = series.selectAll('.bar')
             .data(function (d) { return d.data; });
 
+        var cssClass = 'bar' + (options.tooltip.enable ? ' tooltip-tracker' : '');
         bars.enter().append('rect')
-            .attr('class', 'bar tooltip-tracker')
+            .attr('class', cssClass)
             .call(enter);
 
         if(options.chart.animations && options.chart.animations.enable) {
@@ -2192,30 +2198,31 @@ Contour.version = '0.9.79';
             if (enter) {
                 return bar
                     .attr('x', function (d) { return y(0); })
-                    .attr('width', function (d) { return y(0); });
+                    .attr('width', function (d) { return 0; });
 
             } else {
                 return bar
-                    .attr('x', function (d) { return y(d.y0 || 0); })
-                    .attr('width', function (d) { return y(d.y); });
+                    .attr('x', function (d) { return d.y >= 0 ? y(d.y0 || 0) : y(d.y + d.y0); })
+                    .attr('width', function (d) { return d.y >=0 ? y(d.y) - y(0) : y(0) - y(d.y); });
             }
         }
 
         function grouped(bar, enter) {
             var numSeries = data.length;
-            var height = function () { return rangeBand / numSeries - options.bar.groupPadding; };
-            var offset = function (d, i) { return rangeBand / numSeries * i; };
+            var height = function () { return rangeBand / numSeries - options.bar.groupPadding + 0.5; };
+            var offset = function (d, i) { return rangeBand / numSeries * i + 0.5; };
 
             bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })
-                .attr('x', 0)
+                .attr('x', y(0))
                 .attr('height', height);
 
             if (enter) {
                 return bar
-                    .attr('width', function (d) { return y(0); });
+                    .attr('width', function (d) { return 0.5; });
             } else {
                 return bar
-                    .attr('width', function (d) { return y(d.y); });
+                    .attr('width', function (d) { return d.y >= 0 ? y(d.y) - y(0) : y(0) - y(d.y); })
+                    .attr('x', function (d) { return d.y < 0 ? y(d.y) : y(0); });
             }
         }
     }
@@ -2264,8 +2271,8 @@ Contour.version = '0.9.79';
         var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
         var _this = this;
-        var x = function (v) { return Math.round(_this.xScale(v)); };
-        var y = function (v) { return Math.round(_this.yScale(v)); };
+        var x = function (v) { return Math.round(_this.xScale(v)) + 0.5; };
+        var y = function (v) { return Math.round(_this.yScale(v)) - 0.5; };
         var dataKey = function (d) { return d.data; };
         var chartOffset = _.nw.getValue(opt.offset, 0, this);
         var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
@@ -2298,18 +2305,19 @@ Contour.version = '0.9.79';
                 .data(dataKey);
 
         var offset = function (d, i) { return rangeBand / data.length * i; };
-        var width = rangeBand / data.length - opt.groupPadding;
+        var width = rangeBand / data.length - opt.groupPadding - 0.5;
+        var cssClass = 'column' + (options.tooltip.enable ? ' tooltip-tracker' : '');
 
         cols.enter()
             .append('rect')
-            .attr('class', 'column tooltip-tracker')
+            .attr('class', cssClass)
             .call(enter);
 
         if (options.chart.animations && options.chart.animations.enable) {
             cols.exit()
                 .transition().duration(duration)
                 .attr('y', h)
-                .attr('height', function () { return 0; })
+                .attr('height', function () { return 0.5; })
                 .remove();
             cols.transition().duration(duration)
                 .call(update);
@@ -2326,7 +2334,7 @@ Contour.version = '0.9.79';
 
             if (enter) {
                 col.attr('y', function (d) { return d.y >= 0 ? base : base; })
-                    .attr('height', function (d) { return 0; });
+                    .attr('height', function (d) { return 0.5; });
             } else {
                 col.attr('y', function (d) { return d.y >= 0 ? y(d.y) + y(d.y0) - base : y(d.y0) ; })
                     .attr('height', function (d) { return d.y >=0 ? base - y(d.y) : y(d.y) - base; });
@@ -2334,8 +2342,8 @@ Contour.version = '0.9.79';
         }
 
         function grouped(col, enter) {
-            var width = rangeBand / data.length - opt.groupPadding;
-            var offset = function (d, i) { return rangeBand / data.length * i; };
+            var width = rangeBand / data.length - opt.groupPadding + 0.5;
+            var offset = function (d, i) { return rangeBand / data.length * i + 0.5; };
             var base = y(0);
 
             col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
@@ -2580,8 +2588,8 @@ Contour.version = '0.9.79';
     function render(rawData, layer, options, id) {
         if (!this.xScale) throw new Error('Line Chart requires .cartesian() to be included in the instance.');
 
-        var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2; }, this);
-        var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+        var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
+        var y = _.bind(function (d) { return this.yScale(d.y) + 0.5; }, this);
         var h = options.chart.plotHeight;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         animationDirection = options.line.animationDirection || 'left-to-right';
@@ -2598,12 +2606,14 @@ Contour.version = '0.9.79';
         });
 
         renderPaths();
+
         if (options.line.marker.enable)
             renderMarkers();
-        renderTooltipTrackers();
+
+        if (options.tooltip && options.tooltip.enable)
+            renderTooltipTrackers();
 
         function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
-
 
         function renderPaths() {
             var startLine = d3.svg.line()
@@ -2682,7 +2692,8 @@ Contour.version = '0.9.79';
                     .attr('opacity', 1);
             } else {
                 dots.attr('cx', x)
-                    .attr('cy', y);
+                    .attr('cy', y)
+                    .attr('opacity', 1);
             }
         }
 
@@ -2700,16 +2711,18 @@ Contour.version = '0.9.79';
                 .data(function (d) { return d.data; }, function (d) { return d.x; });
 
             dots.enter().append('circle')
-                .attr('class', 'tooltip-tracker')
-                .attr('r', trackerSize)
-                .attr('opacity', 0)
-                .attr('cx', x)
-                .attr('cy', h);
+                .attr({
+                    'class': 'tooltip-tracker',
+                    'r': trackerSize,
+                    'opacity': 0
+                });
+
+            dots.attr({
+                'cx': x,
+                'cy': y
+            });
 
             dots.exit().remove();
-
-            dots.attr('cx', x)
-                .attr('cy', y);
         }
 
         return this;
@@ -2764,7 +2777,7 @@ Contour.export('nullVis', _.noop);
         var proposedRadius = (Math.min(w / numSeries, h) / 2) - padding;
         var radius = _.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius) ;
         var innerRadius = _.nw.getValue(options.pie.innerRadius, 0, this, radius);
-        var classFn = function (d, i) { return 'series arc tooltip-tracker s-' + (i+1) + ' ' + d.name; };
+        var classFn = function (d, i) { return 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.name; };
         // shape the data into angles and don't sort (ie preserve order of input array)
         var pieData = d3.layout.pie().value(function (d) { return d.y; }).sort(null);
         var translatePie = function (d,i) {
@@ -2997,6 +3010,7 @@ Contour.export('nullVis', _.noop);
 (function () {
     var defaults = {
         tooltip: {
+            enable: true,
             animate: true,
             opacity: 0.85,
             showTime: 300,
