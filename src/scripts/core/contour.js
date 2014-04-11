@@ -358,7 +358,7 @@
             });
 
             if (missing.length) {
-                throw new Error('Missing depeendencies in the Contour instance (ej. new Contour({}).cartesian()): [' + missing.join(', ') + ']');
+                throw new Error('ERROR: Missing depeendencies in the Contour instance (ej. new Contour({}).cartesian())\n The missing dependencies are: [' + missing.join(', ') + ']\nGo to http://forio.com/contour/documentation.html#key_concepts for more information');
             }
         },
 
