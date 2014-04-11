@@ -2,7 +2,7 @@
 
 
     function ctor(data, layer, options) {
-        if (!this.xScale) throw new Error('Trend Line requires .cartesian() to be included in the instance.');
+        this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);

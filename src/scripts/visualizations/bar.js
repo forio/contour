@@ -8,9 +8,7 @@
     };
 
     function barRender(data, layer, options) {
-
-        if (!options.chart.rotatedFrame) throw new Error('Bar Chart requires .horizontal() to be included in the instance');
-
+        this.checkDependencies(['cartesian', 'horizontal']);
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var _this = this;
         var x = function (d) { return _this.xScale(d) - 0.5; };

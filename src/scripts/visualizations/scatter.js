@@ -10,7 +10,7 @@
     };
 
     function ScatterPlot(data, layer, options) {
-        if (!this.xScale) throw new Error('Scatter Chart requires .cartesian() to be included in the instance.');
+        this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var opt = options.scatter;
