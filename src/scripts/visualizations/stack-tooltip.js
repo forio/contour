@@ -8,7 +8,7 @@
     *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .column(stackedColData)
-    *           .stackedTooltip(stackedColData, {el: '.myChartLegend'})
+    *           .stackTooltip(stackedColData, {el: '.myChartLegend'})
     *           .render();
     *
     * @name stackTooltip(data, options)
@@ -16,6 +16,9 @@
     * @param {object} options Configuration options particular to this visualization that override the defaults. Requires an `el` option with the selector of the container in which to render the tooltip.
     * @api public
     *
+    * ### Notes:
+    *
+    * Each Contour instance can only include one `stackTooltip` visualization.
     */
     Contour.export('stackTooltip', function (data, layer, options) {
 
