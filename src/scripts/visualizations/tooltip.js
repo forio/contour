@@ -194,6 +194,9 @@
     * @param {object} options Configuration options particular to this visualization that override the defaults.
     * @api public
     *
+    * ### Notes:
+    *
+    * Each Contour instance can only include one `tooltip` visualization.
     */
     Contour.export('tooltip', render);
 
