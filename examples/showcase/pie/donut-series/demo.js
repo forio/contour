@@ -32,7 +32,7 @@ $(function () {
     new Contour({
             el: '.pie-series',
             chart: {
-                height: 230
+                height: 270
             },
             pie: {
                 piePadding: 15,
