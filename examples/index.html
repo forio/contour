@@ -50,6 +50,11 @@
             margin: .35em 0;
          }
 
+         #sample {
+            width: 100%;
+
+         }
+
     </style>
 </head>
 <body>
@@ -72,119 +77,11 @@
                     <option value="6">Palette 6</option>
                 </select>
             </div>
-            <iframe id="sample" frameborder="0" width="600px" height="500px"></iframe>
+                <iframe id="sample" frameborder="0"></iframe>
         </div>
     </div>
 </div>
 
-<script>
-    var samples = [
-        "area/area-basic",
-        "area/area-combo",
-        "area/area-stacked",
-        "bar/bar-basic",
-        "bar/bar-export",
-        "bar/bar-grouped",
-        "bar/bar-stacked",
-        "bar/bar-styled",
-        "bar/bar-image",
-        "column/column-basic",
-        "column/column-styled",
-        "column/column-grouped",
-        "column/column-width",
-        "column/coumn-stacked",
-        "line/line-basic",
-        "line/line-markers",
-        "line/line-dates",
-        "line/line-export",
-        "line/line-multi-basic",
-        "line/line-sine",
-        "pie/pie-basic",
-        "pie/pie-donut",
-        "pie/pie-gauge",
-        "pie/pie-series",
-        "pie/donut-series",
-        "scatter/scatter-basic",
-        "scatter/scatter-export",
-        "scatter/scatter-trendline"
-    ];
-
-    buildMenu(samples);
-    doRouting();
-
-    function doRouting() {
-        var hash = document.location.hash.replace('#', '');
-        if (hash.length) {
-            loadSamples(hash);
-        }
-    }
-
-    function buildMenu(data) {
-        var items = [];
-        var curPalette = 'palette-1';
-
-        $.each(data, function (i, d) {
-            var li = $('<li>').text(d).attr('data-path', d);
-            items.push(li);
-        })
-
-        var ul = $('<ul>').addClass('list-unstyled');
-        ul.append(items).appendTo('.menu');
-        ul.on('click', 'li', function () {
-            var path = $(this).data('path');
-            document.location.hash = '#/' + path;
-            loadSamples(path);
-        });
-
-        $('.palette-selector').on('change', function () {
-            var iframe = d3.select('iframe').node();
-            var newPalette = 'palette-' + $(this).val();
-
-            d3.select(iframe.contentDocument)
-                .selectAll('.series')
-                    .classed(curPalette, false)
-                    .classed(newPalette, true);
-
-            curPalette = newPalette;
-        });
-    }
-
-    function loadSamples(path) {
-        var fullPath = 'showcase/' + path;
-        var frame = $('#sample');
-
-        $('.chart-id').text(path);
-
-        $.get(fullPath + '/demo.html', function (res) {
-            var iframe = frame.get(0);
-            if(iframe.contentDocument) doc = iframe.contentDocument;
-            else if(iframe.contentWindow) doc = iframe.contentWindow.document;
-            else doc = iframe.document;
-
-            doc.open();
-            doc.writeln(res);
-            doc.close();
-
-            var head = doc.getElementsByTagName('head')[0];
-            var body = doc.getElementsByTagName('body')[0];
-
-            var link = document.createElement('link');
-            link.href = fullPath + '/demo.css';
-            link.rel = 'stylesheet';
-            head.appendChild(link);
-
-            var script = document.createElement('script');
-            script.src = '../examples/js/vendor/jquery.js';
-            head.appendChild(script);
-
-            var script = document.createElement('script');
-            script.src = fullPath + '/demo.js';
-
-            head.appendChild(script);
-        });
-    }
-
-
-</script>
+<script src="js/index.js"></script>
 </body>
 </html>
