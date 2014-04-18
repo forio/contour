@@ -57,6 +57,12 @@
         }
     };
 
+    // used to pass the last specified dataset
+    // to the next visualiaztion in the chain wihtout
+    // the need to specify it again.... this allows you to do
+    // new Contour().cartesian().line(dataset).lengend().tooltip().render()
+    // and legend and tooltip will recieve dataset
+    var lastData;
 
     /**
     * Creates a Contour instance, based on the core Contour object. This instance can contain a set of related visualizations.
@@ -123,17 +129,16 @@
             return data;
         }
 
-
         Contour.prototype[ctorName] = function (data, options) {
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
 
-            data = data || [];
+            data = data || lastData || [];
             sortSeries(data);
             vis = new Contour.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
             this._visualizations.push(vis);
-
+            lastData = data;
             return this;
         };
     };
