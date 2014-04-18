@@ -20,27 +20,35 @@ describe('Bar chart', function () {
 
         it('should create one rect per data point', function () {
             createinstance().bar(data).render();
-            var rects = $el.find('rect');
+            var rects = $el.find('rect.bar');
             expect(rects.length).toBe(3);
         });
 
         it('should add the Bar class to each Bar', function () {
             createinstance().bar(data).render();
-            var rects = $el.find('rect');
+            var rects = $el.find('rect.bar');
 
             expect(rects.filter('.bar').length).toBe(3);
         });
 
-        it('should add the tooltip-tracker class to each Bar', function () {
-            createinstance().bar(data).render();
-            var rects = $el.find('rect');
+
+        it('with tooltips enabled should add the tooltip-tracker class to each Bar', function () {
+            createinstance({tooltip: { enable: true }}).bar(data).render();
+            var rects = $el.find('rect.bar');
 
             expect(rects.filter('.tooltip-tracker').length).toBe(3);
         });
 
+        it('with tooltips disabled should add the tooltip-tracker class to each Bar', function () {
+            createinstance({tooltip: { enable: false }}).bar(data).render();
+            var rects = $el.find('rect.bar');
+
+            expect(rects.filter('.tooltip-tracker').length).toBe(0);
+        });
+
         it('should set the width of each Bar to the corresponding yScale value', function () {
             var nw = createinstance().bar(data).render();
-            var rects = $el.find('rect');
+            var rects = $el.find('rect.bar');
             var x = function (d) { return nw.yScale(d); };
 
             expect(+rects.eq(0).attr('width')).toBe(x(data[0]));
@@ -107,7 +115,7 @@ describe('Bar chart', function () {
             });
 
             it('should render one bar per data point on different y\'s', function () {
-                var rects = $el.find('rect');
+                var rects = $el.find('rect.bar');
 
                 expect(rects).toAllHaveDifferentYCoord();
             });
@@ -124,7 +132,7 @@ describe('Bar chart', function () {
             });
 
             it('should render one bar per category', function () {
-                var rects = $el.find('rect');
+                var rects = $el.find('rect.bar');
                 expect(rects).toHaveUniqeYCoord(3);
             });
         });
@@ -141,7 +149,7 @@ describe('Bar chart', function () {
         });
 
         it('should behave correctly', function () {
-            var rects = _.filter($el.find('rect'), function (r) { return +$(r).attr('width') > 0; });
+            var rects = _.filter($el.find('rect.bar'), function (r) { return +$(r).attr('width') > 0; });
             expect(rects.length).toBe(7);
         });
 
