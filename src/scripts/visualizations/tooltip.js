@@ -120,7 +120,7 @@
             changeOpacity.call(this, 0, this.options.tooltip.hideTime);
         };
 
-        var getTooltipText = function (d) {
+        var getTooltipText = function (d, allPoints) {
             function match() {
                 var params = Array.prototype.slice.call(arguments);
                 var list = params[0];
@@ -130,9 +130,10 @@
 
                 return _.first(_.select(response));
             }
+
             var options = this.options.tooltip;
             var formatters = [
-                function (d) { return options.formatter ? _.partial(options.formatter, d) : null; },
+                function (d) { return options.formatter ? _.partial(options.formatter, d, allPoints) : null; },
                 function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return d.series + '<br>' + d.x + '<br>' + d.y; }, d) : null; },
                 function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return d.series + '<br>' +  d.x + '<br>' + d.y; }, d.data) : null; },
                 function (d) { return d.hasOwnProperty('value') ? _.partial(function (d) { return d.value; }, d) : null;  },
