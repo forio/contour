@@ -448,12 +448,13 @@
 
             renderBackground: function () {
                 var options = this.options.chart;
-                var g = this.svg.selectAll('.plot-area-background').data([null]);
+                var layer = this.createVisualizationLayer('background', 0);
+                var g = layer.selectAll('.plot-area-background').data([null]);
 
                 g.enter().append('rect')
                     .attr('class', 'plot-area-background')
-                    .attr('x', options.plotLeft)
-                    .attr('y', options.plotTop)
+                    .attr('x', 0)
+                    .attr('y', 0)
                     .attr('width', options.plotWidth)
                     .attr('height', options.plotHeight);
 
