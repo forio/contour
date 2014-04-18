@@ -64,7 +64,7 @@
 
 
     /**
-    * Provides a Cartesian frame to the Contour instance. 
+    * Provides a Cartesian frame to the Contour instance.
     *
     * This is required for all visualizations displayed in a Cartesian frame, for example line charts, bar charts, area charts, etc. It is not required otherwise; for instance, pie charts do not use a Cartesian frame.
     *
@@ -446,6 +446,22 @@
                 return this;
             },
 
+            renderBackground: function () {
+                var options = this.options.chart;
+                var g = this.svg.selectAll('.plot-area-background').data([null]);
+
+                g.enter().append('rect')
+                    .attr('class', 'plot-area-background')
+                    .attr('x', options.plotLeft)
+                    .attr('y', options.plotTop)
+                    .attr('width', options.plotWidth)
+                    .attr('height', options.plotHeight);
+
+                g.exit().remove();
+
+                return this;
+            },
+
             render: function () {
 
                 this.composeOptions();
@@ -454,7 +470,9 @@
                 this.computeScales();
                 this.baseRender();
 
-                this.renderXAxis()
+                this
+                    .renderBackground()
+                    .renderXAxis()
                     .renderYAxis()
                     .renderGridlines()
                     .renderAxisLabels()
