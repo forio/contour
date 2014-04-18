@@ -105,16 +105,38 @@ describe('Visualizations', function () {
                     expect(path.attr('class')).toContain('line');
                 });
 
-                it('should add a marker tooltip target for each data point', function () {
-                    var trackers = $el.find('g[vis-id="1"] .tooltip-tracker');
-                    expect(trackers.length).toBe(data.length);
+                describe('with tooltips disabled', function () {
+                    beforeEach(function () {
+                        nw = createContour({tooltip: { enable: false }}).line(data).render();
+                    });
+
+                    it('should NOT add any tooltip tracker marker', function () {
+                        var trackers = $el.find('g[vis-id="1"] .tooltip-tracker');
+                        expect(trackers.length).toBe(0);
+                    });
+
                 });
 
-                it('should add a tooltip trackers AFTER line markers', function () {
-                    var groups = $el.find('g[vis-id="1"] g');
-                    expect(groups.eq(1).attr('class')).toContain('line-chart-markers');
-                    expect(groups.eq(2).attr('class')).toContain('tooltip-trackers');
-                });
+
+                describe('with tooltips enabled', function () {
+                    beforeEach(function () {
+                        nw = createContour({tooltip: { enable: true }}).line(data).render();
+                    });
+
+                    it('should add a marker tooltip target for each data point', function () {
+                        var trackers = $el.find('g[vis-id="1"] .tooltip-tracker');
+                        expect(trackers.length).toBe(data.length);
+                    });
+
+                    it('should add a tooltip trackers AFTER line markers', function () {
+                        var groups = $el.find('g[vis-id="1"] g');
+                        expect(groups.eq(1).attr('class')).toContain('line-chart-markers');
+                        expect(groups.eq(2).attr('class')).toContain('tooltip-trackers');
+                    });
+
+
+                })
+
             });
 
             describe('render with special case data', function () {
