@@ -47,7 +47,7 @@ describe('Column chart', function () {
                 }).column(data).render();
 
                 var rects = $el.find('rect.column');
-                var x1 = nw.xScale(0) + offset;
+                var x1 = nw.xScale(0) + offset + 0.5;
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });
@@ -96,7 +96,7 @@ describe('Column chart', function () {
                 }).column(data).render();
 
                 var rects = $el.find('rect.column');
-                var x1 = nw.xScale(0) + offset;
+                var x1 = nw.xScale(0) + offset + (0.5 * 2); // .5 fixel extra per column
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });
@@ -108,7 +108,8 @@ describe('Column chart', function () {
 
                 // each group has #series columns, in this case two series, so each group has 2 columns
                 // the width of each column should be rangeBand / 2 - padding
-                var w = 3/2 - 1;
+                // (0.5 to account for sub pixel offset introduced in visualizations to prevent fuzzy edges)
+                var w = 3/2 - 1 + 0.5;
 
                 var rects = $el.find('rect.column');
                 expect(+rects.eq(0).attr('width')).toBe(w);
