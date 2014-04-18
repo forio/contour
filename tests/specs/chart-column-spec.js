@@ -16,20 +16,20 @@ describe('Column chart', function () {
     describe('render', function () {
         it('should create one rect per data point', function () {
             createinstance().column(data).render();
-            var rects = $el.find('rect');
+            var rects = $el.find('rect.column');
             expect(rects.length).toBe(3);
         });
 
         it('should add the column class to each column', function () {
             createinstance().column(data).render();
-            var rects = $el.find('rect');
+            var rects = $el.find('rect.column');
 
             expect(rects.filter('.column').length).toBe(3);
         });
 
         it('should set the hight of each column to the corresponding yScale value', function () {
             var nw = createinstance().column(data).render();
-            var rects = $el.find('rect');
+            var rects = $el.find('rect.column');
             var y = function (d) { return nw.yScale(0) - Math.round(nw.yScale(d)); };
 
             expect(+rects.eq(0).attr('height')).toBe(y(data[0]));
@@ -46,7 +46,7 @@ describe('Column chart', function () {
                     column: { offset: offset , stacked: true }
                 }).column(data).render();
 
-                var rects = $el.find('rect');
+                var rects = $el.find('rect.column');
                 var x1 = nw.xScale(0) + offset;
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
@@ -67,7 +67,7 @@ describe('Column chart', function () {
                     column: { columnWidth: 1.5 , stacked: true }
                 }).column(data).render();
 
-                var rects = $el.find('rect');
+                var rects = $el.find('rect.column');
                 expect(+rects.eq(0).attr('width')).toBe(1.5);
                 expect(+rects.eq(1).attr('width')).toBe(1.5);
                 expect(+rects.eq(2).attr('width')).toBe(1.5);
@@ -78,7 +78,7 @@ describe('Column chart', function () {
                     column: { columnWidth: function () { return 1.5; }, stacked: true }
                 }).column(data).render();
 
-                var rects = $el.find('rect');
+                var rects = $el.find('rect.column');
                 expect(+rects.eq(0).attr('width')).toBe(1.5);
                 expect(+rects.eq(1).attr('width')).toBe(1.5);
                 expect(+rects.eq(2).attr('width')).toBe(1.5);
@@ -95,7 +95,7 @@ describe('Column chart', function () {
                     column: { offset: offset, stacked: false }
                 }).column(data).render();
 
-                var rects = $el.find('rect');
+                var rects = $el.find('rect.column');
                 var x1 = nw.xScale(0) + offset;
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
@@ -110,7 +110,7 @@ describe('Column chart', function () {
                 // the width of each column should be rangeBand / 2 - padding
                 var w = 3/2 - 1;
 
-                var rects = $el.find('rect');
+                var rects = $el.find('rect.column');
                 expect(+rects.eq(0).attr('width')).toBe(w);
                 expect(+rects.eq(1).attr('width')).toBe(w);
                 expect(+rects.eq(2).attr('width')).toBe(w);
