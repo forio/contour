@@ -354,6 +354,12 @@
         }
     };
 
+    // used to pass the last specified dataset
+    // to the next visualiaztion in the chain wihtout
+    // the need to specify it again.... this allows you to do
+    // new Contour().cartesian().line(dataset).lengend().tooltip().render()
+    // and legend and tooltip will recieve dataset
+    var lastData;
 
     /**
     * Creates a Contour instance, based on the core Contour object. This instance can contain a set of related visualizations.
@@ -420,17 +426,16 @@
             return data;
         }
 
-
         Contour.prototype[ctorName] = function (data, options) {
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
 
-            data = data || [];
+            data = data || lastData || [];
             sortSeries(data);
             vis = new Contour.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
             this._visualizations.push(vis);
-
+            lastData = data;
             return this;
         };
     };
@@ -459,11 +464,16 @@
     */
     Contour.expose = function (ctorName, functionalityConstructor) {
         var ctor = function () {
+
             var functionality = typeof functionalityConstructor === 'function' ? new functionalityConstructor() : functionalityConstructor;
             // extend the --instance-- we don't want all charts to be overriden...
             _.extend(this, _.omit(functionality, 'init'));
 
             if(functionality.init) functionality.init.call(this, this.options);
+
+            // keep a list of the included functionality into this instance
+            // so we can match and check dependencies
+            this._exposed.push(ctorName);
 
             return this;
         };
@@ -478,6 +488,8 @@
 
         _extraOptions: undefined,
 
+        _exposed: undefined,
+
         // Initializes the instance of Narwhal
         init: function (options) {
             // for now, just  store this options here...
@@ -487,6 +499,7 @@
 
             this._extraOptions = [];
             this._visualizations = [];
+            this._exposed = [];
 
             return this;
         },
@@ -623,6 +636,32 @@
             }, this);
 
             return this;
+        },
+
+        /**
+        * Assert that all the dependencies are into the Contour instance
+        * for example if a visualization requires Cartisian to be included in the instance
+        * it would call this.checkDependencies('Cartesian'), and the framework would
+        * give a helpful error message if it was not included
+        *
+        * @function checkDependencies
+        * @param {string|array} list of dependencies (as specified in the instance constructor)
+        *
+        */
+        checkDependencies: function (listOfDependencies) {
+            listOfDependencies = _.isArray(listOfDependencies) ? listOfDependencies : [listOfDependencies];
+            var _this = this;
+            var missing = [];
+
+            _.each(listOfDependencies, function (dep) {
+                if (_this._exposed.indexOf(dep) === -1) {
+                    missing.push(dep);
+                }
+            });
+
+            if (missing.length) {
+                throw new Error('ERROR: Missing depeendencies in the Contour instance (ej. new Contour({}).cartesian())\n The missing dependencies are: [' + missing.join(', ') + ']\nGo to http://forio.com/contour/documentation.html#key_concepts for more information');
+            }
         },
 
         /**
@@ -815,7 +854,7 @@
 
 
     /**
-    * Provides a Cartesian frame to the Contour instance. 
+    * Provides a Cartesian frame to the Contour instance.
     *
     * This is required for all visualizations displayed in a Cartesian frame, for example line charts, bar charts, area charts, etc. It is not required otherwise; for instance, pie charts do not use a Cartesian frame.
     *
@@ -1197,6 +1236,22 @@
                 return this;
             },
 
+            renderBackground: function () {
+                var options = this.options.chart;
+                var g = this.svg.selectAll('.plot-area-background').data([null]);
+
+                g.enter().append('rect')
+                    .attr('class', 'plot-area-background')
+                    .attr('x', options.plotLeft)
+                    .attr('y', options.plotTop)
+                    .attr('width', options.plotWidth)
+                    .attr('height', options.plotHeight);
+
+                g.exit().remove();
+
+                return this;
+            },
+
             render: function () {
 
                 this.composeOptions();
@@ -1205,7 +1260,9 @@
                 this.computeScales();
                 this.baseRender();
 
-                this.renderXAxis()
+                this
+                    .renderBackground()
+                    .renderXAxis()
                     .renderYAxis()
                     .renderGridlines()
                     .renderAxisLabels()
@@ -1262,7 +1319,7 @@
 
 })();
 
-Contour.version = '0.9.80';
+Contour.version = '0.9.81';
 (function () {
 
     var helpers = {
@@ -2048,8 +2105,7 @@ Contour.version = '0.9.80';
 
     /* jshint eqnull:true */
     function renderer(data, layer, options) {
-
-        if (!this.xScale) throw new Error('Area Chart requires .cartesian() to be included in the instance.');
+        this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2 + 0.5; }, this);
         var y = _.bind(function (val) { return this.yScale(val) + 0.5; }, this);
@@ -2150,9 +2206,7 @@ Contour.version = '0.9.80';
     };
 
     function barRender(data, layer, options) {
-
-        if (!options.chart.rotatedFrame) throw new Error('Bar Chart requires .horizontal() to be included in the instance');
-
+        this.checkDependencies(['cartesian', 'horizontal']);
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var _this = this;
         var x = function (d) { return _this.xScale(d) - 0.5; };
@@ -2265,7 +2319,7 @@ Contour.version = '0.9.80';
     };
 
     function render(data, layer, options) {
-        if (!this.xScale) throw new Error('Column Chart requires .cartesian() to be included in the instance.');
+        this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var opt = options.column;
         var w = options.chart.plotWidth;
@@ -2586,7 +2640,7 @@ Contour.version = '0.9.80';
 
     /* jshint eqnull: true */
     function render(rawData, layer, options, id) {
-        if (!this.xScale) throw new Error('Line Chart requires .cartesian() to be included in the instance.');
+        this.checkDependencies('cartesian');
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y) + 0.5; }, this);
@@ -2882,7 +2936,7 @@ Contour.export('nullVis', _.noop);
     };
 
     function ScatterPlot(data, layer, options) {
-        if (!this.xScale) throw new Error('Scatter Chart requires .cartesian() to be included in the instance.');
+        this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var opt = options.scatter;
@@ -2964,7 +3018,7 @@ Contour.export('nullVis', _.noop);
     *     new Contour({el: '.myChart'})
     *           .cartesian()
     *           .column(stackedColData)
-    *           .stackedTooltip(stackedColData, {el: '.myChartLegend'})
+    *           .stackTooltip(stackedColData, {el: '.myChartLegend'})
     *           .render();
     *
     * @name stackTooltip(data, options)
@@ -2972,6 +3026,9 @@ Contour.export('nullVis', _.noop);
     * @param {object} options Configuration options particular to this visualization that override the defaults. Requires an `el` option with the selector of the container in which to render the tooltip.
     * @api public
     *
+    * ### Notes:
+    *
+    * Each Contour instance can only include one `stackTooltip` visualization.
     */
     Contour.export('stackTooltip', function (data, layer, options) {
 
@@ -3142,8 +3199,8 @@ Contour.export('nullVis', _.noop);
             var options = this.options.tooltip;
             var formatters = [
                 function (d) { return options.formatter ? _.partial(options.formatter, d) : null; },
-                function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return d.x + '<br>' + d.y; }, d) : null; },
-                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return d.x + '<br>' + d.y; }, d.data) : null; },
+                function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return d.series + '<br>' + d.x + '<br>' + d.y; }, d) : null; },
+                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return d.series + '<br>' +  d.x + '<br>' + d.y; }, d.data) : null; },
                 function (d) { return d.hasOwnProperty('value') ? _.partial(function (d) { return d.value; }, d) : null;  },
                 function () { return function () { return 'NA'; }; }
             ];
@@ -3155,7 +3212,9 @@ Contour.export('nullVis', _.noop);
         var show = function (d) {
             clearHideTimer.call(this);
 
-            this.tooltipElement.select('.text').html(getTooltipText.call(this, d));
+            dataPoints = findOriginalDataPoint(d);
+
+            this.tooltipElement.select('.text').html(getTooltipText.call(this, dataPoints[0], dataPoints));
 
             var pos = positionTooltip.call(this, d);
 
@@ -3165,6 +3224,24 @@ Contour.export('nullVis', _.noop);
 
             changeOpacity.call(this, this.options.tooltip.opacity, this.options.tooltip.showTime);
         };
+
+        function findOriginalDataPoint(d) {
+            var res = [];
+            _.each(data, function (series) {
+                var name = series.name;
+                _.each(series.data, function (point) {
+                    if (point.x === d.x && d.y === point.y) {
+                        res.push({
+                            x: point.x,
+                            y: point.y,
+                            series: name
+                        });
+                    }
+                });
+            });
+
+            return res;
+        }
 
         this.tooltipElement = this.container
             .style('position', 'relative')
@@ -3203,6 +3280,9 @@ Contour.export('nullVis', _.noop);
     * @param {object} options Configuration options particular to this visualization that override the defaults.
     * @api public
     *
+    * ### Notes:
+    *
+    * Each Contour instance can only include one `tooltip` visualization.
     */
     Contour.export('tooltip', render);
 
@@ -3215,7 +3295,7 @@ Contour.export('nullVis', _.noop);
 
 
     function ctor(data, layer, options) {
-        if (!this.xScale) throw new Error('Trend Line requires .cartesian() to be included in the instance.');
+        this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);

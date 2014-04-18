@@ -4,8 +4,9 @@
 .contour-chart {
   position: relative;
 }
-.contour-chart .series .line {
+.contour-chart .plot-area-background {
   fill: none;
+  stroke: none;
 }
 .contour-chart .axis {
   stroke: #666666;

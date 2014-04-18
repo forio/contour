@@ -1,5 +1,5 @@
 .chart-container{position:relative}
-.contour-chart{position:relative}.contour-chart .series .line{fill:none}
+.contour-chart{position:relative}.contour-chart .plot-area-background{fill:none;stroke:none}
 .contour-chart .axis{stroke:#666;stroke-width:1px;fill:none;shape-rendering:crispEdges;font-family:"Consolas","Monaco",monospace;font-size:13px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.contour-chart .axis text{stroke:none;fill:#666}
 .contour-chart .axis.x .tick line{stroke:#666}
 .contour-chart .axis-title{font-family:"Consolas","Monaco",monospace;font-size:13px;font-size:14px;line-height:100%;stroke:none;fill:#666}
