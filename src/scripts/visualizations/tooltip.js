@@ -133,8 +133,8 @@
             var options = this.options.tooltip;
             var formatters = [
                 function (d) { return options.formatter ? _.partial(options.formatter, d) : null; },
-                function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return d.x + '<br>' + d.y; }, d) : null; },
-                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return d.x + '<br>' + d.y; }, d.data) : null; },
+                function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return d.series + '<br>' + d.x + '<br>' + d.y; }, d) : null; },
+                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return d.series + '<br>' +  d.x + '<br>' + d.y; }, d.data) : null; },
                 function (d) { return d.hasOwnProperty('value') ? _.partial(function (d) { return d.value; }, d) : null;  },
                 function () { return function () { return 'NA'; }; }
             ];
@@ -146,7 +146,9 @@
         var show = function (d) {
             clearHideTimer.call(this);
 
-            this.tooltipElement.select('.text').html(getTooltipText.call(this, d));
+            dataPoints = findOriginalDataPoint(d);
+
+            this.tooltipElement.select('.text').html(getTooltipText.call(this, dataPoints[0], dataPoints));
 
             var pos = positionTooltip.call(this, d);
 
@@ -156,6 +158,24 @@
 
             changeOpacity.call(this, this.options.tooltip.opacity, this.options.tooltip.showTime);
         };
+
+        function findOriginalDataPoint(d) {
+            var res = [];
+            _.each(data, function (series) {
+                var name = series.name;
+                _.each(series.data, function (point) {
+                    if (point.x === d.x && d.y === point.y) {
+                        res.push({
+                            x: point.x,
+                            y: point.y,
+                            series: name
+                        });
+                    }
+                });
+            });
+
+            return res;
+        }
 
         this.tooltipElement = this.container
             .style('position', 'relative')
