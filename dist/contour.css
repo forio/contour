@@ -30,7 +30,8 @@
   stroke: none;
   fill: #666666;
 }
-.contour-chart .axis.x .tick line {
+.contour-chart .axis.x .tick,
+.contour-chart .axis.y .tick {
   stroke: #666666;
 }
 .contour-chart .axis-title {
