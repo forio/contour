@@ -1,13 +1,13 @@
 ##Styling Visualizations
 
-The [Forio Contour Core Components](#get_contour.html) include the Contour stylesheet.
+The [Forio Contour Core Components](get_contour.html) include the Contour stylesheet.
 
 You can update or extend the classes in this stylesheet, using [CSS](http://en.wikipedia.org/wiki/Cascading_Style_Sheets) or [SVG](http://www.w3.org/TR/SVG11/styling.html), to change the look of your visualizations.
 
 
 ####For example:
 
-* **to change the background color of the plot area of a chart, update the `.contour-chart .plot-area-background` class and set a `fill` color.
+* **to change the background color of the plot area of a chart**, update the `.contour-chart .plot-area-background` class and set a `fill` color.
 
 * **to change the type face of axis labels**, update `contour-chart .axis text` and set the `font-family` or `font-size`. You can see an example of this in the [Styled Bar Chart](gallery.html#/chart/bar/bar-styled) in the Gallery.
 
