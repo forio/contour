@@ -200,7 +200,7 @@
     /**
     * Adds a tooltip on hover to all other visualizations in the Contour instance.
     *
-    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Contour instance for which to show the tooltips.
+    * Although not strictly required, this visualization does not appear unless there are already one or more visualizations in this Contour instance for which to show the tooltips.
     *
     * ### Example:
     *

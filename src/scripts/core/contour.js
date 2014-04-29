@@ -65,7 +65,7 @@
     var lastData;
 
     /**
-    * Creates a Contour instance, based on the core Contour object. This instance can contain a set of related visualizations.
+    * Creates a Contour instance, based on the core Contour visualizations object. This instance can contain a set of related visualizations.
     *
     *   * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Contour instance will be rendered.
     *   * Set the frame for this Contour instance (e.g. `.cartesian()`).
@@ -80,7 +80,7 @@
     *       .render()
     *
     *
-    * @class Contour() visualizations object
+    * @class Contour()
     * @param {object} options The global configuration options object
     *
     */
@@ -93,6 +93,7 @@
     /**
     * Adds a new kind of visualization to the core Contour object.
     * The *renderer* function is called when you add this visualization to instances of Contour.
+    * See a sample in the [Contour Gallery](http://forio.com/contour/gallery.html#/chart/pie/pie-gauge).
     *
     * ### Example:
     *
@@ -272,7 +273,7 @@
         /**
         * Renders this Contour instance and all its visualizations into the DOM.
         *
-        * Example:
+        * ### Example:
         *
         *     new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
@@ -342,10 +343,10 @@
         },
 
         /**
-        * Assert that all the dependencies are into the Contour instance
-        * for example if a visualization requires Cartisian to be included in the instance
-        * it would call this.checkDependencies('Cartesian'), and the framework would
-        * give a helpful error message if it was not included
+        * Assert that all the dependencies are in the Contour instance.
+        * For example, if a visualization requires Cartesian to be included in the instance,
+        * it could call this.checkDependencies('Cartesian'), and the framework would
+        * give a helpful error message if Cartesian was not included.
         *
         * @function checkDependencies
         * @param {string|array} list of dependencies (as specified in the instance constructor)

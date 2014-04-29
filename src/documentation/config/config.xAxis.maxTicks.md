@@ -20,7 +20,7 @@ Where the ticks are placed is determined based on the number and value of elemen
 
 **Notes:**
 
-`maxTicks` serves at the upper bound. For example, when [`firstAndLast`](#config_config.xAxis.firstAndLast) is set to `true`, there are two tick marks, even if `maxTicks` is set much higher. 
+`maxTicks` serves as the upper bound. For example, when [`firstAndLast`](#config_config.xAxis.firstAndLast) is set to `true`, there are two tick marks, even if `maxTicks` is set much higher. 
 
 <% if(notes) { %><%= notes %><% } %>
 
