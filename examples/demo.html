@@ -37,11 +37,12 @@
 
     <style>
         .chart {
-            width: 600px;
+            /*width: 600px;*/
+            height: 315px;
 /*            height: 300px;
             width: 400px;*/
             margin: 10px 0;
-            border: solid 1px red;
+            /*border: solid 1px red;*/
         }
 
         .chart svg {
@@ -197,14 +198,14 @@ var generateSeries = function (numSeries) {
                 title: 'Value'
             },
             pie: {
-                piePadding: {
-                    left: .1
-                },
-                outerRadius: 50
+                // piePadding: {
+                //     left: .1
+                // },
+                // outerRadius: 50
 
             }
         })
-        .mesh({step: 10})
+        // .mesh({step: 10})
         .pie(data)
         .render();
 

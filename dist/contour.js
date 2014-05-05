@@ -1321,7 +1321,7 @@
 
 })();
 
-Contour.version = '0.9.85';
+Contour.version = '0.9.86';
 (function () {
 
     var helpers = {
@@ -2876,10 +2876,10 @@ Contour.export('nullVis', _.noop);
         // if the value of padding is betweem 0 and 1 (non inclusing),
         // interpret it as a percentage, otherwise as a pixel value
         return {
-            top: resolveValueUnits(padding.top, h),
-            bottom: resolveValueUnits(padding.bottom, h),
-            left: resolveValueUnits(padding.left, w),
-            right: resolveValueUnits(padding.right, w)
+            top: resolveValueUnits(padding.top, h) || 1,
+            bottom: resolveValueUnits(padding.bottom, h) || 1,
+            left: resolveValueUnits(padding.left, w) || 1,
+            right: resolveValueUnits(padding.right, w) || 1
         };
     }
 
