@@ -362,7 +362,7 @@
     var lastData;
 
     /**
-    * Creates a Contour instance, based on the core Contour object. This instance can contain a set of related visualizations.
+    * Creates a Contour instance, based on the core Contour visualizations object. This instance can contain a set of related visualizations.
     *
     *   * Pass the constructor any configuration options in the *options* parameter. Make sure the `el` option contains the selector of the container in which the Contour instance will be rendered.
     *   * Set the frame for this Contour instance (e.g. `.cartesian()`).
@@ -377,7 +377,7 @@
     *       .render()
     *
     *
-    * @class Contour() visualizations object
+    * @class Contour()
     * @param {object} options The global configuration options object
     *
     */
@@ -390,6 +390,7 @@
     /**
     * Adds a new kind of visualization to the core Contour object.
     * The *renderer* function is called when you add this visualization to instances of Contour.
+    * See a sample in the [Contour Gallery](http://forio.com/contour/gallery.html#/chart/pie/pie-gauge).
     *
     * ### Example:
     *
@@ -569,7 +570,7 @@
         /**
         * Renders this Contour instance and all its visualizations into the DOM.
         *
-        * Example:
+        * ### Example:
         *
         *     new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
@@ -639,10 +640,10 @@
         },
 
         /**
-        * Assert that all the dependencies are into the Contour instance
-        * for example if a visualization requires Cartisian to be included in the instance
-        * it would call this.checkDependencies('Cartesian'), and the framework would
-        * give a helpful error message if it was not included
+        * Assert that all the dependencies are in the Contour instance.
+        * For example, if a visualization requires Cartesian to be included in the instance,
+        * it could call this.checkDependencies('Cartesian'), and the framework would
+        * give a helpful error message if Cartesian was not included.
         *
         * @function checkDependencies
         * @param {string|array} list of dependencies (as specified in the instance constructor)
@@ -1238,8 +1239,8 @@
 
             renderBackground: function () {
                 var options = this.options.chart;
-                var layer = this.createVisualizationLayer('background', 0);
-                var g = layer.selectAll('.plot-area-background').data([null]);
+                this.background = this.background || this.createVisualizationLayer('background', 0);
+                var g = this.background.selectAll('.plot-area-background').data([null]);
 
                 g.enter().append('rect')
                     .attr('class', 'plot-area-background')
@@ -1320,7 +1321,7 @@
 
 })();
 
-Contour.version = '0.9.84';
+Contour.version = '0.9.85';
 (function () {
 
     var helpers = {
@@ -2814,30 +2815,105 @@ Contour.export('nullVis', _.noop);
 
     var defaults = {
         pie: {
-            piePadding: 1,
-            // inner and outer radius can be numbers (pixels) or functions
+            piePadding: {
+                left: null,
+                top: null,
+                right: null,
+                bottom: null
+            },
+
+            // inner and outer radius can be numbers of pixels if >= 1, percentage if > 0 && < 1 or functions
+
             // inner radius as function will recive the outerRadius as parameter
+            // passing a value between 0 and 1 (non-inclusing), this value is interpreted as % of radius
+            // ie. outerRadius: 100, innerRadius: .8 would give a inner radius or 80 pixles
             innerRadius: null,
+
             // outer radius as function will recieve the proposed maximum radius for a pie
+            // passing a value between 0 and 1 (non-inclusing), this value is interpreted as % of width
+            // the default behavior is 50% of the mininum between with and height of the container (adjusted for padding)
             outerRadius: null
         }
     };
 
+    function normalizePadding(options) {
+        if (_.isNumber(options.pie.piePadding)) {
+            return {
+                top: options.pie.piePadding,
+                left: options.pie.piePadding,
+                right: options.pie.piePadding,
+                bottom: options.pie.piePadding
+            };
+        }
+
+        return options.pie.piePadding;
+    }
+
+    function clampBounds(bounds, maxWidth, maxHeight) {
+        return {
+            top: _.nw.clamp(bounds.top, 0, maxHeight),
+            bottom: _.nw.clamp(bounds.bottom, 0, maxHeight),
+            left: _.nw.clamp(bounds.left, 0, maxWidth),
+            right: _.nw.clamp(bounds.right, 0, maxWidth)
+        };
+    }
+
+    function calcPadding(options) {
+        padding = normalizePadding(options);
+        var w = options.chart.plotWidth;
+        var h = options.chart.plotHeight;
+
+        return clampBounds(padding, w, h);
+    }
+
+    function resolveValueUnits(value, ref) {
+        // resolve (0,1) interval to a percentage of the reference value
+        // otherwise as a pixel valie
+        return value > 0 && value < 1 ? ref * value : value;
+    }
+
+    function resolvePaddingUnits(padding, w, h) {
+        // if the value of padding is betweem 0 and 1 (non inclusing),
+        // interpret it as a percentage, otherwise as a pixel value
+        return {
+            top: resolveValueUnits(padding.top, h),
+            bottom: resolveValueUnits(padding.bottom, h),
+            left: resolveValueUnits(padding.left, w),
+            right: resolveValueUnits(padding.right, w)
+        };
+    }
+
     function renderer(data, layer, options) {
+        /*jshint eqnull:true */
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var w = options.chart.plotWidth, h = options.chart.plotHeight;
-        var padding = _.nw.clamp(_.nw.getValue(options.pie.piePadding, 0, this), 0, h/2 - 2);
+        var padding = calcPadding.call(this, options);
         var numSeries = data.length;
-        var proposedRadius = (Math.min(w / numSeries, h) / 2) - padding;
-        var radius = _.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius) ;
-        var innerRadius = _.nw.getValue(options.pie.innerRadius, 0, this, radius);
-        var classFn = function (d, i) { return 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.name; };
-        // shape the data into angles and don't sort (ie preserve order of input array)
+        var shouldCenterX = _.all([options.pie.piePadding.left, options.pie.piePadding.right], function (d) { return d == null; });
+        var shouldCenterY = _.all([options.pie.piePadding.top, options.pie.piePadding.bottom], function (d) { return d == null; });
+        var pixelPadding = resolvePaddingUnits(padding, w, h);
+        // the reference size is the min between with and height of the container
+        var referenceSize = Math.min(w, h);
+
+        // for auto radius we need to take the min between the available with or height adjusted by padding and num series
+        var proposedRadius = Math.min((w - pixelPadding.left - pixelPadding.right) / numSeries, (h - pixelPadding.top - pixelPadding.bottom)) / 2;
+        var radius = resolveValueUnits(_.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius, referenceSize), referenceSize);
+        // inner radius is a pixel value or % of the radius
+        var innerRadius = resolveValueUnits(_.nw.getValue(options.pie.innerRadius, 0, this, radius), radius);
         var pieData = d3.layout.pie().value(function (d) { return d.y; }).sort(null);
+        var centerX = (w - (radius * 2 * (numSeries - 1)))/2;
+        var centerY = h / 2;
+
+        var classFn = function (d, i) {
+            return 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.data.x;
+        };
         var translatePie = function (d,i) {
-            var offsetX = radius * 2 + padding;
-            return "translate(" + (radius + padding + (offsetX * i)) + "," + (radius + padding) + ")";
+            var offsetX = radius * 2;
+            var posX = shouldCenterX ? centerX : radius + pixelPadding.left;
+            var posY = shouldCenterY ? centerY : radius + pixelPadding.top;
+
+            return "translate(" + (posX + (offsetX * i)) + "," + (posY) + ")";
         };
 
         var pieGroup = layer.selectAll('g.pie-group')
@@ -3267,7 +3343,7 @@ Contour.export('nullVis', _.noop);
     /**
     * Adds a tooltip on hover to all other visualizations in the Contour instance.
     *
-    * Although not strictly required, this visualization does not appear unless there are one or more additional visualizations in this Contour instance for which to show the tooltips.
+    * Although not strictly required, this visualization does not appear unless there are already one or more visualizations in this Contour instance for which to show the tooltips.
     *
     * ### Example:
     *

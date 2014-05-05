@@ -41,6 +41,7 @@
 /*            height: 300px;
             width: 400px;*/
             margin: 10px 0;
+            border: solid 1px red;
         }
 
         .chart svg {
@@ -59,6 +60,18 @@
         .xyz, .www {
             opacity: 0.4;
         }
+
+        .mesh {
+            stroke: #ccc;
+        }
+
+        .mesh-text {
+            font-size: 10px;
+            stroke: none;
+            fill: #999;
+        }
+
+
 
 
     </style>
@@ -106,6 +119,48 @@ var generateSeries = function (numSeries) {
     return series;
 }
 
+
+    Contour.export('mesh', function (data, layer, options) {
+        var every = data.step || 5;
+        var w = options.chart.plotWidth;
+        var h = options.chart.plotHeight;
+        var xVals = d3.range(0, w + 1, every);
+        var yVals = d3.range(0, h + 1, every)
+
+        ver = layer.selectAll('.mesh.vertical').data(xVals);
+
+        ver.enter().append('line')
+            .attr('class', 'mesh vertical')
+            .attr('x1', function(d) { return d; } )
+            .attr('x2', function(d) { return d; } )
+            .attr('y1', 0)
+            .attr('y2', options.chart.plotHeight);
+
+        hor = layer.selectAll('.mesh.horizontal').data(xVals);
+
+        hor.enter().append('line')
+            .attr('class', 'mesh horizontal')
+            .attr('y1', function(d) { return d; } )
+            .attr('y2', function(d) { return d; } )
+            .attr('x1', 0)
+            .attr('x2', options.chart.plotWidth)
+
+        hor.enter().append('text')
+            .attr('class', 'mesh-text')
+            .text(function (d) { return d; })
+            .attr('x', 0)
+            .attr('y', function (d) { return d; })
+
+        ver.enter().append('text')
+            .attr('class', 'mesh-text')
+            .text(function (d) { return d; })
+            .attr('y', options.chart.plotHeight)
+            .attr('x', function (d) { return d; })
+            .attr('transform', function (d) { return 'rotate(-90 ' + d + ',' + options.chart.plotHeight + ')'; })
+
+
+    });
+
     var series = [];
 
     //series defined as 3x10 array of random (x,y) pairs
@@ -126,7 +181,12 @@ var generateSeries = function (numSeries) {
         { x: new Date('6/1/2000'), y: 2}
     ];
 
-    var datasrc = [{data: [1,2,3,4,5]},{data: [5,4,2,1,5]}];
+    var datasrc = [
+        {data: [1,2,3,4,5]},
+        {data: [1,2,3,4,5]},
+        {data: [1,2,3,4,5]},
+        {data: [5,4,2,1,5]}
+    ];
     chart = new Contour({
             el: '.chart',
             xAxis: {
@@ -135,14 +195,17 @@ var generateSeries = function (numSeries) {
             },
             yAxis: {
                 title: 'Value'
+            },
+            pie: {
+                piePadding: {
+                    left: .1
+                },
+                outerRadius: 50
+
             }
         })
-        .cartesian()
-        .line(datasrc)
-        .legend(datasrc, {
-
-        })
-        .tooltip()
+        .mesh({step: 10})
+        .pie(data)
         .render();
 
 
