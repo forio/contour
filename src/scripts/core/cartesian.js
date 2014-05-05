@@ -448,8 +448,8 @@
 
             renderBackground: function () {
                 var options = this.options.chart;
-                var layer = this.createVisualizationLayer('background', 0);
-                var g = layer.selectAll('.plot-area-background').data([null]);
+                this.background = this.background || this.createVisualizationLayer('background', 0);
+                var g = this.background.selectAll('.plot-area-background').data([null]);
 
                 g.enter().append('rect')
                     .attr('class', 'plot-area-background')
