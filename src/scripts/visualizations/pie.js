@@ -2,30 +2,98 @@
 
     var defaults = {
         pie: {
-            piePadding: 1,
-            // inner and outer radius can be numbers (pixels) or functions
+            piePadding: {
+                left: 1,
+                top: 1,
+                right: 1,
+                bottom: 1
+            },
+
+            // inner and outer radius can be numbers of pixels if >= 1, percentage if > 0 && < 1 or functions
+
             // inner radius as function will recive the outerRadius as parameter
+            // passing a value between 0 and 1 (non-inclusing), this value is interpreted as % of radius
+            // ie. outerRadius: 100, innerRadius: .8 would give a inner radius or 80 pixles
             innerRadius: null,
+
             // outer radius as function will recieve the proposed maximum radius for a pie
+            // passing a value between 0 and 1 (non-inclusing), this value is interpreted as % of width
+            // the default behavior is 50% of the mininum between with and height of the container (adjusted for padding)
             outerRadius: null
         }
     };
 
+    function normalizePadding(options) {
+        if (_.isNumber(options.pie.piePadding)) {
+            return {
+                top: options.pie.piePadding,
+                left: options.pie.piePadding,
+                right: options.pie.piePadding,
+                bottom: options.pie.piePadding
+            };
+        }
+
+        return options.pie.piePadding;
+    }
+
+    function clampBounds(bounds, maxWidth, maxHeight) {
+        return {
+            top: _.nw.clamp(bounds.top, 0, maxHeight),
+            bottom: _.nw.clamp(bounds.bottom, 0, maxHeight),
+            left: _.nw.clamp(bounds.left, 0, maxWidth),
+            right: _.nw.clamp(bounds.right, 0, maxWidth)
+        };
+    }
+
+    function calcPadding(options) {
+        padding = normalizePadding(options);
+        var w = options.chart.plotWidth;
+        var h = options.chart.plotHeight;
+
+        return clampBounds(padding, w, h);
+    }
+
+    function resolveValueUnits(value, ref) {
+        // resolve (0,1) interval to a percentage of the reference value
+        // otherwise as a pixel valie
+        return value > 0 && value < 1 ? ref * value : value;
+    }
+
+    function resolvePaddingUnits(padding, w, h) {
+        // if the value of padding is betweem 0 and 1 (non inclusing),
+        // interpret it as a percentage, otherwise as a pixel value
+        return {
+            top: resolveValueUnits(padding.top, h),
+            bottom: resolveValueUnits(padding.bottom, h),
+            left: resolveValueUnits(padding.left, w),
+            right: resolveValueUnits(padding.right, w)
+        };
+    }
+
     function renderer(data, layer, options) {
+        /*jshint eqnull:true */
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var w = options.chart.plotWidth, h = options.chart.plotHeight;
-        var padding = _.nw.clamp(_.nw.getValue(options.pie.piePadding, 0, this), 0, h/2 - 2);
+        var padding = calcPadding.call(this, options);
         var numSeries = data.length;
-        var proposedRadius = (Math.min(w / numSeries, h) / 2) - padding;
-        var radius = _.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius) ;
-        var innerRadius = _.nw.getValue(options.pie.innerRadius, 0, this, radius);
-        var classFn = function (d, i) { return 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.name; };
-        // shape the data into angles and don't sort (ie preserve order of input array)
+
+        var pixelPadding = resolvePaddingUnits(padding, w, h);
+        // the reference size is the min between with and height of the container
+        var referenceSize = Math.min(w, h);
+
+        // for auto radius we need to take the min between the available with or height adjusted by padding and num series
+        var proposedRadius = Math.min((w - pixelPadding.left - pixelPadding.right) / numSeries, (h - pixelPadding.top - pixelPadding.bottom)) / 2;
+        var radius = resolveValueUnits(_.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius, referenceSize), referenceSize);
+        // inner radius is a pixel value or % of the radius
+        var innerRadius = resolveValueUnits(_.nw.getValue(options.pie.innerRadius, 0, this, radius), radius);
         var pieData = d3.layout.pie().value(function (d) { return d.y; }).sort(null);
+        var classFn = function (d, i) {
+            return 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.data.x;
+        };
         var translatePie = function (d,i) {
-            var offsetX = radius * 2 + padding;
-            return "translate(" + (radius + padding + (offsetX * i)) + "," + (radius + padding) + ")";
+            var offsetX = radius * 2;
+            return "translate(" + (radius + pixelPadding.left + (offsetX * i)) + "," + (radius + pixelPadding.top) + ")";
         };
 
         var pieGroup = layer.selectAll('g.pie-group')
