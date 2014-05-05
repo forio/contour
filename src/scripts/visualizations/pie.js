@@ -3,10 +3,10 @@
     var defaults = {
         pie: {
             piePadding: {
-                left: 1,
-                top: 1,
-                right: 1,
-                bottom: 1
+                left: null,
+                top: null,
+                right: null,
+                bottom: null
             },
 
             // inner and outer radius can be numbers of pixels if >= 1, percentage if > 0 && < 1 or functions
@@ -77,7 +77,8 @@
         var w = options.chart.plotWidth, h = options.chart.plotHeight;
         var padding = calcPadding.call(this, options);
         var numSeries = data.length;
-
+        var shouldCenterX = _.all([options.pie.piePadding.left, options.pie.piePadding.right], function (d) { return d == null; });
+        var shouldCenterY = _.all([options.pie.piePadding.top, options.pie.piePadding.bottom], function (d) { return d == null; });
         var pixelPadding = resolvePaddingUnits(padding, w, h);
         // the reference size is the min between with and height of the container
         var referenceSize = Math.min(w, h);
@@ -88,12 +89,18 @@
         // inner radius is a pixel value or % of the radius
         var innerRadius = resolveValueUnits(_.nw.getValue(options.pie.innerRadius, 0, this, radius), radius);
         var pieData = d3.layout.pie().value(function (d) { return d.y; }).sort(null);
+        var centerX = (w - (radius * 2 * (numSeries - 1)))/2;
+        var centerY = h / 2;
+
         var classFn = function (d, i) {
             return 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.data.x;
         };
         var translatePie = function (d,i) {
             var offsetX = radius * 2;
-            return "translate(" + (radius + pixelPadding.left + (offsetX * i)) + "," + (radius + pixelPadding.top) + ")";
+            var posX = shouldCenterX ? centerX : radius + pixelPadding.left;
+            var posY = shouldCenterY ? centerY : radius + pixelPadding.top;
+
+            return "translate(" + (posX + (offsetX * i)) + "," + (posY) + ")";
         };
 
         var pieGroup = layer.selectAll('g.pie-group')
