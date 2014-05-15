@@ -17,7 +17,7 @@
         var stack = d3.layout.stack().values(function (d) { return d.data; });
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
-        var classFn = function (d, i) { return 'series s-' + (i+1); };
+        var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
 
         var series = layer.selectAll('g.series')
             .data(stack(data));
