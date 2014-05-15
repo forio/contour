@@ -41,7 +41,7 @@
 
         series.enter()
             .append('g')
-            .attr('class', function (d, i) { return 'series s-' + (i+1); });
+            .attr('class', function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; });
 
         series.exit()
             .remove();
