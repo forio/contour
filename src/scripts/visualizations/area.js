@@ -29,6 +29,11 @@
             .y0(function (d) { return options.area.stacked ? y(d.y0 || options.yAxis.min || 0) : y(0); })
             .y1(function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
 
+        if(options.area.smooth) {
+            area.interpolate('cardinal');
+            startArea.interpolate('cardinal');
+        }
+
         renderSeries();
 
 
