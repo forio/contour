@@ -95,7 +95,7 @@
         renderAxisLabels: function () {
             var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
             var adjustFactor = 40/46.609;
-
+            var el;
             var bounds, anchor, rotation, tickSize, x, y;
 
             if (this.options.xAxis.title) {
@@ -104,14 +104,19 @@
                 y = this.options.chart.rotatedFrame ? -this.options.chart.internalPadding.left : this.options.chart.internalPadding.bottom - lineHeightAdjustment;
 
                 rotation = this.options.chart.rotatedFrame ? '-90' : '0';
-                this._xAxisGroup.append('text')
-                    .attr('class', 'x axis-title')
-                    .attr('x', 0)
+                el = this._xAxisGroup.selectAll('.x.axis-title').data([null]);
+
+                el.enter().append('text')
+                    .attr('class', 'x axis-title');
+
+                el.attr('x', 0)
                     .attr('y', y)
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .attr('dy', bounds.height * adjustFactor)
                     .attr('dx', -(this.options.chart.plotHeight + bounds.width) / 2)
                     .text(this.options.xAxis.title);
+
+                el.exit().remove();
             }
 
             if (this.options.yAxis.title) {
@@ -125,14 +130,19 @@
 
                 rotation = this.options.chart.rotatedFrame ? '0' : '-90';
 
-                this._yAxisGroup.append('text')
-                    .attr('class', 'y axis-title')
-                    .attr('y', y)
+                el = this._yAxisGroup.selectAll('.y.axis-title').data([null]);
+
+                el.enter().append('text')
+                    .attr('class', 'y axis-title');
+
+                el.attr('y', y)
                     .attr('x', x)
                     .attr('dx', -(this.options.chart.plotWidth + bounds.width) / 2)
                     .attr('dy', -4) // just because
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .text(this.options.yAxis.title);
+
+                el.exit().remove();
             }
 
             return this;
