@@ -325,7 +325,7 @@
             return this.svg.append('g')
                 .attr('vis-id', id)
                 .attr('vis-type', vis.type)
-                .attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + this.options.chart.padding.top + ')');
+                .attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
         },
 
         renderVisualizations: function () {
