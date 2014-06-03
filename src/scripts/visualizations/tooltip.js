@@ -52,8 +52,8 @@
             var distance = this.options.tooltip.distance;
             var width = parseFloat(this.tooltipElement.node().offsetWidth);
             var height = parseFloat(this.tooltipElement.node().offsetHeight);
-            var pointX = xScale ? xScale(d.x) : pointOrCentroid()[0];
-            var pointY = yScale ? yScale(d.y) : pointOrCentroid()[1];
+            var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];
+            var pointY = yScale ? yScale(d.y) : pointOrCentroid.call(this)[1];
             var alignedRight;
 
             var clampPosition = function (pos) {
