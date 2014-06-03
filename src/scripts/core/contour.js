@@ -305,7 +305,7 @@
 
             this.container = d3.select(this.options.el);
             // fix a flicker im web-kit when animating opacity and the chart is in an iframe
-            this.container.attr('style', '-webkit-backface-visibility: hidden;');
+            this.container.attr('style', '-webkit-backface-visibility: hidden; position: relative');
 
             if(!this.svg) {
                 this.svg = this.container
