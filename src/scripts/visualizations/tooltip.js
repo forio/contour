@@ -50,8 +50,8 @@
             var plotTop = this.options.chart.plotTop;
             var plotHeight = this.options.chart.plotHeight;
             var distance = this.options.tooltip.distance;
-            var width = parseFloat(this.tooltipElement.style('width'));
-            var height = parseFloat(this.tooltipElement.style('height'));
+            var width = parseFloat(this.tooltipElement.node().offsetWidth);
+            var height = parseFloat(this.tooltipElement.node().offsetHeight);
             var pointX = xScale ? xScale(d.x) : pointOrCentroid()[0];
             var pointY = yScale ? yScale(d.y) : pointOrCentroid()[1];
             var alignedRight;
