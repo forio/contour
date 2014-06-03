@@ -602,7 +602,7 @@
 
             this.container = d3.select(this.options.el);
             // fix a flicker im web-kit when animating opacity and the chart is in an iframe
-            this.container.attr('style', '-webkit-backface-visibility: hidden;');
+            this.container.attr('style', '-webkit-backface-visibility: hidden; position: relative');
 
             if(!this.svg) {
                 this.svg = this.container
@@ -622,7 +622,7 @@
             return this.svg.append('g')
                 .attr('vis-id', id)
                 .attr('vis-type', vis.type)
-                .attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + this.options.chart.padding.top + ')');
+                .attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
         },
 
         renderVisualizations: function () {
@@ -1321,7 +1321,7 @@
 
 })();
 
-Contour.version = '0.9.86';
+Contour.version = '0.9.87';
 (function () {
 
     var helpers = {
@@ -1939,7 +1939,7 @@ Contour.version = '0.9.86';
         renderAxisLabels: function () {
             var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
             var adjustFactor = 40/46.609;
-
+            var el;
             var bounds, anchor, rotation, tickSize, x, y;
 
             if (this.options.xAxis.title) {
@@ -1948,14 +1948,19 @@ Contour.version = '0.9.86';
                 y = this.options.chart.rotatedFrame ? -this.options.chart.internalPadding.left : this.options.chart.internalPadding.bottom - lineHeightAdjustment;
 
                 rotation = this.options.chart.rotatedFrame ? '-90' : '0';
-                this._xAxisGroup.append('text')
-                    .attr('class', 'x axis-title')
-                    .attr('x', 0)
+                el = this._xAxisGroup.selectAll('.x.axis-title').data([null]);
+
+                el.enter().append('text')
+                    .attr('class', 'x axis-title');
+
+                el.attr('x', 0)
                     .attr('y', y)
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .attr('dy', bounds.height * adjustFactor)
                     .attr('dx', -(this.options.chart.plotHeight + bounds.width) / 2)
                     .text(this.options.xAxis.title);
+
+                el.exit().remove();
             }
 
             if (this.options.yAxis.title) {
@@ -1969,14 +1974,19 @@ Contour.version = '0.9.86';
 
                 rotation = this.options.chart.rotatedFrame ? '0' : '-90';
 
-                this._yAxisGroup.append('text')
-                    .attr('class', 'y axis-title')
-                    .attr('y', y)
+                el = this._yAxisGroup.selectAll('.y.axis-title').data([null]);
+
+                el.enter().append('text')
+                    .attr('class', 'y axis-title');
+
+                el.attr('y', y)
                     .attr('x', x)
                     .attr('dx', -(this.options.chart.plotWidth + bounds.width) / 2)
                     .attr('dy', -4) // just because
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .text(this.options.yAxis.title);
+
+                el.exit().remove();
             }
 
             return this;
@@ -2125,6 +2135,11 @@ Contour.version = '0.9.86';
             .y0(function (d) { return options.area.stacked ? y(d.y0 || options.yAxis.min || 0) : y(0); })
             .y1(function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
 
+        if(options.area.smooth) {
+            area.interpolate('cardinal');
+            startArea.interpolate('cardinal');
+        }
+
         renderSeries();
 
 
@@ -2217,7 +2232,7 @@ Contour.version = '0.9.86';
         var stack = d3.layout.stack().values(function (d) { return d.data; });
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
-        var classFn = function (d, i) { return 'series s-' + (i+1); };
+        var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
 
         var series = layer.selectAll('g.series')
             .data(stack(data));
@@ -2352,7 +2367,7 @@ Contour.version = '0.9.86';
 
         series.enter()
             .append('g')
-            .attr('class', function (d, i) { return 'series s-' + (i+1); });
+            .attr('class', function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; });
 
         series.exit()
             .remove();
@@ -3193,10 +3208,10 @@ Contour.export('nullVis', _.noop);
             var plotTop = this.options.chart.plotTop;
             var plotHeight = this.options.chart.plotHeight;
             var distance = this.options.tooltip.distance;
-            var width = parseFloat(this.tooltipElement.style('width'));
-            var height = parseFloat(this.tooltipElement.style('height'));
-            var pointX = xScale ? xScale(d.x) : pointOrCentroid()[0];
-            var pointY = yScale ? yScale(d.y) : pointOrCentroid()[1];
+            var width = parseFloat(this.tooltipElement.node().offsetWidth);
+            var height = parseFloat(this.tooltipElement.node().offsetHeight);
+            var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];
+            var pointY = yScale ? yScale(d.y) : pointOrCentroid.call(this)[1];
             var alignedRight;
 
             var clampPosition = function (pos) {
@@ -3292,7 +3307,7 @@ Contour.export('nullVis', _.noop);
 
             dataPoints = findOriginalDataPoint(d);
 
-            this.tooltipElement.select('.text').html(getTooltipText.call(this, dataPoints[0], dataPoints));
+            this.tooltipElement.select('.text').html(getTooltipText.call(this, dataPoints[0] || d, dataPoints));
 
             var pos = positionTooltip.call(this, d);
 
