@@ -26,14 +26,6 @@
             }
         };
 
-        // return the centroid x, y coordinates relative to the svg container
-        var getCentroid = function (element) {
-            var bbox = element.getBoundingClientRect();
-            var clientRect = element.getBoundingClientRect();
-
-            return [bbox.left + bbox.width/2, bbox.top + bbox.height/2];
-        };
-
         function getPosition(options) {
 
         }
@@ -41,7 +33,7 @@
 
         var positionTooltip = function (d) {
             var pointOrCentroid = function () {
-                return d3.event.target.tagName === 'path' ? getCentroid(d3.event.target) : d3.mouse(this.container.node());
+                return d3.event.target.tagName === 'path' ? _.nw.getCentroid(d3.event.target) : d3.mouse(this.container.node());
             };
             var xScale = this.xScale;
             var yScale = this.yScale;
