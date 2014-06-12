@@ -1,7 +1,7 @@
 {
   "name": "Contour",
   "description": "Forio's Visualization Library",
-  "version": "0.9.87",
+  "version": "0.9.88",
   "dependencies": {
     "lodash": "~2.4.1",
     "d3": "~3.3.0"

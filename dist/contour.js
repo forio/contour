@@ -279,6 +279,13 @@
             var styles = elem.offsetParent ? elem.ownerDocument.defaultView.getComputedStyle(elem, null) : elem.style;
 
             return style ? styles[style] : styles;
+        },
+
+        getCentroid: function (element) {
+            var parentBox = element.offsetParent.getBoundingClientRect();
+            var bbox = element.getBoundingClientRect();
+
+            return [bbox.left - parentBox.left + bbox.width/2, bbox.top - parentBox.top + bbox.height/2];
         }
     };
 
@@ -1321,7 +1328,7 @@
 
 })();
 
-Contour.version = '0.9.87';
+Contour.version = '0.9.88';
 (function () {
 
     var helpers = {
@@ -2112,6 +2119,7 @@ Contour.version = '0.9.87';
         },
         area: {
             stacked: true,
+            areaBase: undefined
         }
     };
 
@@ -2130,9 +2138,10 @@ Contour.version = '0.9.87';
             .y0(function (d) { return h; })
             .y1(function(d) { return h; });
 
+        var areaBase = options.area.areaBase != null ? options.area.areaBase : options.yAxis.min;
         var area = d3.svg.area()
             .x(function(d) { return x(d.x); })
-            .y0(function (d) { return options.area.stacked ? y(d.y0 || options.yAxis.min || 0) : y(0); })
+            .y0(function (d) { return options.area.stacked ? y(d.y0 || areaBase || 0) : y(0); })
             .y1(function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
 
         if(options.area.smooth) {
@@ -3184,14 +3193,6 @@ Contour.export('nullVis', _.noop);
             }
         };
 
-        // return the centroid x, y coordinates relative to the svg container
-        var getCentroid = function (element) {
-            var bbox = element.getBoundingClientRect();
-            var clientRect = element.getBoundingClientRect();
-
-            return [bbox.left + bbox.width/2, bbox.top + bbox.height/2];
-        };
-
         function getPosition(options) {
 
         }
@@ -3199,7 +3200,7 @@ Contour.export('nullVis', _.noop);
 
         var positionTooltip = function (d) {
             var pointOrCentroid = function () {
-                return d3.event.target.tagName === 'path' ? getCentroid(d3.event.target) : d3.mouse(this.container.node());
+                return d3.event.target.tagName === 'path' ? _.nw.getCentroid(d3.event.target) : d3.mouse(this.container.node());
             };
             var xScale = this.xScale;
             var yScale = this.yScale;
