@@ -263,6 +263,13 @@
             var styles = elem.offsetParent ? elem.ownerDocument.defaultView.getComputedStyle(elem, null) : elem.style;
 
             return style ? styles[style] : styles;
+        },
+
+        getCentroid: function (element) {
+            var parentBox = element.offsetParent.getBoundingClientRect();
+            var bbox = element.getBoundingClientRect();
+
+            return [bbox.left - parentBox.left + bbox.width/2, bbox.top - parentBox.top + bbox.height/2];
         }
     };
 
