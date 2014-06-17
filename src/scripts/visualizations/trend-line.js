@@ -33,18 +33,13 @@
         line.exit().remove();
 
         if (shouldAnimate) {
-            line.transition().duration(duration)
-                .attr('x1', x(domain[0]))
-                .attr('y1', y(lineY(numericDomain[0])))
-                .attr('x2', x(domain[1]))
-                .attr('y2', y(lineY(numericDomain[1])));
-        } else {
-            line
-                .attr('x1', x(domain[0]))
-                .attr('y1', y(lineY(numericDomain[0])))
-                .attr('x2', x(domain[1]))
-                .attr('y2', y(lineY(numericDomain[1])));
+            line = line.transition().duration(duration);
         }
+
+        line.attr('x1', x(domain[0]))
+            .attr('y1', y(lineY(numericDomain[0])))
+            .attr('x2', x(domain[1]))
+            .attr('y2', y(lineY(numericDomain[1])));
     }
 
     ctor.defaults = {};
