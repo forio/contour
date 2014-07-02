@@ -15,6 +15,7 @@ The distance from the edge of the chart to the [`outerRadius`](#config_config.pi
 
 *[Try it.](<%= jsFiddleLink %>)*
 
-<% if(notes) { %><%= notes %><% } %>
+**Notes:**
 
+Values for `piePadding` of less than 1 are interpreted as percentages. For example, `pie: { piePadding: 0.35 }` means the distance from the edge of the chart to the [`outerRadius`](#config_config.pie.outerRadius) is 35% of the size of the chart. (Therefore, values of `piePadding` less than or equal to `0.5` cause the pie chart to disappear.)
 
