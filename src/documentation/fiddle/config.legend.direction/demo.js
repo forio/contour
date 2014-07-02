@@ -6,6 +6,7 @@ $(function () {
 
     new Contour({
         el: '.myChart',
+        xAxis: { type: 'linear' },
         legend: { direction: 'horizontal' }
       })
     .cartesian()
