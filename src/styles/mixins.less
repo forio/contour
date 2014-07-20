@@ -1,12 +1,13 @@
 
-.mono-font() {
+.mono-font(@size:13px) {
+
     font-family: "Consolas", "Monaco", monospace;
-    font-size: 13px;
+    font-size: @size;
 }
 
-.sans-serif() {
+.sans-serif(@size:16px) {
     font-family: "Helvetica Neue", arial, sans-serif;
-    font-size: 16px;
+    font-size: @size;
 }
 
 .make-series-colors(@namespace, @colorList) {
