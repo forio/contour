@@ -2,6 +2,8 @@
 
     var defaults = {
         column : {
+            // specifies a class string or function that will be added to each column
+            columnClass: null,
             stacked: false,
             groupPadding: 1,
             columnWidth: function() { return this.rangeBand; },
@@ -15,6 +17,7 @@
         var opt = options.column;
         var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
+        var rectClass = options.column.columnClass;
         var _this = this;
         var x = function (v) { return Math.round(_this.xScale(v)) + 0.5; };
         var y = function (v) { return Math.round(_this.yScale(v)) - 0.5; };
@@ -55,7 +58,11 @@
 
         cols.enter()
             .append('rect')
-            .attr('class', cssClass)
+            .attr('class', function (d, i, j) {
+                if (!rectClass) return cssClass;
+
+                return cssClass + ' ' + (typeof rectClass === 'function' ? rectClass.call(this, d, i, j) : rectClass);
+            })
             .call(enter);
 
         if (options.chart.animations && options.chart.animations.enable) {

@@ -2,6 +2,7 @@
 
     var defaults = {
         bar: {
+            barClass: null,
             stacked: false,
             groupPadding: 2      // two px between same group bars
         }
@@ -11,6 +12,7 @@
         this.checkDependencies(['cartesian', 'horizontal']);
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var _this = this;
+        var rectClass = options.bar.barClass;
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
         var rangeBand = this.rangeBand;
@@ -32,7 +34,11 @@
 
         var cssClass = 'bar' + (options.tooltip.enable ? ' tooltip-tracker' : '');
         bars.enter().append('rect')
-            .attr('class', cssClass)
+            .attr('class', function (d, i, j) {
+                if (!rectClass) return cssClass;
+
+                return cssClass + ' ' + (typeof rectClass === 'function' ? rectClass.call(this, d, i, j) : rectClass);
+            })
             .call(enter);
 
         if(options.chart.animations && options.chart.animations.enable) {
