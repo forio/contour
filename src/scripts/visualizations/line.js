@@ -2,6 +2,7 @@
 
     var defaults = {
         line: {
+            stacked: false,
             smooth: false,
             animationDirection: 'left-to-right',
             // animationDirection: 'bottom-to-top',
@@ -54,26 +55,32 @@
         }
     };
 
+
     /* jshint eqnull: true */
     function render(rawData, layer, options, id) {
         this.checkDependencies('cartesian');
+        function optimizeData(rawData) {
+            return _.map(rawData, function (s) {
+                return _.extend(s, {
+                    data: _.filter(s.data, function (d, i) {
+                        if (i === 0 && d.y != null) return true;
+                        var differentX = x(s.data[i-1]) !== x(d); // && y(s.data[i-1]) !== y(d);
+                        return d.y != null && differentX;
+                    })
+                });
+            });
+        }
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
-        var y = _.bind(function (d) { return this.yScale(d.y) + 0.5; }, this);
+        var y = _.bind(function (d) { return this.yScale(d.y + (d.y0 || 0)) + 0.5; }, this);
         var h = options.chart.plotHeight;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         animationDirection = options.line.animationDirection || 'left-to-right';
         duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         // jshint eqnull:true
-        var data = _.map(rawData, function (s) {
-            return _.extend(s, {
-                data: _.filter(s.data, function (d, i) {
-                    if (i === 0 && d.y != null) return true;
-                    var differentX = x(s.data[i-1]) !== x(d); // && y(s.data[i-1]) !== y(d);
-                    return d.y != null && differentX;
-                })
-            });
-        });
+        var data = optimizeData(rawData);
+
+        data = options.line.stacked ? d3.layout.stack().values(function (d) { return d.data; })(data) : data;
 
         renderPaths();
 
