@@ -50,7 +50,7 @@
             .remove();
 
         var cols = series.selectAll('.column')
-                .data(dataKey);
+                .data(dataKey, function (d) { return d.x || d; });
 
         var offset = function (d, i) { return rangeBand / data.length * i; };
         var width = rangeBand / data.length - opt.groupPadding - 0.5;
