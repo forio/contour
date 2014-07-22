@@ -38,6 +38,8 @@
 
         renderSeries();
 
+        if (options.tooltip && options.tooltip.enable)
+            renderTooltipTrackers();
 
         function renderSeries() {
             var series = layer.selectAll('g.series')
@@ -62,24 +64,36 @@
                     .datum(function (d) { return d.data; })
                     .attr('d', area);
             }
-
-            if (options.tooltip.enable) {
-                renderTooltipTrackers.call(this, series);
-            }
         }
 
-        function renderTooltipTrackers(series){
+        function renderTooltipTrackers() {
             var trackerSize = 10;
             // add the tooltip trackers regardless
-            series.append('g').attr('class', 'tooltip-trackers')
-                .selectAll('tooltip-tracker')
-                    .data(function (d) { return d.data; })
-                .enter().append('circle')
+            var markers = layer.selectAll('.tooltip-trackers')
+                .data(data, function (d) { return d.name; });
+
+            markers.enter().append('g')
+                .attr('class', 'tooltip-trackers');
+
+            markers.exit().remove();
+
+            var dots = markers.selectAll('.tooltip-tracker')
+                    .data(function (d) {
+                        return d.data;
+                    }, function (d, i) {
+                        return [d.x,d.y,d.y0].join('&');
+                    });
+
+            dots.enter().append('circle')
                     .attr('class', 'tooltip-tracker')
                     .attr('opacity', 0)
-                    .attr('r', trackerSize)
-                    .attr('cx', function(d) { return x(d.x); })
-                    .attr('cy', function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
+                    .attr('r', trackerSize);
+
+            dots.attr('cx', function(d) { return x(d.x); })
+                .attr('cy', function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
+
+            dots.exit().remove();
+
         }
     }
 
