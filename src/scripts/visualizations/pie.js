@@ -2,6 +2,10 @@
 
     var defaults = {
         pie: {
+            sliceClass: null,
+
+            style: null,
+
             piePadding: {
                 left: null,
                 top: null,
@@ -77,6 +81,8 @@
         var w = options.chart.plotWidth, h = options.chart.plotHeight;
         var padding = calcPadding.call(this, options);
         var numSeries = data.length;
+        var style = options.pie.style;
+        var _this = this;
         var shouldCenterX = _.all([options.pie.piePadding.left, options.pie.piePadding.right], function (d) { return d == null; });
         var shouldCenterY = _.all([options.pie.piePadding.top, options.pie.piePadding.bottom], function (d) { return d == null; });
         var pixelPadding = resolvePaddingUnits(padding, w, h);
@@ -92,9 +98,16 @@
         var centerX = (w - (radius * 2 * (numSeries - 1)))/2;
         var centerY = h / 2;
 
-        var classFn = function (d, i) {
-            return 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.data.x;
+        var classFn = function (d, i, j) {
+            var baseClass = 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.data.x;
+
+            if (!options.pie.sliceClass) {
+                return baseClass;
+            }
+
+            return baseClass + ' ' + (typeof options.pie.sliceClass === 'function' ? options.pie.sliceClass.call(_this, d, i, j) : options.pie.sliceClass);
         };
+
         var translatePie = function (d,i) {
             var offsetX = radius * 2;
             var posX = shouldCenterX ? centerX : radius + pixelPadding.left;
@@ -138,7 +151,9 @@
                 .append('path')
                 .attr('class', classFn)
                 .attr('d', function (d) { return startArc(d); })
+                .attr('style', style)
                 .each(function (d) { this._current = { startAngle: d.startAngle, endAngle: d.startAngle }; });
+
 
             if (shouldAnimate) {
                 pie.exit()

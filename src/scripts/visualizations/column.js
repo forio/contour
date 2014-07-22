@@ -4,6 +4,7 @@
         column : {
             // specifies a class string or function that will be added to each column
             columnClass: null,
+            style: null,
             stacked: false,
             groupPadding: 1,
             columnWidth: function() { return this.rangeBand; },
@@ -18,6 +19,7 @@
         var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
         var rectClass = options.column.columnClass;
+        var rectStyle = options.column.style;
         var _this = this;
         var x = function (v) { return Math.round(_this.xScale(v)) + 0.5; };
         var y = function (v) { return Math.round(_this.yScale(v)) - 0.5; };
@@ -77,6 +79,9 @@
             cols.exit().remove();
             cols.call(update);
         }
+
+        // for every update
+        cols.attr('style', rectStyle);
 
         function stacked(col, enter) {
             var base = y(0);

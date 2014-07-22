@@ -3,6 +3,8 @@
     var defaults = {
         bar: {
             barClass: null,
+            style: null,
+            barClass: null,
             stacked: false,
             groupPadding: 2      // two px between same group bars
         }
@@ -13,6 +15,7 @@
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var _this = this;
         var rectClass = options.bar.barClass;
+        var style = options.bar.style;
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
         var rangeBand = this.rangeBand;
@@ -42,13 +45,15 @@
             .call(enter);
 
         if(options.chart.animations && options.chart.animations.enable) {
-            bars.transition().duration(duration).call(update);
+            bars
+                .attr('style', style)
+                .transition().duration(duration).call(update);
             bars.exit()
                 .transition().duration(duration)
                 .attr('width', y(0))
                 .remove();
         } else {
-            bars.call(update);
+            bars.attr('style', style).call(update);
             bars.exit().remove();
         }
 
