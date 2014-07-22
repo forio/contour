@@ -158,11 +158,7 @@
                 var name = series.name;
                 _.each(series.data, function (point) {
                     if (point.x === d.x && d.y === point.y) {
-                        res.push({
-                            x: point.x,
-                            y: point.y,
-                            series: name
-                        });
+                        res.push(_.extend(point, { series: name }));
                     }
                 });
             });
