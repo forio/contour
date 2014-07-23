@@ -1328,7 +1328,7 @@
 
 })();
 
-Contour.version = '0.9.90';
+Contour.version = '0.9.91';
 (function () {
 
     var helpers = {
@@ -2151,6 +2151,8 @@ Contour.version = '0.9.90';
 
         renderSeries();
 
+        if (options.tooltip && options.tooltip.enable)
+            renderTooltipTrackers();
 
         function renderSeries() {
             var series = layer.selectAll('g.series')
@@ -2175,24 +2177,36 @@ Contour.version = '0.9.90';
                     .datum(function (d) { return d.data; })
                     .attr('d', area);
             }
-
-            if (options.tooltip.enable) {
-                renderTooltipTrackers.call(this, series);
-            }
         }
 
-        function renderTooltipTrackers(series){
+        function renderTooltipTrackers() {
             var trackerSize = 10;
             // add the tooltip trackers regardless
-            series.append('g').attr('class', 'tooltip-trackers')
-                .selectAll('tooltip-tracker')
-                    .data(function (d) { return d.data; })
-                .enter().append('circle')
+            var markers = layer.selectAll('.tooltip-trackers')
+                .data(data, function (d) { return d.name; });
+
+            markers.enter().append('g')
+                .attr('class', 'tooltip-trackers');
+
+            markers.exit().remove();
+
+            var dots = markers.selectAll('.tooltip-tracker')
+                    .data(function (d) {
+                        return d.data;
+                    }, function (d, i) {
+                        return [d.x,d.y,d.y0].join('&');
+                    });
+
+            dots.enter().append('circle')
                     .attr('class', 'tooltip-tracker')
                     .attr('opacity', 0)
-                    .attr('r', trackerSize)
-                    .attr('cx', function(d) { return x(d.x); })
-                    .attr('cy', function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
+                    .attr('r', trackerSize);
+
+            dots.attr('cx', function(d) { return x(d.x); })
+                .attr('cy', function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
+
+            dots.exit().remove();
+
         }
     }
 
@@ -2226,6 +2240,9 @@ Contour.version = '0.9.90';
 
     var defaults = {
         bar: {
+            barClass: null,
+            style: null,
+            barClass: null,
             stacked: false,
             groupPadding: 2      // two px between same group bars
         }
@@ -2235,6 +2252,8 @@ Contour.version = '0.9.90';
         this.checkDependencies(['cartesian', 'horizontal']);
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var _this = this;
+        var rectClass = options.bar.barClass;
+        var style = options.bar.style;
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
         var rangeBand = this.rangeBand;
@@ -2256,17 +2275,23 @@ Contour.version = '0.9.90';
 
         var cssClass = 'bar' + (options.tooltip.enable ? ' tooltip-tracker' : '');
         bars.enter().append('rect')
-            .attr('class', cssClass)
+            .attr('class', function (d, i, j) {
+                if (!rectClass) return cssClass;
+
+                return cssClass + ' ' + (typeof rectClass === 'function' ? rectClass.call(this, d, i, j) : rectClass);
+            })
             .call(enter);
 
         if(options.chart.animations && options.chart.animations.enable) {
-            bars.transition().duration(duration).call(update);
+            bars
+                .attr('style', style)
+                .transition().duration(duration).call(update);
             bars.exit()
                 .transition().duration(duration)
                 .attr('width', y(0))
                 .remove();
         } else {
-            bars.call(update);
+            bars.attr('style', style).call(update);
             bars.exit().remove();
         }
 
@@ -2337,6 +2362,9 @@ Contour.version = '0.9.90';
 
     var defaults = {
         column : {
+            // specifies a class string or function that will be added to each column
+            columnClass: null,
+            style: null,
             stacked: false,
             groupPadding: 1,
             columnWidth: function() { return this.rangeBand; },
@@ -2350,6 +2378,8 @@ Contour.version = '0.9.90';
         var opt = options.column;
         var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
+        var rectClass = options.column.columnClass;
+        var rectStyle = options.column.style;
         var _this = this;
         var x = function (v) { return Math.round(_this.xScale(v)) + 0.5; };
         var y = function (v) { return Math.round(_this.yScale(v)) - 0.5; };
@@ -2382,7 +2412,7 @@ Contour.version = '0.9.90';
             .remove();
 
         var cols = series.selectAll('.column')
-                .data(dataKey);
+                .data(dataKey, function (d) { return d.x || d; });
 
         var offset = function (d, i) { return rangeBand / data.length * i; };
         var width = rangeBand / data.length - opt.groupPadding - 0.5;
@@ -2390,7 +2420,11 @@ Contour.version = '0.9.90';
 
         cols.enter()
             .append('rect')
-            .attr('class', cssClass)
+            .attr('class', function (d, i, j) {
+                if (!rectClass) return cssClass;
+
+                return cssClass + ' ' + (typeof rectClass === 'function' ? rectClass.call(this, d, i, j) : rectClass);
+            })
             .call(enter);
 
         if (options.chart.animations && options.chart.animations.enable) {
@@ -2405,6 +2439,9 @@ Contour.version = '0.9.90';
             cols.exit().remove();
             cols.call(update);
         }
+
+        // for every update
+        cols.attr('style', rectStyle);
 
         function stacked(col, enter) {
             var base = y(0);
@@ -2613,6 +2650,7 @@ Contour.version = '0.9.90';
 
     var defaults = {
         line: {
+            stacked: false,
             smooth: false,
             animationDirection: 'left-to-right',
             // animationDirection: 'bottom-to-top',
@@ -2665,26 +2703,32 @@ Contour.version = '0.9.90';
         }
     };
 
+
     /* jshint eqnull: true */
     function render(rawData, layer, options, id) {
         this.checkDependencies('cartesian');
+        function optimizeData(rawData) {
+            return _.map(rawData, function (s) {
+                return _.extend(s, {
+                    data: _.filter(s.data, function (d, i) {
+                        if (i === 0 && d.y != null) return true;
+                        var differentX = x(s.data[i-1]) !== x(d); // && y(s.data[i-1]) !== y(d);
+                        return d.y != null && differentX;
+                    })
+                });
+            });
+        }
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
-        var y = _.bind(function (d) { return this.yScale(d.y) + 0.5; }, this);
+        var y = _.bind(function (d) { return this.yScale(d.y + (d.y0 || 0)) + 0.5; }, this);
         var h = options.chart.plotHeight;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         animationDirection = options.line.animationDirection || 'left-to-right';
         duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         // jshint eqnull:true
-        var data = _.map(rawData, function (s) {
-            return _.extend(s, {
-                data: _.filter(s.data, function (d, i) {
-                    if (i === 0 && d.y != null) return true;
-                    var differentX = x(s.data[i-1]) !== x(d); // && y(s.data[i-1]) !== y(d);
-                    return d.y != null && differentX;
-                })
-            });
-        });
+        var data = optimizeData(rawData);
+
+        data = options.line.stacked ? d3.layout.stack().values(function (d) { return d.data; })(data) : data;
 
         renderPaths();
 
@@ -2840,6 +2884,10 @@ Contour.export('nullVis', _.noop);
 
     var defaults = {
         pie: {
+            sliceClass: null,
+
+            style: null,
+
             piePadding: {
                 left: null,
                 top: null,
@@ -2915,6 +2963,8 @@ Contour.export('nullVis', _.noop);
         var w = options.chart.plotWidth, h = options.chart.plotHeight;
         var padding = calcPadding.call(this, options);
         var numSeries = data.length;
+        var style = options.pie.style;
+        var _this = this;
         var shouldCenterX = _.all([options.pie.piePadding.left, options.pie.piePadding.right], function (d) { return d == null; });
         var shouldCenterY = _.all([options.pie.piePadding.top, options.pie.piePadding.bottom], function (d) { return d == null; });
         var pixelPadding = resolvePaddingUnits(padding, w, h);
@@ -2930,9 +2980,16 @@ Contour.export('nullVis', _.noop);
         var centerX = (w - (radius * 2 * (numSeries - 1)))/2;
         var centerY = h / 2;
 
-        var classFn = function (d, i) {
-            return 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.data.x;
+        var classFn = function (d, i, j) {
+            var baseClass = 'series arc' + (options.tooltip.enable ? ' tooltip-tracker' : '') + ' s-' + (i+1) + ' ' + d.data.x;
+
+            if (!options.pie.sliceClass) {
+                return baseClass;
+            }
+
+            return baseClass + ' ' + (typeof options.pie.sliceClass === 'function' ? options.pie.sliceClass.call(_this, d, i, j) : options.pie.sliceClass);
         };
+
         var translatePie = function (d,i) {
             var offsetX = radius * 2;
             var posX = shouldCenterX ? centerX : radius + pixelPadding.left;
@@ -2976,7 +3033,9 @@ Contour.export('nullVis', _.noop);
                 .append('path')
                 .attr('class', classFn)
                 .attr('d', function (d) { return startArc(d); })
+                .attr('style', style)
                 .each(function (d) { this._current = { startAngle: d.startAngle, endAngle: d.startAngle }; });
+
 
             if (shouldAnimate) {
                 pie.exit()
@@ -3326,11 +3385,7 @@ Contour.export('nullVis', _.noop);
                 var name = series.name;
                 _.each(series.data, function (point) {
                     if (point.x === d.x && d.y === point.y) {
-                        res.push({
-                            x: point.x,
-                            y: point.y,
-                            series: name
-                        });
+                        res.push(_.extend(point, { series: name }));
                     }
                 });
             });
