@@ -17,5 +17,7 @@ The pie chart is completely filled in when `innerRadius` is `0` or null. The pie
 
 *[Try it.](<%= jsFiddleLink %>)*
 
+**Notes:**
+
 Values for `innerRadius` of less than 1 are interpreted as percentages. For example, `pie: { innerRadius: 0.35 }` means the radius from the center of the pie chart to the inner edge is 35% of the (outer) radius of the pie. 
 
