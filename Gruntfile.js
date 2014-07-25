@@ -73,7 +73,7 @@ module.exports = function (grunt) {
                 'src/scripts/core/contour.js',
                 'src/scripts/core/axis/y-axis.js',
                 'src/scripts/core/cartesian.js',
-                'src/scripts/core/version.js',
+                'src/scripts/version.js',
 
 
                 'src/scripts/core/**/*.js',
@@ -122,7 +122,7 @@ module.exports = function (grunt) {
                     'src/scripts/core/contour.js',
                     'src/scripts/core/axis/y-axis.js',
                     'src/scripts/core/cartesian.js',
-                    'src/scripts/core/version.js',
+                    'src/scripts/version.js',
 
                     'src/scripts/core/**/*.js',
                     'src/scripts/visualizations/null.js',
@@ -144,7 +144,9 @@ module.exports = function (grunt) {
     // Default task.
     grunt.registerTask('default', ['less:dev', 'watch:less']);
 
-    grunt.registerTask('production', function (type) {
+    grunt.registerTask('production', ['concat', 'uglify', 'less:production', 'less:uncompressed']);
+
+    grunt.registerTask('release', function (type) {
         type = type ? type : 'patch';
         ['bumpup:' + type, 'ver', 'concat', 'uglify', 'less:production', 'less:uncompressed', 'tagrelease'].forEach(function (task) {
             grunt.task.run(task);
