@@ -8,7 +8,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-tagrelease');
 
-
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -33,6 +32,12 @@ module.exports = function (grunt) {
         tagrelease: '<%= pkg.version %>',
         ver: {
             files: ['src/scripts/core/version.js']
+        },
+        releaseNotes: {
+            files: [],
+            options: {
+                dest: 'dist/contour-release-notes.txt'
+            }
         },
         less: {
             dev: {
@@ -112,6 +117,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         // this task does not currently work... our tests are done in jasmine 1.3.1
         // and grunt-contrib-jasmin only supports 2.0.0
         // TODO: upgrade tests for jasmin 2.0
@@ -144,16 +150,28 @@ module.exports = function (grunt) {
     // Default task.
     grunt.registerTask('default', ['less:dev', 'watch:less']);
 
-    grunt.registerTask('production', ['concat', 'uglify', 'less:production', 'less:uncompressed']);
+    grunt.registerTask('production', ['concat', 'uglify', 'less:production', 'less:uncompressed', 'releaseNotes']);
 
     grunt.registerTask('release', function (type) {
         type = type ? type : 'patch';
-        ['bumpup:' + type, 'ver', 'concat', 'uglify', 'less:production', 'less:uncompressed', 'tagrelease'].forEach(function (task) {
+        ['bumpup:' + type, 'ver', 'concat', 'uglify', 'less:production', 'less:uncompressed', 'releaseNotes', 'tagrelease'].forEach(function (task) {
             grunt.task.run(task);
         });
     });
 
     grunt.registerTask('linked', ['concat', 'uglify', 'less:uncompressed', 'less:production', 'watch']);
+
+
+    grunt.registerMultiTask('releaseNotes', 'Generate a release notes file with changes in git log since last tag', function () {
+        var options = this.options({
+            dest: 'dist/release-notes.txt'
+        });
+
+        var cmd = 'git log --pretty="format:  * %s"  `git describe --tags --abbrev=0`..HEAD > ' + options.dest;
+        grunt.log.verbose.writeln('executing', cmd);
+        var log = require('shelljs').exec(cmd).output;
+        grunt.file.write(options.dest, log);
+    });
 
     grunt.registerMultiTask('ver', 'Update version file with what\'s in package.json', function () {
         var pkg = require('./package.json');
