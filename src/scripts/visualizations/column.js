@@ -41,6 +41,18 @@
             return d.data;
         });
 
+        // prepare satck to handle different x values with different lengths
+        var outFn = function() {
+            var y0s = {};
+            return function (d, y0, y) {
+                d.y0 = y0s[d.x] != null ? y0s[d.x] : 0;
+                d.y = y;
+                y0s[d.x] = y;
+            };
+        };
+
+        stack.out(outFn());
+
         var series = layer.selectAll('g.series')
                 .data(stack(filteredData));
 

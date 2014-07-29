@@ -16,18 +16,32 @@
     };
 
 
+    /*jshint eqnull:true */
     var _stackedExtent = function (data) {
-        var dataSets = _.pluck(data, 'data');
-        var maxLength = _.max(_.map(dataSets, function (d) { return d.length; }));
-        var stackY = [];
+        // prepare satck to handle different x values with different lengths
+        var stack = d3.layout.stack().values(function (d) { return d.data; });
+        var outFn = function() {
+            var y0s = {};
+            return function (d, y0, y) {
+                d.y0 = y0s[d.x] != null ? y0s[d.x] : 0;
+                d.y = y;
+                y0s[d.x] = y;
+            };
+        };
+        stack.out(outFn());
 
-        for (var j=0; j<maxLength; j++) {
-            _.each(dataSets, function (set) {
-                stackY[j] = set[j] ? (stackY[j] || 0) + set[j].y : (stackY[j] || 0);
+        var dataSets = stack(data);
+        var min = {};
+        var max = {};
+
+        _.each(dataSets, function (set) {
+            _.each(set.data, function (d) {
+                if (min[d.x] == null || min[d.x] > d.y0) min[d.x] = d.y0;
+                if (max[d.x] == null || max[d.x] < d.y0 + d.y) max[d.x] = d.y0 + d.y;
             });
-        }
+        });
 
-        return [_.min(stackY), _.max(stackY)];
+        return [_.min(min), _.max(max)];
     };
 
     var _xExtent = _.partialRight(_extent, 'x');
