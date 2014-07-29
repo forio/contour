@@ -266,5 +266,73 @@ describe('normalizeSeries', function () {
             expect(s1.data[2].y).toBe(3);
         });
     });
-
 });
+
+describe('stacked layout', function () {
+    it('should handle simple stacked data', function () {
+        var data = [{name: 'a', data: [{x: 0, y: 1}, {x: 1, y: 2}]}, {name: 'b', data: [{x: 0, y: 4}, {x: 1, y: 5}]}];
+        var expected = [
+            { name: 'a', data: [{x: 0, y: 1, y0: 0}, {x: 1, y: 2, y0: 0}] },
+            { name: 'b', data: [{x: 0, y: 4, y0: 1}, {x: 1, y: 5, y0: 2}] }
+        ];
+
+        var res = _.nw.stackLayout()(data);
+
+        expect(res).toEqual(expected);
+    });
+
+    it('should handle stacked categorical data', function () {
+        var data = [
+            { name: 'app1', data: [{x:'10.10', y: 5}] },
+            { name: 'app2', data: [{x:'10.10', y: 7}] },
+            { name: 'app3', data: [{x:'10.11', y: 9}] },
+            { name: 'app4', data: [{x:'10.11', y: 3}] }
+        ];
+
+        var expected = [
+            { name: 'app1', data: [{x:'10.10', y: 5, y0: 0}] },
+            { name: 'app2', data: [{x:'10.10', y: 7, y0: 5}] },
+            { name: 'app3', data: [{x:'10.11', y: 9, y0: 0}] },
+            { name: 'app4', data: [{x:'10.11', y: 3, y0: 9}] }
+        ];
+
+        var res = _.nw.stackLayout()(data);
+        expect(res).toEqual(expected);
+    });
+
+    it('should handle complex categorical data', function () {
+        var data = [
+            { "data": [{ "x": "10.0.17.22", "y": 1, } ], "name": "/monitoring/model-lua" },
+            { "data": [{ "x": "10.0.17.22", "y": 4, } ], "name": "/jaimedp/pda" },
+            { "data": [{ "x": "10.0.17.22", "y": 1, } ], "name": "/monitoring/model-julia" },
+            { "data": [{ "x": "10.0.17.22", "y": 146, } ], "name": "Free" }
+        ];
+
+        var expected = [
+            { "data": [{ "x": "10.0.17.22", "y": 1, y0: 0 } ], "name": "/monitoring/model-lua" },
+            { "data": [{ "x": "10.0.17.22", "y": 4, y0: 1 } ], "name": "/jaimedp/pda" },
+            { "data": [{ "x": "10.0.17.22", "y": 1, y0: 5 } ], "name": "/monitoring/model-julia" },
+            { "data": [{ "x": "10.0.17.22", "y": 146, y0: 6 } ], "name": "Free" }
+        ];
+
+        var res = _.nw.stackLayout()(data);
+        expect(res).toEqual(expected);
+
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
