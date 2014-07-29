@@ -18,18 +18,7 @@
 
     /*jshint eqnull:true */
     var _stackedExtent = function (data) {
-        // prepare satck to handle different x values with different lengths
-        var stack = d3.layout.stack().values(function (d) { return d.data; });
-        var outFn = function() {
-            var y0s = {};
-            return function (d, y0, y) {
-                d.y0 = y0s[d.x] != null ? y0s[d.x] : 0;
-                d.y = y;
-                y0s[d.x] = y;
-            };
-        };
-        stack.out(outFn());
-
+        var stack = _.nw.stackLayout();
         var dataSets = stack(data);
         var min = {};
         var max = {};

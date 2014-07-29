@@ -184,6 +184,29 @@
             return data;
         },
 
+        // returns a function to format the data into a 'stacked' d3 layout
+        // passing in a series data will add a y0 to each data point
+        // where the point should start relative to the reset of the series points
+        // at that x value
+        stackLayout: function () {
+            var stack = d3.layout
+                .stack()
+                .values(function (d) { return d.data; });
+            // prepare satck to handle different x values with different lengths
+            var outFn = function() {
+                var y0s = {};
+                return function (d, y0, y) {
+                    d.y0 = y0s[d.x] != null ? y0s[d.x] : 0;
+                    d.y = y;
+                    y0s[d.x] = y;
+                };
+            };
+
+            stack.out(outFn());
+
+            return stack;
+        },
+
         // return the uniq elements in the array
         // we are implementing our own version since this algorithm seems
         // to be a lot faster than what lodash uses

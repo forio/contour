@@ -19,26 +19,14 @@
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
         var rangeBand = this.rangeBand;
-        var stack = d3.layout
-            .stack()
-            .values(function (d) { return d.data; });
+        var stack = _.nw.stackLayout();
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
 
-        // prepare satck to handle different x values with different lengths
-        var outFn = function() {
-            var y0s = {};
-            return function (d, y0, y) {
-                d.y0 = y0s[d.x] != null ? y0s[d.x] : 0;
-                d.y = y;
-                y0s[d.x] = y;
-            };
-        };
-        stack.out(outFn());
 
         var series = layer.selectAll('g.series')
-            .data(stack(data));
+            .data(stack(data), function (d) { return d.name; });
 
         series.enter().append('svg:g')
             .attr('class', classFn);
