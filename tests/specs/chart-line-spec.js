@@ -77,6 +77,19 @@ describe('Visualizations', function () {
                     nw.line(data).render();
                 });
 
+                it('should default to linear x scale', function () {
+                    var chart = createContour();
+                    chart.line([1,2,3]).render();
+                    expect(chart.xScaleGenerator instanceof _.nw.LinearScale).toBeTruthy();
+                });
+
+
+                it('should render as ordinal scale if categorical data is passed in', function () {
+                    var chart = createContour();
+                    chart.line([{x: 'a', y: 1}, {x: 'b', y: 2}]).render();
+                    expect(chart.xScaleGenerator instanceof _.nw.OrdinalScale).toBeTruthy();
+                });
+
                 it('should add a group with the visualization id', function () {
                     expect($el.find('g [vis-id="1"]').length).toBe(1);
                 });

@@ -67,6 +67,16 @@ describe('Cartesian frame', function () {
             expect(instance.dataSrc[1].x).toBe(1);
             expect(instance.dataSrc[2].x).toBe(2);
         });
+
+        it('with string x values in all data, should copy categories to xAxis.categories', function () {
+            var instance = createinstance();
+            instance.nullVis([{x:'a', y:1}, {x:'b', y: 2}]).render();
+
+            expect(instance.options.xAxis.categories).toBeDefined();
+            expect(instance.options.xAxis.categories[0]).toBe('a');
+            expect(instance.options.xAxis.categories[1]).toBe('b');
+        });
+
     });
 
     describe('with categories array', function () {

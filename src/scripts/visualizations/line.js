@@ -1,6 +1,9 @@
 (function () {
 
     var defaults = {
+        xAxis: {
+            type: 'linear'
+        },
         line: {
             stacked: false,
             smooth: false,
