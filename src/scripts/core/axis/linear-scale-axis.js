@@ -29,7 +29,7 @@
 
         axis: function () {
             var options = this.options.xAxis;
-            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'd');
+            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'g');
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickSize(options.innerTickSize, options.outerTickSize)
