@@ -17,5 +17,18 @@ An array containing the values for the locations of the tick marks on this axis 
 
 *[Try it.](<%= jsFiddleLink %>)*
 
-<% if(notes) { %><%= notes %><% } %>
+**Notes:**
+
+For an xAxis with [`type`](#config_config.xAxis.type) of `ordinal`, the `tickValues` must be a subset of the categories. For example: 
+
+	new Contour({
+	    el: '.myLineChart',
+	    	// shows tick marks for the second and fourth points
+	    	// at x:1 and x:10
+	    xAxis: { tickValues: [1, 10], type: 'ordinal' }
+	  })
+	.cartesian()
+	.line([{x:0, y:5}, {x:1, y:3}, {x:3, y:7}, {x:10, y:4}])
+	.tooltip()
+	.render();
 
