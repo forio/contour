@@ -44,6 +44,21 @@ describe('time Axis', function () {
         expect(xLabels.length).toBe(2);
     });
 
+    it('should show only passed in tickValues', function () {
+        var tickVals = [new Date('10/12/2013')];
+        instance = createinstance({ xAxis: { tickValues: tickVals }})
+            .nullVis([
+                { x: new Date('10/11/2013'), y: 10 },
+                { x: new Date('10/12/2013'), y: 20 },
+                { x: new Date('10/13/2013'), y: 30 }
+            ])
+            .render();
+
+        var xLabels = instance.svg.selectAll('.x.axis .tick text')[0];
+        expect(xLabels.length).toBe(1);
+        expect(instance._xAxis.tickValues()).toEqual(tickVals);
+    });
+
     it('should set text-anchor:left to first label and text-anchor:end to last label only when firstAndLast is set to true', function () {
         instance = createinstance({ xAxis: { firstAndLast: true }})
             .nullVis([

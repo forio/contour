@@ -53,7 +53,9 @@
                 .tickPadding(options.tickPadding)
                 .tickValues(this._domain);
 
-            if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
+            if (this.options.xAxis.tickValues != null) {
+                axis.tickValues(this.options.xAxis.tickValues);
+            } else if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
                 // override the tickValues with custom array based on number of ticks
                 // we don't use D3 ticks() because you cannot force it to show a specific number of ticks
                 axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
