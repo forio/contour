@@ -69,7 +69,7 @@ describe('Cartesian frame', function () {
         });
     });
 
-    describe('width categories array', function () {
+    describe('with categories array', function () {
         it('should override the x axis type to be ordinal', function () {
             var instance = createinstance({xAxis: { type: 'linear', categories: [1,2,3,4] }});
             instance.render();
