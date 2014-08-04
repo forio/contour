@@ -26,7 +26,7 @@
 
 
         var series = layer.selectAll('g.series')
-            .data(stack(data), function (d) { return d.name; });
+            .data(stack(data));
 
         series.enter().append('svg:g')
             .attr('class', classFn);
