@@ -1,2 +1,0 @@
-  * pass all matching-x points into the tooltip formatter callback
-  * updated version file to 0.9.99
