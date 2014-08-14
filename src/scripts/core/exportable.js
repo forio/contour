@@ -93,7 +93,7 @@
         // which based on http://svgopen.org/2010/papers/62-From_SVG_to_Canvas_and_Back/#svg_to_canvas
 
         // exports svg to canvas
-        function getSvgDataUrl(svg, options, callback) {
+        function getSvgDataUrl(svg, options, dataUrlCreated) {
             switch (options.type) {
             case 'image/svg+xml':
                 return exportSvg();
@@ -112,7 +112,7 @@
                 var svgXml = shim.serializeXml(svg);
                 var svgDataUrl = encodeBase64DataUrl(svgXml);
 
-                callback(svgDataUrl); // double data carrier
+                dataUrlCreated(svgDataUrl); // double data carrier
             }
 
             function exportImage() {
@@ -133,7 +133,7 @@
 
                 function imageRendered() {
                     var imageDataUrl = canvas.toDataURL(options.type);
-                    callback(imageDataUrl);
+                    dataUrlCreated(imageDataUrl);
                 }
 
                 function renderImageNative() {
@@ -163,7 +163,7 @@
                         offsetY: undefined,
                         scaleWidth: undefined,
                         scaleHeight: undefined,
-                        renderCallback: imageRendered
+                        renderdataUrlCreated: imageRendered
                     });
                 }
             }
