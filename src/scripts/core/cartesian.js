@@ -505,7 +505,8 @@
                     }, this)
                 );
 
-                var isCategoricalData = _.all(this.dataSrc, function (d) { return +d.x !== d.x; });
+                // _.all() on empty array returns true, so we guard against it
+                var isCategoricalData = this.dataSrc.length && _.all(this.dataSrc, function (d) { return +d.x !== d.x; });
                 if (isCategoricalData && !this.options.xAxis.categories) {
                     this.options.xAxis.categories = _.uniq(_.pluck(this.dataSrc, 'x'));
                 }

@@ -1,4 +1,10 @@
 (function () {
+    var defaults = {
+        tooltip: {
+            enable: true
+        }
+    };
+
     /**
     * Adds a tooltip and legend combination for stacked (multiple) series visualizations in the Contour instance.
     * Requires a second display element (`<div>`) for the legend in the html.
@@ -20,7 +26,7 @@
     *
     * Each Contour instance can only include one `stackTooltip` visualization.
     */
-    Contour.export('stackTooltip', function (data, layer, options) {
+    function stackTooltip(data, layer, options) {
 
         var valueFormatter = this.yAxis().tickFormat();
         var tooltip = d3.select(options.stackTooltip.el);
@@ -43,7 +49,7 @@
             tooltip.html(text).style({display: 'block'});
         };
 
-        var onMouseOut = function (// datum 
+        var onMouseOut = function (// datum
                                     ) {
             tooltip.html('');
         };
@@ -51,5 +57,10 @@
         this.svg.selectAll('.tooltip-tracker')
             .on('mouseover.tooltip', onMouseOver.bind(this))
             .on('mouseout.tooltip',  onMouseOut.bind(this));
-    });
+    }
+
+    stackTooltip.defaults = defaults;
+
+    Contour.export('stackTooltip', stackTooltip);
+
 })();

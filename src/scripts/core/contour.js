@@ -261,7 +261,7 @@
             _.each(this._visualizations, mergeDefaults);
 
             // compose the final list of options right before start rendering
-            this.options = _.merge({}, allDefaults, this.options);
+            this.options = _.merge(this.options, _.merge({}, allDefaults, this.options));
         },
 
         baseRender: function () {
