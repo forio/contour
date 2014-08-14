@@ -128,17 +128,9 @@
                 }
 
                 function imageRendered() {
-                    // var imageDataUrl = canvas.toDataURL(options.type);
-                    // dataUrlCreated(imageDataUrl);
+                    var imageDataUrl = canvas.toDataURL(options.type);
 
-                    canvas.toBlob(function (blob) {
-                        var domUrl = window.URL || window.webkitURL || window;
-                        var url = domUrl.createObjectURL(blob);
-
-                        dataUrlCreated(url, function () {
-                            domUrl.revokeObjectURL(url);
-                        });
-                    });
+                    dataUrlCreated(imageDataUrl);
                 }
 
                 function renderImageNative() {
