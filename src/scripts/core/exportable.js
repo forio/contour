@@ -113,7 +113,7 @@
                 var svgXml = shim.serializeXml(svg);
                 var svgDataUrl = encodeBase64DataUrl(svgXml);
 
-                dataUrlCreated(svgDataUrl, function () {});
+                dataUrlCreated(svgDataUrl);
             }
 
             function exportImage() {
@@ -270,7 +270,7 @@
                 svgNodeClone.setAttribute('width', boundsClone.width);
                 svgNodeClone.setAttribute('height', boundsClone.height);
 
-                getSvgDataUrl(svgNodeClone, options, function (url, revokeUrl) {
+                getSvgDataUrl(svgNodeClone, options, function (url) {
                     destroySvgClone();
 
                     // call exporter function
@@ -295,8 +295,6 @@
                         }
                     };
                     exporters[exporter](); // call exporter function
-
-                    revokeUrl();
                 });
             }
         }
