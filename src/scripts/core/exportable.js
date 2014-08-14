@@ -118,10 +118,6 @@
             function exportImage() {
                 var canvas = document.createElement('canvas');
                 var context = canvas.getContext('2d');
-                if (options.fill) {
-                    context.fillStyle = options.fill;
-                    context.fillRect(0, 0, snapshot.width, snapshot.height);
-                }
 
                 var svgXml = shim.serializeXml(svg);
 
@@ -152,6 +148,12 @@
                     svgImg.onload = function () {
                         canvas.width = svgImg.width;
                         canvas.height = svgImg.height;
+
+                        if (options.fill) {
+                            context.fillStyle = options.fill;
+                            context.fillRect(0, 0, svgImg.width, svgImg.height);
+                        }
+
                         context.drawImage(svgImg, 0, 0);
 
                         imageRendered();
