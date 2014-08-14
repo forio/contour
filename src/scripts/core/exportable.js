@@ -112,7 +112,7 @@
                 var svgXml = shim.serializeXml(svg);
                 var svgDataUrl = encodeBase64DataUrl(svgXml);
 
-                dataUrlCreated(svgDataUrl); // double data carrier
+                dataUrlCreated(svgDataUrl, function () {});
             }
 
             function exportImage() {
@@ -132,8 +132,17 @@
                 }
 
                 function imageRendered() {
-                    var imageDataUrl = canvas.toDataURL(options.type);
-                    dataUrlCreated(imageDataUrl);
+                    // var imageDataUrl = canvas.toDataURL(options.type);
+                    // dataUrlCreated(imageDataUrl);
+
+                    canvas.toBlob(function (blob) {
+                        var domUrl = window.URL || window.webkitURL || window;
+                        var url = domUrl.createObjectURL(blob);
+
+                        dataUrlCreated(url, function () {
+                            domUrl.revokeObjectURL(url);
+                        });
+                    });
                 }
 
                 function renderImageNative() {
@@ -266,7 +275,7 @@
                 svgNodeClone.setAttribute('width', boundsClone.width);
                 svgNodeClone.setAttribute('height', boundsClone.height);
 
-                getSvgDataUrl(svgNodeClone, options.type, function (canvasData) {
+                getSvgDataUrl(svgNodeClone, options.type, function (url, revokeUrl) {
                     destroySvgClone();
 
                     // call exporter function
@@ -275,18 +284,20 @@
                             // make a link to download and click it
                             var a = document.createElement('a');
                             a.download = options.fileName;
-                            a.href = canvasData;
+                            a.href = url;
                             document.body.appendChild(a);
                             a.click();
                             document.body.removeChild(a);
                         },
                         'place': function () {
                             var img = document.createElement('img');
-                            img.src = canvasData;
+                            img.src = url;
                             d3.select(options.target).node().appendChild(img);
                         }
                     };
                     exporters[exporter](); // call exporter function
+
+                    revokeUrl();
                 });
             }
         }
