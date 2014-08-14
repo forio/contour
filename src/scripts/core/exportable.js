@@ -167,7 +167,7 @@
                         offsetY: undefined,
                         scaleWidth: undefined,
                         scaleHeight: undefined,
-                        renderdataUrlCreated: imageRendered
+                        renderCallback: imageRendered
                     });
                 }
             }
