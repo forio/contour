@@ -277,7 +277,7 @@
                 svgNodeClone.setAttribute('width', boundsClone.width);
                 svgNodeClone.setAttribute('height', boundsClone.height);
 
-                getSvgDataUrl(svgNodeClone, options.type, function (url, revokeUrl) {
+                getSvgDataUrl(svgNodeClone, options, function (url, revokeUrl) {
                     destroySvgClone();
 
                     // call exporter function
