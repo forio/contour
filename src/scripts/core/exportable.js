@@ -3,7 +3,7 @@
     var defaults = {
         type: 'image/png',
         fill: '#fff',
-        fileName: 'contour'
+        fileName: 'contour.png'
     };
     var browser = { // browser capabilities
         checked: false
@@ -37,7 +37,7 @@
             * Saves a visualization as an image, triggering a download.
             *
             * `type` specfies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
-            * `fileName` specifies the fileName for the download. (Default: 'contour'.)
+            * `fileName` specifies the fileName for the download. (Default: 'contour.png'.)
             *
             * ###Example:
             *
@@ -47,7 +47,7 @@
             *         .render();
             *     document.getElementById('save').onclick = function () {
             *         contour.download({
-            *             fileName: 'contour',
+            *             fileName: 'contour.png',
             *             width: 640
             *         });
             *
@@ -482,7 +482,7 @@
     *         .render();
     *     document.getElementById('save').onclick = function () {
     *         contour.download({
-    *             fileName: 'contour'
+    *             fileName: 'contour.png'
     *         });
     *
     * @name exportable
