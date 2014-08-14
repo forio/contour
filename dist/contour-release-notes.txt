@@ -1,0 +1,23 @@
+  * build
+  * correct unclosed DIV in bar-stacked example
+  * correct typo in LESS variable name
+  * include styles for SVG legend
+  * convert HTML legend to SVG
+  * concatenate "exportable" plugin in Gruntfile.js explicitly
+  * add "exportable" plugin for exporting as an image
+  * Changed default linear x axis label formatter to be 'general' instead of 'integer'
+  * Added ability to specify tickValues array for time axis
+  * Change default xAxis type for line charts to be 'linear' unless categorical data is provided
+  * fix typo in test description
+  * Merge pull request #156 from forio/release-0.9.89-docs
+  * Fixed bug when more that two stacks are in the series
+  * Refactor setting up of d3.layout.stack() into a contour-utils stackLayout function
+  * fixed stacking layout to handle uneven series with grouping x category
+  * added release notes generation grunt task
+  * updated grunt file to reflect new release process
+  * missed header
+  * issue #149. note that we're NOT linking the new fiddle in yet b/c 0.9.89 is not on forio.com/tools
+  * issue #143. note that we're NOT linking the new fiddles into the docs pages until 0.9.89 is avail on forio.com/tools
+  * issue #142
+  * for multiple data series, we don't detect axis type as well ... specify linear
+  * issue #112
