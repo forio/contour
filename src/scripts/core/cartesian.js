@@ -270,7 +270,6 @@
                 if (!this._xAxis) {
                     this._xAxis = this.xScaleGenerator.axis().orient(this.options.xAxis.orient);
                 }
-
                 return this._xAxis;
             },
 
@@ -507,8 +506,13 @@
 
                 // _.all() on empty array returns true, so we guard against it
                 var isCategoricalData = this.dataSrc.length && _.all(this.dataSrc, function (d) { return +d.x !== d.x; });
-                if (isCategoricalData && !this.options.xAxis.categories) {
-                    this.options.xAxis.categories = _.uniq(_.pluck(this.dataSrc, 'x'));
+                var dataSrcCategories = _.uniq(_.pluck(this.dataSrc, 'x'));
+                var sameCats = this.options.xAxis.categories ?
+                    this.options.xAxis.categories.length === dataSrcCategories.length && _.intersection(this.options.xAxis.categories, dataSrcCategories).length === dataSrcCategories.length :
+                    false;
+
+                if (isCategoricalData && !(this.options.xAxis.categories && sameCats)) {
+                    this.options.xAxis.categories = dataSrcCategories;
                 }
 
                 this._yAxis = null;
