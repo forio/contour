@@ -275,13 +275,17 @@
                     // call exporter function
                     var exporters = {
                         'download': function () {
-                            // make a link to download and click it
-                            var a = document.createElement('a');
-                            a.download = options.fileName;
-                            a.href = url;
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
+                            if (browser.aDownloads) {
+                                // make a link to download and click it
+                                var a = document.createElement('a');
+                                a.download = options.fileName;
+                                a.href = url;
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                            } else {
+                                window.open(url);
+                            }
                         },
                         'place': function () {
                             var img = document.createElement('img');
@@ -301,10 +305,15 @@
     function checkBrowser() {
         browser.checked = true;
 
+        checkADownloads();
         checkEncodesBase64();
         checkSerializesXml();
         checkExportsSvg();
 
+
+        function checkADownloads() {
+            browser.aDownloads = document.createElement('a').download !== undefined;
+        }
 
         function checkEncodesBase64() {
             browser.encodesBase64 = !!window.btoa;
