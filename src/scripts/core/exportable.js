@@ -95,11 +95,11 @@
         // exports svg to canvas
         function getSvgDataUrl(svg, options, dataUrlCreated) {
             switch (options.type) {
-            case 'image/svg+xml':
-                return exportSvg();
+                case 'image/svg+xml':
+                    return exportSvg();
 
-            default: // 'image/png' or 'image/jpeg'
-                return exportImage();
+                default: // 'image/png' or 'image/jpeg'
+                    return exportImage();
             }
 
 
