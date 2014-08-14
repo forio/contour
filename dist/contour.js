@@ -200,6 +200,29 @@
             return data;
         },
 
+        // returns a function to format the data into a 'stacked' d3 layout
+        // passing in a series data will add a y0 to each data point
+        // where the point should start relative to the reset of the series points
+        // at that x value
+        stackLayout: function () {
+            var stack = d3.layout
+                .stack()
+                .values(function (d) { return d.data; });
+            // prepare satck to handle different x values with different lengths
+            var outFn = function() {
+                var y0s = {};
+                return function (d, y0, y) {
+                    d.y0 = y0s[d.x] != null ? y0s[d.x] : 0;
+                    d.y = y;
+                    y0s[d.x] = (y0s[d.x] || 0) + y;
+                };
+            };
+
+            stack.out(outFn());
+
+            return stack;
+        },
+
         // return the uniq elements in the array
         // we are implementing our own version since this algorithm seems
         // to be a lot faster than what lodash uses
@@ -1303,6 +1326,11 @@
                     }, this)
                 );
 
+                var isCategoricalData = _.all(this.dataSrc, function (d) { return +d.x !== d.x; });
+                if (isCategoricalData && !this.options.xAxis.categories) {
+                    this.options.xAxis.categories = _.uniq(_.pluck(this.dataSrc, 'x'));
+                }
+
                 this._yAxis = null;
                 this._xAxis = null;
             },
@@ -1325,6 +1353,497 @@
     };
 
     Contour.expose('cartesian', cartesian);
+
+})();
+
+(function () {
+
+    var defaults = {
+        type: 'image/png',
+        fill: '#fff',
+        fileName: 'contour'
+    };
+    var browser = { // browser capabilities
+        checked: false
+    };
+    var shim = {
+        encodeBase64: undefined, // base 64 encoder
+        serializeXml: undefined // xml serializer
+    }; // shims for less capable browsers
+
+
+    var exportable = function () {
+        var ignoreDiff = { // css rules to ignore for diff
+            cssText: 1,
+            parentRule: 1
+        };
+        var self; // reference to this contour
+
+
+        // interface
+
+        return {
+            init: function () {
+                self = this;
+
+                if (!browser.checked) checkBrowser();
+
+                return this;
+            },
+
+            /**
+            * Saves a visualization as an image, triggering a download.
+            *
+            * `type` specfies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
+            * `fileName` specifies the fileName for the download. (Default: 'contour'.)
+            *
+            * ###Example:
+            *
+            *     var contour = new Contour(...)
+            *         ...
+            *         .exportable()
+            *         .render();
+            *     document.getElementById('save').onclick = function () {
+            *         contour.download({
+            *             fileName: 'contour',
+            *             width: 640
+            *         });
+            *
+            * @name download
+            * @param {object} options Configuration options specific to saving the image.
+            */
+            download: function (options) {
+                exportImage(options, 'download');
+
+                return this;
+            },
+
+            /**
+            * Saves a visualization as an image.
+            *
+            * `type` specfies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
+            * `target` specifies a selector for the container. (For example: `target: '#vis'` will insert the image in `<div id="vis"></div>`.)
+            *
+            * ###Example:
+            *
+            *     var contour = new Contour(...)
+            *         ...
+            *         .exportable()
+            *         .render();
+            *     document.getElementById('save').onclick = function () {
+            *         contour.place({
+            *             target: '#image'
+            *         });
+            *
+            * @name place
+            * @param {object} options Configuration options specific to saving the image.
+            */
+            place: function (options) {
+                exportImage(options, 'place');
+
+                return this;
+            }
+        };
+
+
+        // svg to canvas export function
+        // adapted from https://github.com/sampumon/SVG.toDataURL
+        // which based on http://svgopen.org/2010/papers/62-From_SVG_to_Canvas_and_Back/#svg_to_canvas
+
+        // exports svg to canvas
+        function getSvgDataUrl(svg, options, callback) {
+            switch (options.type) {
+            case 'image/svg+xml':
+                return exportSvg();
+
+            default: // 'image/png' or 'image/jpeg'
+                return exportImage();
+            }
+
+
+            function base64DataUrlEncode(svgXml) {
+                // https://developer.mozilla.org/en/DOM/window.btoa
+                return 'data:image/svg+xml;base64,' + shim.encodeBase64(svgXml);
+            }
+
+            function exportSvg() {
+                var svgXml = shim.serializeXml(svg);
+                var svgDataUrl = base64DataUrlEncode(svgXml);
+
+                callback(svgDataUrl); // double data carrier
+            }
+
+            function exportImage() {
+                var canvas = document.createElement('canvas');
+                var context = canvas.getContext('2d');
+                if (options.fill) {
+                    context.fillStyle = options.fill;
+                    context.fillRect(0, 0, snapshot.width, snapshot.height);
+                }
+
+                var svgXml = shim.serializeXml(svg);
+
+                if (window.canvg) { // use canvg renderer for image export
+                    renderImageCanvg();
+                } else { // use native renderer for image export (this might fail)
+                    renderImageNative();
+                }
+
+                function imageRendered() {
+                    var imageDataUrl = canvas.toDataURL(options.type);
+                    callback(imageDataUrl);
+                }
+
+                function renderImageNative() {
+                    var svgImg = new Image();
+                    svgImg.src = base64DataUrlEncode(svgXml);
+
+                    svgImg.onload = function () {
+                        canvas.width = svgImg.width;
+                        canvas.height = svgImg.height;
+                        context.drawImage(svgImg, 0, 0);
+
+                        imageRendered();
+                    };
+
+                    svgImg.onerror = function () {
+                        console.log('Cannot export image');
+                    };
+                }
+
+                function renderImageCanvg() {
+                    // NOTE: canvg gets the svg element dimensions incorrectly if not specified as attributes
+                    // NOTE: this canvg call is synchronous and blocks
+                    canvg(canvas, svgXml, {
+                        ignoreMouse: true,
+                        ignoreAnimation: true,
+                        offsetX: undefined,
+                        offsetY: undefined,
+                        scaleWidth: undefined,
+                        scaleHeight: undefined,
+                        renderCallback: imageRendered
+                    });
+                }
+            }
+        }
+
+
+        // clone svg in isolation with styles directly applied
+        function createSvgClone(svgNode, svgCloned) {
+            createIsolatedNode(function (nodeClone, destroyIsolatedNode) {
+                cloneNodes(svgNode, nodeClone); // clone nodes and apply styles directly to each node
+
+                svgCloned(d3.select(nodeClone).select('svg').node(), destroyIsolatedNode);
+            });
+
+
+            // compare computed styles at this node and apply the differences directly
+            function applyStyles(sourceNode, targetNode) {
+                var sourceStyle = window.getComputedStyle(sourceNode);
+                var targetStyle = window.getComputedStyle(targetNode);
+
+                for (var prop in sourceStyle) {
+                    if (!ignoreDiff[prop] && !isFinite(prop)) { // note that checking for sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in firefox
+                        if (targetStyle[prop] !== sourceStyle[prop]) {
+                            targetNode.style[prop] = sourceStyle[prop];
+                        }
+                    }
+                }
+            }
+
+            // clone nodes and apply styles directly to each node
+            function cloneNodes(sourceNode, targetNode) {
+                var newNode = sourceNode.cloneNode(false);
+                targetNode.appendChild(newNode);
+
+                if (!sourceNode.tagName) return; // skip inner text
+
+                applyStyles(sourceNode, newNode); // compare computed styles at this node and apply the differences directly
+
+                _.each(sourceNode.childNodes, function (childNode) {
+                    cloneNodes(childNode, newNode); // clone each child node and apply styles
+                });
+            }
+
+            function createIsolatedNode(nodeLoaded) {
+                var iframe = document.body.appendChild(document.createElement('iframe'));
+                iframe.style.visibility = 'hidden';
+                var iframeWindow = iframe.contentWindow;
+                var iframeDocument = iframeWindow.document;
+
+                iframe.onload = function () {
+                    var nodeClone = iframeDocument.createElement('div');
+                    iframeDocument.body.appendChild(nodeClone);
+
+                    var destroyIframe = function () {
+                        iframeDocument.body.removeChild(nodeClone);
+                        document.body.removeChild(iframe); // destroy clone
+                    };
+
+                    nodeLoaded(nodeClone, destroyIframe);
+                };
+
+                iframeDocument.open();
+                iframeDocument.write('<!DOCTYPE html>');
+                iframeDocument.write('<html><head></head><body></body></html>');
+                iframeDocument.close();
+            }
+        }
+
+
+        function getProportionedBounds(original, specified) {
+            if (specified.width && specified.height) {
+                return specified;
+            } else if (specified.width) {
+                return {
+                    width: specified.width,
+                    height: specified.width * original.height / original.width
+                };
+            } else if (specified.height) {
+                return {
+                    width: specified.height * original.width / original.height,
+                    height: specified.height
+                };
+            } else {
+                return original;
+            }
+        }
+
+
+        function exportImage(options, exporter) {
+            options = options || {};
+            _.defaults(options, defaults); // merge configuration options with defaults
+
+            var svgNode = self.container.select('svg').node();
+            var bounds = svgNode.getBoundingClientRect(); // get bounds from original svg
+            var boundsClone = getProportionedBounds(bounds, options);
+
+            createSvgClone(svgNode, performExport); // clone svg in isolation with styles directly applied
+
+            function performExport(svgNodeClone, destroySvgClone) {
+                svgNodeClone.setAttribute('width', boundsClone.width);
+                svgNodeClone.setAttribute('height', boundsClone.height);
+
+                getSvgDataUrl(svgNodeClone, options.type, function (canvasData) {
+                    destroySvgClone();
+
+                    // call exporter function
+                    var exporters = {
+                        'download': function () {
+                            // make a link to download and click it
+                            var a = document.createElement('a');
+                            a.download = options.fileName;
+                            a.href = canvasData;
+                            a.click();
+                        },
+                        'place': function () {
+                            var img = document.createElement('img');
+                            img.src = canvasData;
+                            d3.select(options.target).node().appendChild(img);
+                        }
+                    };
+                    exporters[exporter](); // call exporter function
+                });
+            }
+        }
+    };
+
+
+    function checkBrowser() {
+        browser.checked = true;
+
+        checkEncodesBase64();
+        checkSerializesXml();
+        checkExportsSvg();
+
+
+        function checkEncodesBase64() {
+            browser.encodesBase64 = !!window.btoa;
+
+            if (browser.encodesBase64) {
+                shim.encodeBase64 = function (s) { // use window.btoa for base64 encoding
+                    return btoa(s); // note that it won't work as just `shim.encodeBase64 = btoa;`, therefore it needs to be wrapped
+                };
+            } else {
+                shim.encodeBase64 = base64Encode; // use custom base64 encoder
+            }
+
+
+            // base64 encode
+            // adapted from http://www.webtoolkit.info/
+            function base64Encode(input) {
+                var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+                var output = '';
+                var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+                var i = 0;
+
+                input = utf8_encode(input);
+
+                while (i < input.length) {
+                    chr1 = input.charCodeAt(i++);
+                    chr2 = input.charCodeAt(i++);
+                    chr3 = input.charCodeAt(i++);
+
+                    enc1 = chr1 >> 2;
+                    enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                    enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                    enc4 = chr3 & 63;
+
+                    if (isNaN(chr2)) {
+                        enc3 = enc4 = 64;
+                    } else if (isNaN(chr3)) {
+                        enc4 = 64;
+                    }
+
+                    output = output +
+                        keyStr.charAt(enc1) +
+                        keyStr.charAt(enc2) +
+                        keyStr.charAt(enc3) +
+                        keyStr.charAt(enc4);
+                }
+
+                return output;
+
+            }
+
+            function utf8_encode(string) {
+                string = string.replace(/\r\n/g, '\n');
+                var utftext = '';
+
+                for (var n = 0; n < string.length; n++) {
+                    var c = string.charCodeAt(n);
+
+                    if (c < 128) {
+                        utftext += String.fromCharCode(c);
+                    }
+                    else if((c > 127) && (c < 2048)) {
+                        utftext += String.fromCharCode((c >> 6) | 192);
+                        utftext += String.fromCharCode((c & 63) | 128);
+                    }
+                    else {
+                        utftext += String.fromCharCode((c >> 12) | 224);
+                        utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                        utftext += String.fromCharCode((c & 63) | 128);
+                    }
+                }
+
+                return utftext;
+            }
+        }
+
+        function checkSerializesXml() {
+            browser.serializesXml = !!window.XMLSerializer;
+
+            if (browser.serializesXml) {
+                shim.serializeXml = function (xml) { // use standard XMLSerializer.serializeToString
+                    return (new XMLSerializer()).serializeToString(xml);
+                };
+            } else {
+                shim.serializeXml = serializeXmlToString; // use custom serializeXmlToString for IE9
+            }
+
+            // quick-n-serialize an SVG dom, needed for IE9 where there's no XMLSerializer nor SVG.xml
+            // s: SVG dom, which is the <svg> elemennt
+            function serializeXmlToString(s) {
+                var out = '<' + s.nodeName;
+                for (var i = 0; i < s.attributes.length; i++) {
+                    out += ' ' + s.attributes[i].name + '=' + '"' + s.attributes[i].value + '"';
+                }
+
+                if (s.hasChildNodes()) {
+                    out += '>\n';
+                    for (var j = 0; j < s.childNodes.length; j++) {
+                        out += serializeXmlToString(s.childNodes[j]);
+                    }
+                    out += '</' + s.nodeName + '>' + '\n';
+                } else out += ' />\n';
+
+                return out;
+            }
+        }
+
+        function checkExportsSvg() {
+            browser.exportsSvg = false;
+
+            var iframe = document.body.appendChild(document.createElement('iframe'));
+            iframe.style.visibility = 'hidden';
+            var doc = iframe.contentWindow.document;
+
+            iframe.onload = function () {
+                try {
+                    var svg = doc.querySelector('svg');
+                    var img = doc.querySelector('img');
+                    var canvas = doc.querySelector('canvas');
+                    var context = canvas.getContext('2d');
+                    canvas.width = img.getAttribute('width') * 1;
+                    canvas.height = img.getAttribute('height') * 1;
+                    var sourceImg = new Image();
+                    sourceImg.width = canvas.width;
+                    sourceImg.height = canvas.height;
+                    sourceImg.onload = function () {
+                        try {
+                            context.drawImage(sourceImg, 0, 0, img.width, img.height);
+                            img.src = canvas.toDataURL();
+
+                            browser.exportsSvg = true; // yay
+                        } catch (e) {}
+
+                        svgExportChecked();
+                    };
+                    var xml = shim.serializeXml(svg);
+                    sourceImg.src = 'data:image/svg+xml,' + encodeURIComponent(xml);
+                } catch (e) {
+                    svgExportChecked();
+                }
+            };
+
+            doc.open();
+            doc.write('<!DOCTYPE html>');
+            doc.write('<html><head></head><body>');
+            doc.write('<svg xmlns="http://www.w3.org/2000/svg" width="2" height="2" viewBox="0 0 1 1"><circle r="1" fill="red"/></svg>');
+            doc.write('<img width="2" height="2">');
+            doc.write('<canvas></canvas>');
+            doc.write('</body></html>');
+            doc.close();
+
+
+            function svgExportChecked() {
+                document.body.removeChild(iframe);
+
+                if (!browser.exportsSvg) { // load canvg svg renderer for browsers that can't safely export svg
+                    _.each([
+                        'rgbcolor.js',
+                        'StackBlur.js',
+                        'canvg.js'
+                    ], function (src) {
+                        var script = document.createElement('script');
+                        script.type = 'text/javascript';
+                        script.src = 'http://canvg.googlecode.com/svn/trunk/' + src;
+                        document.head.appendChild(script);
+                    });
+                }
+            }
+        }
+    }
+
+
+    /**
+    * Saves a visualization as an image.
+    *
+    * ###Example:
+    *
+    *     var contour = new Contour(...)
+    *         ...
+    *         .exportable()
+    *         .render();
+    *     document.getElementById('save').onclick = function () {
+    *         contour.download({
+    *             fileName: 'contour'
+    *         });
+    *
+    * @name exportable
+    */
+    Contour.expose('exportable', exportable);
 
 })();
 
@@ -1407,7 +1926,7 @@ Contour.version = '0.9.91';
 
         axis: function () {
             var options = this.options.xAxis;
-            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'd');
+            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'g');
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickSize(options.innerTickSize, options.outerTickSize)
@@ -1773,7 +2292,9 @@ Contour.version = '0.9.91';
                 .tickPadding(options.tickPadding)
                 .tickValues(this._domain);
 
-            if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
+            if (this.options.xAxis.tickValues != null) {
+                axis.tickValues(this.options.xAxis.tickValues);
+            } else if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
                 // override the tickValues with custom array based on number of ticks
                 // we don't use D3 ticks() because you cannot force it to show a specific number of ticks
                 axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
@@ -2024,6 +2545,282 @@ Contour.version = '0.9.91';
 
 (function () {
 
+    var defaults = {
+        type: 'image/png',
+        fill: '#fff',
+        fileName: 'contour'
+    };
+
+
+    var createSnapshot = function () {
+        var ignoreDiff = {
+            cssText: 1,
+            parentRule: 1
+        };
+        var domUrl = window.URL || window.webkitURL || window;
+        var container; // element containing the contour svg
+        var saving = 0; // positive when snapshot is currently being saved (more than one save method can be waiting for an img.onload at the same time)
+        var destroyAfterSave = false; // set true to destroy snapshot when done saving
+        var snapshot; // saved snapshot data
+
+        return {
+            init: function () {
+                container = this.container;
+
+                createSnapshot(); // make svg into a data url
+
+                return this;
+            },
+
+            createSnapshot: function () {
+                if (saving) throw 'Cannot create a new snapshot while saving';
+                createSnapshot(); // make svg into a data url
+
+                return this;
+            },
+
+            destroySnapshot: function () {
+                if (saving) {
+                    destroyAfterSave = true; // destroy snapshot when done saving
+                } else {
+                    destroySnapshot(); // destroy data url
+                }
+
+                return this;
+            },
+
+            /**
+            * Saves a visualization as an image, triggering a download.
+            *
+            * `type` specfies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
+            * `fileName` specifies the fileName for the download. (Default: 'contour'.)
+            *
+            * ###Example:
+            *
+            *     new Contour(...)
+            *           ...
+            *           .render()
+            *           .createSnapshot()
+            *           .downloadImage({
+            *               fileName: 'contour'
+            *           })
+            *           .destroySnapshot();
+            *
+            * @name downloadImage
+            * @param {object} options Configuration options specific to saving the image.
+            */
+            downloadImage: function (options) {
+                saveImage(options, 'download');
+
+                return this;
+            },
+
+            /**
+            * Saves a visualization as an image.
+            *
+            * `type` specfies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
+            * `target` specifies a selector for the container. (For example: `target: '#vis'` will insert the image in `<div id="vis"></div>`.)
+            *
+            * ###Example:
+            *
+            *     new Contour(...)
+            *           ...
+            *           .render()
+            *           .createSnapshot()
+            *           .placeImage({
+            *               target: '#image'
+            *           })
+            *           .destroySnapshot();
+            *
+            * @name placeImage
+            * @param {object} options Configuration options specific to saving the image.
+            */
+            placeImage: function (options) {
+                saveImage(options, 'place');
+
+                return this;
+            }
+        };
+
+        // compare computed styles at this node and apply the differences directly
+        function applyStyles(sourceNode, targetNode) {
+            var sourceStyle = window.getComputedStyle(sourceNode);
+            var targetStyle = window.getComputedStyle(targetNode);
+
+            for (var prop in sourceStyle) {
+                if (!ignoreDiff[prop] && !isFinite(prop)) { // note that sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in firefox
+                    // var sourceValue = sourceStyle.getPropertyValue(prop);
+                    // var targetValue = targetStyle.getPropertyValue(prop);
+
+                    // if (targetValue !== sourceValue) {
+                    if (targetStyle[prop] !== sourceStyle[prop]) {
+// if(prop.indexOf('font')!==-1)
+// console.log('* ' + targetNode.tagName + '.' + prop + ': ' + targetStyle[prop] + ' -> ' + sourceStyle[prop]);
+                        // targetNode.style.setProperty(prop, sourceValue, sourceStyle.getPropertyPriority(prop));
+                        targetNode.style[prop] = sourceStyle[prop];
+                    }
+// else{
+// if(prop.indexOf('font')!==-1)
+// console.log('  ' + targetNode.tagName + '.' + prop + ': ' + targetValue + ' === ' + sourceValue);
+// }
+                }
+            }
+        }
+
+        // clone nodes and apply styles directly to each node
+        function cloneNodes(sourceNode, targetNode) {
+            var newNode = sourceNode.cloneNode(false);
+            targetNode.appendChild(newNode);
+
+            if (!sourceNode.tagName) return; // skip inner text
+
+            applyStyles(sourceNode, newNode); // compare computed styles at this node and apply the differences directly
+
+            _.each(sourceNode.childNodes, function (childNode) {
+                cloneNodes(childNode, newNode); // clone each child node and apply styles
+            });
+        }
+
+        // make svg into a data url
+        function createSnapshot() {
+            destroySnapshot(); // destroy data url first, in case one was already created
+
+            // create clone
+
+            var svgNode = container.select('svg').node();
+            var bounds = svgNode.getBoundingClientRect(); // get bounds from original svg
+
+            var iframe = document.body.appendChild(document.createElement('iframe'));
+            var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDocument.open();
+            iframeDocument.write('<html><body></body></html>'); // for IE, ensure the iframe has a body
+            iframeDocument.close();
+            var nodeClone = iframeDocument.createElement('div');
+            iframeDocument.body.appendChild(nodeClone);
+
+            cloneNodes(svgNode, nodeClone); // clone nodes and apply styles directly to each node
+
+            var svgNodeClone = d3.select(nodeClone).select('svg').node();
+            svgNodeClone.setAttribute('width', bounds.width + 'px');
+            svgNodeClone.setAttribute('height', bounds.height + 'px');
+
+            // create data url
+
+            var xml = (new XMLSerializer()).serializeToString(svgNodeClone);
+            var svg = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+
+            snapshot = {
+                dataUrl: domUrl.createObjectURL(svg), // create url for svg+xml blob
+                // imgSrc: 'data:image/svg+xml;base64,' + btoa(xml),
+                width: bounds.width,
+                height: bounds.height
+            };
+
+            // destroy clone
+
+            document.body.removeChild(iframe);
+        }
+
+        // destroy data url
+        function destroySnapshot() {
+            if (snapshot) {
+                domUrl.revokeObjectURL(snapshot.dataUrl); // destroy url for svg+xml blob
+                snapshot = undefined;
+            }
+        }
+
+        // load image with data url, draw image on canvas, and call saver function
+        function saveImage(options, saver) {
+            saving++; // snapshot is currently being saved
+
+            options = options || {};
+            _.defaults(options, defaults); // merge configuration options with defaults
+
+            if (!snapshot) {
+                createSnapshot(); // make svg into a data url first, in case one wasn't already created
+            }
+
+            var svgImg = new Image();
+            svgImg.onload = function () {
+
+                // create canvas
+
+                var canvas = document.createElement('canvas');
+                canvas.width = snapshot.width;
+                canvas.height = snapshot.height;
+
+                // get context for canvas
+
+                var context = canvas.getContext('2d');
+                context.fillStyle = options.fill;
+                context.fillRect(0, 0, snapshot.width, snapshot.height);
+
+                // draw image on canvas
+
+                context.drawImage(svgImg, 0, 0);
+
+                // get data url string for canvas data
+
+                var canvasData = canvas.toDataURL(options.type); // make url for canvas
+
+                // call saver function
+
+                var savers = {
+                    'download': function () {
+
+                        // make a link to download and click it
+
+                        var a = document.createElement('a');
+                        a.download = options.fileName;
+                        a.href = canvasData;
+                        a.click();
+                    },
+                    'place': function () {
+                        var img = document.createElement('img');
+                        img.src = canvasData;
+                        d3.select(options.target).node().appendChild(img);
+                    }
+                };
+
+                savers[saver](); // call saver function
+
+                saving--; // snapshot is no longer being saved
+                if (!saving && destroyAfterSave) { // destroy snapshot when done saving
+                    destroyAfterSave = false;
+                    destroySnapshot(); // destroy data url
+                }
+            };
+            svgImg.src = snapshot.dataUrl; // load image with url of svg+xml blob
+            // svgImg.src = snapshot.imgSrc; // load image with svg+xml data
+        }
+    };
+
+
+    /**
+    * Saves a visualization as an image.
+    *
+    * ###Example:
+    *
+    *     new Contour(...)
+    *           ...
+    *           .render()
+    *           .createSnapshot()
+    *           .downloadImage({
+    *               fileName: 'contour'
+    *           })
+    *           .placeImage({
+    *               target: '#image'
+    *           })
+    *           .destroySnapshot();
+    *
+    * @name createSnapshot
+    */
+    Contour.expose('createSnapshotOrig', createSnapshot);
+
+})();
+
+(function () {
+
     var _extent = function (series, field) {
         var maxs = [], mins = [];
         _.each(series, function (d) {
@@ -2040,18 +2837,21 @@ Contour.version = '0.9.91';
     };
 
 
+    /*jshint eqnull:true */
     var _stackedExtent = function (data) {
-        var dataSets = _.pluck(data, 'data');
-        var maxLength = _.max(_.map(dataSets, function (d) { return d.length; }));
-        var stackY = [];
+        var stack = _.nw.stackLayout();
+        var dataSets = stack(data);
+        var min = {};
+        var max = {};
 
-        for (var j=0; j<maxLength; j++) {
-            _.each(dataSets, function (set) {
-                stackY[j] = set[j] ? (stackY[j] || 0) + set[j].y : (stackY[j] || 0);
+        _.each(dataSets, function (set) {
+            _.each(set.data, function (d) {
+                if (min[d.x] == null || min[d.x] > d.y0) min[d.x] = d.y0;
+                if (max[d.x] == null || max[d.x] < d.y0 + d.y) max[d.x] = d.y0 + d.y;
             });
-        }
+        });
 
-        return [_.min(stackY), _.max(stackY)];
+        return [_.min(min), _.max(max)];
     };
 
     var _xExtent = _.partialRight(_extent, 'x');
@@ -2257,13 +3057,14 @@ Contour.version = '0.9.91';
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
         var rangeBand = this.rangeBand;
-        var stack = d3.layout.stack().values(function (d) { return d.data; });
+        var stack = _.nw.stackLayout();
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
 
+
         var series = layer.selectAll('g.series')
-            .data(stack(data));
+            .data(stack(data), function (d) { return d.name; });
 
         series.enter().append('svg:g')
             .attr('class', classFn);
@@ -2397,10 +3198,7 @@ Contour.version = '0.9.91';
             };
         });
 
-        var stack = d3.layout.stack().values(function (d) {
-            return d.data;
-        });
-
+        var stack = _.nw.stackLayout();
         var series = layer.selectAll('g.series')
                 .data(stack(filteredData));
 
@@ -2551,75 +3349,179 @@ Contour.version = '0.9.91';
     }
 
     function Legend(data, layer, options) {
-        this.container.selectAll('.contour-legend').remove();
-        var legend = this.container.selectAll('.contour-legend').data(data);
-        var em = _.nw.textBounds('series', '.contour-legend.contour-legend-entry');
-        var count = data.length;
-        var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
-        var mid = (options.chart.plotHeight - legendHeight) / 2;
-        var positioner = function (selection) {
-            // adjust position of legend only when is horizontally centered
-            // since we need to have all elements in the legend to calculate its width
-            if (options.legend.hAlign !== 'center' || !selection.length) {
-                return ;
+
+        // make hidden html version of legend
+        function makeDiv() {
+            this.container.selectAll('div.contour-legend').remove();
+            var legend = this.container.selectAll('div.contour-legend').data([null]);
+            var em = _.nw.textBounds('series', 'div.contour-legend.contour-legend-entry');
+            var count = data.length;
+            var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
+            var mid = (options.chart.plotHeight - legendHeight) / 2;
+            var positioner = function (selection) {
+                // adjust position of legend only when is horizontally centered
+                // since we need to have all elements in the legend to calculate its width
+                if (options.legend.hAlign !== 'center' || !selection.length) {
+                    return ;
+                }
+
+                // adjust the left
+                var legendWidth = selection[0].parentNode.clientWidth;
+                var left = (options.chart.plotWidth - legendWidth) / 2 + options.chart.internalPadding.left;
+
+                d3.select(selection[0].parentNode)
+                    .style('left', left + 'px');
+            };
+
+            var container = legend.enter()
+                .append('div')
+                .attr('class', function () {
+                    return ['contour-legend'].concat(validAlignmentClasses(options)).join(' ');
+                })
+                .attr('style', function () {
+                    var styles = ['visibility: hidden'];
+
+                    if (options.legend.vAlign === 'top') {
+                        styles.push('top: 0');
+                    } else if (options.legend.vAlign === 'middle') {
+                        styles.push('top: ' + mid + 'px');
+                    } else {
+                        styles.push('bottom: ' + (options.chart.internalPadding.bottom + 5) + 'px');
+                    }
+
+                    if (options.legend.hAlign === 'left') {
+                        styles.push('left: ' + options.chart.plotLeft + 'px');
+                    } else if (options.legend.hAlign === 'center') {
+                        var bounds = _.nw.textBounds(this, 'div.contour-legend');
+
+                        styles.push('left: ' + ((options.chart.plotWidth - bounds.width) / 2 + options.chart.internalPadding.left) + 'px' );
+                    } else {
+                        styles.push('right: 10px');
+                    }
+
+                    return styles.join(';');
+                });
+
+            var entries = container.selectAll('div.contour-legend-entry')
+                .data(data);
+
+            var enter = entries.enter()
+                .append('div')
+                .attr('class', function () {
+                    return 'contour-legend-entry';
+                });
+
+            entries.append('span')
+                .attr('class', function (d, i) { return 'contour-legend-key series s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name); });
+
+            entries.append('span')
+                .attr('class', 'series-name')
+                .text(options.legend.formatter)
+                .call(positioner);
+
+            entries.exit()
+                .remove();
+        }
+
+        // make svg version of legend, copying positions and sizes from the html version
+        function makeSvg() {
+            layer.selectAll('.contour-legend').remove();
+            var legend = layer.selectAll('.contour-legend').data([null]);
+
+            var containerDiv = this.container.select('div.contour-legend');
+            var containerDivNode = containerDiv.node();
+            var containerDivStyle = window.getComputedStyle(containerDivNode);
+
+            var container = legend.enter()
+                .append('g')
+                .attr('transform', 'translate(' + (containerDivNode.offsetLeft + containerDivNode.clientLeft - options.chart.plotLeft) + ',' + (containerDivNode.offsetTop + containerDivNode.clientTop - options.chart.plotTop) + ')')
+                .attr('class', function () {
+                    return ['contour-legend'].concat(validAlignmentClasses(options)).join(' ');
+                });
+
+            container.append('rect')
+                .attr('width', containerDivNode.clientWidth)
+                .attr('height', containerDivNode.clientHeight)
+                .attr('rx', containerDivStyle.borderTopLeftRadius)
+                .attr('ry', containerDivStyle.borderTopLeftRadius);
+                // .style('fill', containerDivStyle.backgroundColor)
+                // .style('stroke', containerDivStyle.borderTopColor)
+                // .style('stroke-width', containerDivStyle.borderTopWidth);
+
+            var entriesDivs = containerDiv.selectAll('.contour-legend-entry');
+            function getEntryDivSubNode(i, selector) {
+                return d3.select(entriesDivs[0][i]).select(selector).node();
+            }
+            function getEntryDivKeyNode(i) {
+                return getEntryDivSubNode(i, '.contour-legend-key');
+            }
+            function getEntryDivKeyStyle(i) {
+                return window.getComputedStyle(getEntryDivSubNode(i, '.contour-legend-key'));
+            }
+            function getEntryDivSeriesNode(i) {
+                return getEntryDivSubNode(i, '.series-name');
             }
 
-            // adjust the left
-            var legendWidth = selection[0].parentNode.clientWidth;
-            var left = (options.chart.plotWidth - legendWidth) / 2 + options.chart.internalPadding.left;
+            var entries = container.selectAll('.contour-legend-entry')
+                .data(data);
 
-            d3.select(selection[0].parentNode)
-                .style('left', left + 'px');
-        };
+            var enter = entries.enter()
+                .append('g')
+                // .attr('transform', function (d, i) {
+                //     var entryDivNode = entriesDivs[0][i];
+                //     return 'translate(' + entryDivNode.offsetLeft + ',' + entryDivNode.offsetTop + ')';
+                // })
+                .classed('contour-legend-entry', true);
 
-        var container = legend.enter()
-            .append('div')
-            .attr('class', function () {
-                return ['contour-legend'].concat(validAlignmentClasses(options)).join(' ');
-            })
-            .attr('style', function () {
-                var styles = [];
+            enter.append('rect')
+                .attr('x', function (d, i) {
+                    return getEntryDivKeyNode(i).offsetLeft;
+                })
+                .attr('y', function (d, i) {
+                    return getEntryDivKeyNode(i).offsetTop;
+                })
+                .attr('width', function (d, i) {
+                    return getEntryDivKeyNode(i).offsetWidth - 2;
+                })
+                .attr('height', function (d, i) {
+                    return getEntryDivKeyNode(i).offsetHeight - 2;
+                })
+                .attr('rx', function (d, i) {
+                    return getEntryDivKeyStyle(i).borderTopLeftRadius;
+                })
+                .attr('ry', function (d, i) {
+                    return getEntryDivKeyStyle(i).borderTopLeftRadius;
+                })
+                // .style('fill', function (d, i) {
+                //     return getEntryDivKeyStyle(i).backgroundColor;
+                // })
+                // .style('stroke', function (d, i) {
+                //     return getEntryDivKeyStyle(i).borderTopColor;
+                // })
+                // .style('stroke-width', function (d, i) {
+                //     return getEntryDivKeyStyle(i).borderTopWidth;
+                // })
+                .attr('class', function (d, i) {
+                    return 'contour-legend-key series s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name);
+                });
 
-                if (options.legend.vAlign === 'top') {
-                    styles.push('top: 0');
-                } else if (options.legend.vAlign === 'middle') {
-                    styles.push('top: ' + mid + 'px');
-                } else {
-                    styles.push('bottom: ' + (options.chart.internalPadding.bottom + 5) + 'px');
-                }
+            enter.append('text')
+                .attr('x', function (d, i) {
+                    return getEntryDivSeriesNode(i).offsetLeft + 1;
+                })
+                .attr('y', function (d, i) {
+                    var entryDivSeriesNode = getEntryDivSeriesNode(i);
+                    return entryDivSeriesNode.offsetTop + entryDivSeriesNode.offsetHeight - entryDivSeriesNode.offsetParent.clientTop - 2;
+                })
+                .classed('series-name', true)
+                .text(options.legend.formatter);
 
-                if (options.legend.hAlign === 'left') {
-                    styles.push('left: ' + options.chart.plotLeft + 'px');
-                } else if (options.legend.hAlign === 'center') {
-                    var bounds = _.nw.textBounds(this, '.contour-legend');
+            entries.exit()
+                .remove();
+        }
 
-                    styles.push('left: ' + ((options.chart.plotWidth - bounds.width) / 2 + options.chart.internalPadding.left) + 'px' );
-                } else {
-                    styles.push('right: 10px');
-                }
-
-                return styles.join(';');
-            });
-
-        var entries = container.selectAll('.contour-legend-entry')
-            .data(data);
-
-        var enter = entries.enter()
-            .append('div')
-            .attr('class', function () {
-                return 'contour-legend-entry';
-            });
-
-        entries.append('span')
-            .attr('class', function (d, i) { return 'contour-legend-key series s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name); });
-
-        entries.append('span')
-            .attr('class', 'series-name')
-            .text(options.legend.formatter)
-            .call(positioner);
-
-        entries.exit()
-            .remove();
+        makeDiv.call(this);
+        makeSvg.call(this);
     }
 
     Legend.defaults = defaults;
@@ -2649,6 +3551,9 @@ Contour.version = '0.9.91';
 (function () {
 
     var defaults = {
+        xAxis: {
+            type: 'linear'
+        },
         line: {
             stacked: false,
             smooth: false,
