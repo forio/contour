@@ -5,13 +5,14 @@
         fill: '#fff',
         fileName: 'contour.png'
     };
+
     var browser = { // browser capabilities
         checked: false
     };
-    var shim = {
+    var shim = { // shims depending on current browser
         encodeBase64: undefined, // base 64 encoder
         serializeXml: undefined // xml serializer
-    }; // shims for less capable browsers
+    };
 
 
     var exportable = function () {
