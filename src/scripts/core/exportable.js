@@ -103,14 +103,14 @@
             }
 
 
-            function base64DataUrlEncode(svgXml) {
+            function encodeBase64DataUrl(svgXml) {
                 // https://developer.mozilla.org/en/DOM/window.btoa
                 return 'data:image/svg+xml;base64,' + shim.encodeBase64(svgXml);
             }
 
             function exportSvg() {
                 var svgXml = shim.serializeXml(svg);
-                var svgDataUrl = base64DataUrlEncode(svgXml);
+                var svgDataUrl = encodeBase64DataUrl(svgXml);
 
                 callback(svgDataUrl); // double data carrier
             }
@@ -138,7 +138,7 @@
 
                 function renderImageNative() {
                     var svgImg = new Image();
-                    svgImg.src = base64DataUrlEncode(svgXml);
+                    svgImg.src = encodeBase64DataUrl(svgXml);
 
                     svgImg.onload = function () {
                         canvas.width = svgImg.width;
