@@ -200,29 +200,6 @@
             return data;
         },
 
-        // returns a function to format the data into a 'stacked' d3 layout
-        // passing in a series data will add a y0 to each data point
-        // where the point should start relative to the reset of the series points
-        // at that x value
-        stackLayout: function () {
-            var stack = d3.layout
-                .stack()
-                .values(function (d) { return d.data; });
-            // prepare satck to handle different x values with different lengths
-            var outFn = function() {
-                var y0s = {};
-                return function (d, y0, y) {
-                    d.y0 = y0s[d.x] != null ? y0s[d.x] : 0;
-                    d.y = y;
-                    y0s[d.x] = (y0s[d.x] || 0) + y;
-                };
-            };
-
-            stack.out(outFn());
-
-            return stack;
-        },
-
         // return the uniq elements in the array
         // we are implementing our own version since this algorithm seems
         // to be a lot faster than what lodash uses
@@ -1326,12 +1303,15 @@
                     }, this)
                 );
 
+<<<<<<< HEAD
                 // _.all() on empty array returns true, so we guard against it
                 var isCategoricalData = this.dataSrc.length && _.all(this.dataSrc, function (d) { return +d.x !== d.x; });
                 if (isCategoricalData && !this.options.xAxis.categories) {
                     this.options.xAxis.categories = _.uniq(_.pluck(this.dataSrc, 'x'));
                 }
 
+=======
+>>>>>>> parent of d82bee4... build
                 this._yAxis = null;
                 this._xAxis = null;
             },
@@ -1357,7 +1337,11 @@
 
 })();
 
+<<<<<<< HEAD
 Contour.version = '0.9.99';
+=======
+Contour.version = '0.9.91';
+>>>>>>> parent of d82bee4... build
 (function () {
 
     var helpers = {
@@ -1436,7 +1420,7 @@ Contour.version = '0.9.99';
 
         axis: function () {
             var options = this.options.xAxis;
-            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'g');
+            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'd');
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .tickSize(options.innerTickSize, options.outerTickSize)
@@ -1802,9 +1786,7 @@ Contour.version = '0.9.99';
                 .tickPadding(options.tickPadding)
                 .tickValues(this._domain);
 
-            if (this.options.xAxis.tickValues != null) {
-                axis.tickValues(this.options.xAxis.tickValues);
-            } else if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
+            if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
                 // override the tickValues with custom array based on number of ticks
                 // we don't use D3 ticks() because you cannot force it to show a specific number of ticks
                 axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
@@ -2071,21 +2053,18 @@ Contour.version = '0.9.99';
     };
 
 
-    /*jshint eqnull:true */
     var _stackedExtent = function (data) {
-        var stack = _.nw.stackLayout();
-        var dataSets = stack(data);
-        var min = {};
-        var max = {};
+        var dataSets = _.pluck(data, 'data');
+        var maxLength = _.max(_.map(dataSets, function (d) { return d.length; }));
+        var stackY = [];
 
-        _.each(dataSets, function (set) {
-            _.each(set.data, function (d) {
-                if (min[d.x] == null || min[d.x] > d.y0) min[d.x] = d.y0;
-                if (max[d.x] == null || max[d.x] < d.y0 + d.y) max[d.x] = d.y0 + d.y;
+        for (var j=0; j<maxLength; j++) {
+            _.each(dataSets, function (set) {
+                stackY[j] = set[j] ? (stackY[j] || 0) + set[j].y : (stackY[j] || 0);
             });
-        });
+        }
 
-        return [_.min(min), _.max(max)];
+        return [_.min(stackY), _.max(stackY)];
     };
 
     var _xExtent = _.partialRight(_extent, 'x');
@@ -2291,11 +2270,10 @@ Contour.version = '0.9.99';
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
         var rangeBand = this.rangeBand;
-        var stack = _.nw.stackLayout();
+        var stack = d3.layout.stack().values(function (d) { return d.data; });
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
-
 
         var series = layer.selectAll('g.series')
             .data(stack(data));
@@ -2432,7 +2410,10 @@ Contour.version = '0.9.99';
             };
         });
 
-        var stack = _.nw.stackLayout();
+        var stack = d3.layout.stack().values(function (d) {
+            return d.data;
+        });
+
         var series = layer.selectAll('g.series')
                 .data(stack(filteredData));
 
@@ -2681,9 +2662,6 @@ Contour.version = '0.9.99';
 (function () {
 
     var defaults = {
-        xAxis: {
-            type: 'linear'
-        },
         line: {
             stacked: false,
             smooth: false,
