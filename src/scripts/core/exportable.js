@@ -89,7 +89,7 @@
         };
 
 
-        // svg to canvas export function
+        // SVG to canvas export function
         // adapted from https://github.com/sampumon/SVG.toDataURL
         // which based on http://svgopen.org/2010/papers/62-From_SVG_to_Canvas_and_Back/#svg_to_canvas
         function getSvgDataUrl(svg, options, dataUrlCreated) {
@@ -107,29 +107,6 @@
                 return 'data:image/svg+xml;base64,' + btoa(svgXml);
             }
 
-            // convert base64/URLEncoded data component to raw binary data held in a string
-            function dataUrlToBlob(dataUrl) {
-                var byteString;
-                if (dataUrl.split(',')[0].indexOf('base64') >= 0) {
-                    byteString = atob(dataUrl.split(',')[1]);
-                } else {
-                    byteString = unescape(dataUrl.split(',')[1]);
-                }
-
-                // separate out the mime component
-                var mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
-
-                // write the bytes of the string to a typed array
-                var byteArray = new Uint8Array(byteString.length);
-                for (var i = 0; i < byteString.length; i++) {
-                    byteArray[i] = byteString.charCodeAt(i);
-                }
-
-                return new Blob([byteArray], {
-                    type: mimeString
-                });
-            }
-
             function makeSvgUrl() {
                 var svgXml = (new XMLSerializer()).serializeToString(svg);
                 var svgDataUrl = encodeBase64DataUrl(svgXml);
@@ -144,7 +121,7 @@
                 var svgXml = (new XMLSerializer()).serializeToString(svg);
 
                 if (root.canvg) {
-                    // use canvg renderer for image export
+                    // use Canvg renderer for image export
                     renderImageCanvg();
                 } else {
                     // use native renderer for image export (this might fail)
@@ -152,15 +129,14 @@
                 }
 
                 function imageRendered() {
-                    var imageDataUrl = canvas.toDataURL(options.type);
-                    var imageBlob = dataUrlToBlob(imageDataUrl);
+                    canvas.toBlob(function (imageBlob) {
+                        var domUrl = root.URL || root.webkitURL;
+                        var objectUrl = domUrl.createObjectURL(imageBlob);
 
-                    var domUrl = root.URL || root.webkitURL || root;
-                    var objectUrl = domUrl.createObjectURL(imageBlob);
-
-                    dataUrlCreated(objectUrl, imageBlob, function () {
-                        domUrl.revokeObjectURL(objectUrl);
-                    });
+                        dataUrlCreated(objectUrl, imageBlob, function () {
+                            domUrl.revokeObjectURL(objectUrl);
+                        });
+                    }, options.type);
                 }
 
                 function renderImageNative() {
@@ -187,8 +163,8 @@
                 }
 
                 function renderImageCanvg() {
-                    // note that canvg gets the svg element dimensions incorrectly if not specified as attributes
-                    // also this canvg call is synchronous and blocks
+                    // note that Canvg gets the SVG element dimensions incorrectly if not specified as attributes
+                    // also this Canvg call is synchronous and blocks
                     canvg(canvas, svgXml, {
                         ignoreMouse: true,
                         ignoreAnimation: true,
@@ -203,7 +179,7 @@
         }
 
 
-        // clone svg in isolation with styles directly applied
+        // clone SVG in isolation with styles directly applied
         function createSvgClone(svgNode, svgCloned) {
             createIsolatedNode(function (nodeClone, destroyIsolatedNode) {
                 // clone nodes and apply styles directly to each node
@@ -220,7 +196,7 @@
 
                 for (var prop in sourceStyle) {
                     if (!ignoreDiff[prop] && !isFinite(prop)) {
-                        // note that checking for sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in firefox
+                        // note that checking for sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in Firefox
                         if (targetStyle[prop] !== sourceStyle[prop]) {
                             targetNode.style[prop] = sourceStyle[prop];
                         }
@@ -296,11 +272,11 @@
             _.defaults(options, defaults);
 
             var svgNode = this.container.select('svg').node();
-            // get bounds from original svg, and proportion them based on specified options
+            // get bounds from original SVG, and proportion them based on specified options
             var bounds = svgNode.getBoundingClientRect();
             var boundsClone = getProportionedBounds(bounds, options);
 
-            // clone svg in isolation with styles directly applied
+            // clone SVG in isolation with styles directly applied
             createSvgClone(svgNode, performExport);
 
             function performExport(svgNodeClone, destroySvgClone) {
@@ -325,7 +301,7 @@
                                 // IE9-11 support a method to save/open a blob
                                 navigator.msSaveOrOpenBlob(blob, options.fileName);
                             } else {
-                                // safari can only open a new tab with the image
+                                // Safari can only open a new tab with the image
                                 root.open(url);
                             }
                             // wait for download to start
@@ -355,9 +331,10 @@
         browser.checked = true;
 
         checkEncodesBase64();
-        checkHasTypedArray();
         checkADownloads();
         checkSavesMsBlobs();
+        checkHasBlob();
+        checkHasCanvasToBlob();
         checkExportsSvg();
 
 
@@ -370,20 +347,29 @@
             }
         }
 
-        function checkHasTypedArray() {
-            browser.hasTypedArray = !!root.Uint8Array;
-
-            if (!browser.hasTypedArray) {
-                setupTypedArrayShim();
-            }
-        }
-
         function checkADownloads() {
             browser.aDownloads = document.createElement('a').download !== undefined;
         }
 
         function checkSavesMsBlobs() {
             browser.savesMsBlobs = !!navigator.msSaveOrOpenBlob;
+        }
+
+        function checkHasBlob() {
+            root.URL = root.URL || root.webkitURL;
+            browser.hasBlob = root.Blob && root.URL;
+
+            if (!browser.hasBlob) {
+                setupBlobShim();
+            }
+        }
+
+        function checkHasCanvasToBlob() {
+            browser.hasCanvasToBlob = HTMLCanvasElement && HTMLCanvasElement.prototype.toBlob;
+
+            if (!browser.hasCanvasToBlob) {
+                setupCanvasToBlobShim();
+            }
         }
 
         function checkExportsSvg() {
@@ -434,22 +420,14 @@
             function svgExportChecked() {
                 document.body.removeChild(iframe);
 
-                // load canvg svg renderer for browsers that can't safely export svg
+                // load Canvg SVG renderer for browsers that can't safely export SVG
                 if (!browser.exportsSvg) {
-                    _.each([
-                        'rgbcolor.js',
-                        'StackBlur.js',
-                        'canvg.js'
-                    ], function (src) {
-                        var script = document.createElement('script');
-                        script.type = 'text/javascript';
-                        script.src = 'http://canvg.googlecode.com/svn/trunk/' + src;
-                        document.head.appendChild(script);
-                    });
+                    setupCanvgShim();
                 }
             }
         }
 
+        // base64 shim, for IE9
         function setupBase64Shim() {
             var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
@@ -507,44 +485,296 @@
             };
         }
 
-        function setupTypedArrayShim() {
-            root.Uint8Array = TypedArray;
-            root.Uint32Array = TypedArray;
-            root.Int32Array = TypedArray;
+        // blob shim, for IE9
+        // from https://github.com/eligrey/Blob.js
+        function setupBlobShim() {
+            // Internally we use a BlobBuilder implementation to base Blob off of
+            // in order to support older browsers that only have BlobBuilder
+            var BlobBuilder = root.BlobBuilder || root.WebKitBlobBuilder || root.MozBlobBuilder || (function (root) {
+                var get_class = function (object) {
+                    return Object.prototype.toString.call(object).match(/^\[object\s(.*)\]$/)[1];
+                };
+                var FakeBlobBuilder = function BlobBuilder() {
+                    this.data = [];
+                };
+                var FakeBlob = function Blob(data, type, encoding) {
+                    this.data = data;
+                    this.size = data.length;
+                    this.type = type;
+                    this.encoding = encoding;
+                };
+                var FBB_proto = FakeBlobBuilder.prototype;
+                var FB_proto = FakeBlob.prototype;
+                var FileReaderSync = root.FileReaderSync;
+                var FileException = function (type) {
+                    this.code = this[this.name = type];
+                };
+                var file_ex_codes = (
+                    "NOT_FOUND_ERR SECURITY_ERR ABORT_ERR NOT_READABLE_ERR ENCODING_ERR " +
+                    "NO_MODIFICATION_ALLOWED_ERR INVALID_STATE_ERR SYNTAX_ERR"
+                ).split(" ");
+                var file_ex_code = file_ex_codes.length;
+                var real_URL = root.URL || root.webkitURL || root;
+                var real_create_object_URL = real_URL.createObjectURL;
+                var real_revoke_object_URL = real_URL.revokeObjectURL;
+                var URL = real_URL;
+                var btoa = root.btoa;
+                var atob = root.atob;
 
+                var ArrayBuffer = root.ArrayBuffer;
+                var Uint8Array = root.Uint8Array;
+                var origin = /^[\w-]+:\/*\[?[\w\.:-]+\]?(?::[0-9]+)?/;
 
-            function subarray(start, end) {
-                return this.slice(start, end);
-            }
-         
-            function set_(array, offset) {
-                if (arguments.length < 2) offset = 0;
-                for (var i = 0, n = array.length; i < n; ++i, ++offset) {
-                    this[offset] = array[i] & 0xFF;
+                FakeBlob.fake = FB_proto.fake = true;
+                while (file_ex_code--) {
+                    FileException.prototype[file_ex_codes[file_ex_code]] = file_ex_code + 1;
                 }
-            }
-         
-            // we need typed arrays
-            function TypedArray(arg1) {
-                var result;
-                if (typeof arg1 === 'number') {
-                    result = new Array(arg1);
-                    for (var i = 0; i < arg1; ++i) {
-                        result[i] = 0;
+                // Polyfill URL
+                if (!real_URL.createObjectURL) {
+                    URL = root.URL = function (uri) {
+                        var uri_info = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+                        var uri_origin;
+
+                        uri_info.href = uri;
+                        if (!("origin" in uri_info)) {
+                            if (uri_info.protocol.toLowerCase() === "data:") {
+                                uri_info.origin = null;
+                            } else {
+                                uri_origin = uri.match(origin);
+                                uri_info.origin = uri_origin && uri_origin[1];
+                            }
+                        }
+                        return uri_info;
+                    };
+                }
+                URL.createObjectURL = function (blob) {
+                    var type = blob.type;
+                    var data_URI_header;
+
+                    if (type === null) {
+                        type = "application/octet-stream";
                     }
-                } else {
-                    result = arg1.slice(0);
+                    if (blob instanceof FakeBlob) {
+                        data_URI_header = "data:" + type;
+                        if (blob.encoding === "base64") {
+                            return data_URI_header + ";base64," + blob.data;
+                        } else if (blob.encoding === "URI") {
+                            return data_URI_header + "," + decodeURIComponent(blob.data);
+                        }
+                        if (btoa) {
+                            return data_URI_header + ";base64," + btoa(blob.data);
+                        } else {
+                            return data_URI_header + "," + encodeURIComponent(blob.data);
+                        }
+                    } else if (real_create_object_URL) {
+                        return real_create_object_URL.call(real_URL, blob);
+                    }
+                };
+                URL.revokeObjectURL = function (object_URL) {
+                    if (object_URL.substring(0, 5) !== "data:" && real_revoke_object_URL) {
+                        real_revoke_object_URL.call(real_URL, object_URL);
+                    }
+                };
+                FBB_proto.append = function (data/*, endings*/) {
+                    var bb = this.data;
+                    // decode data to a binary string
+                    if (Uint8Array && (data instanceof ArrayBuffer || data instanceof Uint8Array)) {
+                        var str = "";
+                        var buf = new Uint8Array(data);
+                        var i = 0;
+                        var buf_len = buf.length;
+
+                        for (; i < buf_len; i++) {
+                            str += String.fromCharCode(buf[i]);
+                        }
+                        bb.push(str);
+                    } else if (get_class(data) === "Blob" || get_class(data) === "File") {
+                        if (FileReaderSync) {
+                            var fr = new FileReaderSync();
+                            bb.push(fr.readAsBinaryString(data));
+                        } else {
+                            // async FileReader won't work as BlobBuilder is sync
+                            throw new FileException("NOT_READABLE_ERR");
+                        }
+                    } else if (data instanceof FakeBlob) {
+                        if (data.encoding === "base64" && atob) {
+                            bb.push(atob(data.data));
+                        } else if (data.encoding === "URI") {
+                            bb.push(decodeURIComponent(data.data));
+                        } else if (data.encoding === "raw") {
+                            bb.push(data.data);
+                        }
+                    } else {
+                        if (typeof data !== "string") {
+                            data += ""; // convert unsupported types to strings
+                        }
+                        // decode UTF-16 to binary string
+                        bb.push(unescape(encodeURIComponent(data)));
+                    }
+                };
+                FBB_proto.getBlob = function (type) {
+                    if (!arguments.length) {
+                        type = null;
+                    }
+                    return new FakeBlob(this.data.join(""), type, "raw");
+                };
+                FBB_proto.toString = function () {
+                    return "[object BlobBuilder]";
+                };
+                FB_proto.slice = function (start, end, type) {
+                    var args = arguments.length;
+                    if (args < 3) {
+                        type = null;
+                    }
+                    return new FakeBlob(
+                        this.data.slice(start, args > 1 ? end : this.data.length),
+                        type,
+                        this.encoding
+                    );
+                };
+                FB_proto.toString = function () {
+                    return "[object Blob]";
+                };
+                FB_proto.close = function () {
+                    this.size = 0;
+                    delete this.data;
+                };
+                return FakeBlobBuilder;
+            }(root));
+
+            root.Blob = function (blobParts, options) {
+                var type = options ? (options.type || "") : "";
+                var builder = new BlobBuilder();
+                if (blobParts) {
+                    for (var i = 0, len = blobParts.length; i < len; i++) {
+                        builder.append(blobParts[i]);
+                    }
                 }
-                result.subarray = subarray;
-                result.buffer = result;
-                result.byteLength = result.length;
-                result.set = set_;
-                if (typeof arg1 === 'object' && arg1.buffer) {
-                    result.buffer = arg1.buffer;
+                return builder.getBlob(type);
+            };
+        }
+
+        // canvas.toBlob() shim, for all current browsers
+        // from https://github.com/eligrey/canvas-toBlob.js
+        function setupCanvasToBlobShim() {
+            var Uint8Array = root.Uint8Array;
+            var HTMLCanvasElement = root.HTMLCanvasElement;
+            var canvas_proto = HTMLCanvasElement && HTMLCanvasElement.prototype;
+            var is_base64_regex = /\s*;\s*base64\s*(?:;|$)/i;
+            var to_data_url = "toDataURL";
+            var base64_ranks;
+            var decode_base64 = function (base64) {
+                var len = base64.length;
+                var buffer = new Uint8Array(len / 4 * 3 | 0);
+                var i = 0;
+                var outptr = 0;
+                var last = [0, 0];
+                var state = 0;
+                var save = 0;
+                var rank;
+                var code;
+                var undef;
+
+                while (len--) {
+                    code = base64.charCodeAt(i++);
+                    rank = base64_ranks[code-43];
+                    if (rank !== 255 && rank !== undef) {
+                        last[1] = last[0];
+                        last[0] = code;
+                        save = (save << 6) | rank;
+                        state++;
+                        if (state === 4) {
+                            buffer[outptr++] = save >>> 16;
+                            if (last[1] !== 61 /* padding character */) {
+                                buffer[outptr++] = save >>> 8;
+                            }
+                            if (last[0] !== 61 /* padding character */) {
+                                buffer[outptr++] = save;
+                            }
+                            state = 0;
+                        }
+                    }
                 }
-         
-                return result;
+                // 2/3 chance there's going to be some null bytes at the end, but that
+                // doesn't really matter with most image formats.
+                // If it somehow matters for you, truncate the buffer up outptr.
+                return buffer;
+            };
+            if (Uint8Array) {
+                base64_ranks = new Uint8Array([
+                    62, -1, -1, -1, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1,
+                    -1, -1,  0, -1, -1, -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9,
+                    10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+                    -1, -1, -1, -1, -1, -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
+                    36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
+                ]);
             }
+            if (HTMLCanvasElement && !canvas_proto.toBlob) {
+                canvas_proto.toBlob = function (callback, type /*, ...args*/) {
+                    if (!type) {
+                        type = "image/png";
+                    }
+                    if (this.mozGetAsFile) {
+                        callback(this.mozGetAsFile("canvas", type));
+                        return;
+                    }
+                    if (this.msToBlob && /^\s*image\/png\s*(?:$|;)/i.test(type)) {
+                        callback(this.msToBlob());
+                        return;
+                    }
+
+                    var args = Array.prototype.slice.call(arguments, 1);
+                    var dataURI = this[to_data_url].apply(this, args);
+                    var header_end = dataURI.indexOf(",");
+                    var data = dataURI.substring(header_end + 1);
+                    var is_base64 = is_base64_regex.test(dataURI.substring(0, header_end));
+                    var blob;
+
+                    if (Blob.fake) {
+                        // no reason to decode a data: URI that's just going to become a data URI again
+                        blob = new Blob();
+                        if (is_base64) {
+                            blob.encoding = "base64";
+                        } else {
+                            blob.encoding = "URI";
+                        }
+                        blob.data = data;
+                        blob.size = data.length;
+                    } else if (Uint8Array) {
+                        if (is_base64) {
+                            blob = new Blob([decode_base64(data)], {type: type});
+                        } else {
+                            blob = new Blob([decodeURIComponent(data)], {type: type});
+                        }
+                    }
+                    callback(blob);
+                };
+
+                if (canvas_proto.toDataURLHD) {
+                    canvas_proto.toBlobHD = function () {
+                        to_data_url = "toDataURLHD";
+                        var blob = this.toBlob();
+                        to_data_url = "toDataURL";
+                        return blob;
+                    };
+                } else {
+                    canvas_proto.toBlobHD = canvas_proto.toBlob;
+                }
+            }
+        }
+
+        // Canvg shim, for IE9-11 and Safari
+        function setupCanvgShim() {
+            _.each([
+                'rgbcolor.js',
+                'StackBlur.js',
+                'canvg.js'
+            ], function (src) {
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'http://canvg.googlecode.com/svn/trunk/' + src;
+                document.head.appendChild(script);
+            });
         }
     }
 
