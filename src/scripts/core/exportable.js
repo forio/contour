@@ -1,9 +1,12 @@
 (function () {
 
     var defaults = {
-        type: 'image/png',
-        backgroundColor: '#fff',
-        fileName: 'contour.png'
+        type: 'image/png', // the mime type of the image; see http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support
+        fileName: 'contour.png', // the fileName for the download
+        target: undefined, // a selector for the container; for example '#image'
+        backgroundColor: '#fff', // the fill color of the image, or `null` for transparent background
+        width: undefined, // the width of the exported image; if `height` is falsy then the height will be scaled proportionally
+        height: undefined // the height of the exported image; if `width` is falsy then the width will be scaled proportionally
     };
 
     // browser capabilities
@@ -34,9 +37,6 @@
             /**
             * Saves a visualization as an image, triggering a download.
             *
-            * `type` specfies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
-            * `fileName` specifies the fileName for the download. (Default: 'contour.png'.)
-            *
             * ###Example:
             *
             *     var contour = new Contour(...)
@@ -51,6 +51,11 @@
             *
             * @name download
             * @param {object} options Configuration options specific to saving the image.
+            *     `type` specifies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
+            *     `fileName` specifies the fileName for the download. (Default: 'contour.png'.)
+            *     `backgroundColor` specifies the fill color of the image, or `null` for transparent background. (Default: '#fff'.)
+            *     `width` specifies the width of the exported image. If `height` is falsy then the height will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
+            *     `height` specifies the height of the exported image. If `width` is falsy then the width will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
             */
             download: function (options) {
                 exportImage.call(this, options, 'download');
@@ -60,9 +65,6 @@
 
             /**
             * Saves a visualization as an image.
-            *
-            * `type` specfies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
-            * `target` specifies a selector for the container. (For example: `target: '#vis'` will insert the image in `<div id="vis"></div>`.)
             *
             * ###Example:
             *
@@ -77,6 +79,11 @@
             *
             * @name place
             * @param {object} options Configuration options specific to saving the image.
+            *     `type` specifies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
+            *     `target` specifies a selector for the container. (For example: '#image' will append the image into `<div id="image"></div>`.)
+            *     `backgroundColor` specifies the fill color of the image, or `null` for transparent background. (Default: '#fff'.)
+            *     `width` specifies the width of the exported image. If `height` is falsy then the height will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
+            *     `height` specifies the height of the exported image. If `width` is falsy then the width will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
             */
             place: function (options) {
                 exportImage.call(this, options, 'place');
