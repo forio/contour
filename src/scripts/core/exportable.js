@@ -10,9 +10,6 @@
     var browser = {
         checked: false // true after browser capabilities have been checked
     };
-    // shims depending on current browser
-    var shim = {
-    };
 
 
     var exportable = function () {
@@ -354,29 +351,10 @@
     function checkBrowser() {
         browser.checked = true;
 
-        checkEncodesBase64();
-        checkHasTypedArray();
         checkADownloads();
         checkSavesMsBlobs();
         checkExportsSvg();
 
-
-        function checkEncodesBase64() {
-            browser.encodesBase64 = !!root.btoa;
-
-            // setup shim for IE9
-            if (!browser.encodesBase64) {
-                setupBase64Shim();
-            }
-        }
-
-        function checkHasTypedArray() {
-            browser.hasTypedArray = !!root.Uint8Array;
-
-            if (!browser.hasTypedArray) {
-                setupTypedArrayShim();
-            }
-        }
 
         function checkADownloads() {
             browser.aDownloads = document.createElement('a').download !== undefined;
@@ -438,105 +416,6 @@
                 if (!browser.exportsSvg) {
                     setupCanvgShim();
                 }
-            }
-        }
-
-        // base64 shim, for IE9
-        function setupBase64Shim() {
-            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-            function InvalidCharacterError(message) {
-                this.message = message;
-            }
-            InvalidCharacterError.prototype = new Error();
-            InvalidCharacterError.prototype.name = 'InvalidCharacterError';
-
-            // base64 encoder
-            // from https://gist.github.com/999166
-            root.btoa = function (input) {
-                var str = String(input);
-                for (
-                    // initialize result and counter
-                    var block, charCode, idx = 0, map = chars, output = '';
-                    // if the next str index does not exist:
-                    //   change the mapping table to "="
-                    //   check if d has no fractional digits
-                    str.charAt(idx | 0) || (map = '=', idx % 1);
-                    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-                    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-                ) {
-                    charCode = str.charCodeAt(idx += 3 / 4);
-                    if (charCode > 0xFF) {
-                        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
-                    }
-                    block = block << 8 | charCode;
-                }
-                return output;
-            };
-
-            // base64 decoder
-            // from https://gist.github.com/1020396
-            root.atob = function (input) {
-                var str = String(input).replace(/=+$/, '');
-                if (str.length % 4 == 1) {
-                    throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
-                }
-                for (
-                    // initialize result and counters
-                    var bc = 0, bs, buffer, idx = 0, output = '';
-                    // get next character
-                    (buffer = str.charAt(idx++));
-                    // character found in table? initialize bit storage and add its ascii value;
-                    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-                        // and if not first of each 4 characters,
-                        // convert the first 8 bits to one ascii character
-                        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-                ) {
-                    // try to find character in table (0-63, not found => -1)
-                    buffer = chars.indexOf(buffer);
-                }
-                return output;
-            };
-        }
-
-        // typed array shim, for IE9
-        function setupTypedArrayShim() {
-            root.Uint8Array = TypedArray;
-            root.Uint32Array = TypedArray;
-            root.Int32Array = TypedArray;
-
-
-            function subarray(start, end) {
-                return this.slice(start, end);
-            }
-         
-            function set_(array, offset) {
-                if (arguments.length < 2) offset = 0;
-                for (var i = 0, n = array.length; i < n; ++i, ++offset) {
-                    this[offset] = array[i] & 0xFF;
-                }
-            }
-         
-            // we need typed arrays
-            function TypedArray(arg1) {
-                var result;
-                if (typeof arg1 === 'number') {
-                    result = new Array(arg1);
-                    for (var i = 0; i < arg1; ++i) {
-                        result[i] = 0;
-                    }
-                } else {
-                    result = arg1.slice(0);
-                }
-                result.subarray = subarray;
-                result.buffer = result;
-                result.byteLength = result.length;
-                result.set = set_;
-                if (typeof arg1 === 'object' && arg1.buffer) {
-                    result.buffer = arg1.buffer;
-                }
-         
-                return result;
             }
         }
 
