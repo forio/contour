@@ -144,7 +144,7 @@
 
                 var svgXml = shim.serializeXml(svg);
 
-                if (window.canvg) { // use canvg renderer for image export
+                if (root.canvg) { // use canvg renderer for image export
                     renderImageCanvg();
                 } else { // use native renderer for image export (this might fail)
                     renderImageNative();
@@ -154,7 +154,7 @@
                     var imageDataUrl = canvas.toDataURL(options.type);
                     var imageBlob = dataUrlToBlob(imageDataUrl);
 
-                    var domUrl = window.URL || window.webkitURL || window;
+                    var domUrl = root.URL || root.webkitURL || root;
                     var objectUrl = domUrl.createObjectURL(imageBlob);
 
                     dataUrlCreated(objectUrl, imageBlob, function () {
@@ -213,8 +213,8 @@
 
             // compare computed styles at this node and apply the differences directly
             function applyStyles(sourceNode, targetNode) {
-                var sourceStyle = window.getComputedStyle(sourceNode);
-                var targetStyle = window.getComputedStyle(targetNode);
+                var sourceStyle = root.getComputedStyle(sourceNode);
+                var targetStyle = root.getComputedStyle(targetNode);
 
                 for (var prop in sourceStyle) {
                     if (!ignoreDiff[prop] && !isFinite(prop)) { // note that checking for sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in firefox
@@ -315,7 +315,7 @@
                             } else if (browser.savesMsBlobs && blob) {
                                 navigator.msSaveOrOpenBlob(blob, options.fileName);
                             } else {
-                                window.open(url);
+                                root.open(url);
                             }
                             setTimeout(function () { // wait for download to start
                                 revokeUrl();
@@ -349,7 +349,7 @@
 
 
         function checkEncodesBase64() {
-            browser.encodesBase64 = 'btoa' in window;
+            browser.encodesBase64 = 'btoa' in root;
 
             // setup shim for IE9
             if (!browser.encodesBase64) {
@@ -358,7 +358,7 @@
         }
 
         function checkHasTypedArray() {
-            browser.hasTypedArray = 'Uint8Array' in window;
+            browser.hasTypedArray = 'Uint8Array' in root;
 
             if (!browser.hasTypedArray) {
                 setupTypedArrayShim();
@@ -366,7 +366,7 @@
         }
 
         function checkSerializesXml() {
-            browser.serializesXml = 'XMLSerializer' in window;
+            browser.serializesXml = 'XMLSerializer' in root;
 
             if (browser.serializesXml) {
                 shim.serializeXml = function (xml) { // use standard XMLSerializer.serializeToString
@@ -451,8 +451,8 @@
         function setupBase64Shim() {
             var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
-            window.btoa = base64Encode;
-            window.atob = base64Decode;
+            root.btoa = base64Encode;
+            root.atob = base64Decode;
 
 
             // base64 encode
@@ -574,9 +574,9 @@
         }
 
         function setupTypedArrayShim() {
-            window.Uint8Array = TypedArray;
-            window.Uint32Array = TypedArray;
-            window.Int32Array = TypedArray;
+            root.Uint8Array = TypedArray;
+            root.Uint32Array = TypedArray;
+            root.Int32Array = TypedArray;
 
 
             function subarray(start, end) {
