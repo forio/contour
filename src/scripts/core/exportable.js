@@ -2,7 +2,7 @@
 
     var defaults = {
         type: 'image/png',
-        fill: '#fff',
+        backgroundColor: '#fff',
         fileName: 'contour.png'
     };
 
@@ -170,8 +170,8 @@
                         canvas.width = svgImg.width;
                         canvas.height = svgImg.height;
 
-                        if (options.fill) {
-                            context.fillStyle = options.fill;
+                        if (options.backgroundColor) {
+                            context.fillStyle = options.backgroundColor;
                             context.fillRect(0, 0, svgImg.width, svgImg.height);
                         }
 
