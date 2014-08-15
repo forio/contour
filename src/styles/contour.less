@@ -14,7 +14,8 @@
 @palette6: #EEECE1 #4F81BD #C0504D #9BBB59 #8064A2 #4BACC6 #F79646 #1F497D;
 
 @data-line-width: 2px;
-@leged-font-size: 13px;
+@legend-font-size: 13px;
+@legend-text-color: #666;
 
 @tooltip-background-color: #555;
 @tooltip-border-color: transparent;
@@ -90,12 +91,15 @@
 .contour-legend {
     position: absolute;
     border: solid 1px #bbb;
+    stroke: #bbb;
+    stroke-width: 1px;
     margin: 5px;
     padding: 0 5px;
     background-color: rgba(255, 255, 255, 0.7);
+    fill: rgba(255, 255, 255, 0.7);
     border-radius: 4px;
     .mono-font();
-    font-size: @leged-font-size;
+    font-size: @legend-font-size;
 
 
     .contour-legend-key {
@@ -118,6 +122,11 @@
             display: block;
             margin: .2em .2em;
         }
+    }
+
+    text {
+        stroke: none;
+        fill: @legend-text-color;
     }
 }
 
