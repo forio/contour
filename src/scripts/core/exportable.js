@@ -12,7 +12,6 @@
     };
     // shims depending on current browser
     var shim = {
-        serializeXml: undefined // xml serializer
     };
 
 
@@ -132,7 +131,7 @@
             }
 
             function makeSvgUrl() {
-                var svgXml = shim.serializeXml(svg);
+                var svgXml = (new XMLSerializer()).serializeToString(svg);
                 var svgDataUrl = encodeBase64DataUrl(svgXml);
 
                 dataUrlCreated(svgDataUrl, null, function () {});
@@ -142,7 +141,7 @@
                 var canvas = document.createElement('canvas');
                 var context = canvas.getContext('2d');
 
-                var svgXml = shim.serializeXml(svg);
+                var svgXml = (new XMLSerializer()).serializeToString(svg);
 
                 if (root.canvg) {
                     // use canvg renderer for image export
@@ -357,14 +356,13 @@
 
         checkEncodesBase64();
         checkHasTypedArray();
-        checkSerializesXml();
         checkADownloads();
         checkSavesMsBlobs();
         checkExportsSvg();
 
 
         function checkEncodesBase64() {
-            browser.encodesBase64 = 'btoa' in root;
+            browser.encodesBase64 = !!root.btoa;
 
             // setup shim for IE9
             if (!browser.encodesBase64) {
@@ -373,23 +371,10 @@
         }
 
         function checkHasTypedArray() {
-            browser.hasTypedArray = 'Uint8Array' in root;
+            browser.hasTypedArray = !!root.Uint8Array;
 
             if (!browser.hasTypedArray) {
                 setupTypedArrayShim();
-            }
-        }
-
-        function checkSerializesXml() {
-            browser.serializesXml = 'XMLSerializer' in root;
-
-            if (browser.serializesXml) {
-                // use standard XMLSerializer.serializeToString
-                shim.serializeXml = function (xml) {
-                    return (new XMLSerializer()).serializeToString(xml);
-                };
-            } else {
-                setupXmlSerializerShim();
             }
         }
 
@@ -398,7 +383,7 @@
         }
 
         function checkSavesMsBlobs() {
-            browser.savesMsBlobs = 'msSaveOrOpenBlob' in navigator;
+            browser.savesMsBlobs = !!navigator.msSaveOrOpenBlob;
         }
 
         function checkExportsSvg() {
@@ -429,7 +414,7 @@
 
                         svgExportChecked();
                     };
-                    var xml = shim.serializeXml(svg);
+                    var xml = (new XMLSerializer()).serializeToString(svg);
                     sourceImg.src = 'data:image/svg+xml,' + encodeURIComponent(xml);
                 } catch (e) {
                     svgExportChecked();
@@ -559,31 +544,6 @@
                 }
          
                 return result;
-            }
-        }
-
-        function setupXmlSerializerShim() {
-            // use custom serializeXmlToString for IE9
-            shim.serializeXml = serializeXmlToString;
-
-
-            // quick-n-serialize an SVG dom, needed for IE9 where there's no XMLSerializer nor SVG.xml
-            // s: SVG dom, which is the <svg> elemennt
-            function serializeXmlToString(s) {
-                var out = '<' + s.nodeName;
-                for (var i = 0; i < s.attributes.length; i++) {
-                    out += ' ' + s.attributes[i].name + '=' + '"' + s.attributes[i].value + '"';
-                }
-
-                if (s.hasChildNodes()) {
-                    out += '>\n';
-                    for (var j = 0; j < s.childNodes.length; j++) {
-                        out += serializeXmlToString(s.childNodes[j]);
-                    }
-                    out += '</' + s.nodeName + '>' + '\n';
-                } else out += ' />\n';
-
-                return out;
             }
         }
     }
