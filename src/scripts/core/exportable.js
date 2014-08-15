@@ -6,16 +6,19 @@
         fileName: 'contour.png'
     };
 
-    var browser = { // browser capabilities
+    // browser capabilities
+    var browser = {
         checked: false // true after browser capabilities have been checked
     };
-    var shim = { // shims depending on current browser
+    // shims depending on current browser
+    var shim = {
         serializeXml: undefined // xml serializer
     };
 
 
     var exportable = function () {
-        var ignoreDiff = { // css rules to ignore for diff
+        // css rules to ignore for diff
+        var ignoreDiff = {
             cssText: 1,
             parentRule: 1
         };
@@ -91,8 +94,6 @@
         // svg to canvas export function
         // adapted from https://github.com/sampumon/SVG.toDataURL
         // which based on http://svgopen.org/2010/papers/62-From_SVG_to_Canvas_and_Back/#svg_to_canvas
-
-        // exports svg to canvas
         function getSvgDataUrl(svg, options, dataUrlCreated) {
             switch (options.type) {
                 case 'image/svg+xml':
@@ -144,9 +145,11 @@
 
                 var svgXml = shim.serializeXml(svg);
 
-                if (root.canvg) { // use canvg renderer for image export
+                if (root.canvg) {
+                    // use canvg renderer for image export
                     renderImageCanvg();
-                } else { // use native renderer for image export (this might fail)
+                } else {
+                    // use native renderer for image export (this might fail)
                     renderImageNative();
                 }
 
@@ -186,8 +189,8 @@
                 }
 
                 function renderImageCanvg() {
-                    // NOTE: canvg gets the svg element dimensions incorrectly if not specified as attributes
-                    // NOTE: this canvg call is synchronous and blocks
+                    // note that canvg gets the svg element dimensions incorrectly if not specified as attributes
+                    // also this canvg call is synchronous and blocks
                     canvg(canvas, svgXml, {
                         ignoreMouse: true,
                         ignoreAnimation: true,
@@ -205,7 +208,8 @@
         // clone svg in isolation with styles directly applied
         function createSvgClone(svgNode, svgCloned) {
             createIsolatedNode(function (nodeClone, destroyIsolatedNode) {
-                cloneNodes(svgNode, nodeClone); // clone nodes and apply styles directly to each node
+                // clone nodes and apply styles directly to each node
+                cloneNodes(svgNode, nodeClone);
 
                 svgCloned(d3.select(nodeClone).select('svg').node(), destroyIsolatedNode);
             });
@@ -217,7 +221,8 @@
                 var targetStyle = root.getComputedStyle(targetNode);
 
                 for (var prop in sourceStyle) {
-                    if (!ignoreDiff[prop] && !isFinite(prop)) { // note that checking for sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in firefox
+                    if (!ignoreDiff[prop] && !isFinite(prop)) {
+                        // note that checking for sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in firefox
                         if (targetStyle[prop] !== sourceStyle[prop]) {
                             targetNode.style[prop] = sourceStyle[prop];
                         }
@@ -232,10 +237,12 @@
 
                 if (!sourceNode.tagName) return; // skip inner text
 
-                applyStyles(sourceNode, newNode); // compare computed styles at this node and apply the differences directly
+                // compare computed styles at this node and apply the differences directly
+                applyStyles(sourceNode, newNode);
 
                 _.each(sourceNode.childNodes, function (childNode) {
-                    cloneNodes(childNode, newNode); // clone each child node and apply styles
+                    // clone each child node and apply styles
+                    cloneNodes(childNode, newNode);
                 });
             }
 
@@ -250,8 +257,9 @@
                     iframeDocument.body.appendChild(nodeClone);
 
                     var destroyIframe = function () {
+                        // destroy clone
                         iframeDocument.body.removeChild(nodeClone);
-                        document.body.removeChild(iframe); // destroy clone
+                        document.body.removeChild(iframe);
                     };
 
                     nodeLoaded(nodeClone, destroyIframe);
@@ -285,14 +293,17 @@
 
 
         function exportImage(options, exporter) {
+            // merge configuration options with defaults
             options = options || {};
-            _.defaults(options, defaults); // merge configuration options with defaults
+            _.defaults(options, defaults);
 
             var svgNode = self.container.select('svg').node();
-            var bounds = svgNode.getBoundingClientRect(); // get bounds from original svg
+            // get bounds from original svg, and proportion them based on specified options
+            var bounds = svgNode.getBoundingClientRect();
             var boundsClone = getProportionedBounds(bounds, options);
 
-            createSvgClone(svgNode, performExport); // clone svg in isolation with styles directly applied
+            // clone svg in isolation with styles directly applied
+            createSvgClone(svgNode, performExport);
 
             function performExport(svgNodeClone, destroySvgClone) {
                 svgNodeClone.setAttribute('width', boundsClone.width);
@@ -301,7 +312,7 @@
                 getSvgDataUrl(svgNodeClone, options, function (url, blob, revokeUrl) {
                     destroySvgClone();
 
-                    // call exporter function
+                    // exporter functions
                     var exporters = {
                         'download': function () {
                             if (browser.aDownloads) {
@@ -313,11 +324,14 @@
                                 a.click();
                                 document.body.removeChild(a);
                             } else if (browser.savesMsBlobs && blob) {
+                                // IE9-11 support a method to save/open a blob
                                 navigator.msSaveOrOpenBlob(blob, options.fileName);
                             } else {
+                                // safari can only open a new tab with the image
                                 root.open(url);
                             }
-                            setTimeout(function () { // wait for download to start
+                            // wait for download to start
+                            setTimeout(function () {
                                 revokeUrl();
                             }, 1);
                         },
@@ -330,7 +344,8 @@
                             d3.select(options.target).node().appendChild(img);
                         }
                     };
-                    exporters[exporter](); // call exporter function
+                    // call exporter function
+                    exporters[exporter]();
                 });
             }
         }
@@ -369,7 +384,8 @@
             browser.serializesXml = 'XMLSerializer' in root;
 
             if (browser.serializesXml) {
-                shim.serializeXml = function (xml) { // use standard XMLSerializer.serializeToString
+                // use standard XMLSerializer.serializeToString
+                shim.serializeXml = function (xml) {
                     return (new XMLSerializer()).serializeToString(xml);
                 };
             } else {
@@ -433,7 +449,8 @@
             function svgExportChecked() {
                 document.body.removeChild(iframe);
 
-                if (!browser.exportsSvg) { // load canvg svg renderer for browsers that can't safely export svg
+                // load canvg svg renderer for browsers that can't safely export svg
+                if (!browser.exportsSvg) {
                     _.each([
                         'rgbcolor.js',
                         'StackBlur.js',
@@ -614,7 +631,8 @@
         }
 
         function setupXmlSerializerShim() {
-            shim.serializeXml = serializeXmlToString; // use custom serializeXmlToString for IE9
+            // use custom serializeXmlToString for IE9
+            shim.serializeXml = serializeXmlToString;
 
 
             // quick-n-serialize an SVG dom, needed for IE9 where there's no XMLSerializer nor SVG.xml
