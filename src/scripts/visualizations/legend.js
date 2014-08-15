@@ -128,9 +128,6 @@
                 .attr('height', containerDivNode.clientHeight)
                 .attr('rx', containerDivStyle.borderTopLeftRadius)
                 .attr('ry', containerDivStyle.borderTopLeftRadius);
-                // .style('fill', containerDivStyle.backgroundColor)
-                // .style('stroke', containerDivStyle.borderTopColor)
-                // .style('stroke-width', containerDivStyle.borderTopWidth);
 
             var entriesDivs = containerDiv.selectAll('.contour-legend-entry');
             function getEntryDivSubNode(i, selector) {
@@ -151,10 +148,6 @@
 
             var enter = entries.enter()
                 .append('g')
-                // .attr('transform', function (d, i) {
-                //     var entryDivNode = entriesDivs[0][i];
-                //     return 'translate(' + entryDivNode.offsetLeft + ',' + entryDivNode.offsetTop + ')';
-                // })
                 .classed('contour-legend-entry', true);
 
             enter.append('rect')
@@ -176,15 +169,6 @@
                 .attr('ry', function (d, i) {
                     return getEntryDivKeyStyle(i).borderTopLeftRadius;
                 })
-                // .style('fill', function (d, i) {
-                //     return getEntryDivKeyStyle(i).backgroundColor;
-                // })
-                // .style('stroke', function (d, i) {
-                //     return getEntryDivKeyStyle(i).borderTopColor;
-                // })
-                // .style('stroke-width', function (d, i) {
-                //     return getEntryDivKeyStyle(i).borderTopWidth;
-                // })
                 .attr('class', function (d, i) {
                     return 'contour-legend-key series s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name);
                 });
