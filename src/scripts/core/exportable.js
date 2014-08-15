@@ -10,7 +10,8 @@
         checked: false
     };
     var shim = { // shims depending on current browser
-        encodeBase64: undefined, // base 64 encoder
+        btoa: undefined, // base 64 encoder
+        atob: undefined, // base 64 decoder
         serializeXml: undefined // xml serializer
     };
 
@@ -106,14 +107,37 @@
 
             function encodeBase64DataUrl(svgXml) {
                 // https://developer.mozilla.org/en/DOM/window.btoa
-                return 'data:image/svg+xml;base64,' + shim.encodeBase64(svgXml);
+                return 'data:image/svg+xml;base64,' + shim.btoa(svgXml);
+            }
+
+            // convert base64/URLEncoded data component to raw binary data held in a string
+            function dataUrlToBlob(dataUrl) {
+                var byteString;
+                if (dataUrl.split(',')[0].indexOf('base64') >= 0) {
+                    byteString = shim.atob(dataUrl.split(',')[1]);
+                } else {
+                    byteString = unescape(dataUrl.split(',')[1]);
+                }
+
+                // separate out the mime component
+                var mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+
+                // write the bytes of the string to a typed array
+                var ia = new Uint8Array(byteString.length);
+                for (var i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+
+                return new Blob([ia], {
+                    type: mimeString
+                });
             }
 
             function exportSvg() {
                 var svgXml = shim.serializeXml(svg);
                 var svgDataUrl = encodeBase64DataUrl(svgXml);
 
-                dataUrlCreated(svgDataUrl);
+                dataUrlCreated(svgDataUrl, null, function () {});
             }
 
             function exportImage() {
@@ -130,8 +154,14 @@
 
                 function imageRendered() {
                     var imageDataUrl = canvas.toDataURL(options.type);
+                    var imageBlob = dataUrlToBlob(imageDataUrl);
 
-                    dataUrlCreated(imageDataUrl);
+                    var domUrl = window.URL || window.webkitURL || window;
+                    var objectUrl = domUrl.createObjectURL(imageBlob);
+
+                    dataUrlCreated(objectUrl, imageBlob, function () {
+                        domUrl.revokeObjectURL(objectUrl);
+                    });
                 }
 
                 function renderImageNative() {
@@ -270,7 +300,7 @@
                 svgNodeClone.setAttribute('width', boundsClone.width);
                 svgNodeClone.setAttribute('height', boundsClone.height);
 
-                getSvgDataUrl(svgNodeClone, options, function (url) {
+                getSvgDataUrl(svgNodeClone, options, function (url, blob, revokeUrl) {
                     destroySvgClone();
 
                     // call exporter function
@@ -284,12 +314,20 @@
                                 document.body.appendChild(a);
                                 a.click();
                                 document.body.removeChild(a);
+                            } else if (browser.savesMsBlobs && blob) {
+                                navigator.msSaveOrOpenBlob(blob, options.fileName);
                             } else {
                                 window.open(url);
                             }
+                            setTimeout(function () { // wait for download to start
+                                revokeUrl();
+                            }, 1);
                         },
                         'place': function () {
                             var img = document.createElement('img');
+                            img.onload = function () {
+                                revokeUrl();
+                            };
                             img.src = url;
                             d3.select(options.target).node().appendChild(img);
                         }
@@ -305,6 +343,7 @@
         browser.checked = true;
 
         checkADownloads();
+        checkSavesMsBlobs();
         checkEncodesBase64();
         checkSerializesXml();
         checkExportsSvg();
@@ -314,27 +353,35 @@
             browser.aDownloads = document.createElement('a').download !== undefined;
         }
 
+        function checkSavesMsBlobs() {
+            browser.savesMsBlobs = !!navigator.msSaveOrOpenBlob;
+        }
+
         function checkEncodesBase64() {
             browser.encodesBase64 = !!window.btoa;
 
             if (browser.encodesBase64) {
-                shim.encodeBase64 = function (s) { // use window.btoa for base64 encoding
-                    return btoa(s); // note that it won't work as just `shim.encodeBase64 = btoa;`, therefore it needs to be wrapped
+                shim.btoa = function (s) { // use window.btoa for base64 encoding
+                    return btoa(s); // note that it won't work as just `shim.btoa = window.btoa;`, therefore it needs to be wrapped
+                };
+                shim.atob = function (s) { // use window.atob for base64 decoding
+                    return atob(s); // note that it won't work as just `shim.atob = window.atob;`, therefore it needs to be wrapped
                 };
             } else {
-                shim.encodeBase64 = base64Encode; // use custom base64 encoder
+                shim.btoa = base64Encode; // use custom base64 encoder
+                shim.atob = base64Decode; // use custom base64 decoder
             }
 
 
             // base64 encode
-            // adapted from http://www.webtoolkit.info/
+            // adapted from http://www.webtoolkit.info/javascript-base64.html
             function base64Encode(input) {
                 var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
                 var output = '';
                 var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
                 var i = 0;
 
-                input = utf8_encode(input);
+                input = utf8Encode(input);
 
                 while (i < input.length) {
                     chr1 = input.charCodeAt(i++);
@@ -363,7 +410,7 @@
 
             }
 
-            function utf8_encode(string) {
+            function utf8Encode(string) {
                 string = string.replace(/\r\n/g, '\n');
                 var utftext = '';
 
@@ -385,6 +432,70 @@
                 }
 
                 return utftext;
+            }
+
+            // base64 decode
+            // adapted from http://www.webtoolkit.info/javascript-base64.html
+            function base64Decode(input) {
+                var output = '';
+                var chr1, chr2, chr3;
+                var enc1, enc2, enc3, enc4;
+                var i = 0;
+
+                input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
+
+                while (i < input.length) {
+                    enc1 = this.keyStr.indexOf(input.charAt(i++));
+                    enc2 = this.keyStr.indexOf(input.charAt(i++));
+                    enc3 = this.keyStr.indexOf(input.charAt(i++));
+                    enc4 = this.keyStr.indexOf(input.charAt(i++));
+
+                    chr1 = (enc1 << 2) | (enc2 >> 4);
+                    chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+                    chr3 = ((enc3 & 3) << 6) | enc4;
+
+                    output = output + String.fromCharCode(chr1);
+
+                    if (enc3 != 64) {
+                        output = output + String.fromCharCode(chr2);
+                    }
+                    if (enc4 != 64) {
+                        output = output + String.fromCharCode(chr3);
+                    }
+                }
+
+                output = utf8Decode(output);
+
+                return output;
+            }
+
+            function utf8Decode(utftext) {
+                var string = '';
+                var i = 0;
+                var c, c1, c2;
+                c = c1 = c2 = 0;
+
+                while (i < utftext.length) {
+                    c = utftext.charCodeAt(i);
+
+                    if (c < 128) {
+                        string += String.fromCharCode(c);
+                        i++;
+                    }
+                    else if ((c > 191) && (c < 224)) {
+                        c2 = utftext.charCodeAt(i + 1);
+                        string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+                        i += 2;
+                    }
+                    else {
+                        c2 = utftext.charCodeAt(i + 1);
+                        c3 = utftext.charCodeAt(i + 2);
+                        string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+                        i += 3;
+                    }
+                }
+
+                return string;
             }
         }
 
