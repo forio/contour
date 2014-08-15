@@ -1304,12 +1304,15 @@
                 );
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 // _.all() on empty array returns true, so we guard against it
                 var isCategoricalData = this.dataSrc.length && _.all(this.dataSrc, function (d) { return +d.x !== d.x; });
                 if (isCategoricalData && !this.options.xAxis.categories) {
                     this.options.xAxis.categories = _.uniq(_.pluck(this.dataSrc, 'x'));
                 }
 
+=======
+>>>>>>> parent of d82bee4... build
 =======
 >>>>>>> parent of d82bee4... build
                 this._yAxis = null;
@@ -1338,8 +1341,11 @@
 })();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Contour.version = '0.9.99';
 =======
+=======
+>>>>>>> parent of d82bee4... build
 Contour.version = '0.9.91';
 >>>>>>> parent of d82bee4... build
 (function () {
