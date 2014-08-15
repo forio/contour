@@ -466,128 +466,60 @@
         }
 
         function setupBase64Shim() {
-            var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
-            root.btoa = base64Encode;
-            root.atob = base64Decode;
+            function InvalidCharacterError(message) {
+                this.message = message;
+            }
+            InvalidCharacterError.prototype = new Error();
+            InvalidCharacterError.prototype.name = 'InvalidCharacterError';
 
-
-            // base64 encode
-            function base64Encode(input) {
-                var output = '';
-                var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-                var i = 0;
-
-                input = utf8Encode(input);
-
-                while (i < input.length) {
-                    chr1 = input.charCodeAt(i++);
-                    chr2 = input.charCodeAt(i++);
-                    chr3 = input.charCodeAt(i++);
-
-                    enc1 = chr1 >> 2;
-                    enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-                    enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-                    enc4 = chr3 & 63;
-
-                    if (isNaN(chr2)) {
-                        enc3 = enc4 = 64;
-                    } else if (isNaN(chr3)) {
-                        enc4 = 64;
+            // base64 encoder
+            // from https://gist.github.com/999166
+            root.btoa = function (input) {
+                var str = String(input);
+                for (
+                    // initialize result and counter
+                    var block, charCode, idx = 0, map = chars, output = '';
+                    // if the next str index does not exist:
+                    //   change the mapping table to "="
+                    //   check if d has no fractional digits
+                    str.charAt(idx | 0) || (map = '=', idx % 1);
+                    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+                    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+                ) {
+                    charCode = str.charCodeAt(idx += 3 / 4);
+                    if (charCode > 0xFF) {
+                        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
                     }
-
-                    output = output +
-                        keyStr.charAt(enc1) +
-                        keyStr.charAt(enc2) +
-                        keyStr.charAt(enc3) +
-                        keyStr.charAt(enc4);
+                    block = block << 8 | charCode;
                 }
-
                 return output;
-            }
+            };
 
-            function utf8Encode(string) {
-                string = string.replace(/\r\n/g, '\n');
-                var utftext = '';
-
-                for (var n = 0; n < string.length; n++) {
-                    var c = string.charCodeAt(n);
-
-                    if (c < 128) {
-                        utftext += String.fromCharCode(c);
-                    } else if((c > 127) && (c < 2048)) {
-                        utftext += String.fromCharCode((c >> 6) | 192);
-                        utftext += String.fromCharCode((c & 63) | 128);
-                    } else {
-                        utftext += String.fromCharCode((c >> 12) | 224);
-                        utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-                        utftext += String.fromCharCode((c & 63) | 128);
-                    }
+            // base64 decoder
+            // from https://gist.github.com/1020396
+            root.atob = function (input) {
+                var str = String(input).replace(/=+$/, '');
+                if (str.length % 4 == 1) {
+                    throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
                 }
-
-                return utftext;
-            }
-
-            // base64 decode
-            function base64Decode(input) {
-                var output = '';
-                var chr1, chr2, chr3;
-                var enc1, enc2, enc3, enc4;
-                var i = 0;
-
-                input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
-
-                while (i < input.length) {
-                    enc1 = keyStr.indexOf(input.charAt(i++));
-                    enc2 = keyStr.indexOf(input.charAt(i++));
-                    enc3 = keyStr.indexOf(input.charAt(i++));
-                    enc4 = keyStr.indexOf(input.charAt(i++));
-
-                    chr1 = (enc1 << 2) | (enc2 >> 4);
-                    chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-                    chr3 = ((enc3 & 3) << 6) | enc4;
-
-                    output = output + String.fromCharCode(chr1);
-
-                    if (enc3 != 64) {
-                        output = output + String.fromCharCode(chr2);
-                    }
-                    if (enc4 != 64) {
-                        output = output + String.fromCharCode(chr3);
-                    }
+                for (
+                    // initialize result and counters
+                    var bc = 0, bs, buffer, idx = 0, output = '';
+                    // get next character
+                    (buffer = str.charAt(idx++));
+                    // character found in table? initialize bit storage and add its ascii value;
+                    ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+                        // and if not first of each 4 characters,
+                        // convert the first 8 bits to one ascii character
+                        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+                ) {
+                    // try to find character in table (0-63, not found => -1)
+                    buffer = chars.indexOf(buffer);
                 }
-
-                output = utf8Decode(output);
-
                 return output;
-            }
-
-            function utf8Decode(utftext) {
-                var string = '';
-                var i = 0;
-                var c, c1, c2;
-                c = c1 = c2 = 0;
-
-                while (i < utftext.length) {
-                    c = utftext.charCodeAt(i);
-
-                    if (c < 128) {
-                        string += String.fromCharCode(c);
-                        i++;
-                    } else if ((c > 191) && (c < 224)) {
-                        c2 = utftext.charCodeAt(i + 1);
-                        string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-                        i += 2;
-                    } else {
-                        c2 = utftext.charCodeAt(i + 1);
-                        c3 = utftext.charCodeAt(i + 2);
-                        string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-                        i += 3;
-                    }
-                }
-
-                return string;
-            }
+            };
         }
 
         function setupTypedArrayShim() {
