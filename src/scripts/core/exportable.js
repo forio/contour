@@ -22,15 +22,14 @@
             cssText: 1,
             parentRule: 1
         };
-        var self; // reference to this contour
 
 
         // interface
 
         return {
             init: function () {
-                self = this;
-
+                // check browser capabilities and set up necessary shims
+                // only do this once per page load
                 if (!browser.checked) checkBrowser();
 
                 return this;
@@ -58,7 +57,7 @@
             * @param {object} options Configuration options specific to saving the image.
             */
             download: function (options) {
-                exportImage(options, 'download');
+                exportImage.call(this, options, 'download');
 
                 return this;
             },
@@ -84,7 +83,7 @@
             * @param {object} options Configuration options specific to saving the image.
             */
             place: function (options) {
-                exportImage(options, 'place');
+                exportImage.call(this, options, 'place');
 
                 return this;
             }
@@ -97,10 +96,10 @@
         function getSvgDataUrl(svg, options, dataUrlCreated) {
             switch (options.type) {
                 case 'image/svg+xml':
-                    return exportSvg();
+                    return makeSvgUrl();
 
                 default: // 'image/png' or 'image/jpeg'
-                    return exportImage();
+                    return makeImageUrl();
             }
 
 
@@ -122,24 +121,24 @@
                 var mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
 
                 // write the bytes of the string to a typed array
-                var ia = new Uint8Array(byteString.length);
+                var byteArray = new Uint8Array(byteString.length);
                 for (var i = 0; i < byteString.length; i++) {
-                    ia[i] = byteString.charCodeAt(i);
+                    byteArray[i] = byteString.charCodeAt(i);
                 }
 
-                return new Blob([ia], {
+                return new Blob([byteArray], {
                     type: mimeString
                 });
             }
 
-            function exportSvg() {
+            function makeSvgUrl() {
                 var svgXml = shim.serializeXml(svg);
                 var svgDataUrl = encodeBase64DataUrl(svgXml);
 
                 dataUrlCreated(svgDataUrl, null, function () {});
             }
 
-            function exportImage() {
+            function makeImageUrl() {
                 var canvas = document.createElement('canvas');
                 var context = canvas.getContext('2d');
 
@@ -297,7 +296,7 @@
             options = options || {};
             _.defaults(options, defaults);
 
-            var svgNode = self.container.select('svg').node();
+            var svgNode = this.container.select('svg').node();
             // get bounds from original svg, and proportion them based on specified options
             var bounds = svgNode.getBoundingClientRect();
             var boundsClone = getProportionedBounds(bounds, options);
@@ -352,6 +351,7 @@
     };
 
 
+    // check browser capabilities and set up necessary shims
     function checkBrowser() {
         browser.checked = true;
 
