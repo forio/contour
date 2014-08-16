@@ -1,0 +1,17 @@
+{
+  "name": "Contour",
+  "description": "Forio's Visualization Library",
+  "version": "0.9.100",
+  "main": [
+    "dist/contour.css",
+    "dist/contour.js"
+  ],
+  "ignore": [
+    "**/*",
+    "!dist/contour.{js,css}"
+  ],
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "d3": "~3.3.0"
+  }
+}
