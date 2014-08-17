@@ -19,7 +19,7 @@ describe('Exportable extension', function () {
         instance = new Contour(options)
             .cartesian()
             .nullVis(data)
-            .exportable()
+            .exportable();
         return instance;
     }
 
