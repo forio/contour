@@ -1,5 +1,7 @@
 (function () {
 
+    var root = this;
+
     var defaults = {
         type: 'image/png', // the mime type of the image; see http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support
         fileName: 'contour.png', // the fileName for the download
