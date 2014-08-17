@@ -159,14 +159,19 @@
 
                 function imageRendered() {
                     var imageDataUrl = canvas.toDataURL(options.type);
-                    var imageBlob = dataUrlToBlob(imageDataUrl);
 
-                    var domUrl = root.URL || root.webkitURL;
-                    var objectUrl = domUrl.createObjectURL(imageBlob);
+                    if (browser.createsObjectUrls) {
+                        var imageBlob = dataUrlToBlob(imageDataUrl);
 
-                    dataUrlCreated(objectUrl, imageBlob, function () {
-                        domUrl.revokeObjectURL(objectUrl);
-                    });
+                        var domUrl = root.URL || root.webkitURL;
+                        var objectUrl = domUrl.createObjectURL(imageBlob);
+
+                        dataUrlCreated(objectUrl, imageBlob, function () {
+                            domUrl.revokeObjectURL(objectUrl);
+                        });
+                    } else {
+                        dataUrlCreated(imageDataUrl, null, function () {});
+                    }
                 }
 
                 function renderImageNative() {
@@ -360,10 +365,21 @@
     function checkBrowser() {
         browser.checked = true;
 
+        checkEncodesBase64();
         checkADownloads();
         checkSavesMsBlobs();
+        checkCreatesObjectUrls();
         checkExportsSvg();
 
+
+        function checkEncodesBase64() {
+            browser.encodesBase64 = !!root.btoa;
+
+            // setup shim for IE9
+            if (!browser.encodesBase64) {
+                setupBase64Shim();
+            }
+        }
 
         function checkADownloads() {
             browser.aDownloads = document.createElement('a').download !== undefined;
@@ -371,6 +387,11 @@
 
         function checkSavesMsBlobs() {
             browser.savesMsBlobs = !!navigator.msSaveOrOpenBlob;
+        }
+
+        function checkCreatesObjectUrls() {
+            var domUrl = root.URL || root.webkitURL;
+            browser.createsObjectUrls = domUrl && domUrl.createObjectURL;
         }
 
         function checkExportsSvg() {
@@ -426,6 +447,40 @@
                     setupCanvgShim();
                 }
             }
+        }
+
+        // base64 shim, for IE9
+        function setupBase64Shim() {
+            var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+            function InvalidCharacterError(message) {
+                this.message = message;
+            }
+            InvalidCharacterError.prototype = new Error();
+            InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+
+            // base64 encoder
+            // from https://gist.github.com/999166
+            root.btoa = function (input) {
+                var str = String(input);
+                for (
+                    // initialize result and counter
+                    var block, charCode, idx = 0, map = chars, output = '';
+                    // if the next str index does not exist:
+                    //   change the mapping table to "="
+                    //   check if d has no fractional digits
+                    str.charAt(idx | 0) || (map = '=', idx % 1);
+                    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+                    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+                ) {
+                    charCode = str.charCodeAt(idx += 3 / 4);
+                    if (charCode > 0xFF) {
+                        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+                    }
+                    block = block << 8 | charCode;
+                }
+                return output;
+            };
         }
 
         // Canvg shim, for IE9-11 and Safari
