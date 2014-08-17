@@ -1,5 +1,7 @@
 (function () {
 
+    var root = this;
+
     var defaults = {
         legend: {
             vAlign: 'middle',
@@ -114,7 +116,7 @@
 
             var containerDiv = this.container.select('div.contour-legend');
             var containerDivNode = containerDiv.node();
-            var containerDivStyle = window.getComputedStyle(containerDivNode);
+            var containerDivStyle = root.getComputedStyle(containerDivNode);
 
             var container = legend.enter()
                 .append('g')
@@ -137,7 +139,7 @@
                 return getEntryDivSubNode(i, '.contour-legend-key');
             }
             function getEntryDivKeyStyle(i) {
-                return window.getComputedStyle(getEntryDivSubNode(i, '.contour-legend-key'));
+                return root.getComputedStyle(getEntryDivSubNode(i, '.contour-legend-key'));
             }
             function getEntryDivSeriesNode(i) {
                 return getEntryDivSubNode(i, '.series-name');
