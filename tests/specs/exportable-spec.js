@@ -6,6 +6,12 @@ describe('Exportable extension', function () {
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
+        // div must have layout in order to compare sizes
+        document.body.appendChild(el);
+    });
+
+    afterEach(function () {
+        document.body.removeChild(el);
     });
 
     function createinstance(options) {
@@ -25,40 +31,50 @@ describe('Exportable extension', function () {
 
     describe('Place image', function () {
         var $container, container;
+        var $img, img;
 
         beforeEach(function () {
             $container = $('<div>');
             container = $container.get(0);
+            // image must have layout in order to compare sizes
+            document.body.appendChild(container);
 
-            jasmine.Clock.useMock();
             createinstance();
             instance.render();
-            jasmine.Clock.tick(1000);
+
+            runs(function () {
+                instance.place({
+                    target: container
+                });
+            });
+
+            waitsFor(function () {
+                $img = $container.find('img');
+                if ($img.length !== 1) return false;
+                img = $img.get(0);
+                return img.offsetWidth > 0 || img.offsetHeight > 0;
+            }, 'The image should be created and loaded', 2000);
+        });
+
+        afterEach(function () {
+            document.body.removeChild(container);
         });
 
         it('should place an image in the specified container', function () {
-            instance.place({
-                target: container
+            runs(function () {
+                expect($img.length).toBe(1);
+                expect(img.offsetWidth).toBeGreaterThan(0);
+                expect(img.offsetHeight).toBeGreaterThan(0);
             });
-            jasmine.Clock.tick(500);
-
-            var $img = $container.find('img');
-            expect($img.length).toBe(1);
-            var img = $img.get(0);
-            expect(img.offsetWidth).toBeGreaterThan(0);
-            expect(img.offsetHeight).toBeGreaterThan(0);
         });
 
         it('should size the image the same dimensions as the chart', function () {
-            instance.place({
-                target: container
+            runs(function () {
+                var svg = $el.find('svg').get(0);
+                expect(img.offsetWidth).toEqual(svg.offsetWidth);
+                expect(img.offsetHeight).toEqual(svg.offsetHeight);
             });
-            jasmine.Clock.tick(500);
 
-            var svg = $el.find('svg').get(0);
-            var img = $container.find('img').get(0);
-            expect(img.offsetWidth).toEqual(svg.offsetWidth);
-            expect(img.offsetHeight).toEqual(svg.offsetHeight);
         });
     });
 });

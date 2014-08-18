@@ -12,7 +12,7 @@ describe('Legend Visualization', function () {
 
     afterEach(function () {
         document.body.removeChild(el);
-    })
+    });
 
     function createinstance(options) {
         options = _.extend({ el: el }, options);
