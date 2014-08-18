@@ -16,6 +16,11 @@
         checked: false // true after browser capabilities have been checked
     };
 
+    // queue of operations to perform synchronously
+    var queue = [];
+    // true if working on something
+    var working = false;
+
 
     var exportable = function () {
         // css rules to ignore for diff
@@ -23,11 +28,6 @@
             cssText: 1,
             parentRule: 1
         };
-
-        // queue of operations to perform synchronously
-        var queue = [];
-        // true if working on something
-        var working = false;
 
 
         // interface
@@ -108,33 +108,6 @@
                 return this;
             }
         };
-
-
-        // queue functions
-
-        // queue will wait until any asynchronous tasks are complete prior to calling the next fn()
-        function addToQueue(fn) {
-            if (working) {
-                queue.push(fn);
-            } else {
-                fn();
-            }
-        }
-
-        // call before starting an asynchronous task
-        function startWork() {
-            working = true;
-        }
-
-        // call after finishing an asynchronous task
-        function finishWork() {
-            working = false;
-
-            var fn = queue.shift();
-            if (fn) {
-                fn();
-            }
-        }
 
 
         // SVG to canvas export function
@@ -411,6 +384,33 @@
             }
         }
     };
+
+
+    // queue functions
+
+    // queue will wait until any asynchronous tasks are complete prior to calling the next fn()
+    function addToQueue(fn) {
+        if (working) {
+            queue.push(fn);
+        } else {
+            fn();
+        }
+    }
+
+    // call before starting an asynchronous task
+    function startWork() {
+        working = true;
+    }
+
+    // call after finishing an asynchronous task
+    function finishWork() {
+        working = false;
+
+        var fn = queue.shift();
+        if (fn) {
+            fn();
+        }
+    }
 
 
     // check browser capabilities and set up necessary shims
