@@ -337,7 +337,13 @@
                                 navigator.msSaveOrOpenBlob(blob, options.fileName);
                             } else {
                                 // Safari can only open a new tab with the image
-                                root.open(url);
+                                // root.open(url);
+                                var win = root.open();
+                                var doc = win.document;
+                                doc.write('<!DOCTYPE html>');
+                                doc.write('<html><head></head><body>');
+                                doc.write('<img src="' + url + '">')
+                                doc.write('</body></html>');
                             }
                             // wait for download to start
                             setTimeout(function () {
