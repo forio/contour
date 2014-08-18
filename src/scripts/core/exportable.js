@@ -24,6 +24,11 @@
             parentRule: 1
         };
 
+        // queue of operations to perform synchronously
+        var queue = [];
+        // true if working on something
+        var working = false;
+
 
         // interface
 
@@ -31,7 +36,9 @@
             init: function () {
                 // check browser capabilities and set up necessary shims
                 // only do this once per page load
-                if (!browser.checked) checkBrowser();
+                if (!browser.checked) {
+                    addToQueue(checkBrowser);
+                }
 
                 return this;
             },
@@ -60,7 +67,11 @@
             *     `height` specifies the height of the exported image. If `width` is falsy then the width will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
             */
             download: function (options) {
-                exportImage.call(this, options, 'download');
+                var container = this.container;
+
+                addToQueue(function () {
+                    exportImage(container, options, 'download');
+                });
 
                 return this;
             },
@@ -88,11 +99,42 @@
             *     `height` specifies the height of the exported image. If `width` is falsy then the width will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
             */
             place: function (options) {
-                exportImage.call(this, options, 'place');
+                var container = this.container;
+
+                addToQueue(function () {
+                    exportImage(container, options, 'place');
+                });
 
                 return this;
             }
         };
+
+
+        // queue functions
+
+        // queue will wait until any asynchronous tasks are complete prior to calling the next fn()
+        function addToQueue(fn) {
+            if (working) {
+                queue.push(fn);
+            } else {
+                fn();
+            }
+        }
+
+        // call before starting an asynchronous task
+        function startWork() {
+            working = true;
+        }
+
+        // call after finishing an asynchronous task
+        function finishWork() {
+            working = false;
+
+            var fn = queue.shift();
+            if (fn) {
+                fn();
+            }
+        }
 
 
         // SVG to canvas export function
@@ -193,7 +235,7 @@
                     };
 
                     svgImg.onerror = function () {
-                        console.log('Cannot export image');
+                        throw new Error('Cannot export image');
                     };
                 }
 
@@ -301,12 +343,14 @@
         }
 
 
-        function exportImage(options, exporter) {
+        function exportImage(container, options, exporter) {
+            startWork();
+
             // merge configuration options with defaults
             options = options || {};
             _.defaults(options, defaults);
 
-            var svgNode = this.container.select('svg').node();
+            var svgNode = container.select('svg').node();
             // get bounds from original SVG, and proportion them based on specified options
             var bounds = svgNode.getBoundingClientRect();
             var boundsClone = getProportionedBounds(bounds, options);
@@ -342,18 +386,20 @@
                                 var doc = win.document;
                                 doc.write('<!DOCTYPE html>');
                                 doc.write('<html><head></head><body>');
-                                doc.write('<img src="' + url + '">')
+                                doc.write('<img src="' + url + '">');
                                 doc.write('</body></html>');
                             }
                             // wait for download to start
                             setTimeout(function () {
                                 revokeUrl();
+                                finishWork();
                             }, 1);
                         },
                         'place': function () {
                             var img = document.createElement('img');
                             img.onload = function () {
                                 revokeUrl();
+                                finishWork();
                             };
                             img.src = url;
                             d3.select(options.target).node().appendChild(img);
@@ -369,13 +415,14 @@
 
     // check browser capabilities and set up necessary shims
     function checkBrowser() {
+        startWork();
         browser.checked = true;
 
         checkEncodesBase64();
         checkADownloads();
         checkSavesMsBlobs();
         checkCreatesObjectUrls();
-        checkExportsSvg();
+        checkExportsSvg(finishWork);
 
 
         function checkEncodesBase64() {
@@ -401,6 +448,8 @@
         }
 
         function checkExportsSvg() {
+            startWork();
+
             browser.exportsSvg = false;
 
             var iframe = document.body.appendChild(document.createElement('iframe'));
@@ -449,8 +498,10 @@
                 document.body.removeChild(iframe);
 
                 // load Canvg SVG renderer for browsers that can't safely export SVG
-                if (!browser.exportsSvg) {
-                    setupCanvgShim();
+                if (browser.exportsSvg) {
+                    finishWork();
+                } else {
+                    setupCanvgShim(finishWork);
                 }
             }
         }
@@ -490,14 +541,20 @@
         }
 
         // Canvg shim, for IE9-11 and Safari
-        function setupCanvgShim() {
-            _.each([
+        function setupCanvgShim(done) {
+            var scripts = [
                 'rgbcolor.js',
                 'StackBlur.js',
                 'canvg.js'
-            ], function (src) {
+            ];
+            var remaining = scripts.length;
+            _.each(scripts, function (src) {
                 var script = document.createElement('script');
                 script.type = 'text/javascript';
+                script.onload = function () {
+                    remaining--;
+                    if (remaining === 0) done();
+                };
                 script.src = 'http://canvg.googlecode.com/svn/trunk/' + src;
                 document.head.appendChild(script);
             });
