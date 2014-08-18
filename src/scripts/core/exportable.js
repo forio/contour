@@ -4,8 +4,8 @@
 
     var defaults = {
         type: 'image/png', // the mime type of the image; see http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support
-        fileName: 'contour.png', // the fileName for the download
-        target: undefined, // a selector for the container; for example '#image'
+        fileName: 'contour.png', // the fileName for the `download()`
+        target: undefined, // a selector for the container in which to `place()` the image; for example '#image'
         backgroundColor: '#fff', // the fill color of the image, or `null` for transparent background
         width: undefined, // the width of the exported image; if `height` is falsy then the height will be scaled proportionally
         height: undefined // the height of the exported image; if `width` is falsy then the width will be scaled proportionally
