@@ -6,6 +6,7 @@ describe('Legend Visualization', function () {
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
+        // div must have layout in order to build svg legend
         document.body.appendChild(el);
     });
 
