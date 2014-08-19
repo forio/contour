@@ -16,9 +16,13 @@
         }
     };
 
+    var initialize = true;
+
 
     /* jshint eqnull: true */
     function render(rawData, layer, options, id) {
+        var initialRender = initialize;
+        initialize = false;
         this.checkDependencies('cartesian');
         function optimizeData(rawData) {
             return _.map(rawData, function (s) {
@@ -51,6 +55,7 @@
         if (options.tooltip && options.tooltip.enable)
             renderTooltipTrackers();
 
+
         function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
 
         function renderPaths() {
@@ -65,7 +70,7 @@
             if (options.line.smooth) line.interpolate('cardinal');
 
             var startData = data;
-            if (shouldAnimate && animationDirection === 'left-to-right') {
+            if (shouldAnimate && initialRender && animationDirection === 'left-to-right') {
                 startData = _.map(data, function (s0) {
                     var s1 = _.cloneDeep(s0);
                     s1.data = [];
@@ -81,11 +86,11 @@
                 .attr('class', seriesClassName('series'))
                 .select('.line');
 
-            if (shouldAnimate) {
+            if (!shouldAnimate) {
+                el.attr('d', function (d) { return line(d.data); });
+            } else {
                 el.transition().duration(duration)
                     .attr('d', function (d) { return line(d.data); });
-            } else {
-                el.attr('d', function (d) { return line(d.data); });
             }
 
             // enter
@@ -94,37 +99,38 @@
                 .append('path')
                     .attr('class', 'line');
 
-            if (shouldAnimate) {
-                if (animationDirection === 'left-to-right') {
-                    el.transition().duration(duration).ease('linear')
-                        .attrTween('d', function (d, i) {
-                            var dat = data[i].data;
-                            var interpolate = d3.scale.linear()
-                                .domain([0, 1])
-                                .range([1, dat.length]);
-
-                            return function (t) {
-                                var index = Math.floor(interpolate(t));
-                                var interpolatedLine = dat.slice(0, index);
-
-                                if (index < dat.length) {
-                                    var weight = interpolate(t) - index;
-                                    interpolatedLine.push({
-                                        x: dat[index].x * weight + dat[index - 1].x * (1 - weight),
-                                        y: dat[index].y * weight + dat[index - 1].y * (1 - weight)
-                                    });
-                                }
-
-                                return line(interpolatedLine);
-                            };
-                        });
-                } else {
-                    el.attr('d', function (d) { return startLine(d.data); })
-                        .transition().duration(duration)
-                            .attr('d', function (d) { return line(d.data); });
-                }
-            } else {
+            if (!shouldAnimate) {
                 el.attr('d', function (d) { return line(d.data); });
+            } else if (!initialRender) {
+                el.transition().duration(duration)
+                    .attr('d', function (d) { return line(d.data); });
+            } else if (animationDirection === 'left-to-right') {
+                el.transition().duration(duration).ease('linear')
+                    .attrTween('d', function (d, i) {
+                        var dat = data[i].data;
+                        var interpolate = d3.scale.linear()
+                            .domain([0, 1])
+                            .range([1, dat.length]);
+
+                        return function (t) {
+                            var index = Math.floor(interpolate(t));
+                            var interpolatedLine = dat.slice(0, index);
+
+                            if (index < dat.length) {
+                                var weight = interpolate(t) - index;
+                                interpolatedLine.push({
+                                    x: dat[index].x * weight + dat[index - 1].x * (1 - weight),
+                                    y: dat[index].y * weight + dat[index - 1].y * (1 - weight)
+                                });
+                            }
+
+                            return line(interpolatedLine);
+                        };
+                    });
+            } else {
+                el.attr('d', function (d) { return startLine(d.data); })
+                    .transition().duration(duration)
+                        .attr('d', function (d) { return line(d.data); });
             }
 
             // remove
@@ -158,13 +164,13 @@
 
             dots.exit().remove();
 
-            if (shouldAnimate) {
-                dots.transition().delay(duration)
-                    .attr('cx', x)
+            if (!shouldAnimate) {
+                dots.attr('cx', x)
                     .attr('cy', y)
                     .attr('opacity', 1);
             } else {
-                dots.attr('cx', x)
+                dots.transition().delay(duration)
+                    .attr('cx', x)
                     .attr('cy', y)
                     .attr('opacity', 1);
             }
