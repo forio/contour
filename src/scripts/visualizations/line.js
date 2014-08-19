@@ -62,10 +62,10 @@
                 .x(function (d) { return x(d); })
                 .y(function (d) { return y(d); });
 
-            if(options.line.smooth) line.interpolate('cardinal');
+            if (options.line.smooth) line.interpolate('cardinal');
 
             var series = layer.selectAll('g.series')
-                    .data(data, function (d) { return d.name; });
+                .data(data, function (d) { return d.name; });
 
             // update
             var el = series
@@ -74,7 +74,7 @@
 
             if (shouldAnimate) {
                 el.call(animate);
-            } else  {
+            } else {
                 el.attr('d', function (d) { return line(d.data); });
             }
 
@@ -101,7 +101,7 @@
                 series.exit()
                     .transition().duration(duration)
                     .remove();
-            } else  {
+            } else {
                 series.exit().remove();
             }
 
