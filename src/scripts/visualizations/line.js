@@ -16,48 +16,6 @@
         }
     };
 
-    var duration;
-    var animationDirection;
-    var animationsMap = {
-        'left-to-right': {
-            enter: function (line) {
-                var path = this;
-                path.each(function () {
-                    var totalLength = this.getTotalLength();
-                    d3.select(this)
-                        .attr('stroke-dasharray', totalLength + ' ' + totalLength)
-                        .attr('stroke-dashoffset', totalLength)
-                        .transition().duration(duration).ease('linear')
-                            .attr('stroke-dashoffset', 0);
-                });
-            },
-
-            update: function (line) {
-                this.attr('d', function (d) { return line(d.data); });
-                this.each(function () {
-                    var totalLength = this.getTotalLength();
-                    d3.select(this)
-                        .attr('stroke-dasharray', totalLength + ' ' + totalLength)
-                        .attr('stroke-dashoffset', totalLength)
-                        .transition().duration(duration).ease('linear')
-                            .attr('stroke-dashoffset', 0);
-                });
-            }
-        },
-
-        'bottom-to-top': {
-            enter: function (line) {
-                this.transition().duration(duration)
-                    .attr('d', function (d) { return line(d.data); });
-            },
-
-            update: function (line) {
-                this.transition().duration(duration)
-                    .attr('d', function (d) { return line(d.data); });
-            }
-        }
-    };
-
 
     /* jshint eqnull: true */
     function render(rawData, layer, options, id) {
@@ -78,22 +36,8 @@
         var y = _.bind(function (d) { return this.yScale(d.y + (d.y0 || 0)) + 0.5; }, this);
         var h = options.chart.plotHeight;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
-        animationDirection = options.line.animationDirection || 'left-to-right';
-        duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
-        var shouldAnimatePath = shouldAnimate;
-        if (shouldAnimate && animationDirection === 'left-to-right') {
-            shouldAnimatePath = false;
-            this.svg.append('defs')
-                .append('clipPath')
-                    .attr('id', 'line-clip')
-                .append('rect')
-                    .attr('width', 0)
-                    .attr('height', h)
-                    .transition()
-                        .duration(duration)
-                        .ease('linear')
-                        .attr('width', options.chart.plotWidth);
-        }
+        var animationDirection = options.line.animationDirection || 'left-to-right';
+        var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         // jshint eqnull:true
         var data = optimizeData(rawData);
 
@@ -120,7 +64,6 @@
 
             if(options.line.smooth) line.interpolate('cardinal');
 
-            var animFn = animationsMap[animationDirection];
             var series = layer.selectAll('g.series')
                     .data(data, function (d) { return d.name; });
 
@@ -129,8 +72,8 @@
                 .attr('class', seriesClassName('series'))
                 .select('.line');
 
-            if (shouldAnimatePath) {
-                el.call(_.partial(animFn.update, line));
+            if (shouldAnimate) {
+                el.call(animate);
             } else  {
                 el.attr('d', function (d) { return line(d.data); });
             }
@@ -139,22 +82,54 @@
             el = series.enter().append('svg:g')
                 .attr('class',seriesClassName('series'))
                 .append('path')
-                    .attr('class', 'line')
-                    .attr('clip-path', 'url(#line-clip)');
+                    .attr('class', 'line');
 
-            if (shouldAnimatePath) {
-                var path = el.attr('d', function(d) { return startLine(d.data); })
-                    .call(_.partial(animFn.enter, line));
+            if (shouldAnimate) {
+                if (animationDirection === 'left-to-right') {
+                    el.transition().duration(duration)
+                        .attrTween('d', getSmoothInterpolation);
+                } else {
+                    el.attr('d', function (d) { return startLine(d.data); })
+                        .call(animate);
+                }
             } else {
                 el.attr('d', function (d) { return line(d.data); });
             }
 
             // remove
-            if (shouldAnimatePath) {
+            if (shouldAnimate) {
                 series.exit()
+                    .transition().duration(duration)
                     .remove();
             } else  {
                 series.exit().remove();
+            }
+
+
+            function animate() {
+                this.transition().duration(duration)
+                    .attr('d', function (d) { return line(d.data); });
+            }
+
+            // smooth interpolation function
+            // adapted from http://big-elephants.com/2014-06/unrolling-line-charts-d3js/
+            function getSmoothInterpolation() {
+                var interpolate = d3.scale.linear()
+                    .domain([0, 1])
+                    .range([1, data.length + 1]);
+
+                return function (t) {
+                    var flooredX = Math.floor(interpolate(t));
+                    var interpolatedLine = data.slice(0, flooredX);
+
+                    if (flooredX > 0 && flooredX < data.length) {
+                        var weight = interpolate(t) - flooredX;
+                        var weightedLineAverage = data[flooredX].y * weight + data[flooredX - 1].y * (1 - weight);
+                        interpolatedLine.push({ x: interpolate(t) - 1, y: weightedLineAverage });
+                    }
+
+                    return line(interpolatedLine);
+                };
             }
         }
 
