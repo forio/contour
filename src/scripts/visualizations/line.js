@@ -110,8 +110,19 @@
             var series = layer.selectAll('g.series')
                     .data(data, function (d) { return d.name; });
 
+            // update
+            var el = series
+                .attr('class', seriesClassName('series'))
+                .select('.line');
+
+            if (shouldAnimate) {
+                el.call(_.partial(animFn.update, line));
+            } else  {
+                el.attr('d', function (d) { return line(d.data); });
+            }
+
             // enter
-            var el = series.enter().append('svg:g')
+            el = series.enter().append('svg:g')
                 .attr('class',seriesClassName('series'))
                 .append('path')
                     .attr('class', 'line');
@@ -121,17 +132,6 @@
                 var path = el.attr('d', function(d) { return startLineFn(d.data); })
                     .call(_.partial(animFn.enter, line));
             } else {
-                el.attr('d', function (d) { return line(d.data); });
-            }
-
-            // update
-            el = series
-                .attr('class', seriesClassName('series'))
-                .select('.line');
-
-            if (shouldAnimate) {
-                el.call(_.partial(animFn.update, line));
-            } else  {
                 el.attr('d', function (d) { return line(d.data); });
             }
 
