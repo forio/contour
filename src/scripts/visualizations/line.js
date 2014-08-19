@@ -68,7 +68,6 @@
             if (shouldAnimate && animationDirection === 'left-to-right') {
                 startData = _.map(data, function (s0) {
                     var s1 = _.cloneDeep(s0);
-                    // s1.data = [_.first(s0.data)];
                     s1.data = [];
                     return s1;
                 });
