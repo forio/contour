@@ -64,8 +64,18 @@
 
             if (options.line.smooth) line.interpolate('cardinal');
 
+            var startData = data;
+            if (shouldAnimate && animationDirection === 'left-to-right') {
+                startData = _.map(data, function (s0) {
+                    var s1 = _.cloneDeep(s0);
+                    // s1.data = [_.first(s0.data)];
+                    s1.data = [];
+                    return s1;
+                });
+            }
+
             var series = layer.selectAll('g.series')
-                .data(data, function (d) { return d.name; });
+                .data(startData, function (d) { return d.name; });
 
             // update
             var el = series
@@ -73,7 +83,8 @@
                 .select('.line');
 
             if (shouldAnimate) {
-                el.call(animate);
+                el.transition().duration(duration)
+                    .attr('d', function (d) { return line(d.data); });
             } else {
                 el.attr('d', function (d) { return line(d.data); });
             }
@@ -86,11 +97,32 @@
 
             if (shouldAnimate) {
                 if (animationDirection === 'left-to-right') {
-                    el.transition().duration(duration)
-                        .attrTween('d', getSmoothInterpolation);
+                    el.transition().duration(duration).ease('linear')
+                        .attrTween('d', function (d, i) {
+                            var dat = data[i].data;
+                            var interpolate = d3.scale.linear()
+                                .domain([0, 1])
+                                .range([1, dat.length]);
+
+                            return function (t) {
+                                var index = Math.floor(interpolate(t));
+                                var interpolatedLine = dat.slice(0, index);
+
+                                if (index < dat.length) {
+                                    var weight = interpolate(t) - index;
+                                    interpolatedLine.push({
+                                        x: dat[index].x * weight + dat[index - 1].x * (1 - weight),
+                                        y: dat[index].y * weight + dat[index - 1].y * (1 - weight)
+                                    });
+                                }
+
+                                return line(interpolatedLine);
+                            };
+                        });
                 } else {
                     el.attr('d', function (d) { return startLine(d.data); })
-                        .call(animate);
+                        .transition().duration(duration)
+                            .attr('d', function (d) { return line(d.data); });
                 }
             } else {
                 el.attr('d', function (d) { return line(d.data); });
@@ -103,33 +135,6 @@
                     .remove();
             } else {
                 series.exit().remove();
-            }
-
-
-            function animate() {
-                this.transition().duration(duration)
-                    .attr('d', function (d) { return line(d.data); });
-            }
-
-            // smooth interpolation function
-            // adapted from http://big-elephants.com/2014-06/unrolling-line-charts-d3js/
-            function getSmoothInterpolation() {
-                var interpolate = d3.scale.linear()
-                    .domain([0, 1])
-                    .range([1, data.length + 1]);
-
-                return function (t) {
-                    var flooredX = Math.floor(interpolate(t));
-                    var interpolatedLine = data.slice(0, flooredX);
-
-                    if (flooredX > 0 && flooredX < data.length) {
-                        var weight = interpolate(t) - flooredX;
-                        var weightedLineAverage = data[flooredX].y * weight + data[flooredX - 1].y * (1 - weight);
-                        interpolatedLine.push({ x: interpolate(t) - 1, y: weightedLineAverage });
-                    }
-
-                    return line(interpolatedLine);
-                };
             }
         }
 
