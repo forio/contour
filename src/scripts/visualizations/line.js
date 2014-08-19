@@ -80,6 +80,20 @@
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         animationDirection = options.line.animationDirection || 'left-to-right';
         duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+        var shouldAnimatePath = shouldAnimate;
+        if (shouldAnimate && animationDirection === 'left-to-right') {
+            shouldAnimatePath = false;
+            this.svg.append('defs')
+                .append('clipPath')
+                    .attr('id', 'line-clip')
+                .append('rect')
+                    .attr('width', 0)
+                    .attr('height', h)
+                    .transition()
+                        .duration(duration)
+                        .ease('linear')
+                        .attr('width', options.chart.plotWidth);
+        }
         // jshint eqnull:true
         var data = optimizeData(rawData);
 
@@ -115,7 +129,7 @@
                 .attr('class', seriesClassName('series'))
                 .select('.line');
 
-            if (shouldAnimate) {
+            if (shouldAnimatePath) {
                 el.call(_.partial(animFn.update, line));
             } else  {
                 el.attr('d', function (d) { return line(d.data); });
@@ -125,18 +139,18 @@
             el = series.enter().append('svg:g')
                 .attr('class',seriesClassName('series'))
                 .append('path')
-                    .attr('class', 'line');
+                    .attr('class', 'line')
+                    .attr('clip-path', 'url(#line-clip)');
 
-            if (shouldAnimate) {
-                var startLineFn = animationDirection === 'left-to-right' ? line : startLine;
-                var path = el.attr('d', function(d) { return startLineFn(d.data); })
+            if (shouldAnimatePath) {
+                var path = el.attr('d', function(d) { return startLine(d.data); })
                     .call(_.partial(animFn.enter, line));
             } else {
                 el.attr('d', function (d) { return line(d.data); });
             }
 
             // remove
-            if (shouldAnimate) {
+            if (shouldAnimatePath) {
                 series.exit()
                     .remove();
             } else  {
