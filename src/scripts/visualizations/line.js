@@ -168,6 +168,11 @@
                 dots.attr('cx', x)
                     .attr('cy', y)
                     .attr('opacity', 1);
+            } else if (!initialRender) {
+                dots.transition().duration(duration)
+                    .attr('cx', x)
+                    .attr('cy', y)
+                    .attr('opacity', 1);
             } else {
                 dots.transition().delay(duration)
                     .attr('cx', x)
