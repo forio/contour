@@ -81,13 +81,18 @@
 
 
             function renderLine(enter, dm) {
-                var e = d3.select(this);
+                var path = d3.select(this);
+                var pathNode = path.node();
                 var dat = dm.data;
-                var points = (e.attr('d') || '').slice(1).split('L');
+                var same = _.first(pathNode.dat, function (d0, i) {
+                    var d1 = dat[i];
+                    return d1 && d0.x === d1.x && d0.y === d1.y;
+                });
+                pathNode.dat = _.cloneDeep(dat);
 
-                if (shouldAnimate && animationDirection === 'left-to-right' && dat.length > points.length) {
+                if (shouldAnimate && animationDirection === 'left-to-right' && dat.length > same.length && (enter || same.length > 0)) {
                     // line animation on append point in left-to-right direction
-                    e.transition().duration(duration).ease('linear')
+                    path.transition().duration(duration).ease('linear')
                         .attrTween('d', pathTween);
                 } else {
                     if (shouldAnimate) {
@@ -96,18 +101,18 @@
                             var startLine = d3.svg.line()
                                 .x(function (d) { return x(d); })
                                 .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
-                            e.attr('d', function (d) { return startLine(d.data); });
+                            path.attr('d', function (d) { return startLine(d.data); });
                         }
-                        e = e.transition().duration(duration);
+                        path = path.transition().duration(duration);
                     }
-                    e.attr('d', function (d) { return line(d.data); });
+                    path.attr('d', function (d) { return line(d.data); });
                 }
 
 
                 function pathTween() {
                     var interpolate = d3.scale.linear()
                         .domain([0, 1])
-                        .range([enter ? 1 : points.length, dat.length]);
+                        .range([same.length || 1, dat.length]);
 
                     return function (t) {
                         var index = Math.floor(interpolate(t));
