@@ -64,24 +64,15 @@
                 .y(function (d) { return y(d); });
             if (options.line.smooth) line.interpolate('cardinal');
 
-            var startData = data;
             var startLine;
-            if (initialRender && shouldAnimate) {
-                if (animationDirection === 'left-to-right') {
-                    startData = _.map(data, function (s0) {
-                        var s1 = _.cloneDeep(s0);
-                        s1.data = [];
-                        return s1;
-                    });
-                } else {
-                    startLine = d3.svg.line()
-                        .x(function (d) { return x(d); })
-                        .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
-                }
+            if (initialRender && shouldAnimate && animationDirection !== 'left-to-right') {
+                startLine = d3.svg.line()
+                    .x(function (d) { return x(d); })
+                    .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
             }
 
             var series = layer.selectAll('g.series')
-                .data(startData, function (d) { return d.name; });
+                .data(data, function (d) { return d.name; });
 
             // update
             var el = series
@@ -97,7 +88,7 @@
                 .append('path')
                     .attr('class', 'line');
 
-            if (initialRender && shouldAnimate && animationDirection === 'left-to-right') {
+            if (shouldAnimate && animationDirection === 'left-to-right') {
                 el.transition().duration(duration).ease('linear')
                     .attrTween('d', pathTween);
             } else {
