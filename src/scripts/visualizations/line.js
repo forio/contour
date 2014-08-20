@@ -94,9 +94,8 @@
             }
 
             // enter
-            el = series.enter()
-                .append('svg:g')
-                    .attr('class', seriesClassName('series'))
+            el = series.enter().append('svg:g')
+                .attr('class', seriesClassName('series'))
                 .append('path')
                     .attr('class', 'line');
 
@@ -136,8 +135,7 @@
 
             // remove
             if (!shouldAnimate) {
-                series.exit()
-                    .remove();
+                series.exit().remove();
             } else {
                 series.exit()
                     .transition().duration(duration)
@@ -173,13 +171,19 @@
             } else if (!initialRender) {
                 dots.transition().duration(duration)
                     .attr('cx', x)
-                    .attr('cy', y)
+                    .attr('cy', y);
+                dots.transition().delay(duration * 3 / 4)
                     .attr('opacity', 1);
             } else {
-                dots.transition().delay(duration)
-                    .attr('cx', x)
+                var count = _.max(_.map(_.pluck(data, 'data'), function (dat) {
+                    return dat.length;
+                }));
+                dots.attr('cx', x)
                     .attr('cy', y)
-                    .attr('opacity', 1);
+                    .transition().delay(function (d, i) {
+                        return duration * (i + 4) / (count + 3);
+                    })
+                        .attr('opacity', 1);
             }
         }
 
