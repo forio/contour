@@ -86,12 +86,10 @@
                 .attr('class', seriesClassName('series'))
                 .select('.line');
 
-            if (!shouldAnimate) {
-                el.attr('d', function (d) { return line(d.data); });
-            } else {
-                el.transition().duration(duration)
-                    .attr('d', function (d) { return line(d.data); });
+            if (shouldAnimate) {
+                el = el.transition().duration(duration);
             }
+            el.attr('d', function (d) { return line(d.data); });
 
             // enter
             el = series.enter().append('svg:g')
@@ -134,13 +132,11 @@
             }
 
             // remove
-            if (!shouldAnimate) {
-                series.exit().remove();
-            } else {
-                series.exit()
-                    .transition().duration(duration)
-                    .remove();
+            el = series.exit();
+            if (shouldAnimate) {
+                el = el.transition().duration(duration);
             }
+            el.remove();
         }
 
         function renderMarkers() {
@@ -159,31 +155,31 @@
                 .attr('class', 'dot')
                 .attr('r', options.line.marker.size)
                 .attr('opacity', 0);
-                // .attr('cx', x)
-                // .attr('cy', y);
 
             dots.exit().remove();
 
-            if (!shouldAnimate) {
+            if (!initialRender) {
+                if (shouldAnimate) {
+                    dots = dots.transition().duration(duration);
+                }
                 dots.attr('cx', x)
-                    .attr('cy', y)
-                    .attr('opacity', 1);
-            } else if (!initialRender) {
-                dots.transition().duration(duration)
-                    .attr('cx', x)
                     .attr('cy', y);
-                dots.transition().delay(duration * 3 / 4)
-                    .attr('opacity', 1);
+                if (shouldAnimate) {
+                    dots = dots.transition().delay(duration * 3 / 4);
+                }
+                dots.attr('opacity', 1);
             } else {
                 var count = _.max(_.map(_.pluck(data, 'data'), function (dat) {
                     return dat.length;
                 }));
                 dots.attr('cx', x)
-                    .attr('cy', y)
-                    .transition().delay(function (d, i) {
+                    .attr('cy', y);
+                if (shouldAnimate) {
+                    dots = dots.transition().delay(function (d, i) {
                         return duration * (i + 4) / (count + 3);
-                    })
-                        .attr('opacity', 1);
+                    });
+                }
+                dots.attr('opacity', 1);
             }
         }
 
