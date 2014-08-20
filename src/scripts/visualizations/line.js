@@ -92,7 +92,13 @@
 
                 if (shouldAnimate && animationDirection === 'left-to-right' && dat.length > same.length && (enter || same.length > 0)) {
                     // line animation on append point in left-to-right direction
-                    path.transition().duration(duration).ease('linear')
+                    if (same.length) {
+                        path = path.transition().duration(duration)
+                            .attr('d', function (d) {
+                                return pathTween()(-1e-9); // t just below 0
+                            });
+                    }
+                    path.transition().duration(same.length ? 250 : duration).ease('linear')
                         .attrTween('d', pathTween);
                 } else {
                     if (shouldAnimate) {
