@@ -102,7 +102,7 @@
                     .attrTween('d', pathTween);
             } else {
                 if (shouldAnimate) {
-                    if (startLine) el.attr('d', function (d) { return startLine(d.data); })
+                    if (startLine) el.attr('d', function (d) { return startLine(d.data); });
                     el = el.transition().duration(duration);
                 }
                 el.attr('d', function (d) { return line(d.data); });
