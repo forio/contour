@@ -83,13 +83,16 @@
             function renderLine(enter, dm) {
                 var e = d3.select(this);
                 var dat = dm.data;
-                if (shouldAnimate && animationDirection === 'left-to-right') {
+                var count = dat.length;
+                var countPrior = (e.attr('d') || '').split('L').length;
+                if (shouldAnimate && animationDirection === 'left-to-right' && count > countPrior) {
+                    // line animation on append point in left-to-right direction
                     e.transition().duration(duration).ease('linear')
                         .attrTween('d', pathTween);
                 } else {
                     if (shouldAnimate) {
                         if (enter) {
-                            // line animation from bottom-to-top on append series
+                            // line animation on append series in bottom-to-top direction
                             var startLine = d3.svg.line()
                                 .x(function (d) { return x(d); })
                                 .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
@@ -104,7 +107,7 @@
                 function pathTween() {
                     var interpolate = d3.scale.linear()
                         .domain([0, 1])
-                        .range([enter ? 1 : dat.length - 1, dat.length]);
+                        .range([enter ? 1 : countPrior, count]);
 
                     return function (t) {
                         var index = Math.floor(interpolate(t));
