@@ -159,17 +159,7 @@
 
             dots.exit().remove();
 
-            if (!initialRender) {
-                if (shouldAnimate) {
-                    dots = dots.transition().duration(duration);
-                }
-                dots.attr('cx', x)
-                    .attr('cy', y);
-                if (shouldAnimate) {
-                    dots = dots.transition().delay(duration * 3 / 4);
-                }
-                dots.attr('opacity', 1);
-            } else {
+            if (initialRender && shouldAnimate && animationDirection === 'left-to-right') {
                 var count = _.max(_.map(_.pluck(data, 'data'), function (dat) {
                     return dat.length;
                 }));
@@ -179,6 +169,16 @@
                     dots = dots.transition().delay(function (d, i) {
                         return duration * (i + 1.5) / (count + 0.5);
                     });
+                }
+                dots.attr('opacity', 1);
+            } else {
+                if (shouldAnimate) {
+                    dots = dots.transition().duration(duration);
+                }
+                dots.attr('cx', x)
+                    .attr('cy', y);
+                if (shouldAnimate) {
+                    dots = dots.transition().duration(250).delay(duration * 3 / 4);
                 }
                 dots.attr('opacity', 1);
             }
