@@ -94,8 +94,9 @@
             }
 
             // enter
-            el = series.enter().append('svg:g')
-                .attr('class',seriesClassName('series'))
+            el = series.enter()
+                .append('svg:g')
+                    .attr('class', seriesClassName('series'))
                 .append('path')
                     .attr('class', 'line');
 
@@ -134,12 +135,13 @@
             }
 
             // remove
-            if (shouldAnimate) {
+            if (!shouldAnimate) {
+                series.exit()
+                    .remove();
+            } else {
                 series.exit()
                     .transition().duration(duration)
                     .remove();
-            } else {
-                series.exit().remove();
             }
         }
 
