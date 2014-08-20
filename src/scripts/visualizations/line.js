@@ -101,27 +101,7 @@
 
             if (initialRender && shouldAnimate && animationDirection === 'left-to-right') {
                 el.transition().duration(duration).ease('linear')
-                    .attrTween('d', function (d, i) {
-                        var dat = data[i].data;
-                        var interpolate = d3.scale.linear()
-                            .domain([0, 1])
-                            .range([1, dat.length]);
-
-                        return function (t) {
-                            var index = Math.floor(interpolate(t));
-                            var interpolatedLine = dat.slice(0, index);
-
-                            if (index < dat.length) {
-                                var weight = interpolate(t) - index;
-                                interpolatedLine.push({
-                                    x: dat[index].x * weight + dat[index - 1].x * (1 - weight),
-                                    y: dat[index].y * weight + dat[index - 1].y * (1 - weight)
-                                });
-                            }
-
-                            return line(interpolatedLine);
-                        };
-                    });
+                    .attrTween('d', pathTween);
             } else {
                 if (shouldAnimate) {
                     if (startLine) {
@@ -138,6 +118,29 @@
                 el = el.transition().duration(duration);
             }
             el.remove();
+
+
+            function pathTween(d, i) {
+                var dat = data[i].data;
+                var interpolate = d3.scale.linear()
+                    .domain([0, 1])
+                    .range([1, dat.length]);
+
+                return function (t) {
+                    var index = Math.floor(interpolate(t));
+                    var interpolatedLine = dat.slice(0, index);
+
+                    if (index < dat.length) {
+                        var weight = interpolate(t) - index;
+                        interpolatedLine.push({
+                            x: dat[index].x * weight + dat[index - 1].x * (1 - weight),
+                            y: dat[index].y * weight + dat[index - 1].y * (1 - weight)
+                        });
+                    }
+
+                    return line(interpolatedLine);
+                };
+            }
         }
 
         function renderMarkers() {
