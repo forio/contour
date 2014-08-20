@@ -82,6 +82,7 @@
 
             function renderLine(enter, dm) {
                 var e = d3.select(this);
+                var dat = dm.data;
                 if (shouldAnimate && animationDirection === 'left-to-right') {
                     e.transition().duration(duration).ease('linear')
                         .attrTween('d', pathTween);
@@ -101,10 +102,9 @@
 
 
                 function pathTween() {
-                    var dat = dm.data;
                     var interpolate = d3.scale.linear()
                         .domain([0, 1])
-                        .range([1, dat.length]);
+                        .range([enter ? 1 : dat.length - 1, dat.length]);
 
                     return function (t) {
                         var index = Math.floor(interpolate(t));
