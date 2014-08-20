@@ -83,9 +83,9 @@
             function renderLine(enter, dm) {
                 var e = d3.select(this);
                 var dat = dm.data;
-                var count = dat.length;
-                var countPrior = (e.attr('d') || '').split('L').length;
-                if (shouldAnimate && animationDirection === 'left-to-right' && count > countPrior) {
+                var points = (e.attr('d') || '').slice(1).split('L');
+
+                if (shouldAnimate && animationDirection === 'left-to-right' && dat.length > points.length) {
                     // line animation on append point in left-to-right direction
                     e.transition().duration(duration).ease('linear')
                         .attrTween('d', pathTween);
@@ -107,7 +107,7 @@
                 function pathTween() {
                     var interpolate = d3.scale.linear()
                         .domain([0, 1])
-                        .range([enter ? 1 : countPrior, count]);
+                        .range([enter ? 1 : points.length, dat.length]);
 
                     return function (t) {
                         var index = Math.floor(interpolate(t));
