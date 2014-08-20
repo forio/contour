@@ -66,55 +66,61 @@
             // update series
             var el = series
                 .attr('class', seriesClassName('series'))
-                .select('.line');
-
-            if (shouldAnimate) el = el.transition().duration(duration);
-            el.attr('d', function (d) { return line(d.data); });
+                .select('.line')
+                .each(function (d) { renderLine.call(this, false, d); });
 
             // append series
             el = series.enter().append('svg:g')
                 .attr('class', seriesClassName('series'))
                 .append('path')
-                    .attr('class', 'line');
-
-            if (shouldAnimate && animationDirection === 'left-to-right') {
-                el.transition().duration(duration).ease('linear')
-                    .attrTween('d', pathTween);
-            } else {
-                if (shouldAnimate) {
-                    var startLine = d3.svg.line()
-                        .x(function (d) { return x(d); })
-                        .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
-                    el.attr('d', function (d) { return startLine(d.data); });
-                    el = el.transition().duration(duration);
-                }
-                el.attr('d', function (d) { return line(d.data); });
-            }
+                    .attr('class', 'line')
+                .each(function (d) { renderLine.call(this, true, d); });
 
             // remove series
             el = series.exit().remove();
 
 
-            function pathTween(d, i) {
-                var dat = data[i].data;
-                var interpolate = d3.scale.linear()
-                    .domain([0, 1])
-                    .range([1, dat.length]);
-
-                return function (t) {
-                    var index = Math.floor(interpolate(t));
-                    var interpolatedLine = dat.slice(0, index);
-
-                    if (index < dat.length) {
-                        var weight = interpolate(t) - index;
-                        interpolatedLine.push({
-                            x: dat[index].x * weight + dat[index - 1].x * (1 - weight),
-                            y: dat[index].y * weight + dat[index - 1].y * (1 - weight)
-                        });
+            function renderLine(enter, dm) {
+                var e = d3.select(this);
+                if (shouldAnimate && animationDirection === 'left-to-right') {
+                    e.transition().duration(duration).ease('linear')
+                        .attrTween('d', pathTween);
+                } else {
+                    if (shouldAnimate) {
+                        if (enter) {
+                            // line animation from bottom-to-top on append series
+                            var startLine = d3.svg.line()
+                                .x(function (d) { return x(d); })
+                                .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
+                            e.attr('d', function (d) { return startLine(d.data); });
+                        }
+                        e = e.transition().duration(duration);
                     }
+                    e.attr('d', function (d) { return line(d.data); });
+                }
 
-                    return line(interpolatedLine);
-                };
+
+                function pathTween() {
+                    var dat = dm.data;
+                    var interpolate = d3.scale.linear()
+                        .domain([0, 1])
+                        .range([1, dat.length]);
+
+                    return function (t) {
+                        var index = Math.floor(interpolate(t));
+                        var interpolatedLine = dat.slice(0, index);
+
+                        if (index < dat.length) {
+                            var weight = interpolate(t) - index;
+                            interpolatedLine.push({
+                                x: dat[index].x * weight + dat[index - 1].x * (1 - weight),
+                                y: dat[index].y * weight + dat[index - 1].y * (1 - weight)
+                            });
+                        }
+
+                        return line(interpolatedLine);
+                    };
+                }
             }
         }
 
@@ -153,7 +159,7 @@
                     dots.attr('cx', x)
                         .attr('cy', y);
                     if (shouldAnimate) {
-                        var count = dots[0].length;
+                        var count = dots.size();
                         dots = dots.transition().delay(function (d, i) {
                             return duration * (i + 1.5) / (count + 0.5);
                         });
