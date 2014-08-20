@@ -59,23 +59,25 @@
         function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
 
         function renderPaths() {
-            var startLine = d3.svg.line()
-                .x(function (d) { return x(d); })
-                .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
-
             var line = d3.svg.line()
                 .x(function (d) { return x(d); })
                 .y(function (d) { return y(d); });
-
             if (options.line.smooth) line.interpolate('cardinal');
 
             var startData = data;
-            if (shouldAnimate && initialRender && animationDirection === 'left-to-right') {
-                startData = _.map(data, function (s0) {
-                    var s1 = _.cloneDeep(s0);
-                    s1.data = [];
-                    return s1;
-                });
+            var startLine;
+            if (initialRender && shouldAnimate) {
+                if (animationDirection === 'left-to-right') {
+                    startData = _.map(data, function (s0) {
+                        var s1 = _.cloneDeep(s0);
+                        s1.data = [];
+                        return s1;
+                    });
+                } else {
+                    startLine = d3.svg.line()
+                        .x(function (d) { return x(d); })
+                        .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
+                }
             }
 
             var series = layer.selectAll('g.series')
@@ -97,12 +99,7 @@
                 .append('path')
                     .attr('class', 'line');
 
-            if (!shouldAnimate) {
-                el.attr('d', function (d) { return line(d.data); });
-            } else if (!initialRender) {
-                el.transition().duration(duration)
-                    .attr('d', function (d) { return line(d.data); });
-            } else if (animationDirection === 'left-to-right') {
+            if (initialRender && shouldAnimate && animationDirection === 'left-to-right') {
                 el.transition().duration(duration).ease('linear')
                     .attrTween('d', function (d, i) {
                         var dat = data[i].data;
@@ -126,9 +123,13 @@
                         };
                     });
             } else {
-                el.attr('d', function (d) { return startLine(d.data); })
-                    .transition().duration(duration)
-                        .attr('d', function (d) { return line(d.data); });
+                if (shouldAnimate) {
+                    if (startLine) {
+                        el.attr('d', function (d) { return startLine(d.data); })
+                    }
+                    el = el.transition().duration(duration);
+                }
+                el.attr('d', function (d) { return line(d.data); });
             }
 
             // remove
@@ -176,7 +177,7 @@
                     .attr('cy', y);
                 if (shouldAnimate) {
                     dots = dots.transition().delay(function (d, i) {
-                        return duration * (i + 4) / (count + 3);
+                        return duration * (i + 1.5) / (count + 0.5);
                     });
                 }
                 dots.attr('opacity', 1);
