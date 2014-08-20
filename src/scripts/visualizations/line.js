@@ -88,9 +88,7 @@
                 .attr('class', seriesClassName('series'))
                 .select('.line');
 
-            if (shouldAnimate) {
-                el = el.transition().duration(duration);
-            }
+            if (shouldAnimate) el = el.transition().duration(duration);
             el.attr('d', function (d) { return line(d.data); });
 
             // enter
@@ -104,9 +102,7 @@
                     .attrTween('d', pathTween);
             } else {
                 if (shouldAnimate) {
-                    if (startLine) {
-                        el.attr('d', function (d) { return startLine(d.data); })
-                    }
+                    if (startLine) el.attr('d', function (d) { return startLine(d.data); })
                     el = el.transition().duration(duration);
                 }
                 el.attr('d', function (d) { return line(d.data); });
@@ -114,9 +110,7 @@
 
             // remove
             el = series.exit();
-            if (shouldAnimate) {
-                el = el.transition().duration(duration);
-            }
+            if (shouldAnimate) el = el.transition().duration(duration);
             el.remove();
 
 
@@ -175,14 +169,10 @@
                 }
                 dots.attr('opacity', 1);
             } else {
-                if (shouldAnimate) {
-                    dots = dots.transition().duration(duration);
-                }
+                if (shouldAnimate) dots = dots.transition().duration(duration);
                 dots.attr('cx', x)
                     .attr('cy', y);
-                if (shouldAnimate) {
-                    dots = dots.transition().duration(250).delay(duration * 3 / 4);
-                }
+                if (shouldAnimate) dots = dots.transition().duration(250).delay(duration * 3 / 4);
                 dots.attr('opacity', 1);
             }
         }
