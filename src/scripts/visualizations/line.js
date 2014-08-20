@@ -16,13 +16,9 @@
         }
     };
 
-    var initialize = true;
-
 
     /* jshint eqnull: true */
     function render(rawData, layer, options, id) {
-        var initialRender = initialize;
-        initialize = false;
         this.checkDependencies('cartesian');
         function optimizeData(rawData) {
             return _.map(rawData, function (s) {
@@ -64,13 +60,6 @@
                 .y(function (d) { return y(d); });
             if (options.line.smooth) line.interpolate('cardinal');
 
-            var startLine;
-            if (initialRender && shouldAnimate && animationDirection !== 'left-to-right') {
-                startLine = d3.svg.line()
-                    .x(function (d) { return x(d); })
-                    .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
-            }
-
             var series = layer.selectAll('g.series')
                 .data(data, function (d) { return d.name; });
 
@@ -93,7 +82,10 @@
                     .attrTween('d', pathTween);
             } else {
                 if (shouldAnimate) {
-                    if (startLine) el.attr('d', function (d) { return startLine(d.data); });
+                    var startLine = d3.svg.line()
+                        .x(function (d) { return x(d); })
+                        .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
+                    el.attr('d', function (d) { return startLine(d.data); });
                     el = el.transition().duration(duration);
                 }
                 el.attr('d', function (d) { return line(d.data); });
@@ -130,41 +122,46 @@
 
         function renderMarkers() {
             var markers = layer.selectAll('.line-chart-markers')
-                .data(data, function (d) { return d.name; });
+                .data(data, function (d) { return d.name; })
+                .each(function () { renderDots.call(this, false); });
 
             markers.enter().append('g')
-                .attr('class', seriesClassName('line-chart-markers markers'));
+                .attr('class', seriesClassName('line-chart-markers markers'))
+                .each(function () { renderDots.call(this, true); });
 
             markers.exit().remove();
 
-            var dots = markers.selectAll('.dot')
-                .data(function (d) { return d.data; }, function (d) { return d.x; });
 
-            dots.enter().append('circle')
-                .attr('class', 'dot')
-                .attr('r', options.line.marker.size)
-                .attr('opacity', 0);
+            function renderDots(enter) {
+                var dots = d3.select(this).selectAll('.dot')
+                    .data(function (d) { return d.data; }, function (d) { return d.x; });
 
-            dots.exit().remove();
+                dots.enter().append('circle')
+                    .attr('class', 'dot')
+                    .attr('r', options.line.marker.size)
+                    .attr('opacity', 0);
 
-            if (initialRender && shouldAnimate && animationDirection === 'left-to-right') {
-                var count = _.max(_.map(_.pluck(data, 'data'), function (dat) {
-                    return dat.length;
-                }));
-                dots.attr('cx', x)
-                    .attr('cy', y);
-                if (shouldAnimate) {
-                    dots = dots.transition().delay(function (d, i) {
-                        return duration * (i + 1.5) / (count + 0.5);
-                    });
+                dots.exit().remove();
+
+                if (enter && shouldAnimate && animationDirection === 'left-to-right') {
+                    var count = _.max(_.map(_.pluck(data, 'data'), function (dat) {
+                        return dat.length;
+                    }));
+                    dots.attr('cx', x)
+                        .attr('cy', y);
+                    if (shouldAnimate) {
+                        dots = dots.transition().delay(function (d, i) {
+                            return duration * (i + 1.5) / (count + 0.5);
+                        });
+                    }
+                    dots.attr('opacity', 1);
+                } else {
+                    if (shouldAnimate) dots = dots.transition().duration(duration);
+                    dots.attr('cx', x)
+                        .attr('cy', y);
+                    if (shouldAnimate) dots = dots.transition().duration(250).delay(duration * 3 / 4);
+                    dots.attr('opacity', 1);
                 }
-                dots.attr('opacity', 1);
-            } else {
-                if (shouldAnimate) dots = dots.transition().duration(duration);
-                dots.attr('cx', x)
-                    .attr('cy', y);
-                if (shouldAnimate) dots = dots.transition().duration(250).delay(duration * 3 / 4);
-                dots.attr('opacity', 1);
             }
         }
 
