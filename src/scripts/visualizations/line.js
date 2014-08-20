@@ -150,12 +150,10 @@
                 // update/append dots
                 if (enter && shouldAnimate && animationDirection === 'left-to-right') {
                     // dot animation on append series in left-to-right direction
-                    var count = _.max(_.map(_.pluck(data, 'data'), function (dat) {
-                        return dat.length;
-                    }));
                     dots.attr('cx', x)
                         .attr('cy', y);
                     if (shouldAnimate) {
+                        var count = dots[0].length;
                         dots = dots.transition().delay(function (d, i) {
                             return duration * (i + 1.5) / (count + 0.5);
                         });
