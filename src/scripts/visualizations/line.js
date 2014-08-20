@@ -63,7 +63,7 @@
             var series = layer.selectAll('g.series')
                 .data(data, function (d) { return d.name; });
 
-            // update
+            // update series
             var el = series
                 .attr('class', seriesClassName('series'))
                 .select('.line');
@@ -71,7 +71,7 @@
             if (shouldAnimate) el = el.transition().duration(duration);
             el.attr('d', function (d) { return line(d.data); });
 
-            // enter
+            // append series
             el = series.enter().append('svg:g')
                 .attr('class', seriesClassName('series'))
                 .append('path')
@@ -91,10 +91,8 @@
                 el.attr('d', function (d) { return line(d.data); });
             }
 
-            // remove
-            el = series.exit();
-            if (shouldAnimate) el = el.transition().duration(duration);
-            el.remove();
+            // remove series
+            el = series.exit().remove();
 
 
             function pathTween(d, i) {
@@ -122,13 +120,17 @@
 
         function renderMarkers() {
             var markers = layer.selectAll('.line-chart-markers')
-                .data(data, function (d) { return d.name; })
-                .each(function () { renderDots.call(this, false); });
+                .data(data, function (d) { return d.name; });
 
+            // update series
+            markers.each(function () { renderDots.call(this, false); });
+
+            // append series
             markers.enter().append('g')
                 .attr('class', seriesClassName('line-chart-markers markers'))
                 .each(function () { renderDots.call(this, true); });
 
+            // remove series
             markers.exit().remove();
 
 
@@ -136,14 +138,18 @@
                 var dots = d3.select(this).selectAll('.dot')
                     .data(function (d) { return d.data; }, function (d) { return d.x; });
 
+                // append dots
                 dots.enter().append('circle')
                     .attr('class', 'dot')
                     .attr('r', options.line.marker.size)
                     .attr('opacity', 0);
 
+                // remove dots
                 dots.exit().remove();
 
+                // update/append dots
                 if (enter && shouldAnimate && animationDirection === 'left-to-right') {
+                    // dot animation on append series in left-to-right direction
                     var count = _.max(_.map(_.pluck(data, 'data'), function (dat) {
                         return dat.length;
                     }));
