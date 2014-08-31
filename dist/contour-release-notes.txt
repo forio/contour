@@ -1,5 +1,3 @@
-  * Make sure we update the categories array when new data arrives, so ordinal xAxis work as expected with dynamic data
-  * reverted tooltip changes to 0.9.99
-  * compile
-  * pass all matching-x points into the tooltip formatter callback
-  * updated version file to 0.9.99
+  * Change behavior of default tick values to always render 5 labels and covert top and bottom of extended domain
+  * make default min and max to be 'nice' numbers for the axis
+  * bump version

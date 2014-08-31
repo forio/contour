@@ -15,6 +15,12 @@
 
 
 (function () {
+    // cheap trick to add decimals without hitting javascript issues
+    // note that this fails for very large numbers
+    var addFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa + bb) / factor; };
+    var subFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa - bb) / factor; };
+    var mulFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
+    var divFloat = function (a,b) { return +((a / b).toFixed(4)); };
 
     var generalHelpers = {
         // the src is a function returns the function evaluated
@@ -43,6 +49,18 @@
 
         roundToNearest: function (number, multiple) {
             return Math.ceil(number / multiple) * multiple;
+        },
+
+        roundTo: function (value, digits) {
+            return divFloat(Math.ceil(mulFloat(value, Math.pow(10, digits))), Math.pow(10, digits));
+        },
+
+        trunc: function (value) {
+            return value - value % 1;
+        },
+
+        log10: function (value) {
+            return Math.log(value) / Math.LN10;
         },
 
         clamp: function (val, l, h) {
@@ -103,6 +121,110 @@
             // return _.nw.roundToNearest(val, fac);
         }
     };
+
+    var axisHelpers = {
+        niceMinMax: function (min, max, ticks) {
+
+            var excelRoundUp = function (value, up) { up = up != null ? up : 0; return divFloat(Math.ceil(value * Math.pow(10, up)), Math.pow(10, up)); };
+            var excelMax = function (a, b) { return a >= b ? a : b; };
+            // 2 ticks seem to wokr for min max and passing 5 ticks to d3
+            ticks = ticks || 2;
+
+            var nearestMul = function (val, mul) { return mulFloat(Math.ceil(val / mul), mul); };
+            var digits = function (val) { return Math.floor(Math.log(val) / Math.LN10) + 1; };
+            var fac = function (digits) { return Math.pow(10, digits); };
+
+
+            var startAtZero = min === 0 ? 1 : max < 0 ? 1 : 0;
+
+            if (min === max) {
+                if (max === 0) {
+                    a = -1.0;
+                } else {
+                    a = numberHelpers.log10(Math.abs(max));
+                }
+            } else {
+                if(startAtZero) {
+                    a = numberHelpers.log10(Math.abs(max)) - 0.5;
+                } else {
+                    a = numberHelpers.log10(max-min) - 0.5;
+                }
+            }
+
+            var defaultRounding = -(a >= 0 ? numberHelpers.trunc(a) : Math.floor(a));
+
+            // var defaultRounding = -numberHelpers.trunc((min === max ?
+            //     max === 0 ? -1.0 : numberHelpers.log10(Math.abs(max)) :
+            //     startAtZero ? numberHelpers.log10(Math.abs(max)) : numberHelpers.log10(max-min)
+            // ) - 0.5);
+
+            var negativeMinAmount = excelRoundUp(Math.max(0, -min) / ticks, defaultRounding);
+
+
+
+            var intermediateMax = min === max ? max === 0 ? 1 : excelRoundUp(max + negativeMinAmount, defaultRounding)
+                : excelRoundUp(max + negativeMinAmount,defaultRounding);
+
+            var intermediateMin = startAtZero ?
+                0 :
+                (min === max ? 0 : excelRoundUp(min-negativeMinAmount,defaultRounding) * (defaultRounding === 0 ? Math.pow(10, defaultRounding) : 1)
+                );
+            // var diff = intermediateMax - intermediateMin;
+            var interval = excelRoundUp((intermediateMax  - intermediateMin)/ticks, defaultRounding);
+            var finalMin = subFloat(intermediateMin, negativeMinAmount);
+            var finalMax = addFloat(finalMin, mulFloat(ticks, interval));
+            var ticksValues = [finalMin];
+            var prevTick = finalMin;
+
+            for (var j=1; j < ticks; j++) {
+                var newTick = addFloat(prevTick, interval);
+
+                ticksValues.push(newTick);
+                prevTick = newTick;
+            }
+
+            // total ticks are going to be either ticks or ticks + 1
+            if (Math.abs(prevTick - finalMax) > 1e-10) {
+                ticksValues.push(finalMax);
+            }
+
+            return {
+                min: finalMin,
+                max: finalMax,
+                tickValues: ticksValues
+            };
+
+        },
+
+        /*jshint eqnull:true */
+        extractScaleDomain: function (domain, min, max) {
+            var dataMin = min != null ? min : _.min(domain);
+            var dataMax = max != null ? max : _.max(domain);
+            var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, 5);
+
+            // we want null || undefined for all this comparasons
+            // that == null gives us
+            if (min == null && max == null) {
+                return [niceMinMax.min, niceMinMax.max];
+            }
+
+            if (min == null) {
+                return [Math.min(niceMinMax.min, max), max];
+            }
+
+            if (max == null) {
+                return [min, Math.max(min, niceMinMax.max)];
+            }
+
+            return [min, max];
+        },
+
+        niceTicks: function (min, max, ticks) {
+            var niceMinMax = axisHelpers.niceMinMax(min, max, (ticks||5));
+            return niceMinMax.tickValues;
+        }
+    };
+
 
     var stringHelpers = {
         // measure text inside a Contour chart container
@@ -266,30 +388,6 @@
 
     };
 
-    var ajaxHelpers = {
-        /*jshint eqnull:true */
-        extractScaleDomain: function (domain, min, max) {
-            var dataMax = _.max(domain);
-            var dataMin = _.min(domain);
-
-            // we want null || undefined for all this comparasons
-            // that == null gives us
-            if (min == null && max == null) {
-                return [dataMin, dataMax];
-            }
-
-            if (min == null) {
-                return [Math.min(dataMin, max), max];
-            }
-
-            if (max == null) {
-                return [min, Math.max(min, dataMax)];
-            }
-
-            return [min, max];
-        }
-    };
-
     var domHelpers = {
         selectDom: function (selector) {
             return d3.select(selector)[0][0];
@@ -321,7 +419,7 @@
     };
 
     _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
-        ajaxHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
+        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
 
 })();
 
@@ -769,8 +867,12 @@
     YAxis.prototype = {
         axis: function () {
             var options = this.options.yAxis;
-            var domain = this._scale.domain();
-            var tickValues = options.tickValues;
+            var domain = d3.extent(_.pluck(this.data, 'y'));
+            var absMin = domain[0] > 0 ? 0 : domain[0];
+            var scaledDomain = _.nw.extractScaleDomain(domain, options.min || absMin, options.max);
+
+
+            var tickValues = options.tickValues || _.nw.niceTicks(scaledDomain[0], scaledDomain[1], options.ticks);
             var numTicks = this.numTicks(domain, options.min, options.max);
             var format = options.labels.formatter || d3.format(options.labels.format);
 
@@ -931,7 +1033,7 @@
             yDomain: [],
 
             _getYScaledDomain: function () {
-                var absMin = this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
+                var absMin = this.yDomain && this.yDomain[0] > 0 ? 0 : this.yDomain[0];
                 return _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min || absMin, this.options.yAxis.max);
             },
 
