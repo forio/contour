@@ -14,8 +14,12 @@
     YAxis.prototype = {
         axis: function () {
             var options = this.options.yAxis;
-            var domain = this._scale.domain();
-            var tickValues = options.tickValues;
+            var domain = d3.extent(_.pluck(this.data, 'y'));
+            var absMin = domain[0] > 0 ? 0 : domain[0];
+            var scaledDomain = _.nw.extractScaleDomain(domain, options.min || absMin, options.max);
+
+
+            var tickValues = options.tickValues || _.nw.niceTicks(scaledDomain[0], scaledDomain[1], options.ticks);
             var numTicks = this.numTicks(domain, options.min, options.max);
             var format = options.labels.formatter || d3.format(options.labels.format);
 

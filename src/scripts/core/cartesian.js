@@ -110,7 +110,7 @@
             yDomain: [],
 
             _getYScaledDomain: function () {
-                var absMin = this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
+                var absMin = this.yDomain && this.yDomain[0] > 0 ? 0 : this.yDomain[0];
                 return _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min || absMin, this.options.yAxis.max);
             },
 

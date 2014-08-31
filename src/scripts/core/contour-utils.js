@@ -1,4 +1,10 @@
 (function () {
+    // cheap trick to add decimals without hitting javascript issues
+    // note that this fails for very large numbers
+    var addFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa + bb) / factor; };
+    var subFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa - bb) / factor; };
+    var mulFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
+    var divFloat = function (a,b) { return +((a / b).toFixed(4)); };
 
     var generalHelpers = {
         // the src is a function returns the function evaluated
@@ -30,7 +36,7 @@
         },
 
         roundTo: function (value, digits) {
-            return Math.ceil(value * Math.pow(10, digits)) / Math.pow(10, digits);
+            return divFloat(Math.ceil(mulFloat(value, Math.pow(10, digits))), Math.pow(10, digits));
         },
 
         trunc: function (value) {
@@ -102,41 +108,67 @@
 
     var axisHelpers = {
         niceMinMax: function (min, max, ticks) {
+
+            var excelRoundUp = function (value, up) { up = up != null ? up : 0; return divFloat(Math.ceil(value * Math.pow(10, up)), Math.pow(10, up)); };
+            var excelMax = function (a, b) { return a >= b ? a : b; };
             // 2 ticks seem to wokr for min max and passing 5 ticks to d3
             ticks = ticks || 2;
-            // cheap trick to add decimals without hitting javascript issues
-            var addFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa + bb) / factor; };
-            var startAtZero = min > 0 ? 1 : max < 0 ? 1 : 0;
-            var defaultRounding = -numberHelpers.trunc((min === max ?
-                max === 0 ? -1.0 : numberHelpers.log10(Math.abs(max)) :
-                startAtZero ? numberHelpers.log10(Math.abs(max)) : numberHelpers.log10(max-min)
-            ) - 0.5);
+
+            var nearestMul = function (val, mul) { return mulFloat(Math.ceil(val / mul), mul); };
+            var digits = function (val) { return Math.floor(Math.log(val) / Math.LN10) + 1; };
+            var fac = function (digits) { return Math.pow(10, digits); };
+
+
+            var startAtZero = min === 0 ? 1 : max < 0 ? 1 : 0;
+
+            if (min === max) {
+                if (max === 0) {
+                    a = -1.0;
+                } else {
+                    a = numberHelpers.log10(Math.abs(max));
+                }
+            } else {
+                if(startAtZero) {
+                    a = numberHelpers.log10(Math.abs(max)) - 0.5;
+                } else {
+                    a = numberHelpers.log10(max-min) - 0.5;
+                }
+            }
+
+            var defaultRounding = -(a >= 0 ? numberHelpers.trunc(a) : Math.floor(a));
+
+            // var defaultRounding = -numberHelpers.trunc((min === max ?
+            //     max === 0 ? -1.0 : numberHelpers.log10(Math.abs(max)) :
+            //     startAtZero ? numberHelpers.log10(Math.abs(max)) : numberHelpers.log10(max-min)
+            // ) - 0.5);
+
+            var negativeMinAmount = excelRoundUp(Math.max(0, -min) / ticks, defaultRounding);
 
 
 
-            var negativeMinAmount = numberHelpers.roundTo(Math.max(0, -min) / ticks, defaultRounding-1);
-
-            var intermediateMax = min === max ? max === 0 ? 1 : numberHelpers.roundTo(max + negativeMinAmount, defaultRounding)
-                : numberHelpers.roundTo(max + negativeMinAmount,defaultRounding);
+            var intermediateMax = min === max ? max === 0 ? 1 : excelRoundUp(max + negativeMinAmount, defaultRounding)
+                : excelRoundUp(max + negativeMinAmount,defaultRounding);
 
             var intermediateMin = startAtZero ?
                 0 :
-                (min === max ? 0 : numberHelpers.roundTo(min+negativeMinAmount,defaultRounding) * (defaultRounding === 0 ? Math.pow(10, defaultRounding) : 1)
+                (min === max ? 0 : excelRoundUp(min-negativeMinAmount,defaultRounding) * (defaultRounding === 0 ? Math.pow(10, defaultRounding) : 1)
                 );
             // var diff = intermediateMax - intermediateMin;
-            var interval = numberHelpers.roundTo((intermediateMax  - intermediateMin)/ticks, defaultRounding);
-            var finalMin = intermediateMin - negativeMinAmount;
-            var finalMax = finalMin+(ticks*interval);
+            var interval = excelRoundUp((intermediateMax  - intermediateMin)/ticks, defaultRounding);
+            var finalMin = subFloat(intermediateMin, negativeMinAmount);
+            var finalMax = addFloat(finalMin, mulFloat(ticks, interval));
             var ticksValues = [finalMin];
             var prevTick = finalMin;
+
             for (var j=1; j < ticks; j++) {
                 var newTick = addFloat(prevTick, interval);
+
                 ticksValues.push(newTick);
                 prevTick = newTick;
             }
 
             // total ticks are going to be either ticks or ticks + 1
-            if (prevTick !== finalMax) {
+            if (Math.abs(prevTick - finalMax) > 1e-10) {
                 ticksValues.push(finalMax);
             }
 
@@ -150,9 +182,9 @@
 
         /*jshint eqnull:true */
         extractScaleDomain: function (domain, min, max) {
-            var dataMax = _.max(domain);
-            var dataMin = _.min(domain);
-            var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax);
+            var dataMin = min != null ? min : _.min(domain);
+            var dataMax = max != null ? max : _.max(domain);
+            var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, 5);
 
             // we want null || undefined for all this comparasons
             // that == null gives us
@@ -169,6 +201,11 @@
             }
 
             return [min, max];
+        },
+
+        niceTicks: function (min, max, ticks) {
+            var niceMinMax = axisHelpers.niceMinMax(min, max, (ticks||5));
+            return niceMinMax.tickValues;
         }
     };
 
