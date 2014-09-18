@@ -2161,6 +2161,283 @@ Contour.version = '0.9.99';
 
 (function () {
 
+    var defaults = {
+        type: 'image/png',
+        fill: '#fff',
+        fileName: 'contour'
+    };
+
+
+    var createSnapshot = function () {
+        var ignoreDiff = {
+            cssText: 1,
+            parentRule: 1
+        };
+        var domUrl = window.URL || window.webkitURL || window;
+        var container; // element containing the contour svg
+        var saving = 0; // positive when snapshot is currently being saved (more than one save method can be waiting for an img.onload at the same time)
+        var destroyAfterSave = false; // set true to destroy snapshot when done saving
+        var snapshot; // saved snapshot data
+
+        return {
+            init: function () {
+                container = this.container;
+
+                createSnapshot(); // make svg into a data url
+
+                return this;
+            },
+
+            createSnapshot: function () {
+                if (saving) throw 'Cannot create a new snapshot while saving';
+                createSnapshot(); // make svg into a data url
+
+                return this;
+            },
+
+            destroySnapshot: function () {
+                if (saving) {
+                    destroyAfterSave = true; // destroy snapshot when done saving
+                } else {
+                    destroySnapshot(); // destroy data url
+                }
+
+                return this;
+            },
+
+            /**
+            * Saves a visualization as an image, triggering a download.
+            *
+            * `type` specfies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
+            * `fileName` specifies the fileName for the download. (Default: 'contour'.)
+            *
+            * ###Example:
+            *
+            *     new Contour(...)
+            *           ...
+            *           .render()
+            *           .createSnapshot()
+            *           .downloadImage({
+            *               fileName: 'contour'
+            *           })
+            *           .destroySnapshot();
+            *
+            * @name downloadImage
+            * @param {object} options Configuration options specific to saving the image.
+            */
+            downloadImage: function (options) {
+                saveImage(options, 'download');
+
+                return this;
+            },
+
+            /**
+            * Saves a visualization as an image.
+            *
+            * `type` specfies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
+            * `target` specifies a selector for the container. (For example: `target: '#vis'` will insert the image in `<div id="vis"></div>`.)
+            *
+            * ###Example:
+            *
+            *     new Contour(...)
+            *           ...
+            *           .render()
+            *           .createSnapshot()
+            *           .placeImage({
+            *               target: '#image'
+            *           })
+            *           .destroySnapshot();
+            *
+            * @name placeImage
+            * @param {object} options Configuration options specific to saving the image.
+            */
+            placeImage: function (options) {
+                saveImage(options, 'place');
+
+                return this;
+            }
+        };
+
+        // compare computed styles at this node and apply the differences directly
+        function applyStyles(sourceNode, targetNode) {
+            var sourceStyle = window.getComputedStyle(sourceNode);
+            var targetStyle = window.getComputedStyle(targetNode);
+
+            for (var prop in sourceStyle) {
+                if (!ignoreDiff[prop] && !isFinite(prop)) { // note that sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in firefox
+                    // var sourceValue = sourceStyle.getPropertyValue(prop);
+                    // var targetValue = targetStyle.getPropertyValue(prop);
+
+                    // if (targetValue !== sourceValue) {
+                    if (targetStyle[prop] !== sourceStyle[prop]) {
+// if(prop.indexOf('font')!==-1)
+// console.log('* ' + targetNode.tagName + '.' + prop + ': ' + targetStyle[prop] + ' -> ' + sourceStyle[prop]);
+                        // targetNode.style.setProperty(prop, sourceValue, sourceStyle.getPropertyPriority(prop));
+                        targetNode.style[prop] = sourceStyle[prop];
+                    }
+// else{
+// if(prop.indexOf('font')!==-1)
+// console.log('  ' + targetNode.tagName + '.' + prop + ': ' + targetValue + ' === ' + sourceValue);
+// }
+                }
+            }
+        }
+
+        // clone nodes and apply styles directly to each node
+        function cloneNodes(sourceNode, targetNode) {
+            var newNode = sourceNode.cloneNode(false);
+            targetNode.appendChild(newNode);
+
+            if (!sourceNode.tagName) return; // skip inner text
+
+            applyStyles(sourceNode, newNode); // compare computed styles at this node and apply the differences directly
+
+            _.each(sourceNode.childNodes, function (childNode) {
+                cloneNodes(childNode, newNode); // clone each child node and apply styles
+            });
+        }
+
+        // make svg into a data url
+        function createSnapshot() {
+            destroySnapshot(); // destroy data url first, in case one was already created
+
+            // create clone
+
+            var svgNode = container.select('svg').node();
+            var bounds = svgNode.getBoundingClientRect(); // get bounds from original svg
+
+            var iframe = document.body.appendChild(document.createElement('iframe'));
+            var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDocument.open();
+            iframeDocument.write('<html><body></body></html>'); // for IE, ensure the iframe has a body
+            iframeDocument.close();
+            var nodeClone = iframeDocument.createElement('div');
+            iframeDocument.body.appendChild(nodeClone);
+
+            cloneNodes(svgNode, nodeClone); // clone nodes and apply styles directly to each node
+
+            var svgNodeClone = d3.select(nodeClone).select('svg').node();
+            svgNodeClone.setAttribute('width', bounds.width + 'px');
+            svgNodeClone.setAttribute('height', bounds.height + 'px');
+
+            // create data url
+
+            var xml = (new XMLSerializer()).serializeToString(svgNodeClone);
+            var svg = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+
+            snapshot = {
+                dataUrl: domUrl.createObjectURL(svg), // create url for svg+xml blob
+                // imgSrc: 'data:image/svg+xml;base64,' + btoa(xml),
+                width: bounds.width,
+                height: bounds.height
+            };
+
+            // destroy clone
+
+            document.body.removeChild(iframe);
+        }
+
+        // destroy data url
+        function destroySnapshot() {
+            if (snapshot) {
+                domUrl.revokeObjectURL(snapshot.dataUrl); // destroy url for svg+xml blob
+                snapshot = undefined;
+            }
+        }
+
+        // load image with data url, draw image on canvas, and call saver function
+        function saveImage(options, saver) {
+            saving++; // snapshot is currently being saved
+
+            options = options || {};
+            _.defaults(options, defaults); // merge configuration options with defaults
+
+            if (!snapshot) {
+                createSnapshot(); // make svg into a data url first, in case one wasn't already created
+            }
+
+            var svgImg = new Image();
+            svgImg.onload = function () {
+
+                // create canvas
+
+                var canvas = document.createElement('canvas');
+                canvas.width = snapshot.width;
+                canvas.height = snapshot.height;
+
+                // get context for canvas
+
+                var context = canvas.getContext('2d');
+                context.fillStyle = options.fill;
+                context.fillRect(0, 0, snapshot.width, snapshot.height);
+
+                // draw image on canvas
+
+                context.drawImage(svgImg, 0, 0);
+
+                // get data url string for canvas data
+
+                var canvasData = canvas.toDataURL(options.type); // make url for canvas
+
+                // call saver function
+
+                var savers = {
+                    'download': function () {
+
+                        // make a link to download and click it
+
+                        var a = document.createElement('a');
+                        a.download = options.fileName;
+                        a.href = canvasData;
+                        a.click();
+                    },
+                    'place': function () {
+                        var img = document.createElement('img');
+                        img.src = canvasData;
+                        d3.select(options.target).node().appendChild(img);
+                    }
+                };
+
+                savers[saver](); // call saver function
+
+                saving--; // snapshot is no longer being saved
+                if (!saving && destroyAfterSave) { // destroy snapshot when done saving
+                    destroyAfterSave = false;
+                    destroySnapshot(); // destroy data url
+                }
+            };
+            svgImg.src = snapshot.dataUrl; // load image with url of svg+xml blob
+            // svgImg.src = snapshot.imgSrc; // load image with svg+xml data
+        }
+    };
+
+
+    /**
+    * Saves a visualization as an image.
+    *
+    * ###Example:
+    *
+    *     new Contour(...)
+    *           ...
+    *           .render()
+    *           .createSnapshot()
+    *           .downloadImage({
+    *               fileName: 'contour'
+    *           })
+    *           .placeImage({
+    *               target: '#image'
+    *           })
+    *           .destroySnapshot();
+    *
+    * @name createSnapshot
+    */
+    Contour.expose('createSnapshotOrig', createSnapshot);
+
+})();
+
+Contour.version = '0.9.101';
+(function () {
+
     var _extent = function (series, field) {
         var maxs = [], mins = [];
         _.each(series, function (d) {
