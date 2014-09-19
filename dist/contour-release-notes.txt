@@ -1,3 +1,4 @@
+  * build
   * Change behavior of default tick values to always render 5 labels and covert top and bottom of extended domain
   * make default min and max to be 'nice' numbers for the axis
   * bump version
