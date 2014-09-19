@@ -1,8 +1,9 @@
 (function () {
 
-    var YAxis = function (data, options) {
+    var YAxis = function (data, options, domain) {
         this.data = data;
         this.options = options;
+        this.domain = domain;
     };
 
     function setRange(scale, options) {
@@ -13,13 +14,12 @@
 
     YAxis.prototype = {
         axis: function () {
+            /*jshint eqnull:true */
             var options = this.options.yAxis;
-            var domain = d3.extent(_.pluck(this.data, 'y'));
-            var absMin = domain[0] > 0 ? 0 : domain[0];
-            var scaledDomain = _.nw.extractScaleDomain(domain, options.min || absMin, options.max);
-
-
-            var tickValues = options.tickValues || _.nw.niceTicks(scaledDomain[0], scaledDomain[1], options.ticks);
+            var domain = this.domain;
+            var dMin = options.min != null ? options.min : options.zeroAnchor ? Math.min(0, domain[0]) : domain[0];
+            var dMax = options.max != null ? options.max : domain[1];
+            var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks);
             var numTicks = this.numTicks(domain, options.min, options.max);
             var format = options.labels.formatter || d3.format(options.labels.format);
 
