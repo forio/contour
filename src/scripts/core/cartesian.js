@@ -519,6 +519,8 @@
 
                 this._yAxis = null;
                 this._xAxis = null;
+
+                this.yScale = null;
             },
 
             getExtents: function (axis) {
