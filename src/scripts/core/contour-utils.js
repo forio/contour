@@ -166,7 +166,7 @@
             if (!startAtZero && min !== max) {
                 var inter = min + negativeMinAmount;
                 var dig = numberHelpers.digits(inter);
-                var roundToDigits = inter <= -1 && inter >= 1 ? -(Math.max(1, Math.abs(dig-2))) :
+                var roundToDigits = inter <= -1 || inter >= 1 ? -(Math.max(1, Math.abs(dig-2))) :
                     -Math.floor(_.nw.log10(inter))  ;
 
                 iMin = -numberHelpers.roundTo(-inter, roundToDigits);
