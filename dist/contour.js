@@ -182,8 +182,12 @@
             if (!startAtZero && min !== max) {
                 var inter = min + negativeMinAmount;
                 var dig = numberHelpers.digits(inter);
-                var roundToDigits = inter <= -1 && inter >= 1 ? -(Math.max(1, Math.abs(dig-2))) :
-                    -Math.floor(_.nw.log10(inter))  ;
+                var roundToDigits;
+                if (Math.abs(min) < Math.abs(max)) {
+                    roundToDigits =  -Math.floor(_.nw.log10(inter));
+                } else {
+                    roundToDigits = -(Math.max(1, Math.abs(dig-2)));
+                }
 
                 iMin = -numberHelpers.roundTo(-inter, roundToDigits);
                 iMin = iMin === 0 ? 0 : iMin;
@@ -1468,6 +1472,8 @@
 
                 this._yAxis = null;
                 this._xAxis = null;
+
+                this.yScale = null;
             },
 
             getExtents: function (axis) {

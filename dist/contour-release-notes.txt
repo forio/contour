@@ -1,3 +1,9 @@
+  * Fixed issue with min max calculation for negative and small numbers
+  * Fixed bug with niceMinMax when range has biiig negative numbers
+  * Reset yAxis when new dataset is passed in to force recalculation of mins and maxes
+  * Build
+  * Added option to not anchor the y Axis ticks at 0 (yAxis.zeroAnchor)
+  * Fixed y Axis ticks calculations for domains with negative numbers
   * build
   * Change behavior of default tick values to always render 5 labels and covert top and bottom of extended domain
   * make default min and max to be 'nice' numbers for the axis
