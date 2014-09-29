@@ -170,7 +170,7 @@
                 if (Math.abs(min) < Math.abs(max)) {
                     roundToDigits =  -Math.floor(_.nw.log10(inter));
                 } else {
-                    roundToDigits = -(Math.max(1, Math.abs(dig-2)));
+                    roundToDigits = (Math.max(1, Math.abs(dig-2)));
                 }
 
                 iMin = -numberHelpers.roundTo(-inter, roundToDigits);
