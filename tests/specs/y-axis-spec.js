@@ -34,8 +34,8 @@ describe('default yAxis', function () {
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
-        // ticks are 0, 5, 10, 15, 20, 25, 30
-        expect(ticks.length).toBe(7);
+        // ticks are 0, 2, 4, 6, 8, 10
+        expect(ticks.length).toBe(6);
     });
 
     it('with smartAxis=true should only show 3 ticks (min, max + max rounded up)', function () {
