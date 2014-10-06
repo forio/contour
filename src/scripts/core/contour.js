@@ -137,7 +137,7 @@
 
             data = data || lastData || [];
             sortSeries(data);
-            vis = new Contour.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
+            vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
             this._visualizations.push(vis);
             lastData = data;
             return this;

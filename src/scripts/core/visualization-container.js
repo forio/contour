@@ -36,10 +36,11 @@
     var _xExtent = _.partialRight(_extent, 'x');
     var _yExtent = _.partialRight(_extent, 'y');
 
-    function VisInstanceContainer(data, options, type, renderer, context) {
+    function VisInstanceContainer(data, categories, options, type, renderer, context) {
         this.type = type;
         this.renderer = renderer;
         this.ctx = context;
+        this.categories = categories;
 
         this.init(data, options);
     }
@@ -59,7 +60,7 @@
         },
 
         setData: function (data) {
-            this.data = _.nw.normalizeSeries(data);
+            this.data = _.nw.normalizeSeries(data, this.categories);
             this._updateDomain();
 
             return this.ctx;
