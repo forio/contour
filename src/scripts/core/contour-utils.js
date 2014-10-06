@@ -45,7 +45,7 @@
 
         // only works for integers
         digits: function (value) {
-            return Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1;
+            return value === 0 ? 1 : Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1;
         },
 
         log10: function (value) {
@@ -167,7 +167,7 @@
                 var inter = min + negativeMinAmount;
                 var dig = numberHelpers.digits(inter);
                 var roundToDigits;
-                if (Math.abs(min) < Math.abs(max)) {
+                if (inter > 0) {
                     roundToDigits =  -Math.floor(_.nw.log10(inter));
                 } else {
                     roundToDigits = (Math.max(1, Math.abs(dig-2)));
