@@ -51,7 +51,7 @@ describe('Linear axis scale', function () {
         expect(createAxis().scale().domain()).toEqual([100, 300]);
     });
 
-    it('should use domain min/max if min/max options are not opssible (ie min > max)', function () {
+    it('should use domain min/max if min/max options are not possible (ie min > max)', function () {
         var opt = {
             xAxis: {
                 min: 10,

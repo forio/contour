@@ -87,6 +87,11 @@
                 return [optMin, Math.max(extents[1], optMin)];
             }
 
+            // options are invalid, use the extents
+            if (optMin > optMax) {
+                return extents;
+            }
+
             return [optMin, optMax];
         }
     };
