@@ -1,3 +1,5 @@
+  * Fixed grunt to use correct version file
+  * Build 0.9.103
   * Fix yAxis ticks for decimal places that give floating point errors when subtracted.
   * fixed y axis ticks for case when min is negative decimal and less than max
   * build
