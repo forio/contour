@@ -73,15 +73,22 @@
             /*jshint eqnull: true*/
             var optMin = this.options.xAxis.min;
             var optMax = this.options.xAxis.max;
-            var min = optMin != null ? this.options.xAxis.min : d3.min(domain);
-            var max = optMax != null ? this.options.xAxis.max : d3.max(domain);
+            var extents = d3.extent(domain);
 
-            if(optMin != null && optMax != null && optMin > optMax) {
-                return d3.extent(domain);
+            if (optMin == null && optMax == null) {
+                return extents;
             }
 
-            return [min, max];
-        },
+            if (optMin == null) {
+                return [Math.min(extents[0], optMax), optMax];
+            }
+
+            if (optMax == null) {
+                return [optMin, Math.max(extents[1], optMin)];
+            }
+
+            return [optMin, optMax];
+        }
     };
 
     _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
