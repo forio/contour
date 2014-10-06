@@ -181,7 +181,7 @@
 
             var intermediateMin = iMin;
 
-            var interval = excelRoundUp((intermediateMax  - intermediateMin)/ticks, defaultRounding);
+            var interval = excelRoundUp(divFloat(subFloat(intermediateMax, intermediateMin),ticks), defaultRounding);
             var finalMin = subFloat(intermediateMin, negativeMinAmount);
             var finalMax = addFloat(finalMin, mulFloat(ticks, interval));
             var ticksValues = [finalMin];
