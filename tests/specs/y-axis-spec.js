@@ -52,7 +52,7 @@ describe('default yAxis', function () {
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
-        expect(ticks.length).toBe(4);
+        expect(ticks.length).toBe(5);
     });
 
     it('with smartAxis=false should delegate to d3 if options.yAxis.ticks override is not present', function () {
@@ -62,7 +62,7 @@ describe('default yAxis', function () {
         var ticks = $el.find('.y.axis .tick text');
 
         // with the given values, d3 would do ticks every 5 so we would get 7 ticks: 0,5,10, 15, 20, 25, 30
-        expect(ticks.length).toBe(7);
+        expect(ticks.length).toBe(6;
     });
 
     it('should align the middle of the label to the tick by default', function () {
