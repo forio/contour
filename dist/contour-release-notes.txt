@@ -1,3 +1,6 @@
+  * Fix yAxis ticks for decimal places that give floating point errors when subtracted.
+  * fixed y axis ticks for case when min is negative decimal and less than max
+  * build
   * Fixed issue with min max calculation for negative and small numbers
   * Fixed bug with niceMinMax when range has biiig negative numbers
   * Reset yAxis when new dataset is passed in to force recalculation of mins and maxes

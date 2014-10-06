@@ -186,7 +186,7 @@
                 if (Math.abs(min) < Math.abs(max)) {
                     roundToDigits =  -Math.floor(_.nw.log10(inter));
                 } else {
-                    roundToDigits = -(Math.max(1, Math.abs(dig-2)));
+                    roundToDigits = (Math.max(1, Math.abs(dig-2)));
                 }
 
                 iMin = -numberHelpers.roundTo(-inter, roundToDigits);
@@ -197,7 +197,7 @@
 
             var intermediateMin = iMin;
 
-            var interval = excelRoundUp((intermediateMax  - intermediateMin)/ticks, defaultRounding);
+            var interval = excelRoundUp(divFloat(subFloat(intermediateMax, intermediateMin),ticks), defaultRounding);
             var finalMin = subFloat(intermediateMin, negativeMinAmount);
             var finalMax = addFloat(finalMin, mulFloat(ticks, interval));
             var ticksValues = [finalMin];
