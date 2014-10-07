@@ -134,6 +134,15 @@
 
             var startAtZero = min === 0 ? 1 : max < 0 ? 1 : 0;
 
+            // check for errors... min cannot be > max
+            if (min > max) {
+                return {
+                    min: min,
+                    max: min,
+                    tickValues: []
+                };
+            }
+
             if (min === max) {
                 if (max === 0) {
                     a = -1.0;
