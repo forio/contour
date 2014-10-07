@@ -58,4 +58,21 @@ describe('contour-utils niceMinMax', function () {
         expect(nice.max).toBe(0.9);
         expect(nice.tickValues).toEqual([0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
     });
+
+    describe('when min > max', function () {
+        it('should return empty ticks array', function () {
+            var nice = _.nw.niceMinMax(2, 1, 5);
+            expect(nice.tickValues).toEqual([]);
+        });
+
+        it('shold return max = min', function () {
+            var nice = _.nw.niceMinMax(2, 1, 5);
+            expect(nice.min).toBe(2);
+            expect(nice.max).toBe(2);
+        });
+    });
+
+    describe('when min === max', function () {
+        // we need to define the behavior here...
+    });
 });
