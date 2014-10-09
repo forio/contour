@@ -5,7 +5,9 @@
             barClass: null,
             style: null,
             stacked: false,
-            groupPadding: 2      // two px between same group bars
+            groupPadding: 2,      // two px between same group bars
+            barWidth: function() { return this.rangeBand; },
+            offset: function() { return 0; }
         }
     };
 
@@ -13,11 +15,13 @@
         this.checkDependencies(['cartesian', 'horizontal']);
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var _this = this;
-        var rectClass = options.bar.barClass;
-        var style = options.bar.style;
+        var opt = options.bar;
+        var rectClass = opt.barClass;
+        var style = opt.style;
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
-        var rangeBand = this.rangeBand;
+        var chartOffset = _.nw.getValue(opt.offset, 0, this);
+        var rangeBand = _.nw.getValue(opt.barWidth, this.rangeBand, this);
         var stack = _.nw.stackLayout();
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
@@ -59,7 +63,7 @@
 
         function stacked(bar, enter) {
             bar
-                .attr('y', function (d) { return x(d.x); })
+                .attr('y', function (d) { return x(d.x) + chartOffset; })
                 .attr('height', rangeBand);
 
             if (enter) {
@@ -79,7 +83,7 @@
             var height = function () { return rangeBand / numSeries - options.bar.groupPadding + 0.5; };
             var offset = function (d, i) { return rangeBand / numSeries * i + 0.5; };
 
-            bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })
+            bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
                 .attr('x', y(0))
                 .attr('height', height);
 
