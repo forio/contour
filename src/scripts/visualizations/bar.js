@@ -1,10 +1,9 @@
 (function () {
-
+    /*jshint eqnull:true*/
     var defaults = {
         bar: {
             barClass: null,
             style: null,
-            barClass: null,
             stacked: false,
             groupPadding: 2      // two px between same group bars
         }
