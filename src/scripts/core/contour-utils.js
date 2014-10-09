@@ -6,6 +6,8 @@
     var mulFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
     var divFloat = function (a,b) { return +((a / b).toFixed(4)); };
 
+    var noop = function () {};
+
     var generalHelpers = {
         // the src is a function returns the function evaluated
         // otherwise returns src
@@ -443,5 +445,9 @@
 
     _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
         axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
+
+    if (!_.noop) {
+        _.noop = noop;
+    }
 
 })();
