@@ -1,6 +1,7 @@
 #### **type** : {<%= type %>}
 
-<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
+*default: linear* 
+<!-- default is null in cartesian.js, linear in line.js -->
 
 How the xAxis should be scaled. The available options are:
 
