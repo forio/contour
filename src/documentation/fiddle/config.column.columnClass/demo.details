@@ -1,0 +1,6 @@
+---
+ name: config.column.columnClass
+ authors:
+   - Forio
+ normalize_css: no
+ ...
