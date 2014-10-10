@@ -1,0 +1,6 @@
+---
+ name: config.line.stacked
+ authors:
+   - Forio
+ normalize_css: no
+ ...
