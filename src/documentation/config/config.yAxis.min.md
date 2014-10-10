@@ -12,7 +12,7 @@ The minimum value for the domain of the yAxis.
       })
     .cartesian()
     .line(data)
-    .render()
+    .render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 
