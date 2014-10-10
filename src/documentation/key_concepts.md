@@ -58,20 +58,20 @@ To add a visualization to the core Contour object:
 
 For example:
 
-	Contour('myExportedVisualization', function (data, layer) {
+	Contour.export('myExportedVisualization', function (data, layer) {
 	
-		// new visualization is a circle, radius 45px, 
-		// centered at (n,n) in the Contour frame;
-		// n is passed in when the visualization constructor
-		// is called in the Contour instance
-		// .xScale and .yScale are functions of 
-		// Contour's .cartesian() frame, 
-		// so this visualization requires .cartesian() 
+	    // new visualization is a circle, radius 45px, 
+	    // centered at (n,n) in the Contour frame;
+	    // n is passed in when the visualization constructor
+	    // is called in the Contour instance
+	    // .xScale and .yScale are functions of 
+	    // Contour's .cartesian() frame, 
+	    // so this visualization requires .cartesian() 
 	
-		layer.append('circle')
-			.attr('cx', this.xScale(data))
-			.attr('cy', this.yScale(data))
-			.attr('r', 45);
+	    layer.append('circle')
+	        .attr('cx', this.xScale(data))
+	        .attr('cy', this.yScale(data))
+	        .attr('r', 45);
 	});
 
 	new Contour({ el: '.myChart' })
@@ -94,10 +94,10 @@ To add functionality to the core Contour object:
 
 For example: 
 
-	Contour.expose('myNewFunctions') {
-		function1 : function (data) { /* some function */ },
-		function2 : function (data) { /* some function */ }
-	};
+	Contour.expose('myNewFunctions', {
+	    function1 : function (data) { /* some function */ },
+	    function2 : function (data) { /* some function */ }
+	});
 	
 	Contour.export('myExportedVisualization', function (data, layer) {
 		// function body, including call to 
@@ -108,6 +108,10 @@ For example:
 		.myNewFunctions()
 		.myExportedVisualization(data)
 		.render();
+
+**Try it**
+
+[Play with an example](http://jsfiddle.net/gh/get/jquery/1.7.2/forio/contour/tree/master/src/documentation/fiddle/Contour.expose/) using `.expose()` and `.export()`.
 
 
 ###Adding Interactivity to Contour

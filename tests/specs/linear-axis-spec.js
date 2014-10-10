@@ -6,7 +6,7 @@ describe('Linear axis scale', function () {
 
     var defaults = {
         chart: {
-            plotWidth: 100,
+            plotWidth: 500,
             rotatedFrame: false
         },
         xAxis: {
@@ -51,7 +51,7 @@ describe('Linear axis scale', function () {
         expect(createAxis().scale().domain()).toEqual([100, 300]);
     });
 
-    it('should use domain min/max if min/max options are not opssible (ie min > max)', function () {
+    it('should use domain min/max if min/max options are not possible (ie min > max)', function () {
         var opt = {
             xAxis: {
                 min: 10,
@@ -81,6 +81,23 @@ describe('Linear axis scale', function () {
             }
         };
 
-        expect(createAxis(opt).axis().tickValues()).toEqual([2,4,6]);
+        var axisScale = createAxis(opt);
+        axisScale.scale();
+        expect(axisScale.axis().tickValues()).toEqual([2,4,6]);
+    });
+
+    it('should reduce the number of ticks if they dont fit', function () {
+        ax = createAxis({ chart: {plotWidth: 500}});
+        ax.scale();
+        expect(ax.axis().ticks()[0]).toBe(10);
+
+
+        ax = createAxis({ chart: {plotWidth: 150}});
+        ax.scale();
+        expect(ax.axis().ticks()[0]).toBe(5);
+
+        ax = createAxis({ chart: {plotWidth: 40}});
+        ax.scale();
+        expect(ax.axis().ticks()[0]).toBe(1);
     });
 });

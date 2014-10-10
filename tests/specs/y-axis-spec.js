@@ -34,8 +34,8 @@ describe('default yAxis', function () {
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
-        // ticks are 0, 5, 10, 15, 20, 25, 30
-        expect(ticks.length).toBe(7);
+        // 0, 6, 12, 18, 24, 30
+        expect(ticks.length).toBe(6);
     });
 
     it('with smartAxis=true should only show 3 ticks (min, max + max rounded up)', function () {
@@ -52,7 +52,8 @@ describe('default yAxis', function () {
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
-        expect(ticks.length).toBe(4);
+        // 0, 6, 12, 18, 24, 30
+        expect(ticks.length).toBe(5);
     });
 
     it('with smartAxis=false should delegate to d3 if options.yAxis.ticks override is not present', function () {
@@ -61,8 +62,8 @@ describe('default yAxis', function () {
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
-        // with the given values, d3 would do ticks every 5 so we would get 7 ticks: 0,5,10, 15, 20, 25, 30
-        expect(ticks.length).toBe(7);
+        // 0, 6, 12, 18, 24, 30
+        expect(ticks.length).toBe(6);
     });
 
     it('should align the middle of the label to the tick by default', function () {
@@ -98,12 +99,12 @@ describe('default yAxis', function () {
 
     describe('with smart y axis', function () {
         it('should round the max tick value to a nice value', function () {
-            createinstance({yAxis: { smartAxis: true }}).nullVis([1,2,3,4]).render();
+            createinstance({yAxis: { smartAxis: true}}).nullVis([1,2,3,4]).render();
 
             d3.timer.flush();
             var lastTicks = $el.find('.y.axis .tick text').last();
 
-            expect(lastTicks.text()).toBe('5');
+            expect(lastTicks.text()).toBe('6');
         });
 
         describe('calling setYDomain', function () {
@@ -177,15 +178,11 @@ describe('default yAxis', function () {
             expect(topTick.attr('transform')).toBe('translate(0,' + instance.options.chart.plotHeight + ')');
         });
 
-        it('should not show data min as a tick', function () {
+        it('should show data min first tick as a tick', function () {
             // we should end with ticks at min, yMax and niceRoundMax
             instance.nullVis([10,20,30]).render();
             var ticks = $el.find('.y.axis .tick text');
             expect(ticks.eq(0).text()).toBe('4');
-            expect(ticks.eq(1).text()).toBe('6');
-            expect(ticks.eq(2).text()).toBe('8');
-            /// ...
-            expect(ticks.eq(ticks.length-1).text()).toBe('30');
         });
 
         it('should use it as the abs min of the domain', function () {
@@ -206,14 +203,14 @@ describe('default yAxis', function () {
 
     describe('with both min and max set', function () {
         beforeEach(function () {
-            instance = createinstance({yAxis: { min: -2, max: 500, nicing: false }});
+            instance = createinstance({yAxis: { min: -10, max: 20, nicing: false }});
         });
 
         it('should set the domain to be [min, max]', function () {
             instance.nullVis([1,2,3]).render();
 
-            expect(instance.yScale(500)).toBe(0);
-            expect(instance.yScale(-2)).toBe(instance.options.chart.plotHeight);
+            expect(instance.yScale(20)).toBe(0);
+            expect(instance.yScale(-10)).toBe(instance.options.chart.plotHeight);
         });
     });
 

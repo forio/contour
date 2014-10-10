@@ -6,6 +6,8 @@
     var mulFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
     var divFloat = function (a,b) { return +((a / b).toFixed(4)); };
 
+    var noop = function () {};
+
     var generalHelpers = {
         // the src is a function returns the function evaluated
         // otherwise returns src
@@ -45,7 +47,7 @@
 
         // only works for integers
         digits: function (value) {
-            return Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1;
+            return value === 0 ? 1 : Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1;
         },
 
         log10: function (value) {
@@ -134,6 +136,15 @@
 
             var startAtZero = min === 0 ? 1 : max < 0 ? 1 : 0;
 
+            // check for errors... min cannot be > max
+            if (min > max) {
+                return {
+                    min: min,
+                    max: min,
+                    tickValues: []
+                };
+            }
+
             if (min === max) {
                 if (max === 0) {
                     a = -1.0;
@@ -167,7 +178,7 @@
                 var inter = min + negativeMinAmount;
                 var dig = numberHelpers.digits(inter);
                 var roundToDigits;
-                if (Math.abs(min) < Math.abs(max)) {
+                if (inter > 0) {
                     roundToDigits =  -Math.floor(_.nw.log10(inter));
                 } else {
                     roundToDigits = (Math.max(1, Math.abs(dig-2)));
@@ -434,5 +445,9 @@
 
     _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
         axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
+
+    if (!_.noop) {
+        _.noop = noop;
+    }
 
 })();

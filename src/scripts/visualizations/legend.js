@@ -34,7 +34,7 @@
 
     function Legend(data, layer, options) {
         this.container.selectAll('.contour-legend').remove();
-        var legend = this.container.selectAll('.contour-legend').data(data);
+        var legend = this.container.selectAll('.contour-legend').data([null]);
         var em = _.nw.textBounds('series', '.contour-legend.contour-legend-entry');
         var count = data.length;
         var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin

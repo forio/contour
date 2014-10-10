@@ -137,7 +137,7 @@
 
             data = data || lastData || [];
             sortSeries(data);
-            vis = new Contour.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
+            vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
             this._visualizations.push(vis);
             lastData = data;
             return this;
@@ -151,9 +151,16 @@
     *
     * ###Example:
     *
-    *     Contour.expose("example", {
-    *          // when included in the instance, the function `.myFunction` is available in the visualizations
-    *         myFunction: function(data) { .... }
+    *     Contour.expose("example", function ctor(params) {
+    *         // params will be the parameters paseed into the constructor function
+    *         return {
+    *             // the init function, if provided, will be called automatically upon instanciation of the functionality
+    *             // the options parameter will have the global Contour options object
+    *             init: function (options) { ... }
+    *
+    *             // when included in the instance, the function `.myFunction` is available in the visualizations
+    *             myFunction: function(data) { .... }
+    *         };
     *     });
     *
     *     Contour.export("visualizationThatUsesMyFunction", function(data, layer) {
@@ -162,18 +169,26 @@
     *
     *     // to include the functionality into a specific instance
     *     new Contour(options)
-    *           .example()
+    *           .example({ text: 'someText' })
     *           .visualizationThatUsesMyFunction()
     *           .render()
+    *
+
     */
     Contour.expose = function (ctorName, functionalityConstructor) {
         var ctor = function () {
+            var functionality = functionalityConstructor;
+            if (typeof functionalityConstructor === 'function') {
+                functionality = Object.create(functionalityConstructor);
+                functionality = functionalityConstructor.apply(functionality, arguments);
+            }
 
-            var functionality = typeof functionalityConstructor === 'function' ? new functionalityConstructor() : functionalityConstructor;
             // extend the --instance-- we don't want all charts to be overriden...
             _.extend(this, _.omit(functionality, 'init'));
 
-            if(functionality.init) functionality.init.call(this, this.options);
+            if(functionality.init) {
+                functionality.init.call(this, this.options);
+            }
 
             // keep a list of the included functionality into this instance
             // so we can match and check dependencies
