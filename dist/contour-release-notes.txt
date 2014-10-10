@@ -1,3 +1,22 @@
+  * Added ability to pass parameters to an exposed constructor function. This allows to receive parameters that are specific to the exposed functionality and not relevant to the global config object.
+  * Added polyfill for _.noop so we can support lodash 1.0
+  * Implemented barWidth and offset of for bar charts to be consistent with column charts
+  * Clean up
+  * Added series name as a class for tooltip-trackers group in line charts
+  * Implemented reduction of ticks for ordinal axis if the labels don't fit
+  * Fixed and added unit tests for y axis
+  * Added edge case for y axis ticks when min > max
+  * Added unit tests for yAxis ticks
+  * Fixed case for when |max| - |min| < 1 for generating yAxis ticks
+  * Prevent legend from rendering multiple times
+  * Fixed tests for new yAxis ticks functionality
+  * Fix edge case for x linear axis
+  * Fixed tests
+  * Fixed smartYAxis functionality due to changes in regular yAxis
+  * Fixed re-normalizing of data when is categorical and .setData is called
+  * Merge pull request #171 from forio/issue-164
+  * Fixed how xDomain is calculated from the data/min/max to be consistent with different options
+  * Release 0.9.104
   * Fixed grunt to use correct version file
   * Build 0.9.103
   * Fix yAxis ticks for decimal places that give floating point errors when subtracted.
@@ -12,4 +31,13 @@
   * build
   * Change behavior of default tick values to always render 5 labels and covert top and bottom of extended domain
   * make default min and max to be 'nice' numbers for the axis
+  * fix issue #164 and add fiddle
   * bump version
+  * Merge pull request #161 from dwick/master
+  * bower support
+  * build
+  * Make sure we update the categories array when new data arrives, so ordinal xAxis work as expected with dynamic data
+  * reverted tooltip changes to 0.9.99
+  * compile
+  * pass all matching-x points into the tooltip formatter callback
+  * updated version file to 0.9.99

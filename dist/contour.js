@@ -22,6 +22,8 @@
     var mulFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
     var divFloat = function (a,b) { return +((a / b).toFixed(4)); };
 
+    var noop = function () {};
+
     var generalHelpers = {
         // the src is a function returns the function evaluated
         // otherwise returns src
@@ -61,7 +63,7 @@
 
         // only works for integers
         digits: function (value) {
-            return Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1;
+            return value === 0 ? 1 : Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1;
         },
 
         log10: function (value) {
@@ -150,6 +152,15 @@
 
             var startAtZero = min === 0 ? 1 : max < 0 ? 1 : 0;
 
+            // check for errors... min cannot be > max
+            if (min > max) {
+                return {
+                    min: min,
+                    max: min,
+                    tickValues: []
+                };
+            }
+
             if (min === max) {
                 if (max === 0) {
                     a = -1.0;
@@ -183,7 +194,7 @@
                 var inter = min + negativeMinAmount;
                 var dig = numberHelpers.digits(inter);
                 var roundToDigits;
-                if (Math.abs(min) < Math.abs(max)) {
+                if (inter > 0) {
                     roundToDigits =  -Math.floor(_.nw.log10(inter));
                 } else {
                     roundToDigits = (Math.max(1, Math.abs(dig-2)));
@@ -451,6 +462,10 @@
     _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
         axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
 
+    if (!_.noop) {
+        _.noop = noop;
+    }
+
 })();
 
 (function () {
@@ -592,7 +607,7 @@
 
             data = data || lastData || [];
             sortSeries(data);
-            vis = new Contour.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
+            vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
             this._visualizations.push(vis);
             lastData = data;
             return this;
@@ -606,9 +621,16 @@
     *
     * ###Example:
     *
-    *     Contour.expose("example", {
-    *          // when included in the instance, the function `.myFunction` is available in the visualizations
-    *         myFunction: function(data) { .... }
+    *     Contour.expose("example", function ctor(params) {
+    *         // params will be the parameters paseed into the constructor function
+    *         return {
+    *             // the init function, if provided, will be called automatically upon instanciation of the functionality
+    *             // the options parameter will have the global Contour options object
+    *             init: function (options) { ... }
+    *
+    *             // when included in the instance, the function `.myFunction` is available in the visualizations
+    *             myFunction: function(data) { .... }
+    *         };
     *     });
     *
     *     Contour.export("visualizationThatUsesMyFunction", function(data, layer) {
@@ -617,18 +639,26 @@
     *
     *     // to include the functionality into a specific instance
     *     new Contour(options)
-    *           .example()
+    *           .example({ text: 'someText' })
     *           .visualizationThatUsesMyFunction()
     *           .render()
+    *
+
     */
     Contour.expose = function (ctorName, functionalityConstructor) {
         var ctor = function () {
+            var functionality = functionalityConstructor;
+            if (typeof functionalityConstructor === 'function') {
+                functionality = Object.create(functionalityConstructor);
+                functionality = functionalityConstructor.apply(functionality, arguments);
+            }
 
-            var functionality = typeof functionalityConstructor === 'function' ? new functionalityConstructor() : functionalityConstructor;
             // extend the --instance-- we don't want all charts to be overriden...
             _.extend(this, _.omit(functionality, 'init'));
 
-            if(functionality.init) functionality.init.call(this, this.options);
+            if(functionality.init) {
+                functionality.init.call(this, this.options);
+            }
 
             // keep a list of the included functionality into this instance
             // so we can match and check dependencies
@@ -1497,7 +1527,7 @@
 
 })();
 
-Contour.version = '0.9.104';
+Contour.version = '0.9.105';
 (function () {
 
     var helpers = {
@@ -1547,6 +1577,14 @@ Contour.version = '0.9.104';
 
 (function () {
 
+    var sum = _.partialRight(_.reduce, function (acc, d) { return acc += d; }, 0);
+
+    function calcLabelsWidths(ticks) {
+        return ticks.map(String).map(function (d) {
+            return _.nw.textBounds(d, '.x.axis text').width;
+        });
+    }
+
     function LinearScale(data, options) {
         this.options = options;
         this.data = data;
@@ -1585,6 +1623,13 @@ Contour.version = '0.9.104';
                     return _.isDate(d) ? d.getDate() : formatLabel(d);
                 });
 
+            var ticks = axis.scale().ticks();
+            var tickWidths = calcLabelsWidths(ticks.map(formatLabel));
+            var availableWidthForLabels = this.options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2;
+            var numAutoTicks = ticks.length;
+            var axisLabelsWidth = sum(tickWidths);
+            var labelsFit = axisLabelsWidth <= availableWidthForLabels;
+
             if (options.firstAndLast) {
                 // show only first and last tick
                 axis.tickValues(_.nw.firstAndLast(this._domain));
@@ -1592,6 +1637,13 @@ Contour.version = '0.9.104';
                 axis.tickValues(options.tickValues);
             } else if (options.ticks != null) {
                 axis.ticks(options.ticks);
+            } else if (!labelsFit) {
+                while(axisLabelsWidth > availableWidthForLabels && ticks.length !== 1) {
+                    ticks = axis.scale().ticks(Math.floor(--numAutoTicks));
+                    axisLabelsWidth = sum(calcLabelsWidths(ticks.map(formatLabel)));
+                }
+
+                axis.ticks(ticks.length);
             }
 
             return axis;
@@ -1620,15 +1672,27 @@ Contour.version = '0.9.104';
             /*jshint eqnull: true*/
             var optMin = this.options.xAxis.min;
             var optMax = this.options.xAxis.max;
-            var min = optMin != null ? this.options.xAxis.min : d3.min(domain);
-            var max = optMax != null ? this.options.xAxis.max : d3.max(domain);
+            var extents = d3.extent(domain);
 
-            if(optMin != null && optMax != null && optMin > optMax) {
-                return d3.extent(domain);
+            if (optMin == null && optMax == null) {
+                return extents;
             }
 
-            return [min, max];
-        },
+            if (optMin == null) {
+                return [Math.min(extents[0], optMax), optMax];
+            }
+
+            if (optMax == null) {
+                return [optMin, Math.max(extents[1], optMin)];
+            }
+
+            // options are invalid, use the extents
+            if (optMin > optMax) {
+                return extents;
+            }
+
+            return [optMin, optMax];
+        }
     };
 
     _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
@@ -1855,8 +1919,8 @@ Contour.version = '0.9.104';
     SmartYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
         axis: function () {
             var options = this.options.yAxis;
-            var domain = this._scale.domain();
-            var tickValues = _extractYTickValues(domain, options.min, options.max, this.yMin, this.yMax);
+            this.domain = this._scale.domain();
+            var tickValues = _extractYTickValues(this.domain, options.min, options.max, this.yMin, this.yMax);
             var numTicks = this.numTicks();
             var axis = _.nw.YAxis.prototype.axis.call(this);
             return axis.ticks(numTicks)
@@ -2231,10 +2295,11 @@ Contour.version = '0.9.104';
     var _xExtent = _.partialRight(_extent, 'x');
     var _yExtent = _.partialRight(_extent, 'y');
 
-    function VisInstanceContainer(data, options, type, renderer, context) {
+    function VisInstanceContainer(data, categories, options, type, renderer, context) {
         this.type = type;
         this.renderer = renderer;
         this.ctx = context;
+        this.categories = categories;
 
         this.init(data, options);
     }
@@ -2254,7 +2319,7 @@ Contour.version = '0.9.104';
         },
 
         setData: function (data) {
-            this.data = _.nw.normalizeSeries(data);
+            this.data = _.nw.normalizeSeries(data, this.categories);
             this._updateDomain();
 
             return this.ctx;
@@ -2411,14 +2476,15 @@ Contour.version = '0.9.104';
 })();
 
 (function () {
-
+    /*jshint eqnull:true*/
     var defaults = {
         bar: {
             barClass: null,
             style: null,
-            barClass: null,
             stacked: false,
-            groupPadding: 2      // two px between same group bars
+            groupPadding: 2,      // two px between same group bars
+            barWidth: function() { return this.rangeBand; },
+            offset: function() { return 0; }
         }
     };
 
@@ -2426,11 +2492,13 @@ Contour.version = '0.9.104';
         this.checkDependencies(['cartesian', 'horizontal']);
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var _this = this;
-        var rectClass = options.bar.barClass;
-        var style = options.bar.style;
+        var opt = options.bar;
+        var rectClass = opt.barClass;
+        var style = opt.style;
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
-        var rangeBand = this.rangeBand;
+        var chartOffset = _.nw.getValue(opt.offset, 0, this);
+        var rangeBand = _.nw.getValue(opt.barWidth, this.rangeBand, this);
         var stack = _.nw.stackLayout();
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
@@ -2472,7 +2540,7 @@ Contour.version = '0.9.104';
 
         function stacked(bar, enter) {
             bar
-                .attr('y', function (d) { return x(d.x); })
+                .attr('y', function (d) { return x(d.x) + chartOffset; })
                 .attr('height', rangeBand);
 
             if (enter) {
@@ -2492,7 +2560,7 @@ Contour.version = '0.9.104';
             var height = function () { return rangeBand / numSeries - options.bar.groupPadding + 0.5; };
             var offset = function (d, i) { return rangeBand / numSeries * i + 0.5; };
 
-            bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })
+            bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
                 .attr('x', y(0))
                 .attr('height', height);
 
@@ -2724,7 +2792,7 @@ Contour.version = '0.9.104';
 
     function Legend(data, layer, options) {
         this.container.selectAll('.contour-legend').remove();
-        var legend = this.container.selectAll('.contour-legend').data(data);
+        var legend = this.container.selectAll('.contour-legend').data([null]);
         var em = _.nw.textBounds('series', '.contour-legend.contour-legend-entry');
         var count = data.length;
         var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
@@ -3003,7 +3071,7 @@ Contour.version = '0.9.104';
                 .data(data, function (d) { return d.name; });
 
             markers.enter().append('g')
-                .attr('class', function (d, i) { return 'tooltip-trackers s-' + (i+1); });
+                .attr('class', seriesClassName('tooltip-trackers'));
 
             markers.exit().remove();
 
