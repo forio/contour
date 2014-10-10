@@ -17,6 +17,8 @@
             // type of axis {ordinal|linear|time}
             type: null, // defaults is ordinal (needs to be null here so overrides work)
             categories: undefined,
+            max: undefined,
+            min: undefined,
             innerTickSize: 6,
             outerTickSize: 0,
             tickPadding: 6,
