@@ -2,9 +2,9 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-The approximate number of tick marks to display on the axis (excluding ends of the domain). 
+The approximate number of tick marks to display on the axis (excluding ends of the range). 
 
-Tick marks are evenly spaced along the domain at multiples of 1, 2, 5, 10, or 10x. Even spacing is given priority over an exact match of the `ticks` value.
+Tick marks are evenly spaced along the range at multiples of 1, 2, 5, 10, or 10x. Even spacing is given priority over an exact match of the `ticks` value.
 
 **Example:**
 
