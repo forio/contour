@@ -1,0 +1,6 @@
+---
+ name: config.bar.offset
+ authors:
+   - Forio
+ normalize_css: no
+ ...
