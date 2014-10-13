@@ -2,7 +2,7 @@
 
     var root = this;
 
-    var defaults = {
+    var defaultParams = {
         type: 'image/png', // the mime type of the image; see http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support
         fileName: 'contour.png', // the fileName for the `download()`
         target: undefined, // a selector for the container in which to `place()` the image; for example '#image'
@@ -321,7 +321,7 @@
 
             // merge configuration options with defaults
             options = options || {};
-            _.defaults(options, defaults);
+            _.defaults(options, defaultParams);
 
             var svgNode = container.select('svg').node();
             // get bounds from original SVG, and proportion them based on specified options
