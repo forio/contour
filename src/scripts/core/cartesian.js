@@ -18,7 +18,7 @@
             type: null, // default is linear in line.js (needs to be null here so overrides work)
             categories: undefined,
             max: undefined,
-            min: undefined, 
+            min: undefined,
             innerTickSize: 6,
             outerTickSize: 0,
             tickPadding: 6,
