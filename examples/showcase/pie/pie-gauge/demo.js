@@ -5,23 +5,23 @@ $(function () {
     Contour.export('donutTextOneValue', function (data, layer, options) {
 
         // This visualization is only for single-element gauges, that is,
-        // donut (pie) charts with one data series, one value visible, and the remainder dimed out.
+        // donut (pie) charts with one data series, one value visible, and the remainder dimmed out.
         // So we can assume that there are only two elements in the data series.
         var visibleIndex = data[0].data[0].y < data[0].data[1].y ? 1 : 0;
-        var posibleRadius = options.chart.plotHeight / 2;
-        var center = (options.pie.outerRadius || posibleRadius);
+        var centerX = options.chart.plotWidth / 2;
+        var centerY = options.chart.plotHeight / 2;
 
         layer.append('text')
             .attr('class', 'center-text')
-            .attr('x', center)
-            .attr('y', center)
+            .attr('x', centerX)
+            .attr('y', centerY)
             .attr('dy', '.3em')
             .text(formatter(data[0].data[visibleIndex].y));
 
         layer.append('text')
             .attr('class', 'center-label')
-            .attr('x', center)
-            .attr('y', center)
+            .attr('x', centerX)
+            .attr('y', centerY)
             .attr('dy', '2.3em')
             .text('Growth Rate');
     });
