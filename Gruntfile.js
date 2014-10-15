@@ -105,9 +105,7 @@ module.exports = function (grunt) {
         },
         uglify: {
             options: {
-                sourceMap: function (fileName) {
-                    return fileName.replace(/\.js$/, '.map');
-                },
+                sourceMap: 'contour.min.map',
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
                         '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
