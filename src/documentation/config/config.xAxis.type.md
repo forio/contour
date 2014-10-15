@@ -1,7 +1,6 @@
 #### **type** : {<%= type %>}
 
-*default: linear* 
-<!-- default is null in cartesian.js, linear in line.js -->
+<% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
 How the xAxis should be scaled. The available options are:
 
@@ -23,7 +22,7 @@ How the xAxis should be scaled. The available options are:
 
 **Notes:**
 
-* The `type` defaults to `linear` **unless**:
+* The `type` defaults to `linear` for [`line` charts](#config_config.line), [`area` charts](#config_config.area), and [`scatter` plots](#config_config.scatter) **unless**:
 
 	* your data is in the JavaScript [Date](http://www.w3schools.com/jsref/jsref_obj_date.asp) format, in which case the `type` defaults to `time`, or
 	* your `xAxis` has a [`categories`](#config_config.xAxis.categories) property set.
@@ -41,6 +40,7 @@ How the xAxis should be scaled. The available options are:
 	        { x: new Date('4/30/2000'), y: 2}
 	    ];
 
+* The `type` defaults to `ordinal` for [`column` charts](#config_config.column) and [`bar` charts](#config_config.bar).
 
 <% if(notes) { %><%= notes %><% } %>
 
