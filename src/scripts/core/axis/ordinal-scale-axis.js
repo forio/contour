@@ -117,7 +117,7 @@
         _range: function () {
             var range = this.options.chart.rotatedFrame ? [this.options.chart.plotHeight, 0] : [0, this.options.chart.plotWidth];
             return this.isCategorized ?
-                this._scale.rangeRoundBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
+                this._scale.rangeBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
                 this._scale.rangePoints(range);
         }
     };
