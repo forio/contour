@@ -2,7 +2,7 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-The maximum value for the domain of the yAxis.
+The maximum value for the range of the yAxis.
 
 **Example:**
 
@@ -18,7 +18,7 @@ The maximum value for the domain of the yAxis.
 
 **Notes:**
 
-If the maximum value in your data series is greater than `max`, not all of your visualizaiton will be visible in your Contour instance.
+If the maximum value in your data series is greater than `max`, not all of your visualization will be visible in your Contour instance.
 
 See also: [`smartAxis`](#config_config.yAxis.smartAxis), [`min`](#config_config.yAxis.min), [`nicing`](#config_config.yAxis.nicing), [`tickValues`](#config_config.yAxis.tickValues), [`ticks`](#config_config.yAxis.ticks).
 

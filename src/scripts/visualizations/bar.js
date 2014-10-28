@@ -109,10 +109,10 @@
     * ### Example:
     *
     *     new Contour({el: '.myChart'})
-    *           .cartesian()
-    *           .horizontal()
-    *           .bar([1,2,3,4])
-    *           .render();
+    *       .cartesian()
+    *       .horizontal()
+    *       .bar([1,2,3,4])
+    *       .render();
     *
     * @name bar(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.

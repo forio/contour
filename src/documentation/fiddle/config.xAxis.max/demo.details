@@ -1,0 +1,6 @@
+---
+ name: config.xAxis.max
+ authors:
+   - Forio
+ normalize_css: no
+ ...

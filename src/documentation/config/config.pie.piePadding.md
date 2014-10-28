@@ -13,7 +13,7 @@ Using `piePadding` specifies the same distance for all between the pie and the c
         pie: { piePadding: 100 }
     })
     .pie(data)
-    .render()
+    .render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 

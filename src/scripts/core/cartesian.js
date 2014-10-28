@@ -15,7 +15,7 @@
 
         xAxis: {
             // type of axis {ordinal|linear|time}
-            type: null, // defaults is ordinal (needs to be null here so overrides work)
+            type: null, // default is linear in line.js (needs to be null here so overrides work)
             categories: undefined,
             max: undefined,
             min: undefined,

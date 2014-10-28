@@ -3,7 +3,7 @@ $(function () {
     Contour.export('pieName', function (data, layer, options) {
 
         var w = options.chart.plotWidth;
-        var padding = options.pie.piePadding - 10;
+        var padding = options.pie.piePadding.left - 10;
         var paddings = (w / data.length / 2) - padding;
         var pieRadius = (w - paddings) / data.length;
         layer.selectAll('.pie-name')
@@ -11,10 +11,10 @@ $(function () {
             .enter().append('text')
                 .attr('class', 'pie-name')
                 .attr('x', function (d, i) {
-                    return options.pie.piePadding * (i + 1) + (pieRadius ) * i + pieRadius / 2;
+                    return ((options.pie.piePadding.left + 10) * (i + 1)) + (pieRadius * i) + (pieRadius / 2);
                 })
                 .attr('text-anchor', 'middle')
-                .attr('y', (options.pie.piePadding + pieRadius / 2 + 5))
+                .attr('y', (options.pie.piePadding.left + pieRadius / 2 + options.pie.piePadding.top))
                 .text(function (d) { return d.name; });
     });
 
@@ -35,7 +35,7 @@ $(function () {
                 height: 230
             },
             pie: {
-                piePadding: 15,
+                piePadding: { left: 15, top: 10 },
                 innerRadius: 50
             },
             legend: {

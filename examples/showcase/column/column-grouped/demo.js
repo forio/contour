@@ -12,7 +12,8 @@ $(function () {
                 categories: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
             },
             yAxis: {
-                title: 'Sales'
+                title: 'Sales',
+                ticks: 7
             },
             legend: {
                 vAlign: 'bottom',

@@ -16,5 +16,7 @@ Turn the area chart into a horizon chart, setting the horizon at `areaBase`.
     .area(data)
     .render(); 
  
+ *[Try it.](<%= jsFiddleLink %>)*
+ 
 <% if(notes) { %><%= notes %><% } %>
 

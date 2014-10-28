@@ -15,12 +15,8 @@ You can update or extend the classes in this stylesheet, using [CSS](http://en.w
 
 * **to change the color of a visualization**, update the `fill` for `contour-chart .series .{visualization}`. You can see an example of this in the [Styled Bar Chart](gallery.html#/chart/bar/bar-styled) in the Gallery, where the `contour-chart .series .bar` is updated.
 
+* **to change the visibility of a specific series**, update the properties for the series either by number (`.s-1`, `.s-2`, etc.) or by name. You can see an example of this in the [Basic Line Chart, Multiple Series](gallery.html#/chart/line/line-multi-basic), where the `.line-chart-markers` are set based on series number. Note that this CSS could be rewritten to use the names of the series if desired &mdash; `Math`, `Economics`, `History`, as listed in the JavaScript of that example. (You can update the `tooltip-trackers` by name as well.)
+
 * **to change the entire color palette**, you can use the `d3.classed` call when you are creating your Contour instance, e.g. `d3.selectAll('series').classed('palette-6', true)`, as shown in the [Pie Chart Series](gallery.html#/chart/pie/pie-series) in the Gallery.
-
-
-
-
-
-
 
 

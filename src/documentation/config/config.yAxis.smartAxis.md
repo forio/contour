@@ -31,7 +31,7 @@ When `smartAxis` is `false`, tick marks are drawn for:
 
 The `smartAxis` configuration option has the highest precedence in specifying locations of tick marks. If `smartAxis` is `true`, both [`tickValues`](#config_config.yAxis.tickValues) and [`ticks`](#config_config.yAxis.ticks) options are ignored.
 
-To remove the tick mark at the end of the domain, set [`outerTickSize`](#config_config.yAxis.outerTickSize) to `0`.
+To remove the tick mark at the end of the range, set [`outerTickSize`](#config_config.yAxis.outerTickSize) to `0`.
 
 See also: [`min`](#config_config.yAxis.min), [`max`](#config_config.yAxis.max), [`nicing`](#config_config.yAxis.nicing), [`tickValues`](#config_config.yAxis.tickValues), [`ticks`](#config_config.yAxis.ticks).
 
