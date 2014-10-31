@@ -1,43 +1,40 @@
-  * Added ability to pass parameters to an exposed constructor function. This allows to receive parameters that are specific to the exposed functionality and not relevant to the global config object.
-  * Added polyfill for _.noop so we can support lodash 1.0
-  * Implemented barWidth and offset of for bar charts to be consistent with column charts
-  * Clean up
-  * Added series name as a class for tooltip-trackers group in line charts
-  * Implemented reduction of ticks for ordinal axis if the labels don't fit
-  * Fixed and added unit tests for y axis
-  * Added edge case for y axis ticks when min > max
-  * Added unit tests for yAxis ticks
-  * Fixed case for when |max| - |min| < 1 for generating yAxis ticks
-  * Prevent legend from rendering multiple times
-  * Fixed tests for new yAxis ticks functionality
-  * Fix edge case for x linear axis
-  * Fixed tests
-  * Fixed smartYAxis functionality due to changes in regular yAxis
-  * Fixed re-normalizing of data when is categorical and .setData is called
-  * Merge pull request #171 from forio/issue-164
-  * Fixed how xDomain is calculated from the data/min/max to be consistent with different options
-  * Release 0.9.104
-  * Fixed grunt to use correct version file
-  * Build 0.9.103
-  * Fix yAxis ticks for decimal places that give floating point errors when subtracted.
-  * fixed y axis ticks for case when min is negative decimal and less than max
-  * build
-  * Fixed issue with min max calculation for negative and small numbers
-  * Fixed bug with niceMinMax when range has biiig negative numbers
-  * Reset yAxis when new dataset is passed in to force recalculation of mins and maxes
-  * Build
-  * Added option to not anchor the y Axis ticks at 0 (yAxis.zeroAnchor)
-  * Fixed y Axis ticks calculations for domains with negative numbers
-  * build
-  * Change behavior of default tick values to always render 5 labels and covert top and bottom of extended domain
-  * make default min and max to be 'nice' numbers for the axis
-  * fix issue #164 and add fiddle
-  * bump version
-  * Merge pull request #161 from dwick/master
-  * bower support
-  * build
-  * Make sure we update the categories array when new data arrives, so ordinal xAxis work as expected with dynamic data
-  * reverted tooltip changes to 0.9.99
-  * compile
-  * pass all matching-x points into the tooltip formatter callback
-  * updated version file to 0.9.99
+  * Merge pull request #187 from forio/release-0.9.105-docs
+  * Revert ".chart --> .contour-chart for fiddle samples"
+  * Changed nicing default to false
+  * Change to use rangeBands instead of rangeRoundBands for ordinal scales
+  * Updated version in bower.json
+  * .chart --> .contour-chart for fiddle samples
+  * update based on pr feedback
+  * Fixed name of .map file
+  * fix merge conflict: remove extra space at end of line
+  * fix examples based on breaking changes in 0.9.105
+  * fix for xAxis.labels.formatter fiddle
+  * update pie-donut because of 0.9.105 -- need better centering
+  * fix areaBase fiddel
+  * add back in demo.html
+  * note that we support bower now
+  * updates because #151: need to hard code default in config.md
+  * add additional styling example, because of #173
+  * new properties for 0.9.105: bar.offset
+  * new properties for 0.9.105: bar.barWidth
+  * Merge pull request #177 from forio/xaxis-min-max
+  * Merge branch 'master' into release-0.9.105-docs
+  * new properties for 0.9.105: xAxis.max
+  * new properties for 0.9.105: xAxis.min
+  * clean up use of domain vs range
+  * fix spelling error in "visualization"
+  * same change as /pull/177
+  * add xAxis.min and .max defaults
+  * new properties for 0.9.105: zeroAnchor
+  * new properties for 0.9.105: line.stacked
+  * new properties for 0.9.105: pie.style
+  * new properties for 0.9.105: sliceClass
+  * new properties for 0.9.105: column.style
+  * new properties for 0.9.105: columnClass
+  * new properties for 0.9.105: bar.style
+  * new properties for 0.9.105: barClass
+  * typo fix
+  * add fiddle link to areaBase, since that's available now
+  * make sure the fiddle demos are all in repo - revert part of gitignore change
+  * edits and sample code updates because #135, #151, #154
+  * formatting fix

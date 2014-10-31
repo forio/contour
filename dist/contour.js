@@ -998,8 +998,10 @@
 
         xAxis: {
             // type of axis {ordinal|linear|time}
-            type: null, // defaults is ordinal (needs to be null here so overrides work)
+            type: null, // default is linear in line.js (needs to be null here so overrides work)
             categories: undefined,
+            max: undefined,
+            min: undefined,
             innerTickSize: 6,
             outerTickSize: 0,
             tickPadding: 6,
@@ -1035,7 +1037,7 @@
             ticks: undefined,
             title: undefined,
             titlePadding: 4,
-            nicing: true,
+            nicing: false,
             orient: 'left',
             labels: {
                 // top, middle, bottom
@@ -1527,7 +1529,7 @@
 
 })();
 
-Contour.version = '0.9.105';
+Contour.version = '0.9.106';
 (function () {
 
     var helpers = {
@@ -1876,7 +1878,7 @@ Contour.version = '0.9.105';
         _range: function () {
             var range = this.options.chart.rotatedFrame ? [this.options.chart.plotHeight, 0] : [0, this.options.chart.plotWidth];
             return this.isCategorized ?
-                this._scale.rangeRoundBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
+                this._scale.rangeBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
                 this._scale.rangePoints(range);
         }
     };
@@ -2586,10 +2588,10 @@ Contour.version = '0.9.105';
     * ### Example:
     *
     *     new Contour({el: '.myChart'})
-    *           .cartesian()
-    *           .horizontal()
-    *           .bar([1,2,3,4])
-    *           .render();
+    *       .cartesian()
+    *       .horizontal()
+    *       .bar([1,2,3,4])
+    *       .render();
     *
     * @name bar(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
