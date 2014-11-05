@@ -22,15 +22,15 @@
         var dataSets = stack(data);
         var min = {};
         var max = {};
-
+        var ext = [];
         _.each(dataSets, function (set) {
-            _.each(set.data, function (d) {
-                if (min[d.x] == null || min[d.x] > d.y0) min[d.x] = d.y0;
-                if (max[d.x] == null || max[d.x] < d.y0 + d.y) max[d.x] = d.y0 + d.y;
+            _.each(set.data, function (d, i) {
+                var cur = ext[i] || 0;
+                ext[i] = cur + d.y;
             });
         });
 
-        return [_.min(min), _.max(max)];
+        return [_.min(ext), _.max(ext)];
     };
 
     var _xExtent = _.partialRight(_extent, 'x');
@@ -70,7 +70,7 @@
             var opt = {};
             opt[this.type] = options || {};
             this.options = {};
-            this.options = _.merge({}, this.renderer.defaults || {}, opt);
+            this.options = _.merge({}, (this.renderer || {}).defaults || {}, opt);
 
             return this.ctx;
         },
