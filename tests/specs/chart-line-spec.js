@@ -147,8 +147,16 @@ describe('Visualizations', function () {
                         expect(groups.eq(2).attr('class')).toContain('tooltip-trackers');
                     });
 
+                    // to hide some markers with their trackers, we need to be able to select
+                    // trackers for a specific series (issue #173)
+                    it('should append the series name and number to the tooltip tracker class', function () {
+                        var g = $el.find('g[vis-id="1"] .tooltip-trackers');
+                        var seriesClasses = ['s-1', 'series', '1'];
+                        expect(_.all(seriesClasses.map(_.partial(_.contains, g[0].classList)))).toBe(true);
+                    });
 
-                })
+
+                });
 
             });
 

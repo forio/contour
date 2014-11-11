@@ -1,5 +1,5 @@
 (function () {
-
+    /*jshint eqnull:true */
     var defaults = {
         chart: {
             gridlines: 'none',
@@ -15,8 +15,10 @@
 
         xAxis: {
             // type of axis {ordinal|linear|time}
-            type: null, // defaults is ordinal (needs to be null here so overrides work)
+            type: null, // default is linear in line.js (needs to be null here so overrides work)
             categories: undefined,
+            max: undefined,
+            min: undefined,
             innerTickSize: 6,
             outerTickSize: 0,
             tickPadding: 6,
@@ -43,6 +45,7 @@
             // type: 'smart',
             min: undefined,
             max: undefined,
+            zeroAnchor: true,
             smartAxis: false,
             innerTickSize: 6,
             outerTickSize: 6,
@@ -51,7 +54,7 @@
             ticks: undefined,
             title: undefined,
             titlePadding: 4,
-            nicing: true,
+            nicing: false,
             orient: 'left',
             labels: {
                 // top, middle, bottom
@@ -110,8 +113,9 @@
             yDomain: [],
 
             _getYScaledDomain: function () {
-                var absMin = this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
-                return _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min || absMin, this.options.yAxis.max);
+                var absMin = this.options.yAxis.zeroAnchor && this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
+                var min = this.options.yAxis.min != null ? this.options.yAxis.min : absMin;
+                return _.nw.extractScaleDomain(this.yDomain, min, this.options.yAxis.max, this.options.yAxis.ticks);
             },
 
             /*jshint eqnull:true */
@@ -191,7 +195,7 @@
                 var yScaleDomain = this._getYScaledDomain();
 
                 if(!this.yScale) {
-                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
+                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yDomain);
                     this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                 } else {
                     this.yScaleGenerator.update(yScaleDomain, this.dataSrc);
@@ -517,6 +521,8 @@
 
                 this._yAxis = null;
                 this._xAxis = null;
+
+                this.yScale = null;
             },
 
             getExtents: function (axis) {

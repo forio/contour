@@ -183,7 +183,7 @@
                 .data(data, function (d) { return d.name; });
 
             markers.enter().append('g')
-                .attr('class', function (d, i) { return 'tooltip-trackers s-' + (i+1); });
+                .attr('class', seriesClassName('tooltip-trackers'));
 
             markers.exit().remove();
 

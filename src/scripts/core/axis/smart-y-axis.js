@@ -32,8 +32,8 @@
     SmartYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
         axis: function () {
             var options = this.options.yAxis;
-            var domain = this._scale.domain();
-            var tickValues = _extractYTickValues(domain, options.min, options.max, this.yMin, this.yMax);
+            this.domain = this._scale.domain();
+            var tickValues = _extractYTickValues(this.domain, options.min, options.max, this.yMin, this.yMax);
             var numTicks = this.numTicks();
             var axis = _.nw.YAxis.prototype.axis.call(this);
             return axis.ticks(numTicks)

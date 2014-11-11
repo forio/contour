@@ -1,5 +1,13 @@
 (function () {
 
+    var sum = _.partialRight(_.reduce, function (acc, d) { return acc += d; }, 0);
+
+    function calcLabelsWidths(ticks) {
+        return ticks.map(String).map(function (d) {
+            return _.nw.textBounds(d, '.x.axis text').width;
+        });
+    }
+
     function LinearScale(data, options) {
         this.options = options;
         this.data = data;
@@ -38,6 +46,13 @@
                     return _.isDate(d) ? d.getDate() : formatLabel(d);
                 });
 
+            var ticks = axis.scale().ticks();
+            var tickWidths = calcLabelsWidths(ticks.map(formatLabel));
+            var availableWidthForLabels = this.options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2;
+            var numAutoTicks = ticks.length;
+            var axisLabelsWidth = sum(tickWidths);
+            var labelsFit = axisLabelsWidth <= availableWidthForLabels;
+
             if (options.firstAndLast) {
                 // show only first and last tick
                 axis.tickValues(_.nw.firstAndLast(this._domain));
@@ -45,6 +60,13 @@
                 axis.tickValues(options.tickValues);
             } else if (options.ticks != null) {
                 axis.ticks(options.ticks);
+            } else if (!labelsFit) {
+                while(axisLabelsWidth > availableWidthForLabels && ticks.length !== 1) {
+                    ticks = axis.scale().ticks(Math.floor(--numAutoTicks));
+                    axisLabelsWidth = sum(calcLabelsWidths(ticks.map(formatLabel)));
+                }
+
+                axis.ticks(ticks.length);
             }
 
             return axis;
@@ -73,15 +95,27 @@
             /*jshint eqnull: true*/
             var optMin = this.options.xAxis.min;
             var optMax = this.options.xAxis.max;
-            var min = optMin != null ? this.options.xAxis.min : d3.min(domain);
-            var max = optMax != null ? this.options.xAxis.max : d3.max(domain);
+            var extents = d3.extent(domain);
 
-            if(optMin != null && optMax != null && optMin > optMax) {
-                return d3.extent(domain);
+            if (optMin == null && optMax == null) {
+                return extents;
             }
 
-            return [min, max];
-        },
+            if (optMin == null) {
+                return [Math.min(extents[0], optMax), optMax];
+            }
+
+            if (optMax == null) {
+                return [optMin, Math.max(extents[1], optMin)];
+            }
+
+            // options are invalid, use the extents
+            if (optMin > optMax) {
+                return extents;
+            }
+
+            return [optMin, optMax];
+        }
     };
 
     _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });

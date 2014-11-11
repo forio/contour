@@ -12,7 +12,7 @@ $(function () {
             el: '.pie-donut',
             pie: {
                 innerRadius: 80,
-                piePadding: 20
+                piePadding: { left: 60 }
             },
             tooltip: {
                 formatter: function (d) {

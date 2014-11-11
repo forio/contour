@@ -47,7 +47,7 @@ describe('Column chart', function () {
                 }).column(data).render();
 
                 var rects = $el.find('rect.column');
-                var x1 = nw.xScale(0) + offset + 0.5;
+                var x1 = +(nw.xScale(0) + offset).toFixed(1);
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });
@@ -96,7 +96,7 @@ describe('Column chart', function () {
                 }).column(data).render();
 
                 var rects = $el.find('rect.column');
-                var x1 = nw.xScale(0) + offset + (0.5 * 2); // .5 fixel extra per column
+                var x1 = +(nw.xScale(0) + offset + 0.5).toFixed(1);
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });

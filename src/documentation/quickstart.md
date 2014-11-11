@@ -11,7 +11,7 @@ Forio Contour requires the following files:
 * `lodash.js`: utilities and performance enhancements used by Contour
 * `contour.min.js`: the Contour visualization library
 
-See the [Get Contour](get_contour.html) page for information on how to download or reference these libraries.
+See the [Get Contour](get_contour.html) page for information on how to download or reference these libraries. (Contour is also available from [GitHub](https://github.com/forio/contour) and [bower](http://bower.io).)
 
 Once you've downloaded Forio Contour, you can load it from your own domain. In the example, `yourPath` is the location on your server, for example `/vendor/forio/js/`.
 

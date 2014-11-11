@@ -254,7 +254,11 @@ describe('Cartesian frame', function () {
             instance = null;
         });
 
-        it('should render horizontal gridLines width gridlines turned on', function () {
+        var getNumTicks = function () {
+            return $el.find('.y.axis .tick').length;
+        };
+
+        it('should render horizontal gridLines when gridlines are turned on', function () {
             createinstance({
                 chart: {
                     gridlines: 'horizontal'
@@ -268,7 +272,7 @@ describe('Cartesian frame', function () {
 
             // should render 1 horizontal line per tick (except 0 wich is the x axis)
             // for data 10,20,30 we get ticks every 5 so 5,10,15,20,25,30
-            expect($el.find('.y.axis .grid-line').length).toBe(6);
+            expect($el.find('.y.axis .grid-line').length).toBe(getNumTicks() - 1);
         });
 
         it('should render only gridlines at ticks for smart axis', function () {
@@ -284,7 +288,7 @@ describe('Cartesian frame', function () {
 
             instance.render();
 
-            expect($el.find('.y.axis .grid-line').length).toBe(6);
+            expect($el.find('.y.axis .grid-line').length).toBe(getNumTicks() - 1);
 
         });
 
