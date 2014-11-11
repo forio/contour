@@ -576,6 +576,11 @@
     *             fileName: 'contour.png'
     *         });
     *
+    * ###External dependencies:
+    *
+    *     IE9-11 and Safari require CanVG ("canned veggies") which is automatically
+    *     downloaded from http://canvg.googlecode.com/svn/trunk/ if necesary
+    *
     * @name exportable
     */
     Contour.expose('exportable', exportable);
