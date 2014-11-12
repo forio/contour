@@ -240,6 +240,9 @@
                 // clone nodes and apply styles directly to each node
                 cloneNodes(svgNode, nodeClone);
 
+                // clone legend DIV as SVG
+                cloneLegendDiv(svgNode, nodeClone);
+
                 svgCloned(d3.select(nodeClone).select('svg').node(), destroyIsolatedNode);
             });
 
@@ -298,6 +301,55 @@
                 iframeDocument.write('<!DOCTYPE html>');
                 iframeDocument.write('<html><head></head><body></body></html>');
                 iframeDocument.close();
+            }
+
+            function cloneLegendDiv(sourceNode, targetNode) {
+                var containerDiv = d3.select(sourceNode.parentElement).select('div.contour-legend');
+                if (containerDiv.empty()) return;
+
+                var containerDivNode = containerDiv.node();
+                var containerDivStyle = root.getComputedStyle(containerDivNode);
+
+                var containerSvg = d3.select(targetNode).select('svg').append('g')
+                    .attr('transform', 'translate(' + (containerDivNode.offsetLeft + containerDivNode.clientLeft - contourOptions.chart.plotLeft) +
+                        ',' + (containerDivNode.offsetTop + containerDivNode.clientTop - contourOptions.chart.plotTop) + ')')
+                    .attr('class', containerDivNode.className);
+
+                containerSvg.append('rect')
+                    .attr('width', containerDivNode.clientWidth)
+                    .attr('height', containerDivNode.clientHeight)
+                    .attr('rx', containerDivStyle.borderTopLeftRadius)
+                    .attr('ry', containerDivStyle.borderTopLeftRadius);
+
+                var entriesDivs = containerDiv.selectAll('.contour-legend-entry');
+
+                _.each(entriesDivs[0], function (entry) {
+                    var enter = containerSvg.append('g')
+                        .attr('class', entry.className);
+
+                    entry = d3.select(entry);
+                    var entryDivKeyNode = getEntryDivSubNode('.contour-legend-key');
+                    var entryDivKeyStyle = root.getComputedStyle(entryDivKeyNode);
+                    enter.append('rect')
+                        .attr('x', entryDivKeyNode.offsetLeft)
+                        .attr('y', entryDivKeyNode.offsetTop)
+                        .attr('width', entryDivKeyNode.offsetWidth - 2)
+                        .attr('height', entryDivKeyNode.offsetHeight - 2)
+                        .attr('rx', entryDivKeyStyle.borderTopLeftRadius)
+                        .attr('ry', entryDivKeyStyle.borderTopLeftRadius)
+                        .attr('class', entryDivKeyNode.className);
+
+                    var entryDivSeriesNode = getEntryDivSubNode('.series-name');
+                    enter.append('text')
+                        .attr('x', entryDivSeriesNode.offsetLeft + 1)
+                        .attr('y', entryDivSeriesNode.offsetTop + entryDivSeriesNode.offsetHeight - entryDivSeriesNode.offsetParent.clientTop - 2)
+                        .attr('class', entryDivSeriesNode.className)
+                        .text(entryDivSeriesNode.innerText);
+
+                    function getEntryDivSubNode(selector) {
+                        return entry.select(selector).node();
+                    }
+                });
             }
         }
 
