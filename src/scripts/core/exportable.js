@@ -391,7 +391,7 @@
                     var text = enter.append('text')
                         .attr('x', entryDivSeriesNode.offsetLeft + 1)
                         .attr('y', entryDivSeriesNode.offsetTop + entryDivSeriesNode.offsetHeight - entryDivSeriesNode.offsetParent.clientTop - 2)
-                        .text(entryDivSeriesNode.innerText);
+                        .text(entryDivSeriesNode.textContent);
                     applyDivStylesToSvg(entryDivSeriesNode, text);
 
                     function getEntryDivSubNode(selector) {
