@@ -24,6 +24,7 @@
 
     /**
     * Saves a visualization as an image.
+    * You can either trigger a download of the image or place the image within a container.
     *
     * ###Example:
     *
