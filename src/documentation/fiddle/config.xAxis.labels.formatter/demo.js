@@ -4,7 +4,7 @@ $(function () {
         xAxis: { 
             labels : 
                 { formatter: 
-                    function (datum) { '$' + datum }
+                    function (datum) { return '$' + datum; }
                 }
         },
         yAxis: {min: 10, max: 30}

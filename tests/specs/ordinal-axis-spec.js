@@ -39,11 +39,11 @@ describe('Ordinal xAxis', function () {
 
         var scale = getScale(0, 0);
 
-        expect(scale(0)).toBe(1);
+        expect(scale(0)).toBe(0);
 
         scale = getScale(0, 0.5);
         var width = scale.rangeBand();
-        expect(scale(0)).toBe(width / 2 + 1);
+        expect(scale(0)).toBe(width / 2);
     });
 
     it('should change padding between columns using innerRangePadding', function () {
@@ -63,12 +63,12 @@ describe('Ordinal xAxis', function () {
         var scale = getScale(0, 0);
         // with 0 inner range padding, we should get the second range (scale(1)) at exaclty the width of the columns
         var width = scale.rangeBand();
-        expect(scale(1)).toBe(120);
+        expect(scale(1)).toBe(width);
 
-        scale = getScale(0, 0.5);
+        scale = getScale(0.5, 0);
         width = scale.rangeBand();
-        // with 50% inner padding, we should get the second range (scale(1)) at 1 1/2 the width of the columns
-        expect(scale(1)).toBe(135);
+        // with 50% inner padding, we should get the second range (scale(1)) at 2 * width
+        expect(scale(1)).toBe(width * 2);
     });
 
     describe('with options.xAxis.min set', function () {

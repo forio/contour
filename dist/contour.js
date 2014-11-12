@@ -15,6 +15,14 @@
 
 
 (function () {
+    // cheap trick to add decimals without hitting javascript issues
+    // note that this fails for very large numbers
+    var addFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa + bb) / factor; };
+    var subFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa - bb) / factor; };
+    var mulFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
+    var divFloat = function (a,b) { return +((a / b).toFixed(4)); };
+
+    var noop = function () {};
 
     var generalHelpers = {
         // the src is a function returns the function evaluated
@@ -43,6 +51,23 @@
 
         roundToNearest: function (number, multiple) {
             return Math.ceil(number / multiple) * multiple;
+        },
+
+        roundTo: function (value, digits) {
+            return divFloat(Math.ceil(mulFloat(value, Math.pow(10, digits))), Math.pow(10, digits));
+        },
+
+        trunc: function (value) {
+            return value - value % 1;
+        },
+
+        // only works for integers
+        digits: function (value) {
+            return value === 0 ? 1 : Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1;
+        },
+
+        log10: function (value) {
+            return Math.log(value) / Math.LN10;
         },
 
         clamp: function (val, l, h) {
@@ -103,6 +128,144 @@
             // return _.nw.roundToNearest(val, fac);
         }
     };
+
+    var axisHelpers = {
+        niceMinMax: function (min, max, ticks) {
+            // return divFloat(Math.ceil(mulFloat(value, Math.pow(10, digits))), Math.pow(10, digits));
+
+            var excelRound = function (value, up) {
+
+            };
+
+            var excelRoundUp = function (value, up) {
+                up = up != null ? up : 0;
+                var roundFn = function (v) { return v >= 0 ? Math.ceil(v) : Math.floor(v); };
+                return divFloat(roundFn(value * Math.pow(10, up)), Math.pow(10, up));
+            };
+            var excelMax = function (a, b) { return a >= b ? a : b; };
+            // 2 ticks seem to wokr for min max and passing 5 ticks to d3
+            ticks = ticks || 2;
+
+            var nearestMul = function (val, mul) { return mulFloat(Math.ceil(val / mul), mul); };
+            var digits = function (val) { return Math.floor(Math.log(Math.abs(val)) / Math.LN10) + 1; };
+            var fac = function (digits) { return Math.pow(10, digits); };
+
+            var startAtZero = min === 0 ? 1 : max < 0 ? 1 : 0;
+
+            // check for errors... min cannot be > max
+            if (min > max) {
+                return {
+                    min: min,
+                    max: min,
+                    tickValues: []
+                };
+            }
+
+            if (min === max) {
+                if (max === 0) {
+                    a = -1.0;
+                } else {
+                    a = numberHelpers.log10(Math.abs(max));
+                }
+            } else {
+                if(startAtZero) {
+                    a = numberHelpers.log10(Math.abs(max)) - 0.5;
+                } else {
+                    a = numberHelpers.log10(max-min) - 0.5;
+                }
+            }
+
+            var defaultRounding = -(a >= 0 ? numberHelpers.trunc(a) : Math.floor(a));
+
+            // var defaultRounding = -numberHelpers.trunc((min === max ?
+            //     max === 0 ? -1.0 : numberHelpers.log10(Math.abs(max)) :
+            //     startAtZero ? numberHelpers.log10(Math.abs(max)) : numberHelpers.log10(max-min)
+            // ) - 0.5);
+
+            var negativeMinAmount = excelRoundUp(Math.max(0, -min) / ticks, defaultRounding - 1);
+
+
+
+            var intermediateMax = min === max ? max === 0 ? 1 : excelRoundUp(max + negativeMinAmount, defaultRounding)
+                : excelRoundUp(max + negativeMinAmount,defaultRounding);
+
+            var iMin = 0;
+            if (!startAtZero && min !== max) {
+                var inter = min + negativeMinAmount;
+                var dig = numberHelpers.digits(inter);
+                var roundToDigits;
+                if (inter > 0) {
+                    roundToDigits =  -Math.floor(_.nw.log10(inter));
+                } else {
+                    roundToDigits = (Math.max(1, Math.abs(dig-2)));
+                }
+
+                iMin = -numberHelpers.roundTo(-inter, roundToDigits);
+                iMin = iMin === 0 ? 0 : iMin;
+                // old version:
+                // iMin = excelRound(min + negativeMinAmount, defaultRounding + (min < 0 ? 1 : 0))
+            }
+
+            var intermediateMin = iMin;
+
+            var interval = excelRoundUp(divFloat(subFloat(intermediateMax, intermediateMin),ticks), defaultRounding);
+            var finalMin = subFloat(intermediateMin, negativeMinAmount);
+            var finalMax = addFloat(finalMin, mulFloat(ticks, interval));
+            var ticksValues = [finalMin];
+            var prevTick = finalMin;
+
+            for (var j=1; j < ticks; j++) {
+                var newTick = addFloat(prevTick, interval);
+
+                ticksValues.push(newTick);
+                prevTick = newTick;
+            }
+
+            // total ticks are going to be either ticks or ticks + 1
+            if (Math.abs(prevTick - finalMax) > 1e-10) {
+                ticksValues.push(finalMax);
+            }
+
+            return {
+                min: finalMin,
+                max: finalMax,
+                tickValues: ticksValues
+            };
+
+        },
+
+        /*jshint eqnull:true */
+        extractScaleDomain: function (domain, min, max, ticks) {
+            var dataMin = min != null ? min : _.min(domain);
+            var dataMax = max != null ? max : _.max(domain);
+
+            var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, (ticks || 5));
+
+            return [niceMinMax.min, niceMinMax.max];
+
+            // we want null || undefined for all this comparasons
+            // that == null gives us
+            if (min == null && max == null) {
+                return [niceMinMax.min, niceMinMax.max];
+            }
+
+            if (min == null) {
+                return [Math.min(niceMinMax.min, max), max];
+            }
+
+            if (max == null) {
+                return [min, Math.max(min, niceMinMax.max)];
+            }
+
+            return [min, max];
+        },
+
+        niceTicks: function (min, max, ticks) {
+            var niceMinMax = axisHelpers.niceMinMax(min, max, (ticks||5));
+            return niceMinMax.tickValues;
+        }
+    };
+
 
     var stringHelpers = {
         // measure text inside a Contour chart container
@@ -266,30 +429,6 @@
 
     };
 
-    var ajaxHelpers = {
-        /*jshint eqnull:true */
-        extractScaleDomain: function (domain, min, max) {
-            var dataMax = _.max(domain);
-            var dataMin = _.min(domain);
-
-            // we want null || undefined for all this comparasons
-            // that == null gives us
-            if (min == null && max == null) {
-                return [dataMin, dataMax];
-            }
-
-            if (min == null) {
-                return [Math.min(dataMin, max), max];
-            }
-
-            if (max == null) {
-                return [min, Math.max(min, dataMax)];
-            }
-
-            return [min, max];
-        }
-    };
-
     var domHelpers = {
         selectDom: function (selector) {
             return d3.select(selector)[0][0];
@@ -321,7 +460,11 @@
     };
 
     _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
-        ajaxHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
+        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
+
+    if (!_.noop) {
+        _.noop = noop;
+    }
 
 })();
 
@@ -464,7 +607,7 @@
 
             data = data || lastData || [];
             sortSeries(data);
-            vis = new Contour.VisualizationContainer(_.nw.normalizeSeries(data, categories), opt, ctorName, renderer, this);
+            vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
             this._visualizations.push(vis);
             lastData = data;
             return this;
@@ -478,9 +621,16 @@
     *
     * ###Example:
     *
-    *     Contour.expose("example", {
-    *          // when included in the instance, the function `.myFunction` is available in the visualizations
-    *         myFunction: function(data) { .... }
+    *     Contour.expose("example", function ctor(params) {
+    *         // params will be the parameters paseed into the constructor function
+    *         return {
+    *             // the init function, if provided, will be called automatically upon instanciation of the functionality
+    *             // the options parameter will have the global Contour options object
+    *             init: function (options) { ... }
+    *
+    *             // when included in the instance, the function `.myFunction` is available in the visualizations
+    *             myFunction: function(data) { .... }
+    *         };
     *     });
     *
     *     Contour.export("visualizationThatUsesMyFunction", function(data, layer) {
@@ -489,18 +639,26 @@
     *
     *     // to include the functionality into a specific instance
     *     new Contour(options)
-    *           .example()
+    *           .example({ text: 'someText' })
     *           .visualizationThatUsesMyFunction()
     *           .render()
+    *
+
     */
     Contour.expose = function (ctorName, functionalityConstructor) {
         var ctor = function () {
+            var functionality = functionalityConstructor;
+            if (typeof functionalityConstructor === 'function') {
+                functionality = Object.create(functionalityConstructor);
+                functionality = functionalityConstructor.apply(functionality, arguments);
+            }
 
-            var functionality = typeof functionalityConstructor === 'function' ? new functionalityConstructor() : functionalityConstructor;
             // extend the --instance-- we don't want all charts to be overriden...
             _.extend(this, _.omit(functionality, 'init'));
 
-            if(functionality.init) functionality.init.call(this, this.options);
+            if(functionality.init) {
+                functionality.init.call(this, this.options);
+            }
 
             // keep a list of the included functionality into this instance
             // so we can match and check dependencies
@@ -755,9 +913,10 @@
 
 (function () {
 
-    var YAxis = function (data, options) {
+    var YAxis = function (data, options, domain) {
         this.data = data;
         this.options = options;
+        this.domain = domain;
     };
 
     function setRange(scale, options) {
@@ -768,9 +927,12 @@
 
     YAxis.prototype = {
         axis: function () {
+            /*jshint eqnull:true */
             var options = this.options.yAxis;
-            var domain = this._scale.domain();
-            var tickValues = options.tickValues;
+            var domain = this.domain;
+            var dMin = options.min != null ? options.min : options.zeroAnchor ? Math.min(0, domain[0]) : domain[0];
+            var dMax = options.max != null ? options.max : domain[1];
+            var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks);
             var numTicks = this.numTicks(domain, options.min, options.max);
             var format = options.labels.formatter || d3.format(options.labels.format);
 
@@ -820,7 +982,7 @@
 })();
 
 (function () {
-
+    /*jshint eqnull:true */
     var defaults = {
         chart: {
             gridlines: 'none',
@@ -836,8 +998,10 @@
 
         xAxis: {
             // type of axis {ordinal|linear|time}
-            type: null, // defaults is ordinal (needs to be null here so overrides work)
+            type: null, // default is linear in line.js (needs to be null here so overrides work)
             categories: undefined,
+            max: undefined,
+            min: undefined,
             innerTickSize: 6,
             outerTickSize: 0,
             tickPadding: 6,
@@ -864,6 +1028,7 @@
             // type: 'smart',
             min: undefined,
             max: undefined,
+            zeroAnchor: true,
             smartAxis: false,
             innerTickSize: 6,
             outerTickSize: 6,
@@ -872,7 +1037,7 @@
             ticks: undefined,
             title: undefined,
             titlePadding: 4,
-            nicing: true,
+            nicing: false,
             orient: 'left',
             labels: {
                 // top, middle, bottom
@@ -931,8 +1096,9 @@
             yDomain: [],
 
             _getYScaledDomain: function () {
-                var absMin = this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
-                return _.nw.extractScaleDomain(this.yDomain, this.options.yAxis.min || absMin, this.options.yAxis.max);
+                var absMin = this.options.yAxis.zeroAnchor && this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
+                var min = this.options.yAxis.min != null ? this.options.yAxis.min : absMin;
+                return _.nw.extractScaleDomain(this.yDomain, min, this.options.yAxis.max, this.options.yAxis.ticks);
             },
 
             /*jshint eqnull:true */
@@ -1012,7 +1178,7 @@
                 var yScaleDomain = this._getYScaledDomain();
 
                 if(!this.yScale) {
-                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yMin, this.yMax);
+                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yDomain);
                     this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                 } else {
                     this.yScaleGenerator.update(yScaleDomain, this.dataSrc);
@@ -1338,6 +1504,8 @@
 
                 this._yAxis = null;
                 this._xAxis = null;
+
+                this.yScale = null;
             },
 
             getExtents: function (axis) {
@@ -1361,7 +1529,7 @@
 
 })();
 
-Contour.version = '0.9.99';
+Contour.version = '0.9.107';
 (function () {
 
     var helpers = {
@@ -1388,7 +1556,7 @@ Contour.version = '0.9.99';
             return new _.nw.OrdinalScale(data, options);
         },
 
-        yScaleFactory: function (data, options, yMin, yMax) {
+        yScaleFactory: function (data, options, domain) {
             var map = {
                 'log': _.nw.LogYAxis,
                 'smart': _.nw.SmartYAxis,
@@ -1400,7 +1568,7 @@ Contour.version = '0.9.99';
 
             if(!map[options.yAxis.type]) throw new Error('Unknown axis type: "' + options.yAxis.type + '"');
 
-            return new map[options.yAxis.type](data, options, yMin, yMax);
+            return new map[options.yAxis.type](data, options, domain);
         }
 
     };
@@ -1410,6 +1578,14 @@ Contour.version = '0.9.99';
 })();
 
 (function () {
+
+    var sum = _.partialRight(_.reduce, function (acc, d) { return acc += d; }, 0);
+
+    function calcLabelsWidths(ticks) {
+        return ticks.map(String).map(function (d) {
+            return _.nw.textBounds(d, '.x.axis text').width;
+        });
+    }
 
     function LinearScale(data, options) {
         this.options = options;
@@ -1449,6 +1625,13 @@ Contour.version = '0.9.99';
                     return _.isDate(d) ? d.getDate() : formatLabel(d);
                 });
 
+            var ticks = axis.scale().ticks();
+            var tickWidths = calcLabelsWidths(ticks.map(formatLabel));
+            var availableWidthForLabels = this.options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2;
+            var numAutoTicks = ticks.length;
+            var axisLabelsWidth = sum(tickWidths);
+            var labelsFit = axisLabelsWidth <= availableWidthForLabels;
+
             if (options.firstAndLast) {
                 // show only first and last tick
                 axis.tickValues(_.nw.firstAndLast(this._domain));
@@ -1456,6 +1639,13 @@ Contour.version = '0.9.99';
                 axis.tickValues(options.tickValues);
             } else if (options.ticks != null) {
                 axis.ticks(options.ticks);
+            } else if (!labelsFit) {
+                while(axisLabelsWidth > availableWidthForLabels && ticks.length !== 1) {
+                    ticks = axis.scale().ticks(Math.floor(--numAutoTicks));
+                    axisLabelsWidth = sum(calcLabelsWidths(ticks.map(formatLabel)));
+                }
+
+                axis.ticks(ticks.length);
             }
 
             return axis;
@@ -1484,15 +1674,27 @@ Contour.version = '0.9.99';
             /*jshint eqnull: true*/
             var optMin = this.options.xAxis.min;
             var optMax = this.options.xAxis.max;
-            var min = optMin != null ? this.options.xAxis.min : d3.min(domain);
-            var max = optMax != null ? this.options.xAxis.max : d3.max(domain);
+            var extents = d3.extent(domain);
 
-            if(optMin != null && optMax != null && optMin > optMax) {
-                return d3.extent(domain);
+            if (optMin == null && optMax == null) {
+                return extents;
             }
 
-            return [min, max];
-        },
+            if (optMin == null) {
+                return [Math.min(extents[0], optMax), optMax];
+            }
+
+            if (optMax == null) {
+                return [optMin, Math.max(extents[1], optMin)];
+            }
+
+            // options are invalid, use the extents
+            if (optMin > optMax) {
+                return extents;
+            }
+
+            return [optMin, optMax];
+        }
     };
 
     _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
@@ -1676,7 +1878,7 @@ Contour.version = '0.9.99';
         _range: function () {
             var range = this.options.chart.rotatedFrame ? [this.options.chart.plotHeight, 0] : [0, this.options.chart.plotWidth];
             return this.isCategorized ?
-                this._scale.rangeRoundBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
+                this._scale.rangeBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
                 this._scale.rangePoints(range);
         }
     };
@@ -1719,8 +1921,8 @@ Contour.version = '0.9.99';
     SmartYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
         axis: function () {
             var options = this.options.yAxis;
-            var domain = this._scale.domain();
-            var tickValues = _extractYTickValues(domain, options.min, options.max, this.yMin, this.yMax);
+            this.domain = this._scale.domain();
+            var tickValues = _extractYTickValues(this.domain, options.min, options.max, this.yMin, this.yMax);
             var numTicks = this.numTicks();
             var axis = _.nw.YAxis.prototype.axis.call(this);
             return axis.ticks(numTicks)
@@ -2081,24 +2283,25 @@ Contour.version = '0.9.99';
         var dataSets = stack(data);
         var min = {};
         var max = {};
-
+        var ext = [];
         _.each(dataSets, function (set) {
-            _.each(set.data, function (d) {
-                if (min[d.x] == null || min[d.x] > d.y0) min[d.x] = d.y0;
-                if (max[d.x] == null || max[d.x] < d.y0 + d.y) max[d.x] = d.y0 + d.y;
+            _.each(set.data, function (d, i) {
+                var cur = ext[i] || 0;
+                ext[i] = cur + d.y;
             });
         });
 
-        return [_.min(min), _.max(max)];
+        return [_.min(ext), _.max(ext)];
     };
 
     var _xExtent = _.partialRight(_extent, 'x');
     var _yExtent = _.partialRight(_extent, 'y');
 
-    function VisInstanceContainer(data, options, type, renderer, context) {
+    function VisInstanceContainer(data, categories, options, type, renderer, context) {
         this.type = type;
         this.renderer = renderer;
         this.ctx = context;
+        this.categories = categories;
 
         this.init(data, options);
     }
@@ -2118,7 +2321,7 @@ Contour.version = '0.9.99';
         },
 
         setData: function (data) {
-            this.data = _.nw.normalizeSeries(data);
+            this.data = _.nw.normalizeSeries(data, this.categories);
             this._updateDomain();
 
             return this.ctx;
@@ -2128,7 +2331,7 @@ Contour.version = '0.9.99';
             var opt = {};
             opt[this.type] = options || {};
             this.options = {};
-            this.options = _.merge({}, this.renderer.defaults || {}, opt);
+            this.options = _.merge({}, (this.renderer || {}).defaults || {}, opt);
 
             return this.ctx;
         },
@@ -2275,14 +2478,15 @@ Contour.version = '0.9.99';
 })();
 
 (function () {
-
+    /*jshint eqnull:true*/
     var defaults = {
         bar: {
             barClass: null,
             style: null,
-            barClass: null,
             stacked: false,
-            groupPadding: 2      // two px between same group bars
+            groupPadding: 2,      // two px between same group bars
+            barWidth: function() { return this.rangeBand; },
+            offset: function() { return 0; }
         }
     };
 
@@ -2290,11 +2494,13 @@ Contour.version = '0.9.99';
         this.checkDependencies(['cartesian', 'horizontal']);
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var _this = this;
-        var rectClass = options.bar.barClass;
-        var style = options.bar.style;
+        var opt = options.bar;
+        var rectClass = opt.barClass;
+        var style = opt.style;
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
-        var rangeBand = this.rangeBand;
+        var chartOffset = _.nw.getValue(opt.offset, 0, this);
+        var rangeBand = _.nw.getValue(opt.barWidth, this.rangeBand, this);
         var stack = _.nw.stackLayout();
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
@@ -2336,7 +2542,7 @@ Contour.version = '0.9.99';
 
         function stacked(bar, enter) {
             bar
-                .attr('y', function (d) { return x(d.x); })
+                .attr('y', function (d) { return x(d.x) + chartOffset; })
                 .attr('height', rangeBand);
 
             if (enter) {
@@ -2356,7 +2562,7 @@ Contour.version = '0.9.99';
             var height = function () { return rangeBand / numSeries - options.bar.groupPadding + 0.5; };
             var offset = function (d, i) { return rangeBand / numSeries * i + 0.5; };
 
-            bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j); })
+            bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
                 .attr('x', y(0))
                 .attr('height', height);
 
@@ -2382,10 +2588,10 @@ Contour.version = '0.9.99';
     * ### Example:
     *
     *     new Contour({el: '.myChart'})
-    *           .cartesian()
-    *           .horizontal()
-    *           .bar([1,2,3,4])
-    *           .render();
+    *       .cartesian()
+    *       .horizontal()
+    *       .bar([1,2,3,4])
+    *       .render();
     *
     * @name bar(data, options)
     * @param {object|array} data The _data series_ to be rendered with this visualization. This can be in any of the supported formats.
@@ -2588,7 +2794,7 @@ Contour.version = '0.9.99';
 
     function Legend(data, layer, options) {
         this.container.selectAll('.contour-legend').remove();
-        var legend = this.container.selectAll('.contour-legend').data(data);
+        var legend = this.container.selectAll('.contour-legend').data([null]);
         var em = _.nw.textBounds('series', '.contour-legend.contour-legend-entry');
         var count = data.length;
         var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
@@ -2867,7 +3073,7 @@ Contour.version = '0.9.99';
                 .data(data, function (d) { return d.name; });
 
             markers.enter().append('g')
-                .attr('class', function (d, i) { return 'tooltip-trackers s-' + (i+1); });
+                .attr('class', seriesClassName('tooltip-trackers'));
 
             markers.exit().remove();
 

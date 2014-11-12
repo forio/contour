@@ -2,7 +2,7 @@
 
 <% if(defaultValue !== "[object Object]") { %>*default: <%= defaultValue %>* <% }%>
 
-The minimum value for the domain of the yAxis.
+The minimum value for the range of the yAxis.
 
 **Example:**
 
@@ -12,13 +12,13 @@ The minimum value for the domain of the yAxis.
       })
     .cartesian()
     .line(data)
-    .render()
+    .render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 
 **Notes:**
 
-If the minimum value in your data series is less than `min`, not all of your visualizaiton will be visible in your Contour instance.
+If the minimum value in your data series is less than `min`, not all of your visualization will be visible in your Contour instance.
 
 See also: [`smartAxis`](#config_config.yAxis.smartAxis), [`max`](#config_config.yAxis.max), [`nicing`](#config_config.yAxis.nicing), [`tickValues`](#config_config.yAxis.tickValues), [`ticks`](#config_config.yAxis.ticks).
 

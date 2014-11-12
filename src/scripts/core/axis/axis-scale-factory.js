@@ -24,7 +24,7 @@
             return new _.nw.OrdinalScale(data, options);
         },
 
-        yScaleFactory: function (data, options, yMin, yMax) {
+        yScaleFactory: function (data, options, domain) {
             var map = {
                 'log': _.nw.LogYAxis,
                 'smart': _.nw.SmartYAxis,
@@ -36,7 +36,7 @@
 
             if(!map[options.yAxis.type]) throw new Error('Unknown axis type: "' + options.yAxis.type + '"');
 
-            return new map[options.yAxis.type](data, options, yMin, yMax);
+            return new map[options.yAxis.type](data, options, domain);
         }
 
     };

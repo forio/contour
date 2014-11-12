@@ -1,0 +1,6 @@
+---
+ name: config.bar.barClass
+ authors:
+   - Forio
+ normalize_css: no
+ ...

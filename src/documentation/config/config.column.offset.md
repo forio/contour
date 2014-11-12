@@ -10,6 +10,9 @@ The horiztonal distance between the start of the range band and the start of the
 			el: '.myColumnChart',
 			column: { offset: 15 }
 		})
+		.cartesian()
+		.column(data)
+		.render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 
@@ -24,9 +27,9 @@ For example:
         column: { offset: 15 }
       })
     .cartesian()
-    .column([1, 2, 3, 4], { columnWidth: 10 })
-    .column([5, 6, 7, 8], { columnWidth: 30, offset: 40 })
-    .render()
+    .column(data, { columnWidth: 10 })
+    .column(otherData, { columnWidth: 30, offset: 40 })
+    .render();
 
 
 <% if(notes) { %><%= notes %><% } %>

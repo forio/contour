@@ -1,0 +1,6 @@
+---
+ name: config.bar.barWidth
+ authors:
+   - Forio
+ normalize_css: no
+ ...

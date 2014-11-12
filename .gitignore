@@ -80,4 +80,4 @@ Cakefile
 
 bower_components/
 /documentation/
-demo.html
+examples/demo.html

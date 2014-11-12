@@ -12,6 +12,9 @@ The default value `this.rangeBand` refers to the width when the axis interval fo
 		  el: '.myColumnChart',
 		  column: { columnWidth: 20 }
 		})
+		.cartesian()
+		.column(data)
+		.render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 
@@ -28,7 +31,7 @@ For example:
 	.cartesian()
 	.column(data)
 	.column(otherData, { columnWidth: 40, offset: 30 } )
-	.render()
+	.render();
 
 <% if(notes) { %><%= notes %> <% } %>
 

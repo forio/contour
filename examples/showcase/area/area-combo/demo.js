@@ -50,7 +50,8 @@ $(function () {
                 }
             },
             yAxis: {
-                title: 'Sales (x1,000)'
+                title: 'Sales (x1,000)',
+                ticks: 6
             },
             tooltip: {
                 formatter: function (d) {

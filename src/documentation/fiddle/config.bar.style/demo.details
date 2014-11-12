@@ -1,0 +1,6 @@
+---
+ name: config.bar.style
+ authors:
+   - Forio
+ normalize_css: no
+ ...

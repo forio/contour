@@ -31,7 +31,7 @@ module.exports = function (grunt) {
         },
         tagrelease: '<%= pkg.version %>',
         ver: {
-            files: ['src/scripts/core/version.js']
+            files: ['src/scripts/version.js']
         },
         releaseNotes: {
             files: [],
@@ -106,9 +106,7 @@ module.exports = function (grunt) {
         },
         uglify: {
             options: {
-                sourceMap: function (fileName) {
-                    return fileName.replace(/\.js$/, '.map');
-                },
+                sourceMap: 'contour.min.map',
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
                         '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
@@ -151,7 +149,7 @@ module.exports = function (grunt) {
     // Default task.
     grunt.registerTask('default', ['less:dev', 'watch:less']);
 
-    grunt.registerTask('production', ['concat', 'uglify', 'less:production', 'less:uncompressed', 'releaseNotes']);
+    grunt.registerTask('production', ['ver', 'concat', 'uglify', 'less:production', 'less:uncompressed', 'releaseNotes']);
 
     grunt.registerTask('release', function (type) {
         type = type ? type : 'patch';
