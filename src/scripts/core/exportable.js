@@ -29,11 +29,16 @@
             parentRule: 1
         };
 
+        // contour instance options
+        var contourOptions;
+
 
         // interface
 
         return {
             init: function () {
+                contourOptions = this.options;
+
                 // check browser capabilities and set up necessary shims
                 // only do this once per page load
                 if (!browser.checked) {
