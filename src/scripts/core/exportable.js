@@ -28,6 +28,28 @@
             cssText: 1,
             parentRule: 1
         };
+        // CSS properties shared between HTML and SVG
+        var cssSharedSvg = {
+            font: 1,
+            fontFamily: 1,
+            fontSize: 1,
+            fontSizeAdjust: 1,
+            fontStretch: 1,
+            fontStyle: 1,
+            fontVariant: 1,
+            fontWeight: 1,
+            direction: 1,
+            letterSpacing: 1,
+            textDecoration: 1,
+            unicodeBidi: 1,
+            wordSpacing: 1,
+            clip: 1,
+            cursor: 1,
+            display: 1,
+            overflow: 1,
+            visibility: 1,
+            opacity: 1
+        };
 
 
         // interface
@@ -296,6 +318,41 @@
                 iframeDocument.write('<!DOCTYPE html>');
                 iframeDocument.write('<html><head></head><body></body></html>');
                 iframeDocument.close();
+            }
+
+            function applyDivStylesToSvg(sourceNode, target) {
+                var targetNode = target.node();
+                var sourceStyle = root.getComputedStyle(sourceNode);
+                var targetStyle = root.getComputedStyle(targetNode);
+
+                for (var prop in sourceStyle) {
+                    if (cssSharedSvg[prop]) {
+                        // note that checking for sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in Firefox
+                        if (targetStyle[prop] !== sourceStyle[prop]) {
+                            target.style(prop, sourceStyle[prop]);
+                        }
+                    }
+                }
+
+                // translate DIV styles to SVG attributes and styles
+                switch (targetNode.nodeName) {
+                case 'rect':
+                    target.attr({
+                        'rx': sourceStyle.borderTopLeftRadius,
+                        'ry': sourceStyle.borderTopLeftRadius
+                    });
+                    target.style({
+                        'fill': sourceStyle.backgroundColor,
+                        'stroke': sourceStyle.borderColor,
+                        'stroke-width': sourceStyle.borderWidth
+                    });
+                    break;
+                case 'text':
+                    target.style({
+                        'fill': sourceStyle.color
+                    });
+                    break;
+                }
             }
 
             function cloneLegendDiv(sourceNode, targetNode) {
