@@ -343,8 +343,8 @@
                     });
                     target.style({
                         'fill': sourceStyle.backgroundColor,
-                        'stroke': sourceStyle.borderColor,
-                        'stroke-width': sourceStyle.borderWidth
+                        'stroke': sourceStyle.borderLeftColor,
+                        'stroke-width': sourceStyle.borderLeftWidth
                     });
                     break;
                 case 'text':
