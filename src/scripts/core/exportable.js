@@ -23,8 +23,8 @@
 
 
     var exportable = function () {
-        // css rules to ignore for diff
-        var ignoreDiff = {
+        // CSS properties to ignore for diff
+        var cssIgnoreDiff = {
             cssText: 1,
             parentRule: 1
         };
@@ -248,7 +248,7 @@
                 var targetStyle = root.getComputedStyle(targetNode);
 
                 for (var prop in sourceStyle) {
-                    if (!ignoreDiff[prop] && !isFinite(prop)) {
+                    if (!cssIgnoreDiff[prop] && !isFinite(prop)) {
                         // note that checking for sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in Firefox
                         if (targetStyle[prop] !== sourceStyle[prop]) {
                             targetNode.style[prop] = sourceStyle[prop];
