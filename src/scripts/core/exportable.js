@@ -126,7 +126,7 @@
             },
 
             /**
-            * Saves a visualization as an image.
+            * Saves a visualization as an image, placing it within a container.
             *
             * ###Example:
             *
