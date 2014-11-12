@@ -35,18 +35,4 @@ describe('Legend Visualization', function () {
         expect(entries.eq(1).text()).toBe('name-2');
     });
 
-    it('should create a svg text with the text for each data series', function () {
-        var data = [
-            { name: 'name-1', data: [] },
-            { name: 'name-2', data: [] }
-        ];
-
-        createinstance().nullVis(data).legend(data).render();
-
-        var entries = $el.find('g[vis-type="legend"] g.contour-legend g.contour-legend-entry');
-        expect(entries.length).toBe(2);
-        expect(entries.eq(0).find('text').text()).toBe('name-1');
-        expect(entries.eq(1).find('text').text()).toBe('name-2');
-    });
-
 });
