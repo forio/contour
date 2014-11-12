@@ -22,6 +22,32 @@
     var working = false;
 
 
+    /**
+    * Saves a visualization as an image.
+    *
+    * ###Example:
+    *
+    *     var contour = new Contour(...)
+    *         ...
+    *         .exportable()
+    *         .render();
+    *     document.getElementById('save').onclick = function () {
+    *         contour.download({
+    *             fileName: 'contour.png'
+    *         });
+    *
+    * ###External dependencies:
+    *
+    * IE9-11 and Safari won't safely export a canvas to which an SVG has been
+    * rendered. To get around this limitation in those browsers, we use CanVG
+    * ("canned veggies"), an implementation of SVG written in JavaScript to
+    * render the SVG directly to the canvas. During initialization of the
+    * 'exportable' plugin, CanVG is automatically downloaded from
+    * http://canvg.googlecode.com/svn/trunk/ if the browser fails the test
+    * SVG export.
+    *
+    * @name exportable
+    */
     var exportable = function () {
         // CSS properties to ignore for diff
         var cssIgnoreDiff = {
@@ -667,32 +693,6 @@
     }
 
 
-    /**
-    * Saves a visualization as an image.
-    *
-    * ###Example:
-    *
-    *     var contour = new Contour(...)
-    *         ...
-    *         .exportable()
-    *         .render();
-    *     document.getElementById('save').onclick = function () {
-    *         contour.download({
-    *             fileName: 'contour.png'
-    *         });
-    *
-    * ###External dependencies:
-    *
-    * IE9-11 and Safari won't safely export a canvas to which an SVG has been
-    * rendered. To get around this limitation in those browsers, we use CanVG
-    * ("canned veggies"), an implementation of SVG written in JavaScript to
-    * render the SVG directly to the canvas. During initialization of the
-    * 'exportable' plugin, CanVG is automatically downloaded from
-    * http://canvg.googlecode.com/svn/trunk/ if the browser fails the test
-    * SVG export.
-    *
-    * @name exportable
-    */
     Contour.expose('exportable', exportable);
 
 })();
