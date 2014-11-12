@@ -95,6 +95,12 @@
             /**
             * Saves a visualization as an image, triggering a download.
             *
+            * ###Browser variations:
+            *
+            * - Chrome will save the image.
+            * - Firefox and IE10-11 will display a prompt, then save the image.
+            * - IE9 and Safari will open the image in a new tab, enabling the user to manually save the image.
+            *
             * ###Example:
             *
             *     var contour = new Contour(...)
