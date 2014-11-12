@@ -329,7 +329,7 @@
                     if (cssSharedSvg[prop]) {
                         // note that checking for sourceStyle.hasOwnProperty(prop) eliminates all valid style properties in Firefox
                         if (targetStyle[prop] !== sourceStyle[prop]) {
-                            target.style(prop, sourceStyle[prop]);
+                            targetNode.style[prop] = sourceStyle[prop];
                         }
                     }
                 }
