@@ -142,6 +142,15 @@
             lastData = data;
             return this;
         };
+
+        /* expose the renderer function so it can be reused
+        * by other visualizations though the constructor function
+        * ie. Contour.export('customLineChart', function (data, layer, options) {
+        *       // call the line chart directly
+        *       return this.line.renderer(data, layer, options);
+        *    });
+        */
+        Contour.prototype[ctorName].renderer = renderer;
     };
 
 
