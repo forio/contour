@@ -6,15 +6,11 @@ describe('Legend Visualization', function () {
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
-        // div must have layout in order to build svg legend
-        document.body.appendChild(el);
-    });
-
-    afterEach(function () {
-        document.body.removeChild(el);
     });
 
     function createinstance(options) {
+        $el = $('<div>');
+        el = $el.get(0);
         options = _.extend({ el: el }, options);
 
         instance = new Contour(options).cartesian();
@@ -29,7 +25,7 @@ describe('Legend Visualization', function () {
 
         createinstance().nullVis(data).legend(data).render();
 
-        var entries = $el.find('div.contour-legend .contour-legend-entry');
+        var entries = $el.find('.contour-legend .contour-legend-entry');
         expect(entries.length).toBe(2);
         expect(entries.eq(0).text()).toBe('name-1');
         expect(entries.eq(1).text()).toBe('name-2');
