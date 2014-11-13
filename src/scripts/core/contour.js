@@ -393,9 +393,14 @@
         },
 
         ensureDefaults: function (options, renderer) {
+            if (_.isString(renderer)) {
+                renderer = this[renderer].renderer;
+            }
+
             if (renderer.defaults) {
                 var defaults = renderer.defaults;
                 options = _.defaults(options || {}, defaults);
+                this.options = _.defaults(this.options, defaults);
             }
         },
 
