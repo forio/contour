@@ -392,6 +392,13 @@
             }
         },
 
+        ensureDefaults: function (options, renderer) {
+            if (renderer.defaults) {
+                var defaults = renderer.defaults;
+                options = _.defaults(options || {}, defaults);
+            }
+        },
+
         /**
         * Sets the same data into all visualizations for a Contour instance. Useful for creating interactive
         * visualizations: call after getting the additional data from the user.
