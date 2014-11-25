@@ -142,6 +142,15 @@
             lastData = data;
             return this;
         };
+
+        /* expose the renderer function so it can be reused
+        * by other visualizations though the constructor function
+        * ie. Contour.export('customLineChart', function (data, layer, options) {
+        *       // call the line chart directly
+        *       return this.line.renderer(data, layer, options);
+        *    });
+        */
+        Contour.prototype[ctorName].renderer = renderer;
     };
 
 
@@ -380,6 +389,18 @@
 
             if (missing.length) {
                 throw new Error('ERROR: Missing depeendencies in the Contour instance (ej. new Contour({}).cartesian())\n The missing dependencies are: [' + missing.join(', ') + ']\nGo to http://forio.com/contour/documentation.html#key_concepts for more information');
+            }
+        },
+
+        ensureDefaults: function (options, renderer) {
+            if (_.isString(renderer)) {
+                renderer = this[renderer].renderer;
+            }
+
+            if (renderer.defaults) {
+                var defaults = renderer.defaults;
+                options = _.defaults(options || {}, defaults);
+                this.options = _.defaults(this.options, defaults);
             }
         },
 
