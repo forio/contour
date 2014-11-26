@@ -495,10 +495,10 @@
                                 a.click();
                                 document.body.removeChild(a);
                             } else if (browser.savesMsBlobs && blob) {
-                                // IE9-11 support a method to save/open a blob
+                                // IE10-11 support a method to save/open a blob
                                 navigator.msSaveOrOpenBlob(blob, options.fileName);
                             } else {
-                                // Safari can only open a new tab with the image
+                                // Safari and IE9 can only open a new tab with the image
                                 if (!win) {
                                     // in case `blob` was falsy or the `open()` above returned undefined, `win` will be undefined, so attempt here (and this might return undefined as well)
                                     win = root.open();
