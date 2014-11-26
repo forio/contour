@@ -389,7 +389,7 @@
             }
 
             function cloneLegendDiv(sourceNode, targetNode) {
-                var containerDiv = d3.select(sourceNode.parentElement).select('div.contour-legend');
+                var containerDiv = d3.select(sourceNode.parentNode).select('div.contour-legend');
                 if (containerDiv.empty()) return;
 
                 var containerDivNode = containerDiv.node();
