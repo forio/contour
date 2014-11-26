@@ -503,11 +503,19 @@
                                     // in case `blob` was falsy, `win` will be undefined
                                     win = root.open();
                                 }
-                                var doc = win.document;
-                                doc.write('<!DOCTYPE html>');
-                                doc.write('<html><head></head><body>');
-                                doc.write('<img src="' + url + '">');
-                                doc.write('</body></html>');
+                                if (win) {
+                                    if (browser.createsObjectUrls) {
+                                        // Safari can set the url of the newly-opened tab to the object URL of the blob
+                                        win.location = url;
+                                    } else {
+                                        // for IE9, create a document with the image
+                                        var doc = win.document;
+                                        doc.write('<!DOCTYPE html>');
+                                        doc.write('<html><head></head><body>');
+                                        doc.write('<img src="' + url + '">');
+                                        doc.write('</body></html>');
+                                    }
+                                }
                             }
                             // wait for download to start
                             setTimeout(function () {
