@@ -473,6 +473,13 @@
                 svgNodeClone.setAttribute('width', boundsClone.width);
                 svgNodeClone.setAttribute('height', boundsClone.height);
 
+                // Safari can only open a new tab with the image
+                // the tab must be opened before `getSvgDataUrl()` to avoid getting blocked due to asynchronous callbacks
+                var win;
+                if (exporter === 'download' && !(browser.aDownloads || browser.savesMsBlobs)) {
+                    win = root.open();
+                }
+
                 getSvgDataUrl(svgNodeClone, options, function (url, blob, revokeUrl) {
                     destroySvgClone();
 
@@ -492,8 +499,10 @@
                                 navigator.msSaveOrOpenBlob(blob, options.fileName);
                             } else {
                                 // Safari can only open a new tab with the image
-                                // root.open(url);
-                                var win = root.open();
+                                if (!win) {
+                                    // in case `blob` was falsy, `win` will be undefined
+                                    win = root.open();
+                                }
                                 var doc = win.document;
                                 doc.write('<!DOCTYPE html>');
                                 doc.write('<html><head></head><body>');
