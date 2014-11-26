@@ -500,7 +500,7 @@
                             } else {
                                 // Safari can only open a new tab with the image
                                 if (!win) {
-                                    // in case `blob` was falsy, `win` will be undefined
+                                    // in case `blob` was falsy or the `open()` above returned undefined, `win` will be undefined, so attempt here (and this might return undefined as well)
                                     win = root.open();
                                 }
                                 if (win) {
