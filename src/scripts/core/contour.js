@@ -160,19 +160,19 @@
     *
     * ###Example:
     *
-    *     Contour.expose("example", function ctor(params) {
-    *         // params will be the parameters paseed into the constructor function
+    *     Contour.expose('example', function ctor(params) {
+    *         // params are the parameters passed into the constructor function
     *         return {
-    *             // the init function, if provided, will be called automatically upon instanciation of the functionality
-    *             // the options parameter will have the global Contour options object
-    *             init: function (options) { ... }
+    *             // the init function, if provided, is called automatically upon instantiation of the functionality
+    *             // the options parameter has the global Contour options object
+    *             init: function (options) { ... },
     *
     *             // when included in the instance, the function `.myFunction` is available in the visualizations
     *             myFunction: function(data) { .... }
     *         };
     *     });
     *
-    *     Contour.export("visualizationThatUsesMyFunction", function(data, layer) {
+    *     Contour.export('visualizationThatUsesMyFunction', function(data, layer) {
     *           //function body including call to this.myFunction(data)
     *     });
     *
@@ -393,6 +393,7 @@
         },
 
         ensureDefaults: function (options, renderer) {
+
             if (_.isString(renderer)) {
                 renderer = this[renderer].renderer;
             }
