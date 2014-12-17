@@ -12,13 +12,10 @@ When `true`, extends the range so that it starts and ends on ["nice, round" valu
 
     new Contour({
         el: '.myLineChart',
-        yAxis: { nicing: false }
+        yAxis: { nicing: true }
       })
-    .cartesian()
-	//for this data set, 
-	//nicing: false draws the top tick mark at 8.2 
-	//nicing: true draws the top tick mark at 9    
-    .line([0.8, 2, 4, 5, 8.2])
+    .cartesian()  
+    .line([0.8, 2, 4, 5, 8.2, 11.5])
     .render()
 
 *[Try it.](<%= jsFiddleLink %>)*
