@@ -393,7 +393,6 @@
         },
 
         ensureDefaults: function (options, renderer) {
-
             if (_.isString(renderer)) {
                 renderer = this[renderer].renderer;
             }
