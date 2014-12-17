@@ -30,7 +30,7 @@ var options = {
 };
 
 var allFiles = getSourceFileList(options.src);
-var filesToCopy = ['index.html', 'docs.css', 'markdown.js', 'overview.md', 'quickstart.md', 'key_concepts.md', 'supported_data_formats.md', 'visualizations.md', 'contributing.md', 'quickstart.png', 'styling.md'];
+var filesToCopy = ['index.html', 'docs.css', 'markdown.js', 'overview.md', 'quickstart.md', 'key_concepts.md', 'supported_data_formats.md', 'visualizations.md', 'contributing.md', 'quickstart.png', 'styling.md', 'extending_contour.md'];
 
 ensureDirectory();
 

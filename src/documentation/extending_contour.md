@@ -1,54 +1,19 @@
-##Key Concepts
+##Extending Contour
 
-The core Contour object defines functionality, visualizations, and default configuration options that can be used by any instance of Contour.
+Contour is designed to be easily extensible. 
 
-If you want more background information than the [QuickStart](#quickstart) provides, or if you've completed that and are looking for detail on some of the extensions and more advanced functionality, these key concepts can help. 
-
-If you'd rather skip the detailed walkthrough, reference materials for this section are on the [Contour API reference page](#contour).
-
-###The Contour Instance
-
-When you want to create a set of related visualizations, you create a Contour instance based on the core Contour object. (This is also described in the [QuickStart](#quickstart).)
-
-To create a set of visualizations:
-
-1. First, call the Contour constructor. 
-	* Pass the constructor a set of configuration options. 
-	* Make sure the `el` option contains the selector of the container in which the Contour instance will be rendered. 
-2. Next, set the frame for this set of visualizations. 
-	* All visualizations in the same set (that is, all visualizations in the same instance of Contour) must use the same frame.
-	* Currently, the only available frame is `.cartesian()`.
-3. Then, add one or more specific visualizations to this Contour instance by calling their respective constructors. 
-	* Pass each visualization constructor the data it displays. You can specify this by hand using a [supported data format](#supported_data_formats), or use a [Contour data connector](#data-connectors) to extract your data from another format (for example, CSV or TSV files).
-4. Finally, invoke an action for this Contour instance. 
-	* Typically, this action is `.render()`, that is, make this set of visualizations visible on your webpage.
-
-For example:
-
-	var data = [{x:0, y:3}, {x:1, y:4}, {x:2, y:5}];
-	
-	//call the Contour constructor with configuration options
-	new Contour( { 
-		el: '.myChart',
-		xAxis: { title: 'Index' },
-		yAxis: { title: 'Value' }
-	})
-	.cartesian() 	//set the frame
-	.line(data)  	//call the 'line' constructor
-	.render();
+* You can add **visualizations** and **functionality**. 
+* You can also add **interactivity**, for example by **updating data** or **selecting visualizations** on the fly.
 
 
-###Adding Capabilities to Contour
 
-Contour is designed to be easily extensible. You can add both **visualizations** and **functionality**.
-
-**Visualizations**
+###Adding Visualizations
 
 Although Contour comes with quite a few visualizations, sometimes you want something a little more customized. 
 
 You can add your own visualizations to the core Contour object using `.export()`.
 
-To add a visualization to the core Contour object:
+**To add a visualization to the core Contour object:**
 
 1. Call the `.export()` function on the Contour object.
 2. Pass in the name of the new visualization. (Later, you'll call this constructor in your Contour instance.)
@@ -79,35 +44,86 @@ For example:
 		.myExportedVisualization(3)
 		.render();
 
-**Functionality**
+**To add a visualization that is based on an existing visualization:**
+
+Note that any exported rendering function (visualization) can be called through the `.renderer` property of the given constructor. This is especially useful if the visualization you want to create and export is based on an existing rendering function.
+
+For example, let's make a `stackedColumn` visualization. It is identical to the existing `column` visualization, but with the `stacked` option defaulting to true.
+
+    var newVisualization = function (data, layer, options) {
+    
+        var renderer = this.column.renderer;
+        var defaults = renderer.defaults;
+
+        options = _.merge(options || {}, defaults, { column: { stacked: true } });
+
+        return renderer.call(this, data, layer, options);
+    };
+
+    newVisualization.defaults = {
+        stackedColumn: {
+            stacked: true
+        }
+    };
+
+    Contour.export('stackedColumn', newVisualization);
+
+Then you can use your new visualization just like any other:
+
+	new Contour({ el: '.myChart' })
+		.cartesian()
+		.stackedColumn(data)
+		.render();
+
+
+###Adding Functionality
 
 Although Contour comes with quite a bit of functionality, sometimes it's cleaner and easier to create your own functions.
 
 You can add functionality to the core Contour object using `.expose()`. This functionality is then available to other visualizations, for example visualizations that you add using `.export()`. Consider this your own mini-library that you can include in particular Contour instances as needed.
 
-To add functionality to the core Contour object:
+**To add functionality to the core Contour object:**
 
 1. Call the `.expose()` function on the Contour object.
 2. Pass in the name of the new set of functionality. (You'll call this functionality in your Contour instance.)
-3. Pass in a JSON object including one or more functions; each function is available after you add this set of functionality to your Contour instance.
+3. Pass in a function, which returns an object containing two functions. 
+	a. The `init` function, if provided, is called automatically upon instantiation of the functionality. Its `options` parameter has the global Contour options object.
+	b. The second function is available in the visualizations after you add this set of functionality to your Contour instance.
 4. Add visualizations to your Contour instance by calling their respective constructors. These constructors can now use any of the functions defined in the set of functionality you've exposed.
 
 For example: 
 
-	Contour.expose('myNewFunctions', {
-	    function1 : function (data) { /* some function */ },
-	    function2 : function (data) { /* some function */ }
+	Contour.expose('myCustomFunction', function ctor(params) {
+		// params are the parameters passed into the constructor function
+		return {
+			// the init function, if provided, is called automatically upon instantiation of the functionality
+			// the options parameter has the global Contour options object
+			init: function (options) { },
+			
+			// when included in a Contour instance, 
+			// the function `.showData` is available in the visualizations
+			showScaledData: function (data) {
+                var yValues =  _.pluck(data[0].data, 'y').map(function(input) { return input * params.factor; }).join(',');
+                alert('The scaled data are: ' + yValues);
+            }
+		};
 	});
 	
-	Contour.export('myExportedVisualization', function (data, layer) {
-		// function body, including call to 
-		// this.function1(data) and this.function2(data)
+	Contour.export('myVisualization', function (data, layer) {
+		// for this call to work, .myCustomFunction() must first be added
+		// to the Contour instance
+		this.showScaledData(data);
 	});
 	
 	new Contour({ el: '.myChart' })
-		.myNewFunctions()
-		.myExportedVisualization(data)
-		.render();
+        // add myCustomFunction() to this instance of Contour, 
+        // so other visualizations can use it
+    .myCustomFunction({ factor: 4 })
+    .cartesian()
+    .line(data)
+        // add myVisualization to this instance of Contour
+    .myVisualization(data)
+    .render();
 
 **Try it**
 
@@ -120,9 +136,9 @@ Contour does more than make visualizations easy for developers to create. It als
 
 To help make your visualizations more interactive, Contour provides **updating of data** and **selection of a visualization**.
 
-**Updating Data**
+#####Updating Data
 
-To update the data for an entire Contour instance at once:
+**To update the data for an entire Contour instance at once:**
 
 1. Add the new data into your data series, for example using `.push()`.
 2. Call the `.setData()` function on your Contour instance. This updates the data for all visualizations in your Contour instance at once.
@@ -140,11 +156,11 @@ For example:
     	.render();
 
 
-**Selecting Visualizations**
+#####Selecting Visualizations
 
 It's also easy to select just one of the set of visualizations that are part of your Contour instance. For example, this allows you to update and re-render just one part of your visualization. 
 
-To select a particular visualization from your Contour instance:
+**To select a particular visualization from your Contour instance:**
 
 1. Call the `.select()` function on your Contour instance. Pass in the index for the visualization you want. Indices are 0-based.
 2. Optionally, call actions just on that visualization, for instance `.setData()` or `.render()`.
