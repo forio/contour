@@ -110,9 +110,6 @@ module.exports = function (grunt) {
             },
             production: {
                 files: [{
-                    // expand: true,
-                    // cwd: 'src/scripts',
-                    // src: '**/*.js',
                     src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>', 'src/scripts/footer.js'],
                     dest: 'dist/contour.min.js'
                 }]
