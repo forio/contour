@@ -141,6 +141,53 @@ describe('Cartesian frame', function () {
             expect(instance.yScale(25)).toEqual(h/2);
             expect(instance.yScale(50)).toEqual(0);
         });
+
+        it('should use extent of tick values for min and max if provided', function () {
+            var nw = createinstance({
+                yAxis: { tickValues: [4,8] }
+            });
+            nw.nullVis([1, 2, 4, 5, 6, 8]).render();
+
+            var h = nw.options.chart.plotHeight;
+            expect(nw.yScale(0)).toEqual(h);
+            expect(nw.yScale(4)).toEqual(h/2);
+            expect(nw.yScale(8)).toEqual(0);
+
+            var yLables = $el.find('.y.axis .tick');
+            var text = yLables.find('text');
+            expect(yLables.length).toBe(2);
+            expect(text[0].innerHTML).toBe('4');
+            expect(text[1].innerHTML).toBe('8');
+        });
+
+        it('should use options.min as absolute min even with tick values', function () {
+            var nw = createinstance({
+                yAxis: { tickValues: [4,8], min: 5 }
+            });
+            nw.nullVis([4, 5, 6, 8]).render();
+            var h = nw.options.chart.plotHeight;
+            expect(nw.yScale(5)).toEqual(h);
+        });
+
+        it('should use options.max as absolute max even with tick values', function () {
+            var nw = createinstance({
+                yAxis: { tickValues: [4,8], max: 7 }
+            });
+            nw.nullVis([4, 5, 6, 8]).render();
+            var h = nw.options.chart.plotHeight;
+
+            expect(nw.yScale(7)).toEqual(0);
+        });
+
+        it('should use options.min and options.max as domain range even with tick values', function () {
+            var nw = createinstance({
+                yAxis: { tickValues: [4,8], max: 7, min: 5 }
+            });
+            nw.nullVis([4, 5, 6, 8]).render();
+            var h = nw.options.chart.plotHeight;
+            expect(nw.yScale(5)).toEqual(h);
+            expect(nw.yScale(7)).toEqual(0);
+        });
     });
 
 

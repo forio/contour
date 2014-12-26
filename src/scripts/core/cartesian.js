@@ -115,6 +115,18 @@
             _getYScaledDomain: function () {
                 var absMin = this.options.yAxis.zeroAnchor && this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
                 var min = this.options.yAxis.min != null ? this.options.yAxis.min : absMin;
+                if (this.options.yAxis.tickValues) {
+                    if (this.options.yAxis.min != null && this.options.yAxis.max != null) {
+                        return [this.options.yAxis.min, this.options.yAxis.max];
+                    } else if (this.options.yAxis.min != null) {
+                        return [this.options.yAxis.min, d3.max(this.options.yAxis.zeroAnchor ? [0].concat(this.options.yAxis.tickValues) : this.options.yAxis.tickValues)];
+                    } else if (this.options.yAxis.max != null) {
+                        return [d3.min(this.options.yAxis.zeroAnchor ? [0].concat(this.options.yAxis.tickValues) : this.options.yAxis.tickValues), this.options.yAxis.max];
+                    } else {
+                        return d3.extent(this.options.yAxis.zeroAnchor || this.options.yAxis.min != null ? [min].concat(this.options.yAxis.tickValues) : this.options.yAxis.tickValues);
+                    }
+                }
+
                 return _.nw.extractScaleDomain(this.yDomain, min, this.options.yAxis.max, this.options.yAxis.ticks);
             },
 
