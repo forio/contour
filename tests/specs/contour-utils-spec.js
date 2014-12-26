@@ -227,6 +227,7 @@ describe('normalizeSeries', function () {
         expect(series[0].data).toBe(data);
     });
 
+
     describe('when passing a categories array', function () {
         it('should use the categories array for normalized x values', function () {
             var data = [1,2,3,4];
@@ -245,6 +246,18 @@ describe('normalizeSeries', function () {
             expect(s1.data[2].y).toBe(3);
             expect(s1.data[3].y).toBe(4);
         });
+
+        it('should treat null x categories as null', function () {
+            var data = [1,2,3,4];
+            var cats = ['a', 'b', null, 'd'];
+
+            var series = _.nw.normalizeSeries(data, cats);
+            var s1 = series[0];
+
+            expect(s1.data[2].x).toBeNull();
+
+        });
+
 
         it('individual point X values should take presendence over the categories array (we may need to change this assumption later based on usage??)', function () {
             var data = [

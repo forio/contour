@@ -306,7 +306,9 @@
                     data: _.map(set, function (d, i) {
                         var hasX = d != null && d.hasOwnProperty('x');
                         var val = function (v) { return v != null ? v : null; };
-                        return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: hasCategories ? categories[i] + '' : i, y: val(d) };
+                        // make sure we return a valid category and not cast nulls as string
+                        var categoryAt = function (i) { return !hasCategories ? i : categories[i] == null ? null : categories[i] + ''; };
+                        return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: categoryAt(i), y: val(d) };
                     })
                 };
 
