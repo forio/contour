@@ -4,7 +4,8 @@
 
     function calcLabelsWidths(ticks) {
         return ticks.map(String).map(function (d) {
-            return _.nw.textBounds(d, '.x.axis text').width;
+            var padding = 2;
+            return _.nw.textBounds(d, '.x.axis text').width + (padding * 2);
         });
     }
 
@@ -48,7 +49,7 @@
 
             var ticks = axis.scale().ticks();
             var tickWidths = calcLabelsWidths(ticks.map(formatLabel));
-            var availableWidthForLabels = this.options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2;
+            var availableWidthForLabels = (this.options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
             var numAutoTicks = ticks.length;
             var axisLabelsWidth = sum(tickWidths);
             var labelsFit = axisLabelsWidth <= availableWidthForLabels;
