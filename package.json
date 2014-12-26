@@ -2,6 +2,10 @@
   "name": "Contour",
   "description": "Forio's Visualization Library",
   "version": "0.9.107",
+  "repository": {
+    "url": "https://github.com/forio/contour",
+    "type": "git"
+  },
   "dependencies": {
     "lodash": "~2.4.1",
     "d3": "~3.3.0"
