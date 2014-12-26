@@ -78,6 +78,7 @@ module.exports = function (grunt) {
                 'src/scripts/core/contour.js',
                 'src/scripts/core/axis/y-axis.js',
                 'src/scripts/core/cartesian.js',
+                'src/scripts/core/exportable.js',
                 'src/scripts/version.js',
 
 
