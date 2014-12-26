@@ -86,11 +86,7 @@ module.exports = function (grunt) {
             ],
             vis: [
                 'src/scripts/visualizations/**/*.js'
-            ],
-            connectors: [
-                'src/scripts/connectors/**/*.js'
             ]
-
         },
         include: {
             core: {
@@ -100,20 +96,26 @@ module.exports = function (grunt) {
         },
         concat: {
             all: {
-                src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>', '<%= scripts.connectors %>', 'src/scripts/footer.js'],
+                src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>'],
                 dest: 'dist/contour.js'
             }
         },
         uglify: {
             options: {
-                sourceMap: 'contour.min.map',
+                sourceMapIncludeSources: true,
+                sourceMap: true,
+                wrap: true,
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-                        '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
+                        '<%= grunt.template.today("yyyy-mm-dd") %> */'
             },
             production: {
-                files: {
-                    'dist/contour.min.js': ['dist/contour.js']
-                }
+                files: [{
+                    // expand: true,
+                    // cwd: 'src/scripts',
+                    // src: '**/*.js',
+                    src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>', 'src/scripts/footer.js'],
+                    dest: 'dist/contour.min.js'
+                }]
             }
         },
 
