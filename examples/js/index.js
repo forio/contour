@@ -1,5 +1,8 @@
 (function () {
+    'use strict';
 
+    var baseContourVersion =  '0.9.107';
+    var contourVersion;
     var samples = [
         "area/area-basic",
         "area/area-combo",
@@ -31,8 +34,18 @@
         "scatter/scatter-trendline"
     ];
 
+    contourVersion = getContourVersion();
     buildMenu(samples);
     doRouting();
+
+    function getContourVersion() {
+        if (!/ver=/.test(window.location.search)) {
+            return baseContourVersion;
+        }
+
+        var version = window.location.search.match(/ver=(\d+\.\d+\.\d+)/);
+        return version[1] || baseContourVersion;
+    }
 
     function onSampleLoad() {
         var height = $(this.contentDocument).height();
@@ -101,6 +114,12 @@
             // now we start adding stuff
             // add jquery and the demo css to the head first
             contents.push('<script src="../examples/js/vendor/jquery.js"></script>');
+
+            // force a specific contour version
+            res = res.replace(/(https?:\/\/forio\.com\/tools\/contour\/)([\w\d\.\-\_]+)/g, function ($1, $2, $3) {
+                return $2 + contourVersion + '/' + $3;
+            });
+
             // now add the html
             contents.push(res);
 
