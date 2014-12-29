@@ -67,10 +67,10 @@
         // if the value of padding is betweem 0 and 1 (non inclusing),
         // interpret it as a percentage, otherwise as a pixel value
         return {
-            top: resolveValueUnits(padding.top, h) || 1,
-            bottom: resolveValueUnits(padding.bottom, h) || 1,
-            left: resolveValueUnits(padding.left, w) || 1,
-            right: resolveValueUnits(padding.right, w) || 1
+            top: resolveValueUnits(padding.top, h) || 5,
+            bottom: resolveValueUnits(padding.bottom, h) || 5,
+            left: resolveValueUnits(padding.left, w) || 5,
+            right: resolveValueUnits(padding.right, w) || 5
         };
     }
 
@@ -90,7 +90,8 @@
         var referenceSize = Math.min(w, h);
 
         // for auto radius we need to take the min between the available with or height adjusted by padding and num series
-        var proposedRadius = Math.min((w - pixelPadding.left - pixelPadding.right) / numSeries, (h - pixelPadding.top - pixelPadding.bottom)) / 2;
+        var totalPadding = pixelPadding.left + (pixelPadding.right + pixelPadding.left) * (numSeries - 1) + pixelPadding.right;
+        var proposedRadius = Math.min(((w - totalPadding) / numSeries) / 2, (h - pixelPadding.top - pixelPadding.bottom) / 2);
         var radius = resolveValueUnits(_.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius, referenceSize), referenceSize);
         // inner radius is a pixel value or % of the radius
         var innerRadius = resolveValueUnits(_.nw.getValue(options.pie.innerRadius, 0, this, radius), radius);
@@ -109,11 +110,13 @@
         };
 
         var translatePie = function (d,i) {
-            var offsetX = radius * 2;
-            var posX = shouldCenterX ? centerX : radius + pixelPadding.left;
+            // calc the left side coord of the pie, including padding for the prevousous pies
+            var offsetX = radius * 2 * i + pixelPadding.right * i + pixelPadding.left * (i + 1);
+            // calc the center of the pie starting from offsetX
+            var posX = radius + pixelPadding.left;
             var posY = shouldCenterY ? centerY : radius + pixelPadding.top;
 
-            return "translate(" + (posX + (offsetX * i)) + "," + (posY) + ")";
+            return "translate(" + (radius + offsetX) + "," + (posY) + ")";
         };
 
         var pieGroup = layer.selectAll('g.pie-group')
