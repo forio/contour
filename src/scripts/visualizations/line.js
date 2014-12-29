@@ -28,7 +28,9 @@
                         .attr('stroke-dasharray', totalLength + ' ' + totalLength)
                         .attr('stroke-dashoffset', totalLength)
                         .transition().duration(duration).ease('linear')
-                            .attr('stroke-dashoffset', 0);
+                            .attr('stroke-dashoffset', 0)
+                            .transition().duration(0)
+                                .attr('stroke-dasharray', undefined);
                 });
             },
 
@@ -40,7 +42,9 @@
                         .attr('stroke-dasharray', totalLength + ' ' + totalLength)
                         .attr('stroke-dashoffset', totalLength)
                         .transition().duration(duration).ease('linear')
-                            .attr('stroke-dashoffset', 0);
+                            .attr('stroke-dashoffset', 0)
+                            .transition().duration(0)
+                                .attr('stroke-dasharray', undefined);
                 });
             }
         },
