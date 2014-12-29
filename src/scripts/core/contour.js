@@ -264,6 +264,18 @@
                     plotTop: options.chart.margin.top + options.chart.padding.top
                 }
             });
+
+            if (this.options.chart.plotWidth <= 0 || this.options.chart.plotHeight <= 0) {
+                console.warn('The chart has no space to render. Either the width/height is zero or you have too much padding\nWidth: ' + options.chart.width +
+                    '\nHeight: ' + options.chart.height +
+                    '\npadding-left: ' + options.chart.padding.left +
+                    '\npadding-right: ' + options.chart.padding.right +
+                    '\npadding-top: ' + options.chart.padding.top +
+                    '\npadding-bottom: ' + options.chart.padding.bottom);
+
+                this.options.chart.plotWidth = this.options.chart.plotWidth < 0 ? 0 : this.options.chart.plotWidth;
+                this.options.chart.plotHeight = this.options.chart.plotHeight < 0 ? 0 : this.options.chart.plotHeight;
+            }
         },
 
         adjustPadding: function () {
