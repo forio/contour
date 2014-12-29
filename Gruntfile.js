@@ -18,7 +18,7 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['src/scripts/**/*.js'],
-                tasks: ['concat', 'uglify']
+                tasks: ['uglify']
             }
         },
         bumpup: {
@@ -102,13 +102,51 @@ module.exports = function (grunt) {
         },
         uglify: {
             options: {
-                sourceMapIncludeSources: true,
-                sourceMap: true,
                 wrap: true,
                 banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-                        '<%= grunt.template.today("yyyy-mm-dd") %> */'
+                        '<%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
-            production: {
+            minify: {
+                options: {
+                    sourceMapIncludeSources: true,
+                    sourceMap: true,
+                    mangle: true,
+                    compress: true,
+                    preserveComments: 'none'
+                },
+                files: [{
+                    src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>', 'src/scripts/footer.js'],
+                    dest: 'dist/contour.min.js'
+                }]
+            },
+
+            concatenate: {
+                options: {
+                    sourceMapIncludeSources: true,
+                    sourceMap: false,
+                    mangle: false,
+                    compress: false,
+                    preserveComments: 'all',
+                    beautify: true
+                },
+
+                files: [{
+                    src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>', 'src/scripts/footer.js'],
+                    dest: 'dist/contour.js'
+                }]
+
+            },
+
+            dev: {
+                options: {
+                    sourceMapIncludeSources: true,
+                    sourceMap: true,
+                    mangle: false,
+                    compress: false,
+                    preserveComments: 'all',
+                    // beautify: true
+                },
+
                 files: [{
                     src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>', 'src/scripts/footer.js'],
                     dest: 'dist/contour.min.js'
@@ -146,18 +184,18 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['less:dev', 'watch:less']);
+    grunt.registerTask('default', ['uglify:concatenate', 'uglify:dev', 'less:dev', 'watch']);
 
-    grunt.registerTask('production', ['ver', 'concat', 'uglify', 'less:production', 'less:uncompressed', 'releaseNotes']);
+    grunt.registerTask('production', ['ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'releaseNotes']);
 
     grunt.registerTask('release', function (type) {
         type = type ? type : 'patch';
-        ['bumpup:' + type, 'ver', 'concat', 'uglify', 'less:production', 'less:uncompressed', 'releaseNotes', 'tagrelease'].forEach(function (task) {
+        ['bumpup:' + type, 'ver', 'uglify:concatenate', 'uglify:minify', 'less:production', 'less:uncompressed', 'releaseNotes', 'tagrelease'].forEach(function (task) {
             grunt.task.run(task);
         });
     });
 
-    grunt.registerTask('linked', ['concat', 'uglify', 'less:uncompressed', 'less:production', 'watch']);
+    grunt.registerTask('linked', ['uglify:concatenate', 'uglify:dev', 'less:uncompressed', 'less:production', 'watch']);
 
 
     grunt.registerMultiTask('releaseNotes', 'Generate a release notes file with changes in git log since last tag', function () {
