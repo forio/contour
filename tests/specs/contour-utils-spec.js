@@ -14,6 +14,79 @@ describe('roundToNearest', function () {
     });
 });
 
+describe('roundToNextTick', function () {
+    describe('for negative numbers', function () {
+
+        describe('for decimal numbers', function () {
+            it('with 1 significant digit, it shold round to nearest multiple of .2', function () {
+                expect(_.nw.roundToNextTick(-0.3)).toBe(-0.4);
+            });
+            it('with 2 significant digit, it shold round to nearest multiple of .1', function () {
+                expect(_.nw.roundToNextTick(-0.32)).toBe(-0.4);
+            });
+            it('with 3 significant digit, it shold round to nearest multiple of .01', function () {
+                expect(_.nw.roundToNextTick(-0.567)).toBe(-0.57);
+            });
+        });
+
+        it('for single digit numbers should round nearest multiple of 2', function () {
+            expect(_.nw.roundToNextTick(-3.4)).toBe(-4);
+            expect(_.nw.roundToNextTick(-3.6)).toBe(-4);
+        });
+
+        describe('for two digit numbers', function () {
+            it('should round to next multiple of 2', function () {
+                expect(_.nw.roundToNextTick(-22.5)).toBe(-24);
+            });
+        });
+
+        describe('for three digits and up', function () {
+            it('it should round to next multiple of 10', function () {
+                expect(_.nw.roundToNextTick(-223.5)).toBe(-230);
+                expect(_.nw.roundToNextTick(-1223.5)).toBe(-1300);
+                expect(_.nw.roundToNextTick(-198)).toBe(-200);
+                expect(_.nw.roundToNextTick(-998)).toBe(-1000);
+            });
+        });
+
+    });
+
+    describe('for positive numebrs', function () {
+        describe('for decimal numbers', function () {
+            it('with 1 significant digit, it shold round to nearest multiple of .2', function () {
+                expect(_.nw.roundToNextTick(0.3)).toBe(0.4);
+            });
+            it('with 2 significant digit, it shold round to nearest multiple of .1', function () {
+                expect(_.nw.roundToNextTick(0.32)).toBe(0.4);
+            });
+            it('with 3 significant digit, it shold round to nearest multiple of .01', function () {
+                expect(_.nw.roundToNextTick(0.567)).toBe(0.57);
+            });
+        });
+
+        it('for single digit numbers should round to the next multiple of 2', function () {
+            expect(_.nw.roundToNextTick(3.4)).toBe(4);
+            expect(_.nw.roundToNextTick(3.6)).toBe(4);
+        });
+
+        describe('for two digit numbers', function () {
+            it('should round to next multiple of 2', function () {
+                expect(_.nw.roundToNextTick(22.5)).toBe(24);
+            });
+        });
+
+        describe('for three digits and up', function () {
+            it('it should round to next multiple of 10', function () {
+                expect(_.nw.roundToNextTick(223.5)).toBe(230);
+                expect(_.nw.roundToNextTick(1223.5)).toBe(1300);
+                expect(_.nw.roundToNextTick(198)).toBe(200);
+                expect(_.nw.roundToNextTick(998)).toBe(1000);
+            });
+        });
+    });
+
+});
+
 describe('maxTickValues', function () {
     it('should return domain if domain length is less then maxTicks', function () {
         var domain = [1,2,3];

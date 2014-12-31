@@ -1,10 +1,13 @@
 (function () {
     // cheap trick to add decimals without hitting javascript issues
     // note that this fails for very large numbers
-    var addFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa + bb) / factor; };
-    var subFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa - bb) / factor; };
-    var mulFloat = function (a,b) { var factor = 10000, aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
-    var divFloat = function (a,b) { return +((a / b).toFixed(4)); };
+    var decDigits = function (x) { var parts = x.toString().split('.'); return parts.length < 2 ? 0 : parts[1].length; };
+    var multiplier = function (x) { var dig = decDigits(x); return dig === 0 ? 1 : Math.pow(10, dig); };
+    var maxMultiplier = function (a,b) { return Math.max(multiplier(a), multiplier(b)); };
+    var addFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = a * factor, bb = b * factor; return (aa + bb) / factor; };
+    var subFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = a * factor, bb = b * factor; return (aa - bb) / factor; };
+    var mulFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
+    var divFloat = function (a,b) { return +((a / b).toFixed(_.nw.digits(maxMultiplier(a,b)) -1 )); };
 
     var noop = function () {};
 
@@ -34,7 +37,7 @@
         },
 
         roundToNearest: function (number, multiple) {
-            return Math.ceil(number / multiple) * multiple;
+            return mulFloat(Math.ceil(divFloat(number, multiple)), multiple);
         },
 
         roundTo: function (value, digits) {
@@ -114,7 +117,25 @@
     };
 
     var axisHelpers = {
-        niceMinMax: function (min, max, ticks) {
+        roundToNextTick: function (num) {
+            var abs = Math.abs(num);
+            var sign = abs === num ? 1 : -1;
+            var mag, step;
+            if (abs >= 1) {
+                mag = Math.floor(_.nw.log10(abs));
+                step = mag <= 1 ? 2 : Math.pow(10, mag - 1);
+            } else {
+
+                exp = abs.toExponential().replace(/\.|e-\d+$/g, '');
+                mag = exp.length;
+                step = mulFloat((mag === 1 ? 2 : 10), Math.pow(10, -mag));
+            }
+
+            var raw = _.nw.roundToNearest(abs, step);
+            return sign * raw;
+        },
+
+        niceMinMax: function (min, max, ticks, startAtZero) {
             // return divFloat(Math.ceil(mulFloat(value, Math.pow(10, digits))), Math.pow(10, digits));
 
             var excelRound = function (value, up) {
