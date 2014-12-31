@@ -1,13 +1,12 @@
 (function () {
     // cheap trick to add decimals without hitting javascript issues
     // note that this fails for very large numbers
-    var decDigits = function (x) { var parts = x.toString().split('.'); return parts.length < 2 ? 0 : parts[1].length; };
-    var multiplier = function (x) { var dig = decDigits(x); return dig === 0 ? 1 : Math.pow(10, dig); };
+    var multiplier = function (x) { var dig = _.nw.decDigits(x); return dig === 0 ? 1 : Math.pow(10, dig); };
     var maxMultiplier = function (a,b) { return Math.max(multiplier(a), multiplier(b)); };
     var addFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = a * factor, bb = b * factor; return (aa + bb) / factor; };
     var subFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = a * factor, bb = b * factor; return (aa - bb) / factor; };
     var mulFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
-    var divFloat = function (a,b) { return +((a / b).toFixed(_.nw.digits(maxMultiplier(a,b)) -1 )); };
+    var divFloat = function (a,b) { return +((a / b).toFixed(_.nw.digits(maxMultiplier(a,b)))); };
 
     var noop = function () {};
 
@@ -51,6 +50,11 @@
         // only works for integers
         digits: function (value) {
             return value === 0 ? 1 : Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1;
+        },
+
+        decDigits: function (value) {
+            var parts = value.toString().split('.');
+            return parts.length < 2 ? 0 : parts[1].length;
         },
 
         log10: function (value) {
@@ -155,7 +159,10 @@
             var digits = function (val) { return Math.floor(Math.log(Math.abs(val)) / Math.LN10) + 1; };
             var fac = function (digits) { return Math.pow(10, digits); };
 
-            var startAtZero = min === 0 ? 1 : max < 0 ? 1 : 0;
+            startAtZero = min === 0 ? 1 : max < 0 ? 1 : 0;
+
+
+            // startAtZero = startAtZero || 1;
 
             // check for errors... min cannot be > max
             if (min > max) {
@@ -240,33 +247,33 @@
         },
 
         /*jshint eqnull:true */
-        extractScaleDomain: function (domain, min, max, ticks) {
+        extractScaleDomain: function (domain, min, max, ticks, zeroAnchor) {
             var dataMin = min != null ? min : _.min(domain);
             var dataMax = max != null ? max : _.max(domain);
 
-            var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, (ticks || 5));
+            var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, (ticks || 5), zeroAnchor);
 
             return [niceMinMax.min, niceMinMax.max];
 
-            // we want null || undefined for all this comparasons
-            // that == null gives us
-            if (min == null && max == null) {
-                return [niceMinMax.min, niceMinMax.max];
-            }
+            // // we want null || undefined for all this comparasons
+            // // that == null gives us
+            // if (min == null && max == null) {
+            //     return [niceMinMax.min, niceMinMax.max];
+            // }
 
-            if (min == null) {
-                return [Math.min(niceMinMax.min, max), max];
-            }
+            // if (min == null) {
+            //     return [Math.min(niceMinMax.min, max), max];
+            // }
 
-            if (max == null) {
-                return [min, Math.max(min, niceMinMax.max)];
-            }
+            // if (max == null) {
+            //     return [min, Math.max(min, niceMinMax.max)];
+            // }
 
-            return [min, max];
+            // return [min, max];
         },
 
-        niceTicks: function (min, max, ticks) {
-            var niceMinMax = axisHelpers.niceMinMax(min, max, (ticks||5));
+        niceTicks: function (min, max, ticks, zeroAnchor) {
+            var niceMinMax = axisHelpers.niceMinMax(min, max, (ticks||5), zeroAnchor);
             return niceMinMax.tickValues;
         }
     };
