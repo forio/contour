@@ -39,7 +39,7 @@ describe('default yAxis', function () {
     });
 
     it('with smartAxis=true should only show 3 ticks (min, max + max rounded up)', function () {
-        instance = createinstance({yAxis: { smartAxis: true }}).nullVis([0,10,20,30]).render();
+        instance = createinstance({yAxis: { smartAxis: true }}).nullVis([0,31]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
@@ -99,11 +99,12 @@ describe('default yAxis', function () {
 
     describe('with smart y axis', function () {
         it('should round the max tick value to a nice value', function () {
-            createinstance({yAxis: { smartAxis: true}}).nullVis([1,2,3,4]).render();
+            createinstance({yAxis: { smartAxis: true}}).nullVis([1,2,3,4.5]).render();
 
             d3.timer.flush();
             var lastTicks = $el.find('.y.axis .tick text').last();
 
+            // 4.5 round to nearest multiple of 2 in this case
             expect(lastTicks.text()).toBe('6');
         });
 
@@ -111,9 +112,10 @@ describe('default yAxis', function () {
             it('should recalculate yAxis and ticks with new domain', function () {
                 nw = createinstance({yAxis: { smartAxis: true }}).nullVis([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
 
-                nw.setData([1,2,3,50]).render();
+                // note that the max needs to be 5% away from 50
+                nw.setData([1,2,3,46]).render();
                 var ticks = $el.find('.y.axis .tick text');
-                expect(+ticks.last().text()).toBe(55);
+                expect(+ticks.last().text()).toBe(50);
             });
         });
 

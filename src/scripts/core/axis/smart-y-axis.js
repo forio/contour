@@ -10,10 +10,10 @@
 
     /* jshint eqnull: true */
     function _extractYTickValues(domain, min, max, yMin, yMax, dataMax) {
-        var adjustedDomain = _.nw.merge(_.nw.merge(domain, yMax), dataMax);
+        var adjustedDomain = _.uniq(_.nw.merge(_.nw.merge(domain, yMax), dataMax));
         // we want to be able to remove parameters with default values
         // so to remove the default yAxis.min: 0, you pass yAxis.min: null
-        // and for that we need to to a truely comparison here (to get null or undefined)
+        // and for that we need to to a truly comparison here (to get null or undefined)
         if (min == null && max == null)
             return adjustedDomain;
 
@@ -56,9 +56,16 @@
         },
 
         _niceTheScale: function () {
+            var perTreshold = 0.05;
             var domain = this._scale.domain();
-            var nice = [this.options.yAxis.min || domain[0], this.options.yAxis.max || this.dataMax];
-            this._scale.domain(nice).nice();
+            var min = this.options.yAxis.min || domain[0];
+            var rawMax = this.options.yAxis.max || this.dataMax;
+            var nextTick = _.nw.roundToNextTick(rawMax);
+
+            var max = Math.abs(nextTick - rawMax) < rawMax * perTreshold ? _.nw.roundToNextTick(rawMax + rawMax * perTreshold) : nextTick;
+            // var max = nextTick === rawMax ? _.nw.roundToNextTick(rawMax + Math.pow(10, -_.nw.decDigits(rawMax) - 1)) : nextTick;
+            var nice = [min, max];
+            this._scale.domain(nice);
         }
     });
 
