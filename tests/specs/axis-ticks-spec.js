@@ -75,4 +75,16 @@ describe('contour-utils niceMinMax', function () {
     describe('when min === max', function () {
         // we need to define the behavior here...
     });
+
+    describe('when min < max < 0', function () {
+        it('should include zero by default', function () {
+            var nice = _.nw.niceMinMax(-5, -4, 5);
+            expect(nice.max).toBe(0);
+        });
+
+        it('should have the min number as the min of the domain', function () {
+            var nice = _.nw.niceMinMax(-5, -4, 5);
+            expect(nice.min).toBe(-5);
+        });
+    });
 });

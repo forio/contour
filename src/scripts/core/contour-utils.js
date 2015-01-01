@@ -142,9 +142,13 @@
         niceMinMax: function (min, max, ticks, startAtZero) {
             // return divFloat(Math.ceil(mulFloat(value, Math.pow(10, digits))), Math.pow(10, digits));
 
-            var excelRound = function (value, up) {
-
-            };
+            var swap = false;
+            var origMax = max;
+            if (max < 0 && min < 0) {
+                max = -min;
+                min = -origMax;
+                swap = true;
+            }
 
             var excelRoundUp = function (value, up) {
                 up = up != null ? up : 0;
@@ -159,10 +163,7 @@
             var digits = function (val) { return Math.floor(Math.log(Math.abs(val)) / Math.LN10) + 1; };
             var fac = function (digits) { return Math.pow(10, digits); };
 
-            startAtZero = min === 0 ? 1 : max < 0 ? 1 : 0;
-
-
-            // startAtZero = startAtZero || 1;
+            startAtZero = min === 0 ? 1 : origMax < 0 ? 1 : 0;
 
             // check for errors... min cannot be > max
             if (min > max) {
@@ -195,8 +196,6 @@
             // ) - 0.5);
 
             var negativeMinAmount = excelRoundUp(Math.max(0, -min) / ticks, defaultRounding - 1);
-
-
 
             var intermediateMax = min === max ? max === 0 ? 1 : excelRoundUp(max + negativeMinAmount, defaultRounding)
                 : excelRoundUp(max + negativeMinAmount,defaultRounding);
@@ -239,9 +238,9 @@
             }
 
             return {
-                min: finalMin,
-                max: finalMax,
-                tickValues: ticksValues
+                min: swap ? -finalMax : finalMin,
+                max: swap ? - finalMin : finalMax,
+                tickValues: ticksValues.map(function (a) { return swap ? -a : a; })
             };
 
         },
