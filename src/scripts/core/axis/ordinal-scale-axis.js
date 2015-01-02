@@ -121,8 +121,6 @@
             var threshold = 30;
             var rangeType = numCats <= threshold ? 'rangeRoundBands' : 'rangeBands';
 
-            console.log('adjusting range', rangeType);
-
             return this.isCategorized ?
                 // this._scale.rangeBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
                 this._scale[rangeType](range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
