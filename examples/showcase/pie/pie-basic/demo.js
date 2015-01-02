@@ -5,7 +5,9 @@ $(function () {
     new Contour({
             el: '.pie-basic',
             pie: {
-                piePadding: 20
+                piePadding: {
+                    left: 10
+                }
             },
             legend: {
                 vAlign: 'top'

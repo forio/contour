@@ -31,7 +31,6 @@ $(function () {
     new Contour({
             el: '.pie-gauge',
             pie: {
-                piePadding: 15,
                 innerRadius: 90
             },
             tooltip: {
