@@ -54,7 +54,6 @@
             ticks: undefined,
             title: undefined,
             titlePadding: 4,
-            nicing: false,
             orient: 'left',
             labels: {
                 // top, middle, bottom

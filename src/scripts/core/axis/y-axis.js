@@ -59,8 +59,7 @@
         },
 
         _niceTheScale: function () {
-            if (this.options.yAxis.nicing)
-                this._scale.nice();
+            // nothing to do for the regular y-axis
         }
     };
 

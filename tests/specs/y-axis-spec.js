@@ -168,9 +168,7 @@ describe('default yAxis', function () {
 
     describe('with options.yAxis.min set', function () {
         beforeEach(function () {
-            // remove nicing so we have control of min and max for testing... still min has to be
-            // a 'nice' number so we get a label
-            instance = createinstance({ yAxis: { min: 4, nicing: false }});
+            instance = createinstance({ yAxis: { min: 4 }});
         });
 
         it('should merge options.yAxis.min as the first tick', function () {
@@ -205,7 +203,7 @@ describe('default yAxis', function () {
 
     describe('with both min and max set', function () {
         beforeEach(function () {
-            instance = createinstance({yAxis: { min: -10, max: 20, nicing: false }});
+            instance = createinstance({yAxis: { min: -10, max: 20 }});
         });
 
         it('should set the domain to be [min, max]', function () {
