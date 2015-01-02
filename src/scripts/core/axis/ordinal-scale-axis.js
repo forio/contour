@@ -105,6 +105,7 @@
         setDomain: function (domain) {
             this._domain = domain;
             this._scale.domain(domain);
+            this._range();
         },
 
         rangeBand: function () {
@@ -116,8 +117,13 @@
 
         _range: function () {
             var range = this.options.chart.rotatedFrame ? [this.options.chart.plotHeight, 0] : [0, this.options.chart.plotWidth];
+            var numCats = (this._domain || []).length;
+            var threshold = 30;
+            var rangeType = numCats <= threshold ? 'rangeRoundBands' : 'rangeBands';
+
             return this.isCategorized ?
-                this._scale.rangeBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
+                // this._scale.rangeBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
+                this._scale[rangeType](range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
                 this._scale.rangePoints(range);
         }
     };
