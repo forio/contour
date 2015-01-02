@@ -13,7 +13,7 @@ An array containing the values for the locations of the tick marks on this axis 
     .cartesian()
     .line([1, 2, 4, 5, 6, 7, 8])
     .tooltip()
-    .render()
+    .render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 
