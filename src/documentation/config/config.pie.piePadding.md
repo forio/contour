@@ -19,5 +19,7 @@ Using `piePadding` specifies the same distance for all between the pie and the c
 
 **Notes:**
 
-Values for `piePadding` of less than 1 are interpreted as percentages. For example, `pie: { piePadding: 0.35 }` means the distance from the edge of the chart to the [`outerRadius`](#config_config.pie.outerRadius) is 35% of the size of the chart. (Therefore, values of `piePadding` less than or equal to `0.5` cause the pie chart to disappear.)
+Values for `piePadding` of less than 1 are interpreted as percentages. For example, `pie: { piePadding: 0.35 }` means the distance from the edge of the chart to the [`outerRadius`](#config_config.pie.outerRadius) is 35% of the size of the chart.
+
+If your data are [multiple series](#supported_data_formats), chart space is first divided by the number of elements in the series &mdash; that is, the number of pie charts your data generate &mdash; before the `piePadding` is applied to each individual pie.
 
