@@ -96,6 +96,9 @@
         // inner radius is a pixel value or % of the radius
         var innerRadius = resolveValueUnits(_.nw.getValue(options.pie.innerRadius, 0, this, radius), radius);
         var pieData = d3.layout.pie().value(function (d) { return d.y; }).sort(null);
+        var totalWidth = totalPadding + radius * numSeries * 2;
+        var outerPaddingLeft = shouldCenterX ? (w - totalWidth) / 2 : pixelPadding.left;
+
         var centerX = (w - (radius * 2 * (numSeries - 1)))/2;
         var centerY = h / 2;
 
@@ -111,9 +114,9 @@
 
         var translatePie = function (d,i) {
             // calc the left side coord of the pie, including padding for the prevousous pies
-            var offsetX = radius * 2 * i + pixelPadding.right * i + pixelPadding.left * (i + 1);
+            var offsetX = outerPaddingLeft + (radius * 2 * i + (pixelPadding.right + pixelPadding.left) * i);
             // calc the center of the pie starting from offsetX
-            var posX = radius + pixelPadding.left;
+            var posX = radius;
             var posY = shouldCenterY ? centerY : radius + pixelPadding.top;
 
             return "translate(" + (radius + offsetX) + "," + (posY) + ")";
