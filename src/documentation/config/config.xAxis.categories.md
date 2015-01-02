@@ -13,7 +13,7 @@ An array of category names (strings) to display as the labels on the `xAxis`.
     .cartesian()  
     .line([1, 2, 4, 5, 6, 8])
     .tooltip()
-    .render()
+    .render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 
