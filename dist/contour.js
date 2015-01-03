@@ -1,4 +1,4 @@
-/*! Contour - v0.9.108 - 2015-01-02 */
+/*! Contour - v0.9.109 - 2015-01-02 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -1341,13 +1341,14 @@
     *
     * ###Example:
     *
-    *     var contour = new Contour(...)
+    *     var chart = new Contour(...)
     *         ...
     *         .exportable()
     *         .render();
+    *
     *     document.getElementById('save').onclick = function () {
-    *         contour.download({
-    *             fileName: 'contour.png'
+    *         chart.download({
+    *             fileName: 'myContourChart.png'
     *         });
     *
     * ###External dependencies:
@@ -1405,29 +1406,30 @@
             *
             * ###Browser variations:
             *
-            * - Chrome will save the image.
-            * - Firefox and IE10-11 will display a prompt, then save the image.
-            * - IE9 and Safari will open the image in a new tab, enabling the user to manually save the image.
+            * - Chrome saves the image.
+            * - Firefox and IE10-11 display a prompt, then save the image.
+            * - IE9 and Safari open the image in a new tab, enabling the user to manually save the image.
             *
             * ###Example:
             *
-            *     var contour = new Contour(...)
+            *     var chart = new Contour(...)
             *         ...
             *         .exportable()
             *         .render();
+            *
             *     document.getElementById('save').onclick = function () {
-            *         contour.download({
+            *         chart.download({
             *             fileName: 'contour.png',
             *             width: 640
             *         });
             *
             * @name download
-            * @param {object} options Configuration options specific to saving the image.
-            *     `type` specifies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
-            *     `fileName` specifies the fileName for the download. (Default: 'contour.png'.)
-            *     `backgroundColor` specifies the fill color of the image, or `null` for transparent background. (Default: '#fff'.)
-            *     `width` specifies the width of the exported image. If `height` is falsy then the height will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
-            *     `height` specifies the height of the exported image. If `width` is falsy then the width will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
+            * @param {object} options Configuration options specific to downloading the image.
+            * @param {string} options.type Specifies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. Default: 'image/png'.
+            * @param {string} options.fileName Specifies the file name for the download. Default: 'contour.png'.
+            * @param {string} options.backgroundColor Specifies the fill color of the image. Use `null` for transparent background. Default: '#fff'.
+            * @param {int} options.width Specifies the width of the exported image. If `height` is falsy then the height is scaled proportionally. Default: `undefined`, which means don't do any scaling.
+            * @param {int} options.height Specifies the height of the exported image. If `width` is falsy then the width is scaled proportionally. Default: `undefined`, which means don't do any scaling.
             */
                 download: function(options) {
                     var container = this.container;
@@ -1441,22 +1443,22 @@
             *
             * ###Example:
             *
-            *     var contour = new Contour(...)
+            *     var chart = new Contour(...)
             *         ...
             *         .exportable()
             *         .render();
             *     document.getElementById('save').onclick = function () {
-            *         contour.place({
+            *         chart.place({
             *             target: '#image'
             *         });
             *
             * @name place
-            * @param {object} options Configuration options specific to saving the image.
-            *     `type` specifies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. (Default: 'image/png'.)
-            *     `target` specifies a selector for the container. (For example: '#image' will append the image into `<div id="image"></div>`.)
-            *     `backgroundColor` specifies the fill color of the image, or `null` for transparent background. (Default: '#fff'.)
-            *     `width` specifies the width of the exported image. If `height` is falsy then the height will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
-            *     `height` specifies the height of the exported image. If `width` is falsy then the width will be scaled proportionally. (Default: `undefined` which means don't do any scaling.)
+            * @param {object} options Configuration options specific to placing the image in a container.
+            * @param {string} options.type Specifies the mime type of the image. See http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support for browser support. Default: 'image/png'.
+            * @param {string} options.target Specifies a selector for the container. For example: '#image' will append the image into `<div id="image"></div>`.
+            * @param {string} options.backgroundColor Specifies the fill color of the image. Use `null` for transparent background. Default: '#fff'.
+            * @param {int} options.width Specifies the width of the exported image. If `height` is falsy then the height is scaled proportionally. Default: `undefined`, which means don't do any scaling.
+            * @param {int} options.height specifies the height of the exported image. If `width` is falsy then the width is scaled proportionally. Default: `undefined` which means don't do any scaling.
             */
                 place: function(options) {
                     var container = this.container;
@@ -1911,7 +1913,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.108";
+    Contour.version = "0.9.109";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {
@@ -2188,7 +2190,6 @@
                 var numCats = (this._domain || []).length;
                 var threshold = 30;
                 var rangeType = numCats <= threshold ? "rangeRoundBands" : "rangeBands";
-                console.log("adjusting range", rangeType);
                 // this._scale.rangeBands(range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) :
                 return this.isCategorized ? this._scale[rangeType](range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) : this._scale.rangePoints(range);
             }
@@ -3304,6 +3305,8 @@
             var pieData = d3.layout.pie().value(function(d) {
                 return d.y;
             }).sort(null);
+            var totalWidth = totalPadding + radius * numSeries * 2;
+            var outerPaddingLeft = shouldCenterX ? (w - totalWidth) / 2 : pixelPadding.left;
             var centerX = (w - radius * 2 * (numSeries - 1)) / 2;
             var centerY = h / 2;
             var classFn = function(d, i, j) {
@@ -3315,9 +3318,9 @@
             };
             var translatePie = function(d, i) {
                 // calc the left side coord of the pie, including padding for the prevousous pies
-                var offsetX = radius * 2 * i + pixelPadding.right * i + pixelPadding.left * (i + 1);
+                var offsetX = outerPaddingLeft + (radius * 2 * i + (pixelPadding.right + pixelPadding.left) * i);
                 // calc the center of the pie starting from offsetX
-                var posX = radius + pixelPadding.left;
+                var posX = radius;
                 var posY = shouldCenterY ? centerY : radius + pixelPadding.top;
                 return "translate(" + (radius + offsetX) + "," + posY + ")";
             };
