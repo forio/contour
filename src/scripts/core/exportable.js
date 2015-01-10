@@ -153,7 +153,7 @@
             * @param {string} options.target Specifies a selector for the container. For example: '#image' will append the image into `<div id="image"></div>`.
             * @param {string} options.backgroundColor Specifies the fill color of the image. Use `null` for transparent background. Default: '#fff'.
             * @param {int} options.width Specifies the width of the exported image. If `height` is falsy then the height is scaled proportionally. Default: `undefined`, which means don't do any scaling.
-            * @param {int} options.height specifies the height of the exported image. If `width` is falsy then the width is scaled proportionally. Default: `undefined` which means don't do any scaling.
+            * @param {int} options.height specifies the height of the exported image. If `width` is falsy then the width is scaled proportionally. Default: `undefined`, which means don't do any scaling.
             */
             place: function (options) {
                 var container = this.container;
