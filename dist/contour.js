@@ -1,4 +1,4 @@
-/*! Contour - v0.9.109 - 2015-01-02 */
+/*! Contour - v0.9.110 - 2015-01-22 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -634,12 +634,20 @@
                 return this;
             },
             calculateWidth: function() {
-                var width = _.nw.getStyle(this.options.el, "width");
-                return this.options.el ? parseInt(width, 10) || this.options.chart.defaultWidth : this.options.chart.defaultWidth;
+                // assume all in pixel units and border-box box-sizing
+                var outerWidth = parseInt(_.nw.getStyle(this.options.el, "width"), 10);
+                var paddingLeft = parseInt(_.nw.getStyle(this.options.el, "padding-left"), 10);
+                var paddingRight = parseInt(_.nw.getStyle(this.options.el, "padding-right"), 10);
+                var width = outerWidth - paddingRight - paddingLeft;
+                return this.options.el ? width || this.options.chart.defaultWidth : this.options.chart.defaultWidth;
             },
             calculateHeight: function() {
-                var height = _.nw.getStyle(this.options.el, "height");
-                var containerHeight = this.options.el ? parseInt(height, 10) : undefined;
+                // assume all in pixel units and border-box box-sizing
+                var outerHeight = parseInt(_.nw.getStyle(this.options.el, "height"), 10);
+                var paddingTop = parseInt(_.nw.getStyle(this.options.el, "padding-top"), 10);
+                var paddingBottom = parseInt(_.nw.getStyle(this.options.el, "padding-bottom"), 10);
+                var height = outerHeight - paddingTop - paddingBottom;
+                var containerHeight = this.options.el ? height : undefined;
                 var calcWidth = this.options.chart.width;
                 var ratio = this.options.chart.aspect || this.options.chart.defaultAspect;
                 return !!containerHeight && containerHeight > 1 ? containerHeight : Math.round(calcWidth * ratio);
@@ -1458,7 +1466,7 @@
             * @param {string} options.target Specifies a selector for the container. For example: '#image' will append the image into `<div id="image"></div>`.
             * @param {string} options.backgroundColor Specifies the fill color of the image. Use `null` for transparent background. Default: '#fff'.
             * @param {int} options.width Specifies the width of the exported image. If `height` is falsy then the height is scaled proportionally. Default: `undefined`, which means don't do any scaling.
-            * @param {int} options.height specifies the height of the exported image. If `width` is falsy then the width is scaled proportionally. Default: `undefined` which means don't do any scaling.
+            * @param {int} options.height specifies the height of the exported image. If `width` is falsy then the width is scaled proportionally. Default: `undefined`, which means don't do any scaling.
             */
                 place: function(options) {
                     var container = this.container;
@@ -1913,7 +1921,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.109";
+    Contour.version = "0.9.110";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {

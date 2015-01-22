@@ -1,10 +1,2 @@
-  * Merge pull request #197 from forio/exportable-docs-params
-  * allow options.* parameters to be explicitly listed during build-documentation
-  * Fixed pie demos
-  * Fixed centering of pie/donut charts
-  * Merge pull request #196 from forio/yet-more-docs-updates
-  * Merge branch 'master' into yet-more-docs-updates
-  * update because #190
-  * update because #186
-  * Clean up
-  * missing ;s found testing #179, #182
+  * Take padding of container when calculating width and height of chart
+  * comma
