@@ -233,13 +233,25 @@
         },
 
         calculateWidth: function () {
-            var width = _.nw.getStyle(this.options.el, 'width');
-            return this.options.el ? (parseInt(width, 10) || this.options.chart.defaultWidth) : this.options.chart.defaultWidth;
+
+            // assume all in pixel units and border-box box-sizing
+            var outerWidth = parseInt(_.nw.getStyle(this.options.el, 'width'), 10);
+            var paddingLeft = parseInt(_.nw.getStyle(this.options.el, 'padding-left'), 10);
+            var paddingRight = parseInt(_.nw.getStyle(this.options.el, 'padding-right'), 10);
+
+            var width = outerWidth - paddingRight - paddingLeft;
+
+            return this.options.el ? (width || this.options.chart.defaultWidth) : this.options.chart.defaultWidth;
         },
 
         calculateHeight: function () {
-            var height = _.nw.getStyle(this.options.el, 'height');
-            var containerHeight = this.options.el ? parseInt(height, 10) : undefined;
+            // assume all in pixel units and border-box box-sizing
+            var outerHeight = parseInt(_.nw.getStyle(this.options.el, 'height'), 10);
+            var paddingTop = parseInt(_.nw.getStyle(this.options.el, 'padding-top'), 10);
+            var paddingBottom = parseInt(_.nw.getStyle(this.options.el, 'padding-bottom'), 10);
+            var height = outerHeight - paddingTop - paddingBottom;
+
+            var containerHeight = this.options.el ? height : undefined;
             var calcWidth = this.options.chart.width;
             var ratio = this.options.chart.aspect || this.options.chart.defaultAspect;
 
