@@ -1,4 +1,4 @@
-##Visualizations
+##Core Visualizations
 
 You can add one or more Forio Contour visualizations to any instance of Contour.
 
