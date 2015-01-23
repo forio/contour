@@ -11,7 +11,7 @@ The CSS styles to apply to the rows of the bar chart. This can be a literal stri
         el: '.myBarChart',
         bar: { 
         	style: function(d) {
-        		if (d.y > threshold) { return: 'fill: #000a0'; }
+        		if (d.y > threshold) { return: 'fill: #0000a0'; }
         		else { return 'fill: #0000a0; opacity: 0.4'; }
         	}
         }
