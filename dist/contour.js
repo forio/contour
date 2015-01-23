@@ -1,4 +1,4 @@
-/*! Contour - v0.9.110 - 2015-01-22 */
+/*! Contour - v0.9.111 - 2015-01-23 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -1921,7 +1921,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.110";
+    Contour.version = "0.9.111";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {
@@ -1959,8 +1959,11 @@
             return acc += d;
         }, 0);
         function calcLabelsWidths(ticks) {
-            return ticks.map(String).map(function(d) {
-                var padding = 2;
+            var padding = 2;
+            return _.compact(ticks).map(String).map(function(d) {
+                if (!d) {
+                    return padding * 2;
+                }
                 return _.nw.textBounds(d, ".x.axis text").width + padding * 2;
             });
         }

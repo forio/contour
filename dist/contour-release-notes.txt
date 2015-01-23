@@ -1,2 +1,1 @@
-  * Take padding of container when calculating width and height of chart
-  * comma
+  * prevent empty linear axis labels from taking time calculating its width
