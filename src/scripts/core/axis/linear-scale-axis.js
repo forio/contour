@@ -3,8 +3,11 @@
     var sum = _.partialRight(_.reduce, function (acc, d) { return acc += d; }, 0);
 
     function calcLabelsWidths(ticks) {
-        return ticks.map(String).map(function (d) {
-            var padding = 2;
+        var padding = 2;
+        return _.compact(ticks).map(String).map(function (d) {
+            if (!d) {
+                return padding * 2;
+            }
             return _.nw.textBounds(d, '.x.axis text').width + (padding * 2);
         });
     }
