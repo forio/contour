@@ -43,11 +43,12 @@ describe('Column chart', function () {
             it('should move the columns by \'offset\' if specified', function () {
                 var offset = 50;
                 var nw = createinstance({
+                    chart: { width: 401 },
                     column: { offset: offset , stacked: true }
                 }).column(data).render();
 
                 var rects = $el.find('rect.column');
-                var x1 = +(nw.xScale(0) + offset).toFixed(1);
+                var x1 = +(nw.xScale(0) + offset + 0.5).toFixed(2);
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });
@@ -96,7 +97,7 @@ describe('Column chart', function () {
                 }).column(data).render();
 
                 var rects = $el.find('rect.column');
-                var x1 = +(nw.xScale(0) + offset + 0.5).toFixed(1);
+                var x1 = +(nw.xScale(0) + offset + 1).toFixed(1);
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });
