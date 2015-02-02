@@ -3,6 +3,7 @@
     var root = this;
 
     var defaults = {
+
         chart: {
             animations: {
                 enable: true,
@@ -218,7 +219,7 @@
 
         _exposed: undefined,
 
-        // Initializes the instance of Narwhal
+        // Initializes the instance of Contour
         init: function (options) {
             // for now, just  store this options here...
             // the final set of options will be composed before rendering
