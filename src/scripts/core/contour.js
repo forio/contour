@@ -477,7 +477,10 @@
         // place holder function for now
         data: function () {
 
-        }
+        },
+
+        dataNormalizer: _.nw.normalizeSeries,
+
     });
 
     // exports for commonJS and requireJS styles

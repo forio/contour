@@ -60,7 +60,8 @@
         },
 
         setData: function (data) {
-            this.data = _.nw.normalizeSeries(data, this.categories);
+            var normalizeData = (this.ctx || {}).dataNormalizer || _.nw.normalizeSeries;
+            this.data = normalizeData(data, this.categories);
             this._updateDomain();
 
             return this.ctx;
