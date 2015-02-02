@@ -236,9 +236,9 @@
         calculateWidth: function () {
 
             // assume all in pixel units and border-box box-sizing
-            var outerWidth = parseInt(_.nw.getStyle(this.options.el, 'width'), 10);
-            var paddingLeft = parseInt(_.nw.getStyle(this.options.el, 'padding-left'), 10);
-            var paddingRight = parseInt(_.nw.getStyle(this.options.el, 'padding-right'), 10);
+            var outerWidth = parseInt(_.nw.getStyle(this.options.el, 'width') || 0, 10);
+            var paddingLeft = parseInt(_.nw.getStyle(this.options.el, 'padding-left') || 0, 10);
+            var paddingRight = parseInt(_.nw.getStyle(this.options.el, 'padding-right') || 0, 10);
 
             var width = outerWidth - paddingRight - paddingLeft;
 
@@ -247,9 +247,9 @@
 
         calculateHeight: function () {
             // assume all in pixel units and border-box box-sizing
-            var outerHeight = parseInt(_.nw.getStyle(this.options.el, 'height'), 10);
-            var paddingTop = parseInt(_.nw.getStyle(this.options.el, 'padding-top'), 10);
-            var paddingBottom = parseInt(_.nw.getStyle(this.options.el, 'padding-bottom'), 10);
+            var outerHeight = parseInt(_.nw.getStyle(this.options.el, 'height') || 0, 10);
+            var paddingTop = parseInt(_.nw.getStyle(this.options.el, 'padding-top') || 0, 10);
+            var paddingBottom = parseInt(_.nw.getStyle(this.options.el, 'padding-bottom') || 0, 10);
             var height = outerHeight - paddingTop - paddingBottom;
 
             var containerHeight = this.options.el ? height : undefined;
