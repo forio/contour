@@ -482,6 +482,7 @@
 
         dataNormalizer: _.nw.normalizeSeries,
 
+        isSupportedDataFormat: _.nw.isSupportedDataFormat
     });
 
     // exports for commonJS and requireJS styles
