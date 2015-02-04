@@ -60,7 +60,8 @@
         },
 
         setData: function (data) {
-            this.data = _.nw.normalizeSeries(data, this.categories);
+            var normalizeData = (this.ctx || {}).dataNormalizer || _.nw.normalizeSeries;
+            this.data = normalizeData(data, this.categories);
             this._updateDomain();
 
             return this.ctx;
@@ -78,7 +79,9 @@
         _updateDomain: function () {
             if(!this.options[this.type]) throw new Error('Set the options before calling setData or _updateDomain');
 
-            if (_.nw.isSupportedDataFormat(this.data)) {
+            var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
+
+            if (isSupportedFormat(this.data)) {
                 this.xDomain = _.flatten(_.map(this.data, function (set) { return _.pluck(set.data, 'x'); }));
                 this.xExtent = _xExtent(this.data, 'x');
                 this.yExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);

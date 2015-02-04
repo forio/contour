@@ -30,7 +30,7 @@ describe('Ordinal xAxis', function () {
         /// so it has to have the width: 402... we need to fix this
         function getScale (inner, outer) {
             instance = createinstance({
-                    chart: { width: 402 },
+                    chart: { width: 401, },
                     xAxis: { innerRangePadding: inner, outerRangePadding: outer }
                 })
                 .nullVis([10, 20, 30]).render();
@@ -53,7 +53,7 @@ describe('Ordinal xAxis', function () {
         var data = [10, 20, 30];
         function getScale (inner, outer) {
             instance = createinstance({
-                    chart: { width: 400 },
+                    chart: { width: 401 },
                     xAxis: { innerRangePadding: inner, outerRangePadding: outer }
                 })
                 .nullVis(data).render();

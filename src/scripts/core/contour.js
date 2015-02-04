@@ -3,6 +3,7 @@
     var root = this;
 
     var defaults = {
+
         chart: {
             animations: {
                 enable: true,
@@ -218,7 +219,7 @@
 
         _exposed: undefined,
 
-        // Initializes the instance of Narwhal
+        // Initializes the instance of Contour
         init: function (options) {
             // for now, just  store this options here...
             // the final set of options will be composed before rendering
@@ -235,9 +236,9 @@
         calculateWidth: function () {
 
             // assume all in pixel units and border-box box-sizing
-            var outerWidth = parseInt(_.nw.getStyle(this.options.el, 'width'), 10);
-            var paddingLeft = parseInt(_.nw.getStyle(this.options.el, 'padding-left'), 10);
-            var paddingRight = parseInt(_.nw.getStyle(this.options.el, 'padding-right'), 10);
+            var outerWidth = parseInt(_.nw.getStyle(this.options.el, 'width') || 0, 10);
+            var paddingLeft = parseInt(_.nw.getStyle(this.options.el, 'padding-left') || 0, 10);
+            var paddingRight = parseInt(_.nw.getStyle(this.options.el, 'padding-right') || 0, 10);
 
             var width = outerWidth - paddingRight - paddingLeft;
 
@@ -246,9 +247,9 @@
 
         calculateHeight: function () {
             // assume all in pixel units and border-box box-sizing
-            var outerHeight = parseInt(_.nw.getStyle(this.options.el, 'height'), 10);
-            var paddingTop = parseInt(_.nw.getStyle(this.options.el, 'padding-top'), 10);
-            var paddingBottom = parseInt(_.nw.getStyle(this.options.el, 'padding-bottom'), 10);
+            var outerHeight = parseInt(_.nw.getStyle(this.options.el, 'height') || 0, 10);
+            var paddingTop = parseInt(_.nw.getStyle(this.options.el, 'padding-top') || 0, 10);
+            var paddingBottom = parseInt(_.nw.getStyle(this.options.el, 'padding-bottom') || 0, 10);
             var height = outerHeight - paddingTop - paddingBottom;
 
             var containerHeight = this.options.el ? height : undefined;
@@ -515,7 +516,11 @@
         // place holder function for now
         data: function () {
 
-        }
+        },
+
+        dataNormalizer: _.nw.normalizeSeries,
+
+        isSupportedDataFormat: _.nw.isSupportedDataFormat
     });
 
     // exports for commonJS and requireJS styles

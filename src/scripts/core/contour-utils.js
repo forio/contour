@@ -322,6 +322,19 @@
             return [].concat(array1, array2).sort(function (a,b) { return a-b; });
         },
 
+        isCorrectDataFormat: function (dataArray) {
+            return _.isArray(dataArray) && _.all(dataArray, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+        },
+
+        isCorrectSeriesFormat: function (data) {
+            var isArrayOfObjects = _.isArray(data) && _.isObject(data[0]);
+            var hasDataArrayPerSeries = _.all(data, function (d) { return d.hasOwnProperty('data'); });
+            var hasSeriesNamePerSeries = _.all(data, function (d) { return d.hasOwnProperty('name'); });
+            var datumInCorrectFormat = isArrayOfObjects && hasDataArrayPerSeries && arrayHelpers.isCorrectDataFormat(data[0].data);
+
+            return isArrayOfObjects && hasDataArrayPerSeries && hasSeriesNamePerSeries && datumInCorrectFormat;
+        },
+
         /*jshint eqnull:true */
         // we are using != null to get null & undefined but not 0
         normalizeSeries: function (data, categories) {
@@ -346,9 +359,8 @@
                 return d;
             }
 
-            var correctDataFormat = _.isArray(data) && _.all(data, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
-            var correctSeriesFormat = _.isArray(data) && _.isObject(data[0]) && data[0].hasOwnProperty('data') &&
-                    data[0].hasOwnProperty('name') && _.all(data[0].data, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+            var correctDataFormat = arrayHelpers.isCorrectDataFormat(data);
+            var correctSeriesFormat = arrayHelpers.isCorrectSeriesFormat(data);
 
             // do not make a new copy, if the data is already in the correct format!
             if (correctSeriesFormat) {
@@ -437,7 +449,12 @@
         },
 
         isSupportedDataFormat: function (data) {
-            return _.isArray(data) && (_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0]);
+            // this covers all supported formats so far:
+            // [ {data: [...] }, ... ]
+            // [ [...], [...] ]
+            return _.isArray(data) &&
+                (_.isObject(data[0]) && data[0].hasOwnProperty('data') && _.isArray(data[0].data)) ||
+                _.isArray(data[0]);
         }
 
     };
