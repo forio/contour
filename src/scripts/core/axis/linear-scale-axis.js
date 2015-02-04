@@ -31,11 +31,12 @@
                 this._scale = d3.scale.linear().domain(this._domain);
                 if(this.options.xAxis.min == null && this.options.xAxis.max == null)
                     this._scale.nice();
-                this._setRange();
             } else {
                 this._scale.domain(this._domain);
             }
 
+            this._setRange();
+            
             return this._scale;
         },
 

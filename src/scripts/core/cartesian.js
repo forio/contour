@@ -302,14 +302,21 @@
             renderXAxis: function () {
                 var xAxis = this.xAxis();
                 var y = this.options.chart.plotHeight + this.options.chart.padding.top;
+                var x = this.options.chart.internalPadding.left;
 
                 this._xAxisGroup = this.svg.selectAll('.x.axis')
                     .data([1]);
 
-                this._xAxisGroup.enter()
-                    .append('g')
-                    .attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + y + ')')
-                    .attr('class', 'x axis');
+                if (!this._xAxisGroup.node()) {
+                    this._xAxisGroup.enter()
+                        .append('g')
+                        .attr('transform', 'translate(' + x + ',' + y + ')')
+                        .attr('class', 'x axis');
+                } else {
+                    d3.select(this._xAxisGroup.node())
+                        .attr('transform', 'translate(' + x + ',' + y + ')');
+                }
+                
 
                 this._xAxisGroup
                     .transition().duration(this._animationDuration())
@@ -329,10 +336,15 @@
                 this._yAxisGroup = this.svg.selectAll('.y.axis')
                     .data([1]);
 
-                this._yAxisGroup
-                    .enter().append('g')
-                    .attr('transform', 'translate(' + x + ',' + y + ')')
+                if (!this._yAxisGroup.node()) {
+                    this._yAxisGroup
+                        .enter().append('g')
+                        .attr('transform', 'translate(' + x + ',' + y + ')')
                         .attr('class', 'y axis');
+                } else {
+                    d3.select(this._yAxisGroup.node())
+                        .attr('transform', 'translate(' + x + ',' + y + ')');
+                }
 
                 this._yAxisGroup
                     .transition().duration(this._animationDuration())
@@ -353,8 +365,12 @@
                     y = this.options.chart.internalPadding.bottom;
                     x = 0;
                     el = this._xAxisGroup.selectAll('.x.axis-title').data([1]);
-                    el.enter().append('text')
-                        .attr('class', 'x axis-title')
+                    if (!el.node()) {
+                        el.enter().append('text')
+                            .attr('class', 'x axis-title');
+                    }
+                    
+                    d3.select(el.node())                        
                         .attr('x', x)
                         .attr('y', y)
                         .attr('dx', (this.options.chart.plotWidth - bounds.width) / 2)
@@ -367,7 +383,12 @@
                     y = -this.options.chart.internalPadding.left + bounds.height * adjustFactor;
                     x = 0;
                     el = this._yAxisGroup.selectAll('.y.axis-title').data([1]);
-                    el.enter().append('text')
+                    if (!el.node()) {
+                        el.enter().append('text')
+                            .attr('class', 'y axis-title');
+                    }
+                    
+                    d3.select(el.node()) 
                         .attr('class', 'y axis-title')
                         .attr('transform', 'rotate(-90)')
                         .attr('x', x)
