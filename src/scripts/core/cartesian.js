@@ -307,18 +307,12 @@
                 this._xAxisGroup = this.svg.selectAll('.x.axis')
                     .data([1]);
 
-                if (!this._xAxisGroup.node()) {
-                    this._xAxisGroup.enter()
-                        .append('g')
-                        .attr('transform', 'translate(' + x + ',' + y + ')')
-                        .attr('class', 'x axis');
-                } else {
-                    d3.select(this._xAxisGroup.node())
-                        .attr('transform', 'translate(' + x + ',' + y + ')');
-                }
+                this._xAxisGroup.enter()
+                    .append('g')
+                    .attr('class', 'x axis');
                 
-
                 this._xAxisGroup
+                    .attr('transform', 'translate(' + x + ',' + y + ')')
                     .transition().duration(this._animationDuration())
                     .call(xAxis);
 
@@ -336,17 +330,12 @@
                 this._yAxisGroup = this.svg.selectAll('.y.axis')
                     .data([1]);
 
-                if (!this._yAxisGroup.node()) {
-                    this._yAxisGroup
+                this._yAxisGroup
                         .enter().append('g')
-                        .attr('transform', 'translate(' + x + ',' + y + ')')
                         .attr('class', 'y axis');
-                } else {
-                    d3.select(this._yAxisGroup.node())
-                        .attr('transform', 'translate(' + x + ',' + y + ')');
-                }
 
                 this._yAxisGroup
+                    .attr('transform', 'translate(' + x + ',' + y + ')')
                     .transition().duration(this._animationDuration())
                     .call(this.yAxis())
                     .selectAll('.tick text')
@@ -365,13 +354,10 @@
                     y = this.options.chart.internalPadding.bottom;
                     x = 0;
                     el = this._xAxisGroup.selectAll('.x.axis-title').data([1]);
-                    if (!el.node()) {
-                        el.enter().append('text')
-                            .attr('class', 'x axis-title');
-                    }
+                    el.enter().append('text')
+                        .attr('class', 'x axis-title');
                     
-                    d3.select(el.node())                        
-                        .attr('x', x)
+                    el.attr('x', x)
                         .attr('y', y)
                         .attr('dx', (this.options.chart.plotWidth - bounds.width) / 2)
                         .attr('dy', -2) // just because
@@ -383,15 +369,11 @@
                     y = -this.options.chart.internalPadding.left + bounds.height * adjustFactor;
                     x = 0;
                     el = this._yAxisGroup.selectAll('.y.axis-title').data([1]);
-                    if (!el.node()) {
-                        el.enter().append('text')
-                            .attr('class', 'y axis-title');
-                    }
-                    
-                    d3.select(el.node()) 
-                        .attr('class', 'y axis-title')
+                    el.enter().append('text')
                         .attr('transform', 'rotate(-90)')
-                        .attr('x', x)
+                        .attr('class', 'y axis-title');
+                    
+                   el.attr('x', x)
                         .attr('y', y)
                         .attr('dx', -(this.options.chart.plotHeight + bounds.width) / 2)
                         .attr('dy', 0)
