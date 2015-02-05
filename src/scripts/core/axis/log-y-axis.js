@@ -39,9 +39,10 @@
                 this._scale = d3.scale.log();
                 this.setDomain(domain).clamp(true);
 
-                setRange(this._scale, this.options);
             }
 
+            setRange(this._scale, this.options);
+            
             return this._scale;
         },
 

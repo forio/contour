@@ -36,16 +36,16 @@
             if(!this._scale) {
                 this._scale = d3.scale.linear();
                 this.setDomain(domain);
-                setRange(this._scale, this.options);
             }
 
+            setRange(this._scale, this.options);
             return this._scale;
         },
 
         setDomain: function (domain) {
             this._scale.domain(domain);
             this._niceTheScale();
-            return this._scale;
+            return this.scale();
         },
 
         update: function (domain, dataSrc) {
