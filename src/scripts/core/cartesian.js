@@ -414,7 +414,9 @@
                         return axis.scale().ticks(numTicks).slice(1);
                     }
 
-                    smart && tickValues.pop();
+                    if (smart) {
+                        tickValues.pop();
+                    }
 
                     return tickValues.slice(1);
                 }

@@ -130,7 +130,7 @@
                 step = mag <= 1 ? 2 : Math.pow(10, mag - 1);
             } else {
 
-                exp = abs.toExponential().replace(/\.|e-\d+$/g, '');
+                var exp = abs.toExponential().replace(/\.|e-\d+$/g, '');
                 mag = exp.length;
                 step = mulFloat((mag === 1 ? 2 : 10), Math.pow(10, -mag));
             }

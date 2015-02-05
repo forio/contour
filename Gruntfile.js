@@ -7,6 +7,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-bumpup');
     grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-tagrelease');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
     // Project configuration.
     grunt.initConfig({
@@ -18,7 +19,7 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['src/scripts/**/*.js'],
-                tasks: ['uglify']
+                tasks: ['jshint', 'uglify']
             }
         },
         bumpup: {
@@ -154,6 +155,16 @@ module.exports = function (grunt) {
             }
         },
 
+        jshint: {
+            options: {
+                jshintrc: true,
+            },
+
+            files: {
+                src: ['src/scripts/**/*.js']
+            }
+        },
+
         // this task does not currently work... our tests are done in jasmine 1.3.1
         // and grunt-contrib-jasmin only supports 2.0.0
         // TODO: upgrade tests for jasmin 2.0
@@ -184,18 +195,18 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['uglify:concatenate', 'uglify:dev', 'less:dev', 'watch']);
+    grunt.registerTask('default', ['jshint', 'uglify:concatenate', 'uglify:dev', 'less:dev', 'watch']);
 
-    grunt.registerTask('production', ['ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'releaseNotes']);
+    grunt.registerTask('production', ['jshint', 'ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'releaseNotes']);
 
     grunt.registerTask('release', function (type) {
         type = type ? type : 'patch';
-        ['bumpup:' + type, 'ver', 'uglify:concatenate', 'uglify:minify', 'less:production', 'less:uncompressed', 'releaseNotes', 'tagrelease'].forEach(function (task) {
+        ['jshint', 'bumpup:' + type, 'ver', 'uglify:concatenate', 'uglify:minify', 'less:production', 'less:uncompressed', 'releaseNotes', 'tagrelease'].forEach(function (task) {
             grunt.task.run(task);
         });
     });
 
-    grunt.registerTask('linked', ['uglify:concatenate', 'uglify:dev', 'less:uncompressed', 'less:production', 'watch']);
+    grunt.registerTask('linked', ['jshint', 'uglify:concatenate', 'uglify:dev', 'less:uncompressed', 'less:production', 'watch']);
 
 
     grunt.registerMultiTask('releaseNotes', 'Generate a release notes file with changes in git log since last tag', function () {

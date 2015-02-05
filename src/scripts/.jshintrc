@@ -1,9 +1,13 @@
 {
     "browser": true,
     "strict": false,
+    "eqnull": true,
     "globals": {
         "_": true,
         "Contour": true,
-        "d3": true
+        "d3": true,
+        "module": true,
+        "define": true,
+        "canvg": true
     }
 }
