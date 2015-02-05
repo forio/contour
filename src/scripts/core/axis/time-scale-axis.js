@@ -33,9 +33,7 @@
             if(!this._scale) {
                 this._scale = new d3.time.scale();
                 this.setDomain(domain);
-                this.range();
             }
-
 
             return this._scale;
         },
@@ -77,6 +75,7 @@
             this._domain = domain;
             var axisDomain = this._getAxisDomain(this._domain);
             this._scale.domain(axisDomain);
+            this.range();
         },
 
         postProcessAxis: function (axisGroup) {
