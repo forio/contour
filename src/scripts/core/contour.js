@@ -360,7 +360,8 @@
         *     window.addEventListener('resize', onResize);
         *
         * @function resize
-        *
+        * @param {Number} width (optional) The new width for the visualizations.  If left blank the width will be calcuated from options.el's parent.
+        * @param {Number} height (optional) The new height for the visualizations.  If left blank the height will be calcuated from options.el's parent.
         */
         resize: function(width, height) {
             
