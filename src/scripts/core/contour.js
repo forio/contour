@@ -345,7 +345,8 @@
 
         /**
         * Clears this Contour instance and all its visualizations of any size information so that on the next call to render the instace is re-measured.
-        *
+        * 
+        * The function takes two optional arguements width, height -- if given a specific width/height the chart will use that sizing information on the next render.
         * ### Example:
         *
         *     var contour = new Contour({ el:'.myChart' })
@@ -361,7 +362,11 @@
         * @function resize
         *
         */
-        resize: function() {
+        resize: function(width, height) {
+            
+            if (this.container)
+                this.container.style('height', 0);
+
             delete this.options.chart.width;
             delete this.options.chart.height;
             delete this.options.chart.plotWidth;
@@ -369,6 +374,11 @@
             delete this.options.chart.plotLeft;
             delete this.options.chart.plotTop;
 
+            if (width)
+                this.options.chart.width = width;
+
+            if (height)
+                this.options.chart.height = height;
             return this;
         },
 
