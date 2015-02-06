@@ -50,6 +50,7 @@
             this.data = dataSrc;
             if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
             this.setDomain(domain).clamp(true);
+            this.scale();
         },
     });
 
