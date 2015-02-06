@@ -772,6 +772,38 @@
                 this.renderVisualizations();
                 return this;
             },
+            /**
+        * Clears this Contour instance and all its visualizations of any size information so that on the next call to render the instace is re-measured.
+        * 
+        * The function takes two optional arguements width, height -- if given a specific width/height the chart will use that sizing information on the next render.
+        * ### Example:
+        *
+        *     var contour = new Contour({ el:'.myChart' })
+        *           .pie([1,2,3])
+        *           .render()
+        *     
+        *     var onResize = function(e) {
+        *          contour.resize().render();
+        *     }
+        *
+        *     window.addEventListener('resize', onResize);
+        *
+        * @function resize
+        * @param {Number} width (optional) The new width for the visualizations.  If left blank the width will be calcuated from options.el's parent.
+        * @param {Number} height (optional) The new height for the visualizations.  If left blank the height will be calcuated from options.el's parent.
+        */
+            resize: function(width, height) {
+                if (this.container) this.container.style("height", 0);
+                delete this.options.chart.width;
+                delete this.options.chart.height;
+                delete this.options.chart.plotWidth;
+                delete this.options.chart.plotHeight;
+                delete this.options.chart.plotLeft;
+                delete this.options.chart.plotTop;
+                if (width) this.options.chart.width = width;
+                if (height) this.options.chart.height = height;
+                return this;
+            },
             update: function() {
                 this.calcMetrics();
                 return this;
@@ -783,17 +815,21 @@
                 this.container.attr("style", "-webkit-backface-visibility: hidden; position: relative");
                 if (!this.svg) {
                     this.svg = this.container.append("svg").attr("viewBox", "0 0 " + chartOpt.width + " " + chartOpt.height).attr("preserveAspectRatio", "xMinYMin").attr("class", "contour-chart").attr("height", chartOpt.height).append("g").attr("transform", "translate(" + chartOpt.margin.left + "," + chartOpt.margin.top + ")");
+                } else {
+                    this.svg.attr("transform", "translate(" + chartOpt.margin.left + "," + chartOpt.margin.top + ")");
+                    d3.select(this.svg.node().parentNode).attr("viewBox", "0 0 " + chartOpt.width + " " + chartOpt.height).attr("height", chartOpt.height);
                 }
                 return this;
             },
             createVisualizationLayer: function(vis, id) {
-                return this.svg.append("g").attr("vis-id", id).attr("vis-type", vis.type).attr("transform", "translate(" + this.options.chart.internalPadding.left + "," + (this.options.chart.padding.top || 0) + ")");
+                return this.svg.append("g").attr("vis-id", id).attr("vis-type", vis.type);
             },
             renderVisualizations: function() {
                 _.each(this._visualizations, function(visualization, index) {
                     var id = index + 1;
                     var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
                     var opt = _.merge({}, this.options, visualization.options);
+                    layer.attr("transform", "translate(" + this.options.chart.internalPadding.left + "," + (this.options.chart.padding.top || 0) + ")");
                     visualization.layer = layer;
                     visualization.parent = this;
                     visualization.render(layer, opt, this);
@@ -920,8 +956,8 @@
                 if (!this._scale) {
                     this._scale = d3.scale.linear();
                     this.setDomain(domain);
-                    setRange(this._scale, this.options);
                 }
+                setRange(this._scale, this.options);
                 return this._scale;
             },
             setDomain: function(domain) {
@@ -932,6 +968,7 @@
             update: function(domain, dataSrc) {
                 this.data = dataSrc;
                 this.setDomain(domain);
+                this.scale();
             },
             /*jshint eqnull:true*/
             numTicks: function() {
@@ -1216,9 +1253,10 @@
                 renderXAxis: function() {
                     var xAxis = this.xAxis();
                     var y = this.options.chart.plotHeight + this.options.chart.padding.top;
+                    var x = this.options.chart.internalPadding.left;
                     this._xAxisGroup = this.svg.selectAll(".x.axis").data([ 1 ]);
-                    this._xAxisGroup.enter().append("g").attr("transform", "translate(" + this.options.chart.internalPadding.left + "," + y + ")").attr("class", "x axis");
-                    this._xAxisGroup.transition().duration(this._animationDuration()).call(xAxis);
+                    this._xAxisGroup.enter().append("g").attr("class", "x axis");
+                    this._xAxisGroup.attr("transform", "translate(" + x + "," + y + ")").transition().duration(this._animationDuration()).call(xAxis);
                     this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
                     return this;
                 },
@@ -1232,8 +1270,8 @@
                     var x = this.options.chart.internalPadding.left;
                     var y = this.options.chart.padding.top;
                     this._yAxisGroup = this.svg.selectAll(".y.axis").data([ 1 ]);
-                    this._yAxisGroup.enter().append("g").attr("transform", "translate(" + x + "," + y + ")").attr("class", "y axis");
-                    this._yAxisGroup.transition().duration(this._animationDuration()).call(this.yAxis()).selectAll(".tick text").attr("dy", alignmentOffset[options.labels.verticalAlign]);
+                    this._yAxisGroup.enter().append("g").attr("class", "y axis");
+                    this._yAxisGroup.attr("transform", "translate(" + x + "," + y + ")").transition().duration(this._animationDuration()).call(this.yAxis()).selectAll(".tick text").attr("dy", alignmentOffset[options.labels.verticalAlign]);
                     return this;
                 },
                 renderAxisLabels: function() {
@@ -1247,14 +1285,16 @@
                         y = this.options.chart.internalPadding.bottom;
                         x = 0;
                         el = this._xAxisGroup.selectAll(".x.axis-title").data([ 1 ]);
-                        el.enter().append("text").attr("class", "x axis-title").attr("x", x).attr("y", y).attr("dx", (this.options.chart.plotWidth - bounds.width) / 2).attr("dy", -2).text(this.options.xAxis.title);
+                        el.enter().append("text").attr("class", "x axis-title");
+                        el.attr("x", x).attr("y", y).attr("dx", (this.options.chart.plotWidth - bounds.width) / 2).attr("dy", -2).text(this.options.xAxis.title);
                     }
                     if (this.options.yAxis.title) {
                         bounds = _.nw.textBounds(this.options.yAxis.title, ".y.axis-title");
                         y = -this.options.chart.internalPadding.left + bounds.height * adjustFactor;
                         x = 0;
                         el = this._yAxisGroup.selectAll(".y.axis-title").data([ 1 ]);
-                        el.enter().append("text").attr("class", "y axis-title").attr("transform", "rotate(-90)").attr("x", x).attr("y", y).attr("dx", -(this.options.chart.plotHeight + bounds.width) / 2).attr("dy", 0).text(this.options.yAxis.title);
+                        el.enter().append("text").attr("transform", "rotate(-90)").attr("class", "y axis-title");
+                        el.attr("x", x).attr("y", y).attr("dx", -(this.options.chart.plotHeight + bounds.width) / 2).attr("dy", 0).text(this.options.yAxis.title);
                     }
                     return this;
                 },
@@ -2040,10 +2080,10 @@
                 if (!this._scale) {
                     this._scale = d3.scale.linear().domain(this._domain);
                     if (this.options.xAxis.min == null && this.options.xAxis.max == null) this._scale.nice();
-                    this._setRange();
                 } else {
                     this._scale.domain(this._domain);
                 }
+                this._setRange();
                 return this._scale;
             },
             axis: function() {
@@ -2144,8 +2184,8 @@
                     //throw new Error('Log scales don\'t support 0 or negative values');
                     this._scale = d3.scale.log();
                     this.setDomain(domain).clamp(true);
-                    setRange(this._scale, this.options);
                 }
+                setRange(this._scale, this.options);
                 return this._scale;
             },
             update: function(domain, dataSrc) {
@@ -2153,6 +2193,7 @@
                 if (domain[0] <= .1) domain[0] = .1;
                 //throw new Error('Log scales don\'t support 0 or negative values');
                 this.setDomain(domain).clamp(true);
+                this.scale();
             }
         });
         _.extend(_.nw, {
@@ -2243,6 +2284,7 @@
             update: function(domain, data) {
                 this.data = data;
                 this.setDomain(domain);
+                this.scale();
             },
             setDomain: function(domain) {
                 this._domain = domain;
@@ -2354,8 +2396,8 @@
                 if (!this._scale) {
                     this._scale = new d3.time.scale();
                     this.setDomain(domain);
-                    this.range();
                 }
+                this.range();
                 return this._scale;
             },
             /* jshint eqnull:true */
@@ -2378,6 +2420,7 @@
             update: function(domain, data) {
                 this.data = data;
                 this.setDomain(domain);
+                this.scale();
             },
             setDomain: function(domain) {
                 this._domain = domain;

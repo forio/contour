@@ -36,9 +36,9 @@
             if(!this._scale) {
                 this._scale = d3.scale.linear();
                 this.setDomain(domain);
-                setRange(this._scale, this.options);
             }
 
+            setRange(this._scale, this.options);
             return this._scale;
         },
 
@@ -51,6 +51,7 @@
         update: function (domain, dataSrc) {
             this.data = dataSrc;
             this.setDomain(domain);
+            this.scale();
         },
 
         /*jshint eqnull:true*/
