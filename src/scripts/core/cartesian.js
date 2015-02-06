@@ -302,16 +302,17 @@
             renderXAxis: function () {
                 var xAxis = this.xAxis();
                 var y = this.options.chart.plotHeight + this.options.chart.padding.top;
+                var x = this.options.chart.internalPadding.left;
 
                 this._xAxisGroup = this.svg.selectAll('.x.axis')
                     .data([1]);
 
                 this._xAxisGroup.enter()
                     .append('g')
-                    .attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + y + ')')
                     .attr('class', 'x axis');
-
+                
                 this._xAxisGroup
+                    .attr('transform', 'translate(' + x + ',' + y + ')')
                     .transition().duration(this._animationDuration())
                     .call(xAxis);
 
@@ -330,11 +331,11 @@
                     .data([1]);
 
                 this._yAxisGroup
-                    .enter().append('g')
-                    .attr('transform', 'translate(' + x + ',' + y + ')')
+                        .enter().append('g')
                         .attr('class', 'y axis');
 
                 this._yAxisGroup
+                    .attr('transform', 'translate(' + x + ',' + y + ')')
                     .transition().duration(this._animationDuration())
                     .call(this.yAxis())
                     .selectAll('.tick text')
@@ -354,8 +355,9 @@
                     x = 0;
                     el = this._xAxisGroup.selectAll('.x.axis-title').data([1]);
                     el.enter().append('text')
-                        .attr('class', 'x axis-title')
-                        .attr('x', x)
+                        .attr('class', 'x axis-title');
+                    
+                    el.attr('x', x)
                         .attr('y', y)
                         .attr('dx', (this.options.chart.plotWidth - bounds.width) / 2)
                         .attr('dy', -2) // just because
@@ -368,9 +370,10 @@
                     x = 0;
                     el = this._yAxisGroup.selectAll('.y.axis-title').data([1]);
                     el.enter().append('text')
-                        .attr('class', 'y axis-title')
                         .attr('transform', 'rotate(-90)')
-                        .attr('x', x)
+                        .attr('class', 'y axis-title');
+                    
+                   el.attr('x', x)
                         .attr('y', y)
                         .attr('dx', -(this.options.chart.plotHeight + bounds.width) / 2)
                         .attr('dy', 0)

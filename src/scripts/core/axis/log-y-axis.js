@@ -39,9 +39,10 @@
                 this._scale = d3.scale.log();
                 this.setDomain(domain).clamp(true);
 
-                setRange(this._scale, this.options);
             }
 
+            setRange(this._scale, this.options);
+            
             return this._scale;
         },
 
@@ -49,6 +50,7 @@
             this.data = dataSrc;
             if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
             this.setDomain(domain).clamp(true);
+            this.scale();
         },
     });
 

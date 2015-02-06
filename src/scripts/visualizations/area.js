@@ -6,7 +6,11 @@
         },
         area: {
             stacked: true,
-            areaBase: undefined
+            areaBase: undefined,
+            data: {
+                filter: true,
+                filterNumPts: 1000
+            }
         }
     };
 

@@ -5,7 +5,11 @@
             type: 'linear'
         },
         scatter: {
-            radius: 4
+            radius: 4,
+            data: {
+                filter: false,
+                filterNumPts: 1000
+            }
         }
     };
 

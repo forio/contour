@@ -33,9 +33,9 @@
             if(!this._scale) {
                 this._scale = new d3.time.scale();
                 this.setDomain(domain);
-                this.range();
             }
 
+            this.range();
 
             return this._scale;
         },
@@ -71,6 +71,7 @@
         update: function (domain, data) {
             this.data = data;
             this.setDomain(domain);
+            this.scale();
         },
 
         setDomain: function (domain) {

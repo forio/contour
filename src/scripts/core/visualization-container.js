@@ -61,7 +61,11 @@
 
         setData: function (data) {
             var normalizeData = (this.ctx || {}).dataNormalizer || _.nw.normalizeSeries;
-            this.data = normalizeData(data, this.categories);
+            var filterOpts = this.options[this.type].data || { filter:false };
+            if (filterOpts.filter && !filterOpts.filterNumPts)
+                filterOpts.filterNumPts = 1000;
+
+            this.data = normalizeData(data, this.categories, filterOpts);
             this._updateDomain();
 
             return this.ctx;
@@ -72,7 +76,6 @@
             opt[this.type] = options || {};
             this.options = {};
             this.options = _.merge({}, (this.renderer || {}).defaults || {}, opt);
-
             return this.ctx;
         },
 
