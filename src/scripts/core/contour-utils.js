@@ -413,12 +413,22 @@
 
             // do not make a new copy, if the data is already in the correct format!
             if (correctSeriesFormat) {
+                if (opts.filter) {
+                    for (var i=0; i < data.length; ++i) {
+                        data[i].data = filter(data[i].data);
+                    }
+                }
                 return data;
             }
 
             // do the next best thing if the data is a set of points in the correct format
             if (correctDataFormat) {
-                if (!hasCategories) data.sort(sortFn);
+                if (!hasCategories) 
+                    data.sort(sortFn);
+
+                if (opts.filter) {
+                    data = filter(data);
+                }
                 return [{ name: 'series 1', data: data }];
             }
 
@@ -426,7 +436,9 @@
             if (_.isArray(data)) {
                 if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
                     // this would be the shape for multiple series
-                    return _.map(data, function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
+                    return _.map(data, function (d, i) {
+                            return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); 
+                        });
                 } else {
                     // this is just the shape [1,2,3,4] or [{x:0, y:1}, { x: 1, y:2}...]
                     return [normal(data, 'series 1')];

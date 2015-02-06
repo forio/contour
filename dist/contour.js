@@ -379,11 +379,19 @@
                 var correctSeriesFormat = arrayHelpers.isCorrectSeriesFormat(data);
                 // do not make a new copy, if the data is already in the correct format!
                 if (correctSeriesFormat) {
+                    if (opts.filter) {
+                        for (var i = 0; i < data.length; ++i) {
+                            data[i].data = filter(data[i].data);
+                        }
+                    }
                     return data;
                 }
                 // do the next best thing if the data is a set of points in the correct format
                 if (correctDataFormat) {
                     if (!hasCategories) data.sort(sortFn);
+                    if (opts.filter) {
+                        data = filter(data);
+                    }
                     return [ {
                         name: "series 1",
                         data: data
@@ -3149,6 +3157,16 @@
         /* jshint eqnull: true */
         function render(rawData, layer, options, id) {
             this.checkDependencies("cartesian");
+            function optimizeData(rawData) {
+                return _.map(rawData, function(s) {
+                    return _.extend(s, {
+                        data: _.filter(s.data, function(d, i) {
+                            if (i === 0 && d.y != null) return true;
+                            return d.y != null;
+                        })
+                    });
+                });
+            }
             var x = _.bind(function(d) {
                 return this.xScale(d.x) + this.rangeBand / 2 + .5;
             }, this);
@@ -3160,7 +3178,7 @@
             animationDirection = options.line.animationDirection || "left-to-right";
             duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
             // jshint eqnull:true
-            var data = rawData;
+            var data = optimizeData(rawData);
             data = options.line.stacked ? d3.layout.stack().values(function(d) {
                 return d.data;
             })(data) : data;
