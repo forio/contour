@@ -1,4 +1,4 @@
-/*! Contour - v0.9.111 - 2015-01-23 */
+/*! Contour - v0.9.111 - 2015-02-06 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -285,12 +285,68 @@
                     return a - b;
                 });
             },
+            isCorrectDataFormat: function(dataArray) {
+                return _.isArray(dataArray) && _.all(dataArray, function(p) {
+                    return p.hasOwnProperty("x") && p.hasOwnProperty("y");
+                });
+            },
+            isCorrectSeriesFormat: function(data) {
+                var isArrayOfObjects = _.isArray(data) && _.isObject(data[0]);
+                var hasDataArrayPerSeries = _.all(data, function(d) {
+                    return d.hasOwnProperty("data");
+                });
+                var hasSeriesNamePerSeries = _.all(data, function(d) {
+                    return d.hasOwnProperty("name");
+                });
+                var datumInCorrectFormat = isArrayOfObjects && hasDataArrayPerSeries && arrayHelpers.isCorrectDataFormat(data[0].data);
+                return isArrayOfObjects && hasDataArrayPerSeries && hasSeriesNamePerSeries && datumInCorrectFormat;
+            },
             /*jshint eqnull:true */
             // we are using != null to get null & undefined but not 0
-            normalizeSeries: function(data, categories) {
+            normalizeSeries: function(data, categories, opts) {
+                opts = opts || {
+                    filter: false
+                };
                 var hasCategories = !!(categories && _.isArray(categories));
                 function sortFn(a, b) {
                     return a.x - b.x;
+                }
+                function filter(data) {
+                    var desiredLen = opts.filterNumPts;
+                    if (data.length <= desiredLen) return data;
+                    var toReturn = [ data[0] ];
+                    //always want the first
+                    var index = 1;
+                    var increment = Math.floor(data.length / desiredLen);
+                    while (index < data.length - 1) {
+                        var hasValidPt = false;
+                        var maxPt;
+                        var minPt;
+                        var maxIndex = Math.min(index + increment, data.length);
+                        for (var intermediateIndex = index; intermediateIndex < maxIndex; intermediateIndex++) {
+                            var intermediatePt = data[index];
+                            if (intermediatePt.y) {
+                                if (!hasValidPt || intermediatePt.y > maxPt.y) maxPt = intermediatePt;
+                                if (!hasValidPt || intermediatePt.y < minPt.y) minPt = intermediatePt;
+                                hasValidPt = true;
+                            }
+                        }
+                        if (hasValidPt) {
+                            if (minPt.x == maxPt.x) {
+                                toReturn.push(minPt);
+                            } else if (minPt.x < maxPt.x) {
+                                toReturn.push(minPt);
+                                toReturn.push(maxPt);
+                            } else if (minPt.x > maxPt.x) {
+                                toReturn.push(maxPt);
+                                toReturn.push(minPt);
+                            }
+                        }
+                        index += Math.max(1, Math.min(data.length - 1 - index, increment));
+                    }
+                    toReturn.push(data[data.length - 1]);
+                    //always want the last
+                    return toReturn;
                 }
                 function normal(set, name) {
                     var d = {
@@ -315,22 +371,27 @@
                     };
                     if (!hasCategories) {
                         d.data.sort(sortFn);
+                        if (opts.filter) d.data = filter(d.data);
                     }
                     return d;
                 }
-                var correctDataFormat = _.isArray(data) && _.all(data, function(p) {
-                    return p.hasOwnProperty("x") && p.hasOwnProperty("y");
-                });
-                var correctSeriesFormat = _.isArray(data) && _.isObject(data[0]) && data[0].hasOwnProperty("data") && data[0].hasOwnProperty("name") && _.all(data[0].data, function(p) {
-                    return p.hasOwnProperty("x") && p.hasOwnProperty("y");
-                });
+                var correctDataFormat = arrayHelpers.isCorrectDataFormat(data);
+                var correctSeriesFormat = arrayHelpers.isCorrectSeriesFormat(data);
                 // do not make a new copy, if the data is already in the correct format!
                 if (correctSeriesFormat) {
+                    if (opts.filter) {
+                        for (var i = 0; i < data.length; ++i) {
+                            data[i].data = filter(data[i].data);
+                        }
+                    }
                     return data;
                 }
                 // do the next best thing if the data is a set of points in the correct format
                 if (correctDataFormat) {
                     if (!hasCategories) data.sort(sortFn);
+                    if (opts.filter) {
+                        data = filter(data);
+                    }
                     return [ {
                         name: "series 1",
                         data: data
@@ -400,7 +461,10 @@
                 return values;
             },
             isSupportedDataFormat: function(data) {
-                return _.isArray(data) && (_.isObject(data[0]) && data[0].hasOwnProperty("data")) || _.isArray(data[0]);
+                // this covers all supported formats so far:
+                // [ {data: [...] }, ... ]
+                // [ [...], [...] ]
+                return _.isArray(data) && (_.isObject(data[0]) && data[0].hasOwnProperty("data") && _.isArray(data[0].data)) || _.isArray(data[0]);
             }
         };
         var domHelpers = {
@@ -622,7 +686,7 @@
             _visualizations: undefined,
             _extraOptions: undefined,
             _exposed: undefined,
-            // Initializes the instance of Narwhal
+            // Initializes the instance of Contour
             init: function(options) {
                 // for now, just  store this options here...
                 // the final set of options will be composed before rendering
@@ -635,17 +699,17 @@
             },
             calculateWidth: function() {
                 // assume all in pixel units and border-box box-sizing
-                var outerWidth = parseInt(_.nw.getStyle(this.options.el, "width"), 10);
-                var paddingLeft = parseInt(_.nw.getStyle(this.options.el, "padding-left"), 10);
-                var paddingRight = parseInt(_.nw.getStyle(this.options.el, "padding-right"), 10);
+                var outerWidth = parseInt(_.nw.getStyle(this.options.el, "width") || 0, 10);
+                var paddingLeft = parseInt(_.nw.getStyle(this.options.el, "padding-left") || 0, 10);
+                var paddingRight = parseInt(_.nw.getStyle(this.options.el, "padding-right") || 0, 10);
                 var width = outerWidth - paddingRight - paddingLeft;
                 return this.options.el ? width || this.options.chart.defaultWidth : this.options.chart.defaultWidth;
             },
             calculateHeight: function() {
                 // assume all in pixel units and border-box box-sizing
-                var outerHeight = parseInt(_.nw.getStyle(this.options.el, "height"), 10);
-                var paddingTop = parseInt(_.nw.getStyle(this.options.el, "padding-top"), 10);
-                var paddingBottom = parseInt(_.nw.getStyle(this.options.el, "padding-bottom"), 10);
+                var outerHeight = parseInt(_.nw.getStyle(this.options.el, "height") || 0, 10);
+                var paddingTop = parseInt(_.nw.getStyle(this.options.el, "padding-top") || 0, 10);
+                var paddingBottom = parseInt(_.nw.getStyle(this.options.el, "padding-bottom") || 0, 10);
                 var height = outerHeight - paddingTop - paddingBottom;
                 var containerHeight = this.options.el ? height : undefined;
                 var calcWidth = this.options.chart.width;
@@ -821,7 +885,9 @@
                 return this._visualizations[index];
             },
             // place holder function for now
-            data: function() {}
+            data: function() {},
+            dataNormalizer: _.nw.normalizeSeries,
+            isSupportedDataFormat: _.nw.isSupportedDataFormat
         });
         // exports for commonJS and requireJS styles
         if (typeof module === "object" && module && typeof module.exports === "object") {
@@ -2529,7 +2595,12 @@
                 return this.ctx;
             },
             setData: function(data) {
-                this.data = _.nw.normalizeSeries(data, this.categories);
+                var normalizeData = (this.ctx || {}).dataNormalizer || _.nw.normalizeSeries;
+                var filterOpts = this.options[this.type].data || {
+                    filter: false
+                };
+                if (filterOpts.filter && !filterOpts.filterNumPts) filterOpts.filterNumPts = 1e3;
+                this.data = normalizeData(data, this.categories, filterOpts);
                 this._updateDomain();
                 return this.ctx;
             },
@@ -2542,7 +2613,8 @@
             },
             _updateDomain: function() {
                 if (!this.options[this.type]) throw new Error("Set the options before calling setData or _updateDomain");
-                if (_.nw.isSupportedDataFormat(this.data)) {
+                var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
+                if (isSupportedFormat(this.data)) {
                     this.xDomain = _.flatten(_.map(this.data, function(set) {
                         return _.pluck(set.data, "x");
                     }));
@@ -2560,7 +2632,11 @@
             },
             area: {
                 stacked: true,
-                areaBase: undefined
+                areaBase: undefined,
+                data: {
+                    filter: true,
+                    filterNumPts: 1e3
+                }
             }
         };
         /* jshint eqnull:true */
@@ -3037,6 +3113,10 @@
                 marker: {
                     enable: true,
                     size: 3
+                },
+                data: {
+                    filter: true,
+                    filterNumPts: 1e3
                 }
             }
         };
@@ -3082,9 +3162,7 @@
                     return _.extend(s, {
                         data: _.filter(s.data, function(d, i) {
                             if (i === 0 && d.y != null) return true;
-                            var differentX = x(s.data[i - 1]) !== x(d);
-                            // && y(s.data[i-1]) !== y(d);
-                            return d.y != null && differentX;
+                            return d.y != null;
                         })
                     });
                 });
@@ -3403,7 +3481,11 @@
                 type: "linear"
             },
             scatter: {
-                radius: 4
+                radius: 4,
+                data: {
+                    filter: false,
+                    filterNumPts: 1e3
+                }
             }
         };
         function ScatterPlot(data, layer, options) {

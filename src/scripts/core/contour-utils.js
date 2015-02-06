@@ -337,9 +337,56 @@
 
         /*jshint eqnull:true */
         // we are using != null to get null & undefined but not 0
-        normalizeSeries: function (data, categories) {
+        normalizeSeries: function (data, categories, opts) {
+            opts = opts || {filter:false};
             var hasCategories = !!(categories && _.isArray(categories));
             function sortFn(a, b) { return a.x - b.x; }
+            function filter(data) {
+                var desiredLen = opts.filterNumPts;
+                if (data.length <= desiredLen)
+                    return data;
+
+                var toReturn = [data[0]]; //always want the first
+                var index = 1;
+                var increment = Math.floor(data.length / desiredLen);
+
+                while (index < data.length - 1) {
+                    var hasValidPt = false;
+                    var maxPt;
+                    var minPt;
+                    var maxIndex = Math.min(index + increment, data.length);
+
+                    for (var intermediateIndex = index; intermediateIndex < maxIndex; intermediateIndex++) {
+                        var intermediatePt = data[index];
+                        if (intermediatePt.y) {
+                            if (!hasValidPt || intermediatePt.y > maxPt.y)
+                                maxPt = intermediatePt;
+
+                            if (!hasValidPt || intermediatePt.y < minPt.y)
+                                minPt = intermediatePt;
+
+                            hasValidPt = true;
+                        }
+                    }
+
+                    if (hasValidPt) {
+                        if (minPt.x == maxPt.x) {
+                            toReturn.push(minPt);
+                        } else if (minPt.x < maxPt.x) {
+                            toReturn.push(minPt);
+                            toReturn.push(maxPt);
+                        } else if (minPt.x > maxPt.x) {
+                            toReturn.push(maxPt);
+                            toReturn.push(minPt);
+                        }
+                    }
+
+                    index += Math.max(1, Math.min(data.length - 1 - index, increment));
+                }
+                toReturn.push(data[data.length - 1]); //always want the last
+                return toReturn;
+
+            }
             function normal(set, name) {
                 var d = {
                     name: name,
@@ -354,6 +401,8 @@
 
                 if (!hasCategories) {
                     d.data.sort(sortFn);
+                    if (opts.filter)
+                        d.data = filter(d.data);
                 }
 
                 return d;
@@ -364,12 +413,22 @@
 
             // do not make a new copy, if the data is already in the correct format!
             if (correctSeriesFormat) {
+                if (opts.filter) {
+                    for (var i=0; i < data.length; ++i) {
+                        data[i].data = filter(data[i].data);
+                    }
+                }
                 return data;
             }
 
             // do the next best thing if the data is a set of points in the correct format
             if (correctDataFormat) {
-                if (!hasCategories) data.sort(sortFn);
+                if (!hasCategories) 
+                    data.sort(sortFn);
+
+                if (opts.filter) {
+                    data = filter(data);
+                }
                 return [{ name: 'series 1', data: data }];
             }
 
@@ -377,7 +436,9 @@
             if (_.isArray(data)) {
                 if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
                     // this would be the shape for multiple series
-                    return _.map(data, function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
+                    return _.map(data, function (d, i) {
+                            return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); 
+                        });
                 } else {
                     // this is just the shape [1,2,3,4] or [{x:0, y:1}, { x: 1, y:2}...]
                     return [normal(data, 'series 1')];

@@ -12,6 +12,10 @@
             marker: {
                 enable: true,
                 size: 3
+            },
+            data: {
+                filter: true,
+                filterNumPts: 1000
             }
         }
     };
@@ -67,17 +71,15 @@
     function render(rawData, layer, options, id) {
         this.checkDependencies('cartesian');
         function optimizeData(rawData) {
-            return _.map(rawData, function (s) {
+            return _.map(rawData, function(s) {
                 return _.extend(s, {
-                    data: _.filter(s.data, function (d, i) {
+                    data: _.filter(s.data, function(d, i) {
                         if (i === 0 && d.y != null) return true;
-                        var differentX = x(s.data[i-1]) !== x(d); // && y(s.data[i-1]) !== y(d);
-                        return d.y != null && differentX;
+                        return d.y != null;
                     })
                 });
             });
         }
-
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y + (d.y0 || 0)) + 0.5; }, this);
         var h = options.chart.plotHeight;
