@@ -33,8 +33,14 @@
     }
 
     function Legend(data, layer, options) {
-        this.container.selectAll('.contour-legend').remove();
-        var legend = this.container.selectAll('.contour-legend').data([null]);
+        if (options.legend.el) {
+            var container = d3.select(options.legend.el).node();
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+        } else {
+            this.container.selectAll('.contour-legend').remove();
+        }
         var em = _.nw.textBounds('series', '.contour-legend.contour-legend-entry');
         var count = data.length;
         var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
@@ -54,34 +60,41 @@
                 .style('left', left + 'px');
         };
 
-        var container = legend.enter()
-            .append('div')
-            .attr('class', function () {
-                return ['contour-legend'].concat(validAlignmentClasses(options)).join(' ');
-            })
-            .attr('style', function () {
-                var styles = [];
+        var container;
+        if (options.legend.el) {
+            container = d3.select(options.legend.el);
+        } else {
+            var legend = this.container.selectAll('.contour-legend').data([null]);
+            container = legend.enter().append('div');
+        }
+        
+        container.attr('class', function () {
+            return ['contour-legend'].concat(validAlignmentClasses(options)).join(' ');
+        });
 
-                if (options.legend.vAlign === 'top') {
-                    styles.push('top: 0');
-                } else if (options.legend.vAlign === 'middle') {
-                    styles.push('top: ' + mid + 'px');
-                } else {
-                    styles.push('bottom: ' + (options.chart.internalPadding.bottom + 5) + 'px');
-                }
+        container.attr('style', function () {
+            var styles = [];
 
-                if (options.legend.hAlign === 'left') {
-                    styles.push('left: ' + options.chart.plotLeft + 'px');
-                } else if (options.legend.hAlign === 'center') {
-                    var bounds = _.nw.textBounds(this, '.contour-legend');
+            if (options.legend.vAlign === 'top') {
+                styles.push('top: 0');
+            } else if (options.legend.vAlign === 'middle') {
+                styles.push('top: ' + mid + 'px');
+            } else {
+                styles.push('bottom: ' + (options.chart.internalPadding.bottom + 5) + 'px');
+            }
 
-                    styles.push('left: ' + ((options.chart.plotWidth - bounds.width) / 2 + options.chart.internalPadding.left) + 'px' );
-                } else {
-                    styles.push('right: 10px');
-                }
+            if (options.legend.hAlign === 'left') {
+                styles.push('left: ' + options.chart.plotLeft + 'px');
+            } else if (options.legend.hAlign === 'center') {
+                var bounds = _.nw.textBounds(this, '.contour-legend');
 
-                return styles.join(';');
-            });
+                styles.push('left: ' + ((options.chart.plotWidth - bounds.width) / 2 + options.chart.internalPadding.left) + 'px' );
+            } else {
+                styles.push('right: 10px');
+            }
+
+            return styles.join(';');
+        });
 
         var entries = container.selectAll('.contour-legend-entry')
             .data(data);
