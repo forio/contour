@@ -1214,8 +1214,12 @@
                     var y = this.options.chart.plotHeight + this.options.chart.padding.top;
                     var x = this.options.chart.internalPadding.left;
                     this._xAxisGroup = this.svg.selectAll(".x.axis").data([ 1 ]);
-                    this._xAxisGroup.enter().append("g").attr("class", "x axis");
-                    this._xAxisGroup.attr("transform", "translate(" + x + "," + y + ")").transition().duration(this._animationDuration()).call(xAxis);
+                    if (!this._xAxisGroup.node()) {
+                        this._xAxisGroup.enter().append("g").attr("transform", "translate(" + x + "," + y + ")").attr("class", "x axis");
+                    } else {
+                        d3.select(this._xAxisGroup.node()).attr("transform", "translate(" + x + "," + y + ")");
+                    }
+                    this._xAxisGroup.transition().duration(this._animationDuration()).call(xAxis);
                     this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
                     return this;
                 },
@@ -1229,8 +1233,12 @@
                     var x = this.options.chart.internalPadding.left;
                     var y = this.options.chart.padding.top;
                     this._yAxisGroup = this.svg.selectAll(".y.axis").data([ 1 ]);
-                    this._yAxisGroup.enter().append("g").attr("class", "y axis");
-                    this._yAxisGroup.attr("transform", "translate(" + x + "," + y + ")").transition().duration(this._animationDuration()).call(this.yAxis()).selectAll(".tick text").attr("dy", alignmentOffset[options.labels.verticalAlign]);
+                    if (!this._yAxisGroup.node()) {
+                        this._yAxisGroup.enter().append("g").attr("transform", "translate(" + x + "," + y + ")").attr("class", "y axis");
+                    } else {
+                        d3.select(this._yAxisGroup.node()).attr("transform", "translate(" + x + "," + y + ")");
+                    }
+                    this._yAxisGroup.transition().duration(this._animationDuration()).call(this.yAxis()).selectAll(".tick text").attr("dy", alignmentOffset[options.labels.verticalAlign]);
                     return this;
                 },
                 renderAxisLabels: function() {
@@ -1244,16 +1252,20 @@
                         y = this.options.chart.internalPadding.bottom;
                         x = 0;
                         el = this._xAxisGroup.selectAll(".x.axis-title").data([ 1 ]);
-                        el.enter().append("text").attr("class", "x axis-title");
-                        el.attr("x", x).attr("y", y).attr("dx", (this.options.chart.plotWidth - bounds.width) / 2).attr("dy", -2).text(this.options.xAxis.title);
+                        if (!el.node()) {
+                            el.enter().append("text").attr("class", "x axis-title");
+                        }
+                        d3.select(el.node()).attr("x", x).attr("y", y).attr("dx", (this.options.chart.plotWidth - bounds.width) / 2).attr("dy", -2).text(this.options.xAxis.title);
                     }
                     if (this.options.yAxis.title) {
                         bounds = _.nw.textBounds(this.options.yAxis.title, ".y.axis-title");
                         y = -this.options.chart.internalPadding.left + bounds.height * adjustFactor;
                         x = 0;
                         el = this._yAxisGroup.selectAll(".y.axis-title").data([ 1 ]);
-                        el.enter().append("text").attr("transform", "rotate(-90)").attr("class", "y axis-title");
-                        el.attr("x", x).attr("y", y).attr("dx", -(this.options.chart.plotHeight + bounds.width) / 2).attr("dy", 0).text(this.options.yAxis.title);
+                        if (!el.node()) {
+                            el.enter().append("text").attr("class", "y axis-title");
+                        }
+                        d3.select(el.node()).attr("class", "y axis-title").attr("transform", "rotate(-90)").attr("x", x).attr("y", y).attr("dx", -(this.options.chart.plotHeight + bounds.width) / 2).attr("dy", 0).text(this.options.yAxis.title);
                     }
                     return this;
                 },
