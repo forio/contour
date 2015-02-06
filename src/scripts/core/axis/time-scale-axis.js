@@ -35,6 +35,8 @@
                 this.setDomain(domain);
             }
 
+            this.range();
+
             return this._scale;
         },
 
@@ -69,13 +71,13 @@
         update: function (domain, data) {
             this.data = data;
             this.setDomain(domain);
+            this.scale();
         },
 
         setDomain: function (domain) {
             this._domain = domain;
             var axisDomain = this._getAxisDomain(this._domain);
             this._scale.domain(axisDomain);
-            this.range();
         },
 
         postProcessAxis: function (axisGroup) {

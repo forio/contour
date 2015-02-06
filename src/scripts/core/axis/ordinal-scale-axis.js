@@ -100,6 +100,7 @@
         update: function (domain, data) {
             this.data = data;
             this.setDomain(domain);
+            this.scale();
         },
 
         setDomain: function (domain) {

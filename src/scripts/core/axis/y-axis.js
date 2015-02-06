@@ -45,12 +45,13 @@
         setDomain: function (domain) {
             this._scale.domain(domain);
             this._niceTheScale();
-            return this.scale();
+            return this._scale;
         },
 
         update: function (domain, dataSrc) {
             this.data = dataSrc;
             this.setDomain(domain);
+            this.scale();
         },
 
         /*jshint eqnull:true*/
