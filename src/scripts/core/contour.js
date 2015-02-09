@@ -343,6 +343,46 @@
             return this;
         },
 
+        /**
+        * Clears this Contour instance and all its visualizations of any size information so that on the next call to render the instace is re-measured.
+        * 
+        * The function takes two optional arguements width, height -- if given a specific width/height the chart will use that sizing information on the next render.
+        * ### Example:
+        *
+        *     var contour = new Contour({ el:'.myChart' })
+        *           .pie([1,2,3])
+        *           .render()
+        *     
+        *     var onResize = function(e) {
+        *          contour.resize().render();
+        *     }
+        *
+        *     window.addEventListener('resize', onResize);
+        *
+        * @function resize
+        * @param {Number} width (optional) The new width for the visualizations.  If left blank the width will be calcuated from options.el's parent.
+        * @param {Number} height (optional) The new height for the visualizations.  If left blank the height will be calcuated from options.el's parent.
+        */
+        resize: function(width, height) {
+            
+            if (this.container)
+                this.container.style('height', 0);
+
+            delete this.options.chart.width;
+            delete this.options.chart.height;
+            delete this.options.chart.plotWidth;
+            delete this.options.chart.plotHeight;
+            delete this.options.chart.plotLeft;
+            delete this.options.chart.plotTop;
+
+            if (width)
+                this.options.chart.width = width;
+
+            if (height)
+                this.options.chart.height = height;
+            return this;
+        },
+
         update: function () {
             this.calcMetrics();
             return this;
@@ -365,6 +405,13 @@
                     .attr('height', chartOpt.height)
                     .append('g')
                         .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
+            } else {
+                this.svg
+                    .attr('transform', 'translate(' + chartOpt.margin.left + ',' + chartOpt.margin.top + ')');
+
+                d3.select(this.svg.node().parentNode)
+                    .attr('viewBox', '0 0 ' + chartOpt.width + ' ' + chartOpt.height)
+                    .attr('height', chartOpt.height);
             }
 
             return this;
@@ -373,8 +420,7 @@
         createVisualizationLayer: function (vis, id) {
             return this.svg.append('g')
                 .attr('vis-id', id)
-                .attr('vis-type', vis.type)
-                .attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
+                .attr('vis-type', vis.type);
         },
 
         renderVisualizations: function () {
@@ -383,6 +429,9 @@
                 var id = index + 1;
                 var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
                 var opt = _.merge({}, this.options, visualization.options);
+
+                layer.attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
+
                 visualization.layer = layer;
                 visualization.parent = this;
                 visualization.render(layer, opt, this);
