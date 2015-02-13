@@ -1,4 +1,4 @@
-/*! Contour - v0.9.111 - 2015-02-06 */
+/*! Contour - v0.9.112 - 2015-02-12 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -127,7 +127,7 @@
                     mag = Math.floor(_.nw.log10(abs));
                     step = mag <= 1 ? 2 : Math.pow(10, mag - 1);
                 } else {
-                    exp = abs.toExponential().replace(/\.|e-\d+$/g, "");
+                    var exp = abs.toExponential().replace(/\.|e-\d+$/g, "");
                     mag = exp.length;
                     step = mulFloat(mag === 1 ? 2 : 10, Math.pow(10, -mag));
                 }
@@ -1279,7 +1279,9 @@
                             var numTicks = axis.ticks()[0];
                             return axis.scale().ticks(numTicks).slice(1);
                         }
-                        smart && tickValues.pop();
+                        if (smart) {
+                            tickValues.pop();
+                        }
                         return tickValues.slice(1);
                     }
                     function getXTicks(axis) {
@@ -1990,7 +1992,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.111";
+    Contour.version = "0.9.112";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {
@@ -3029,8 +3031,15 @@
             return classes;
         }
         function Legend(data, layer, options) {
-            this.container.selectAll(".contour-legend").remove();
-            var legend = this.container.selectAll(".contour-legend").data([ null ]);
+            var container;
+            if (options.legend.el) {
+                container = d3.select(options.legend.el).node();
+                while (container.firstChild) {
+                    container.removeChild(container.firstChild);
+                }
+            } else {
+                this.container.selectAll(".contour-legend").remove();
+            }
             var em = _.nw.textBounds("series", ".contour-legend.contour-legend-entry");
             var count = data.length;
             var legendHeight = (em.height + 4) * count + 12;
@@ -3047,9 +3056,16 @@
                 var left = (options.chart.plotWidth - legendWidth) / 2 + options.chart.internalPadding.left;
                 d3.select(selection[0].parentNode).style("left", left + "px");
             };
-            var container = legend.enter().append("div").attr("class", function() {
+            if (options.legend.el) {
+                container = d3.select(options.legend.el);
+            } else {
+                var legend = this.container.selectAll(".contour-legend").data([ null ]);
+                container = legend.enter().append("div");
+            }
+            container.attr("class", function() {
                 return [ "contour-legend" ].concat(validAlignmentClasses(options)).join(" ");
-            }).attr("style", function() {
+            });
+            container.attr("style", function() {
                 var styles = [];
                 if (options.legend.vAlign === "top") {
                     styles.push("top: 0");
@@ -3486,7 +3502,6 @@
             var shouldAnimate = options.chart.animations && options.chart.animations.enable;
             var opt = options.scatter;
             var halfRangeBand = this.rangeBand / 2;
-            var duration = 400;
             var x = _.bind(function(d) {
                 return this.xScale(d.x) + halfRangeBand;
             }, this);
