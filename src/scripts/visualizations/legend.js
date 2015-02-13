@@ -33,8 +33,9 @@
     }
 
     function Legend(data, layer, options) {
+        var container;
         if (options.legend.el) {
-            var container = d3.select(options.legend.el).node();
+            container = d3.select(options.legend.el).node();
             while (container.firstChild) {
                 container.removeChild(container.firstChild);
             }
@@ -60,14 +61,13 @@
                 .style('left', left + 'px');
         };
 
-        var container;
         if (options.legend.el) {
             container = d3.select(options.legend.el);
         } else {
             var legend = this.container.selectAll('.contour-legend').data([null]);
             container = legend.enter().append('div');
         }
-        
+
         container.attr('class', function () {
             return ['contour-legend'].concat(validAlignmentClasses(options)).join(' ');
         });
