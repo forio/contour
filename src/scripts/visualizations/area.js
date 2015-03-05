@@ -7,9 +7,7 @@
         area: {
             stacked: true,
             areaBase: undefined,
-            preprocess: function(data) {
-                return data;
-            }
+            preprocess: _.nw.minMaxFilter(1000)
         }
     };
 
