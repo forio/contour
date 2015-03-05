@@ -5,7 +5,10 @@
             type: 'linear'
         },
         scatter: {
-            radius: 4
+            radius: 4,
+            preprocess: function(data) {
+                return data;
+            }
         }
     };
 
@@ -20,6 +23,8 @@
         var h = options.chart.plotHeight;
         var classFn = function (d, i) { return d.name + ' series s-' + (i+1); };
 
+        data = options.scatter.preprocess(data);
+        
         var series = layer.selectAll('.series')
             .data(data);
 
