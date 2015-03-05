@@ -100,9 +100,11 @@
         function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
 
         function renderPaths() {
+            var axis = options.yAxis;
+            
             var startLine = d3.svg.line()
                 .x(function (d) { return x(d); })
-                .y(function () { return y({x: 0, y: options.yAxis.min || 0}); });
+                .y(function () { return y({x: 0, y: axis.min || 0}); });
 
             var line = d3.svg.line()
                 .x(function (d) { return x(d); })

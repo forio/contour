@@ -34,7 +34,8 @@
             },
             internalPadding: {
                 bottom: 0,
-                left: 0
+                left: 0,
+                right: 0
             },
             // automatically false by default anyway; adding here to help generate docs
             rotatedFrame: false,
@@ -271,7 +272,7 @@
 
             this.options = _.merge(options, {
                 chart: {
-                    plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.internalPadding.left - options.chart.padding.right,
+                    plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.internalPadding.left - options.chart.internalPadding.right,
                     plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.internalPadding.bottom,
                     plotLeft: options.chart.margin.left + options.chart.internalPadding.left,
                     plotTop: options.chart.margin.top + options.chart.padding.top
