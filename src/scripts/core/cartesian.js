@@ -147,8 +147,8 @@
                         var em = regularXBounds.height;
                         var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
                         var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))) + em / 5) ;
-                        this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom ||
-                            maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) +
+                        this.options.chart.internalPadding.bottom = maxTickSize(this.options.xAxis) + 
+                            (this.options.xAxis.tickPadding || 0) +
                             xLabelHeightUsed;
                     } else {
                         this.options.chart.internalPadding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0);
@@ -362,7 +362,7 @@
 
                 if (this.options.xAxis.title) {
                     bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
-                    y = this.options.chart.internalPadding.bottom;
+                    y = this.options.chart.internalPadding.bottom - bounds.height;
                     x = 0;
                     el = this._xAxisGroup.selectAll('.x.axis-title').data([1]);
                     if (!el.node()) {
@@ -374,7 +374,7 @@
                         .attr('x', x)
                         .attr('y', y)
                         .attr('dx', (this.options.chart.plotWidth - bounds.width) / 2)
-                        .attr('dy', -2) // just because
+                        .attr('dy', 2) // just because
                         .text(this.options.xAxis.title);
                 }
 
