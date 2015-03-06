@@ -50,9 +50,15 @@
         },
 
         xAxis: {
+
         },
 
         yAxis: {
+
+        },
+
+        rightYAxis: {
+
         },
 
         tooltip: {
@@ -137,6 +143,8 @@
             var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
 
+            this.composeOptions(); // we compose the options here so that defaults are provided to each viz container on init
+            
             data = data || lastData || [];
             sortSeries(data);
             vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
@@ -311,7 +319,7 @@
             _.each(this._visualizations, mergeDefaults);
 
             // compose the final list of options right before start rendering
-            this.options = _.merge(this.options, _.merge({}, allDefaults, this.options));
+            this.options = _.merge({}, allDefaults, this.options);
         },
 
         baseRender: function () {

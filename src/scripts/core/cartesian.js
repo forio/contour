@@ -139,7 +139,7 @@
             rightYDomain: [],
 
             _axisVisible: function(axisConfig) {
-                return axisConfig.series == 'all' || axisConfig.series.length > 0;
+                return axisConfig && (axisConfig.series == 'all' || axisConfig.series.length > 0);
             },
 
             _pruneData: function(data, series) {
@@ -472,6 +472,9 @@
             },
 
             renderYAxis: function () {
+                if (!this._axisVisible(this.options.yAxis))
+                    return this;
+
                 var options = this.options.yAxis;
                 var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
                 var x = this.options.chart.internalPadding.left;
@@ -500,6 +503,9 @@
             },
 
             renderRightYAxis: function () {
+                if (!this._axisVisible(this.options.rightYAxis))
+                    return this;
+
                 var options = this.options.rightYAxis;
                 var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
                 var x = this.options.chart.internalPadding.left + 

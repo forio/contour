@@ -169,10 +169,7 @@
                 var startLineFn = animationDirection === 'left-to-right' ? line : startLine;
                 var path = el.attr('d', function(d) { 
                         return startLineFn(d.data, axisFor(d, options)); 
-                    })
-                    .call(_.partial(animFn.enter, function(d) {
-                        return line(d.data, axisFor(d, options));
-                    }, options));
+                    });
             } else {
                 el.attr('d', function (d) { 
                     return line(d.data, axisFor(d, options)); 

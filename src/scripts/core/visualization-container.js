@@ -6,7 +6,10 @@
             if(!d.data.length) 
                 return;
             
-            if (field == 'x' || axisOptions.series == 'all' || axisOptions.series.indexOf(d.name) >= 0) {
+            var isAll = axisOptions && axisOptions.series == 'all';
+            var hasSpecific = axisOptions && axisOptions.series && axisOptions.series.indexOf(d.name) >= 0;
+
+            if (field == 'x' || isAll || hasSpecific) {
                 var values = _.pluck(d.data, field);
                 maxs.push(d3.max(values));
                 mins.push(d3.min(values));
@@ -75,7 +78,7 @@
             opt[this.type] = options || {};
             this.options = {};
             this.options = _.merge({}, (this.renderer || {}).defaults || {}, opt);
-
+            
             return this.ctx;
         },
 
