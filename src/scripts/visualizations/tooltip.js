@@ -10,6 +10,13 @@
         }
     };
 
+    var axisFor = function(series, options) {
+        if (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0)
+            return 'rightY';
+        else
+            return 'y';
+    };
+
     function render(data, layer, options) {
 
         var clearHideTimer = function () {
@@ -37,6 +44,7 @@
             };
             var xScale = this.xScale;
             var yScale = this.yScale;
+            var rightYScale = this.rightYScale;
             var plotLeft = this.options.chart.plotLeft;
             var plotWidth = this.options.chart.plotWidth;
             var plotTop = this.options.chart.plotTop;
@@ -45,8 +53,14 @@
             var width = parseFloat(this.tooltipElement.node().offsetWidth);
             var height = parseFloat(this.tooltipElement.node().offsetHeight);
             var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];
-            var pointY = yScale ? yScale(d.y) : pointOrCentroid.call(this)[1];
+            var pointY;
             var alignedRight;
+
+            var axis = axisFor(d, options);
+            if (axis == 'y')
+                pointY = yScale ? yScale(d.y) : pointOrCentroid.call(this)[1];
+            else
+                pointY = rightYScale ? rightYScale(d.y) : pointOrCentroid.call(this)[1];
 
             var clampPosition = function (pos) {
                 // Check outside plot area (left)
