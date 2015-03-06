@@ -16,11 +16,18 @@
         }
     };
 
+    var axisFor = function(series, options) {
+        if (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) != 0)
+            return 'rightY';
+        else
+            return 'y';
+    };
+
     var duration;
     var animationDirection;
     var animationsMap = {
         'left-to-right': {
-            enter: function (line) {
+            enter: function (line, options) {
                 var path = this;
                 path.each(function () {
                     var totalLength = this.getTotalLength();
@@ -34,8 +41,11 @@
                 });
             },
 
-            update: function (line) {
-                this.attr('d', function (d) { return line(d.data); });
+            update: function (line, options) {
+                this.attr('d', function (d) { 
+                    return line(d.data, axisFor(d, options)); 
+                });
+
                 this.each(function () {
                     var totalLength = this.getTotalLength();
                     d3.select(this)
@@ -50,14 +60,18 @@
         },
 
         'bottom-to-top': {
-            enter: function (line) {
+            enter: function (line, options) {
                 this.transition().duration(duration)
-                    .attr('d', function (d) { return line(d.data); });
+                    .attr('d', function (d) { 
+                        return line(d.data, axisFor(d, options)); 
+                    });
             },
 
-            update: function (line) {
+            update: function (line, options) {
                 this.transition().duration(duration)
-                    .attr('d', function (d) { return line(d.data); });
+                    .attr('d', function (d) { 
+                        return line(d.data, axisFor(d, options)); 
+                    });
             }
         }
     };
@@ -78,8 +92,14 @@
             });
         }
 
-        var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
-        var y = _.bind(function (d) { return this.yScale(d.y + (d.y0 || 0)) + 0.5; }, this);
+        var x = _.bind(function (d) { 
+            return this.xScale(d.x) + this.rangeBand / 2 + 0.5; 
+        }, this);
+
+        var y = _.bind(function (d, whichAxis) { 
+            return this[whichAxis + 'Scale'](d.y + (d.y0 || 0)) + 0.5; 
+        }, this);
+
         var h = options.chart.plotHeight;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         animationDirection = options.line.animationDirection || 'left-to-right';
@@ -87,34 +107,57 @@
         // jshint eqnull:true
         var data = optimizeData(rawData);
 
-        data = options.line.stacked ? d3.layout.stack().values(function (d) { return d.data; })(data) : data;
+        data = options.line.stacked ? d3.layout.stack().values(function (d) { 
+            return d.data; 
+        })(data) : data;
 
         renderPaths();
 
         if (options.line.marker.enable)
-            renderMarkers();
+          renderMarkers();
 
         if (options.tooltip && options.tooltip.enable)
             renderTooltipTrackers();
 
-        function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
+        function seriesClassName(extras) { 
+            return function (d, i) { 
+                return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); 
+            }; 
+        };
 
         function renderPaths() {
-            var axis = options.yAxis;
+            var startLine = function(data, whichAxis) {
+                var axis = options[whichAxis + 'Axis'];
+                return d3.svg.line()
+                    .x(function (d) { 
+                        return x(d); 
+                    })
+                    .y(function (d) { 
+                        return y({x: 0, y: axis.min || 0}, whichAxis); 
+                    })(data);
+            };
+
             
-            var startLine = d3.svg.line()
-                .x(function (d) { return x(d); })
-                .y(function () { return y({x: 0, y: axis.min || 0}); });
 
-            var line = d3.svg.line()
-                .x(function (d) { return x(d); })
-                .y(function (d) { return y(d); });
+            var line = function(data, whichAxis) {
+                return d3.svg.line()
+                    .x(function (d) { 
+                        return x(d); 
+                    })
+                    .y(function (d) { 
+                        return y(d, whichAxis); 
+                    })(data);
+            }; 
+            
 
-            if(options.line.smooth) line.interpolate('cardinal');
+            if(options.line.smooth) 
+                line.interpolate('cardinal');
 
             var animFn = animationsMap[animationDirection];
             var series = layer.selectAll('g.series')
-                    .data(data, function (d) { return d.name; });
+                    .data(data, function (d) { 
+                        return d.name; 
+                    });
 
             // enter
             var el = series.enter().append('svg:g')
@@ -124,10 +167,16 @@
 
             if (shouldAnimate) {
                 var startLineFn = animationDirection === 'left-to-right' ? line : startLine;
-                var path = el.attr('d', function(d) { return startLineFn(d.data); })
-                    .call(_.partial(animFn.enter, line));
+                var path = el.attr('d', function(d) { 
+                        return startLineFn(d.data, axisFor(d, options)); 
+                    })
+                    .call(_.partial(animFn.enter, function(d) {
+                        return line(d.data, axisFor(d, options));
+                    }, options));
             } else {
-                el.attr('d', function (d) { return line(d.data); });
+                el.attr('d', function (d) { 
+                    return line(d.data, axisFor(d, options)); 
+                });
             }
 
             // update
@@ -136,23 +185,22 @@
                 .select('.line');
 
             if (shouldAnimate) {
-                el.call(_.partial(animFn.update, line));
+                el.call(_.partial(animFn.update, line, options));
             } else  {
-                el.attr('d', function (d) { return line(d.data); });
+                el.attr('d', function (d) { 
+                    return line(d.data, axisFor(d, options)); 
+                });
             }
 
             // remove
-            if (shouldAnimate) {
-                series.exit()
-                    .remove();
-            } else  {
-                series.exit().remove();
-            }
+           series.exit().remove();
         }
 
         function renderMarkers() {
             var markers = layer.selectAll('.line-chart-markers')
-                .data(data, function (d) { return d.name; });
+                .data(data, function (d) { 
+                    return d.name; 
+                });
 
             markers.enter().append('g')
                 .attr('class', seriesClassName('line-chart-markers markers'));
@@ -160,25 +208,34 @@
             markers.exit().remove();
 
             var dots = markers.selectAll('.dot')
-                .data(function (d) { return d.data; }, function (d) { return d.x; });
+                .data(function (d) { 
+                    return d.data.map(function(di) {
+                        di.name = d.name;
+                        return di;
+                    }); 
+                }, function (d) { 
+                    return d.x; 
+                });
 
             dots.enter().append('circle')
                 .attr('class', 'dot')
                 .attr('r', options.line.marker.size)
                 .attr('opacity', 0);
-                // .attr('cx', x)
-                // .attr('cy', y);
 
             dots.exit().remove();
 
             if (shouldAnimate) {
                 dots.transition().delay(duration)
                     .attr('cx', x)
-                    .attr('cy', y)
+                    .attr('cy', function(d) {
+                        return y(d, axisFor(d, options));
+                    })
                     .attr('opacity', 1);
             } else {
                 dots.attr('cx', x)
-                    .attr('cy', y)
+                    .attr('cy', function(d) {
+                        return y(d, axisFor(d, options));
+                    })
                     .attr('opacity', 1);
             }
         }
@@ -186,7 +243,9 @@
         function renderTooltipTrackers() {
             var trackerSize = 10;
             var markers = layer.selectAll('.tooltip-trackers')
-                .data(data, function (d) { return d.name; });
+                .data(data, function (d) { 
+                    return d.name; 
+                });
 
             markers.enter().append('g')
                 .attr('class', seriesClassName('tooltip-trackers'));
@@ -194,7 +253,14 @@
             markers.exit().remove();
 
             var dots = markers.selectAll('.tooltip-tracker')
-                .data(function (d) { return d.data; }, function (d) { return d.x; });
+                .data(function (d) { 
+                    return d.data.map(function(di) {
+                        di.name = d.name;
+                        return di;
+                    }); 
+                }, function (d) { 
+                    return d.x; 
+                });
 
             dots.enter().append('circle')
                 .attr({
@@ -205,7 +271,9 @@
 
             dots.attr({
                 'cx': x,
-                'cy': y
+                'cy': function(d) {
+                    return y(d, axisFor(d, options));
+                }
             });
 
             dots.exit().remove();

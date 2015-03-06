@@ -43,7 +43,6 @@
         yAxis: {
             // @param: {linear|smart|log}
             // type: 'smart',
-            visible: true,
             min: undefined,
             max: undefined,
             zeroAnchor: true,
@@ -56,6 +55,7 @@
             title: undefined,
             titlePadding: 4,
             orient: 'left',
+            series: 'all', //valid values are 'all' or an array of strings
             labels: {
                 // top, middle, bottom
                 verticalAlign: 'middle',
@@ -67,7 +67,6 @@
         rightYAxis: {
              // @param: {linear|smart|log}
             // type: 'smart',
-            visible: false,
             min: undefined,
             max: undefined,
             zeroAnchor: true,
@@ -80,6 +79,7 @@
             title: undefined,
             titlePadding: 4,
             orient: 'right',
+            series: [], //valid values are 'all' or an array of strings
             labels: {
                 // top, middle, bottom
                 verticalAlign: 'middle',
@@ -124,7 +124,8 @@
                 _.merge(this.options, readOnlyProps);
 
                 var extraPadding = {};
-                if ((!this.options.xAxis || !this.options.xAxis.firstAndLast) && !this.options.rightYAxis.visible) {
+
+                if ((!this.options.xAxis || !this.options.xAxis.firstAndLast) && !this._axisVisible(this.options.rightYAxis)) {
                     extraPadding = { chart : { padding: { right: 15 }}};
                 }
 
@@ -136,6 +137,19 @@
             xDomain: [],
             yDomain: [],
             rightYDomain: [],
+
+            _axisVisible: function(axisConfig) {
+                return axisConfig.series == 'all' || axisConfig.series.length > 0;
+            },
+
+            _pruneData: function(data, series) {
+                if (series == 'all')
+                    return data;
+
+                return data.map(function(item) {
+                    return series.indexOf(item.name) >= 0;
+                });
+            },
 
             _getYScaledDomainForAxis: function (axis, domain) {
                 var absMin = axis.zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
@@ -196,7 +210,7 @@
 
                 // left padding calculations
                 if (this.options.chart.padding.left == null) {
-                    if (yOptions.visible) {
+                    if (this._axisVisible(yOptions)) {
                         var yDomainScaled = this._getYScaledDomain();
                         // var yDomainScaled = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
                         var tmpScale = d3.scale.linear().domain(yDomainScaled);
@@ -217,7 +231,7 @@
 
                 // right padding calculations
                 if (this.options.chart.padding.right == null) {
-                    if (rightYOptions.visible) {
+                    if (this._axisVisible(rightYOptions)) {
                         var rightYDomainScaled = this._getRightYScaledDomain();
                         // var rightYDomainScaled = _.nw.extractScaleDomain(this.rightYDomain.slice().concat([_.nw.niceRound(this.rightYDomain[1])]), rightYOptions.min, rightYOptions.max);
                         var tmpScale = d3.scale.linear().domain(rightYDomainScaled);
@@ -245,12 +259,12 @@
                     this.options.chart.internalPadding.bottom += titleBounds.height + this.options.xAxis.titlePadding;
                 }
 
-                if(this.options.yAxis.title && this.options.yAxis.visible) {
+                if(this.options.yAxis.title && this._axisVisible(this.options.yAxis)) {
                     titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
                     this.options.chart.internalPadding.left += titleBounds.height + this.options.yAxis.titlePadding;
                 }
 
-                if(this.options.rightYAxis.title && this.options.rightYAxis.visible) {
+                if(this.options.rightYAxis.title && this._axisVisible(this.options.rightYAxis)) {
                     titleBounds = _.nw.textBounds(this.options.rightYAxis.title, '.y.right.axis-title');
                     this.options.chart.internalPadding.right += titleBounds.height + this.options.rightYAxis.titlePadding;
                 }
@@ -273,12 +287,13 @@
                 if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
                 var yScaleDomain = this._getYScaledDomain();
+                var dataSrc = this._pruneData(this.dataSrc, this.options.yAxis.series);
 
                 if(!this.yScale) {
-                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yDomain);
+                    this.yScaleGenerator = _.nw.yScaleFactory(dataSrc, this.options, this.yDomain, 'yAxis');
                     this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                 } else {
-                    this.yScaleGenerator.update(yScaleDomain, this.dataSrc);
+                    this.yScaleGenerator.update(yScaleDomain, dataSrc);
                 }
             },
 
@@ -286,12 +301,13 @@
                 if (!this.rightYDomain) throw new Error('You are trying to render without setting data (rightYDomain).');
 
                 var yScaleDomain = this._getRightYScaledDomain();
+                var dataSrc = this._pruneData(this.dataSrc, this.options.rightYAxis.series);
 
                 if(!this.rightYScale) {
-                    this.rightYScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.rightYDomain);
+                    this.rightYScaleGenerator = _.nw.yScaleFactory(dataSrc, this.options, this.rightYDomain, 'rightYAxis');
                     this.rightYScale = this.rightYScaleGenerator.scale(yScaleDomain);
                 } else {
-                    this.rightYScaleGenerator.update(yScaleDomain, this.dataSrc);
+                    this.rightYScaleGenerator.update(yScaleDomain, dataSrc);
                 }
             },
 
@@ -535,7 +551,7 @@
                         .text(this.options.xAxis.title);
                 }
 
-                if (this.options.yAxis.title && this.options.yAxis.visible) {
+                if (this.options.yAxis.title && this._axisVisible(this.options.yAxis)) {
                     bounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
                     y = -this.options.chart.internalPadding.left + bounds.height * adjustFactor;
                     x = 0;
@@ -555,7 +571,7 @@
                         .text(this.options.yAxis.title);
                 }
 
-                if (this.options.rightYAxis.title && this.options.rightYAxis.visible) {
+                if (this.options.rightYAxis.title && this._axisVisible(this.options.rightYAxis)) {
                     bounds = _.nw.textBounds(this.options.rightYAxis.title, '.y.right.axis-title');
                     y = -this.options.chart.internalPadding.right + bounds.height * adjustFactor;
                     x = -bounds.width;
@@ -711,9 +727,10 @@
             },
 
             adjustDomain: function () {
-                var extents = this.getExtents();
-                this.yDomain = extents.length ? extents : [0, 10];
-                this.rightYDomain = extents.length ? extents : [0, 10];
+                var yAxisExtents = this.getExtents('y');
+                var rightYAxisExtents = this.getExtents('rightY');
+                this.yDomain = yAxisExtents.length ? yAxisExtents : [0, 10];
+                this.rightYDomain = rightYAxisExtents.length ? rightYAxisExtents : [0, 10];
                 this.xDomain = this.getXDomain();
                 this.yMin = this.yDomain[0];
                 this.yMax = this.yDomain[this.yDomain.length - 1];
@@ -747,7 +764,9 @@
             },
 
             getExtents: function (axis) {
-                var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
+                axis = axis || 'y';
+
+                var field = axis + 'Extent';
                 var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
                 var all = _.flatten(_.pluck(dataVis, field));
                 return all.length ? d3.extent(all) : [];
