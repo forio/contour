@@ -17,7 +17,7 @@
     };
 
     var axisFor = function(series, options) {
-        if (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0)
+        if (!options.line.stacked && (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0))
             return 'rightY';
         else
             return 'y';
