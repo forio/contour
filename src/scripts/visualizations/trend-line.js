@@ -8,13 +8,20 @@
         return isLinear ? all : _.map(all, normalizer);
     }
 
+    var axisFor = function(series, options) {
+        if (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0)          
+            return 'rightY';
+        else
+            return 'y';
+    };
+
     function ctor(raw, layer, options) {
         this.checkDependencies('cartesian');
         var data = normalizeDataSet(raw);
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);
-        var y = _.bind(function(d) { return this.yScale(d); }, this);
+        var y = _.bind(function(d, whichAxis) { return this[whichAxis + "Scale"](d); }, this);
         var regression = _.nw.linearRegression(data);
         var domain = d3.extent(this.xScale.domain());
         var numericDomain = d3.extent(data, function(p) { return p.x; });
@@ -23,12 +30,14 @@
         var line = layer.selectAll('.trend-line')
             .data([1]);
 
+        var whichAxis = raw.length > 0 ? axisFor(raw[0], options) : 'y';
+
         line.enter().append('line')
             .attr('class', 'trend-line')
             .attr('x1', x(domain[0]))
-            .attr('y1', y(lineY(numericDomain[0])))
+            .attr('y1', y(lineY(numericDomain[0]), whichAxis))
             .attr('x2', x(domain[0]))
-            .attr('y2', y(lineY(numericDomain[0])));
+            .attr('y2', y(lineY(numericDomain[0]), whichAxis));
 
         line.exit().remove();
 
@@ -37,9 +46,9 @@
         }
 
         line.attr('x1', x(domain[0]))
-            .attr('y1', y(lineY(numericDomain[0])))
+            .attr('y1', y(lineY(numericDomain[0]), whichAxis))
             .attr('x2', x(domain[1]))
-            .attr('y2', y(lineY(numericDomain[1])));
+            .attr('y2', y(lineY(numericDomain[1]), whichAxis));
     }
 
     ctor.defaults = {};
