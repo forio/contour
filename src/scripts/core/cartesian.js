@@ -188,6 +188,8 @@
 
                 var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
                 
+                this.options.chart.internalPadding.top = (this.options.chart.padding.top || 0);
+
                 // bottom padding calculations
                 if (this.options.chart.padding.bottom == null) {
                     if (xOptions.ticks !== 0) {
@@ -209,7 +211,7 @@
                 }
 
                 // left padding calculations
-                if (this.options.chart.padding.left == null) {
+                if (this.options.chart.padding.left == null && this._axisVisible(this.options.yAxis)) {
                     if (this._axisVisible(yOptions)) {
                         var yDomainScaled = this._getYScaledDomain();
                         // var yDomainScaled = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
@@ -226,11 +228,11 @@
                             this.options.chart.internalPadding.left = 0;
                         }
                 } else {
-                    this.options.chart.internalPadding.left = this.options.chart.padding.left;
+                    this.options.chart.internalPadding.left = this.options.chart.padding.left || 0;
                 }
 
                 // right padding calculations
-                if (this.options.chart.padding.right == null) {
+                if (this.options.chart.padding.right == null && this._axisVisible(this.options.rightYAxis)) {
                     if (this._axisVisible(rightYOptions)) {
                         var rightYDomainScaled = this._getRightYScaledDomain();
                         // var rightYDomainScaled = _.nw.extractScaleDomain(this.rightYDomain.slice().concat([_.nw.niceRound(this.rightYDomain[1])]), rightYOptions.min, rightYOptions.max);
@@ -247,7 +249,7 @@
                             this.options.chart.internalPadding.right = 5; //match old value... idk why 5???
                         }
                 } else {
-                    this.options.chart.internalPadding.right = this.options.chart.padding.right;
+                    this.options.chart.internalPadding.right = this.options.chart.padding.right || 0;
                 }
             },
 

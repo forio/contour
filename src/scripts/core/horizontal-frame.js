@@ -3,6 +3,10 @@
     var defaults = {
         chart: {
             rotatedFrame: true,
+            padding: {
+                top: null,
+                right: 15
+            }
         },
 
         xAxis: {
@@ -11,6 +15,10 @@
 
         yAxis: {
             orient: 'bottom'
+        },
+
+        rightYAxis: {
+            orient: 'top'
         }
     };
 
@@ -25,31 +33,55 @@
             var text = categoryLabels.join('<br>');
             var xLabel = _.nw.textBounds(text, '.x.axis');
             var yLabel = _.nw.textBounds('ABC', '.y.axis');
+            var rightYLabel = _.nw.textBounds('ABC', '.y.right.axis');
             var maxTickSize = function (options) { return Math.max(options.outerTickSize, options.innerTickSize); };
 
-            this.options.chart.internalPadding.left = this.options.chart.padding.left || maxTickSize(this.options.xAxis) + this.options.xAxis.tickPadding + xLabel.width;
-            this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || maxTickSize(this.options.yAxis) + this.options.yAxis.tickPadding + yLabel.height;
+            this.options.chart.internalPadding.right = this.options.chart.padding.right;
+
+            this.options.chart.internalPadding.left = this.options.chart.padding.left || 
+                maxTickSize(this.options.xAxis) + this.options.xAxis.tickPadding + xLabel.width;
+            
+            if (this._axisVisible(this.options.rightYAxis)) {
+                this.options.chart.internalPadding.top = this.options.chart.padding.top || 
+                    maxTickSize(this.options.rightYAxis) + this.options.rightYAxis.tickPadding + rightYLabel.height;
+            } else {
+                this.options.chart.internalPadding.top = (this.options.chart.padding.top || 0);
+            }
+
+            if (this._axisVisible(this.options.yAxis)) {
+                this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || 
+                    maxTickSize(this.options.yAxis) + this.options.yAxis.tickPadding + yLabel.height;
+            } else {
+                this.options.chart.internalPadding.bottom = (this.options.chart.padding.bottom || 0);
+            }
         },
 
-        adjustTitlePadding: function () {
+        adjustTitlePadding: function () { 
             var titleBounds;
-            if (this.options.xAxis.title || this.options.yAxis.title) {
-                if(this.options.xAxis.title) {
-                    titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
-                    this.options.chart.internalPadding.left += titleBounds.height + this.options.xAxis.titlePadding;
-                }
+           
+            if(this.options.xAxis.title) {
+                titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                this.options.chart.internalPadding.left += titleBounds.height + this.options.xAxis.titlePadding;
+            }
 
-                if(this.options.yAxis.title) {
-                    titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
-                    this.options.chart.internalPadding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
-                }
+            if(this.options.yAxis.title && this._axisVisible(this.options.yAxis)) {
+                titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                this.options.chart.internalPadding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
+            }
+
+            if(this.options.rightYAxis.title && this._axisVisible(this.options.rightYAxis)) {
+                titleBounds = _.nw.textBounds(this.options.rightYAxis.title, '.y.right.axis-title');
+                this.options.chart.internalPadding.top += titleBounds.height + this.options.rightYAxis.titlePadding;
             }
         },
 
         renderYAxis: function () {
+            if (!this._axisVisible(this.options.yAxis))
+                return this;
+
             var yAxis = this.yAxis();
             var x = this.options.chart.internalPadding.left;
-            var y = this.options.chart.padding.top + this.options.chart.plotHeight;
+            var y = this.options.chart.internalPadding.top + this.options.chart.plotHeight;
 
             this._yAxisGroup = this.svg.selectAll('.y.axis')
                 .data([1]);
@@ -68,9 +100,34 @@
             return this;
         },
 
+        renderRightYAxis: function () {
+            if (!this._axisVisible(this.options.rightYAxis))
+                return this;
+
+            var rightYAxis = this.rightYAxis();
+            var x = this.options.chart.internalPadding.left;
+            var y = this.options.chart.internalPadding.top;
+
+            this._rightYAxisGroup = this.svg.selectAll('.y.right.axis')
+                .data([1]);
+
+            this._rightYAxisGroup.enter().append('g')
+                .attr('class', 'y right axis')
+                .attr('transform', 'translate(' + x + ',' + y + ')');
+
+            this._rightYAxisGroup.exit().remove();
+
+            this._rightYAxisGroup
+                    .transition().duration(this._animationDuration())
+                    .attr('transform', 'translate(' + x + ',' + y + ')')
+                    .call(rightYAxis);
+
+            return this;
+        },
+
         renderXAxis: function () {
             var x = this.options.chart.internalPadding.left;
-            var y = this.options.chart.padding.top;
+            var y = this.options.chart.internalPadding.top;
             var xAxis = this.xAxis();
 
             this._xAxisGroup = this.svg.selectAll('.x.axis')
@@ -119,7 +176,7 @@
                 el.exit().remove();
             }
 
-            if (this.options.yAxis.title) {
+            if (this.options.yAxis.title && this._axisVisible(this.options.yAxis)) {
                 bounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
                 tickSize = Math.max(this.options.yAxis.innerTickSize, this.options.yAxis.outerTickSize);
                 anchor = this.options.chart.rotatedFrame ? 'end' : 'middle';
@@ -141,6 +198,32 @@
                     .attr('dy', -4) // just because
                     .attr('transform', ['rotate(', rotation, ')'].join(''))
                     .text(this.options.yAxis.title);
+
+                el.exit().remove();
+            }
+
+            if (this.options.rightYAxis.title && this._axisVisible(this.options.rightYAxis)) {
+                bounds = _.nw.textBounds(this.options.rightYAxis.title, '.y.right.axis-title');
+                tickSize = Math.max(this.options.rightYAxis.innerTickSize, this.options.rightYAxis.outerTickSize);
+                anchor = this.options.chart.rotatedFrame ? 'end' : 'middle';
+                x = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : 0;
+                y = this.options.chart.rotatedFrame ?  
+                    -this.options.chart.internalPadding.top + bounds.height :
+                    -this.options.chart.internalPadding.right - this.titleOneEm + lineHeightAdjustment;
+
+                rotation = this.options.chart.rotatedFrame ? '0' : '-90';
+
+                el = this._rightYAxisGroup.selectAll('.y.right.axis-title').data([null]);
+
+                el.enter().append('text')
+                    .attr('class', 'y right axis-title');
+
+                el.attr('y', y)
+                    .attr('x', x)
+                    .attr('dx', -(this.options.chart.plotWidth + bounds.width) / 2)
+                    .attr('dy', 4) // just because
+                    .attr('transform', ['rotate(', rotation, ')'].join(''))
+                    .text(this.options.rightYAxis.title);
 
                 el.exit().remove();
             }

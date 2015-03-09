@@ -35,7 +35,8 @@
             internalPadding: {
                 bottom: 0,
                 left: 0,
-                right: 0
+                right: 0,
+                top: 0
             },
             // automatically false by default anyway; adding here to help generate docs
             rotatedFrame: false,
@@ -144,7 +145,7 @@
             var vis;
 
             this.composeOptions(); // we compose the options here so that defaults are provided to each viz container on init
-            
+
             data = data || lastData || [];
             sortSeries(data);
             vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
@@ -281,9 +282,9 @@
             this.options = _.merge(options, {
                 chart: {
                     plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.internalPadding.left - options.chart.internalPadding.right,
-                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.internalPadding.bottom,
+                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.internalPadding.top - options.chart.internalPadding.bottom,
                     plotLeft: options.chart.margin.left + options.chart.internalPadding.left,
-                    plotTop: options.chart.margin.top + options.chart.padding.top
+                    plotTop: options.chart.margin.top + options.chart.internalPadding.top
                 }
             });
 
@@ -439,7 +440,7 @@
                 var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
                 var opt = _.merge({}, this.options, visualization.options);
 
-                layer.attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
+                layer.attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.internalPadding.top || 0) + ')');
 
                 visualization.layer = layer;
                 visualization.parent = this;
