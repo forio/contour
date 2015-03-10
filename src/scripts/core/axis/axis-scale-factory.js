@@ -35,7 +35,7 @@
                 options[which].type = 'linear';
             
             if(options[which].type === 'linear' && options[which].smartAxis) 
-                options.yAxis.type = 'smart';
+                options[which].type = 'smart';
 
             if(!map[options[which].type]) 
                 throw new Error('Unknown axis type: "' + options[which].type + '"');
