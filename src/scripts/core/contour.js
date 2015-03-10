@@ -63,7 +63,7 @@
     // the need to specify it again.... this allows you to do
     // new Contour().cartesian().line(dataset).lengend().tooltip().render()
     // and legend and tooltip will recieve dataset
-    var lastData;
+    this.lastData;
 
     /**
     * Creates a Contour instance, based on the core Contour visualizations object. This instance can contain a set of related visualizations.
@@ -136,11 +136,11 @@
             var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
 
-            data = data || lastData || [];
+            data = data || this.lastData || [];
             sortSeries(data);
             vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
             this._visualizations.push(vis);
-            lastData = data;
+            this.lastData = data;
             return this;
         };
 
