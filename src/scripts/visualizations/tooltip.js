@@ -54,11 +54,21 @@
             }, this);
 
             var axis = axisFor(d);
-            if (axis == 'y')
-                pointY = yScale ? yScale(d.y) : pointOrCentroid.call(this)[1];
-            else
-                pointY = rightYScale ? rightYScale(d.y) : pointOrCentroid.call(this)[1];
 
+            var y = _.bind(function (d, seriesName) {
+                var whichAxis = axisFor({name:seriesName}); 
+                var axisConfig = options[whichAxis + 'Axis'];
+                if (axisConfig.multiScale && !options.line.stacked) {
+                    return this[whichAxis + 'ScaleGenerator'].scaleForSeries(seriesName)(d.y);
+                } else if (this[whichAxis + 'Scale']) {
+                    return this[whichAxis + 'Scale'](d.y); 
+                } else {
+                    pointOrCentroid.call(this)[1]
+                }
+            }, this);
+
+            pointY = y(d, d.name);
+           
             var clampPosition = function (pos) {
                 // Check outside plot area (left)
                 if (pos.x < plotLeft) {

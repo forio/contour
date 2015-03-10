@@ -56,7 +56,7 @@
             var domain = (seriesObject && seriesObject.data) ? [d3.min(_.pluck(seriesObject.data, 'y')), d3.max(_.pluck(seriesObject.data, 'y'))] : null;
 
             var absMin = axisConfig.zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
-            var min = axisMax != null ? axisMin : absMin;
+            var min = axisMin != null ? axisMin : absMin;
 
             if (axisConfig.tickValues) {
                 if (axisMin != null && axisMax != null) {
