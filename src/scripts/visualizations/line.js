@@ -97,8 +97,14 @@
         }, this);
 
         var y = _.bind(function (d, seriesName) {
-            var whichAxis = axisFor({name:seriesName});             
-            return this[whichAxis + 'Scale'](d.y + (d.y0 || 0)) + 0.5; 
+            var whichAxis = axisFor({name:seriesName}); 
+            var axisConfig = options[whichAxis + 'Axis'];
+            if (axisConfig.multiScale && !options.line.stacked) {
+                return this[whichAxis + 'ScaleGenerator'].scaleForSeries(seriesName)(d.y) + 0.5;
+            } else {
+                return this[whichAxis + 'Scale'](d.y+ (d.y0 || 0)) + 0.5; 
+            }
+
         }, this);
 
         var h = options.chart.plotHeight;

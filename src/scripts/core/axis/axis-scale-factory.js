@@ -28,7 +28,8 @@
             var map = {
                 'log': _.nw.LogYAxis,
                 'smart': _.nw.SmartYAxis,
-                'linear': _.nw.YAxis
+                'linear': _.nw.YAxis,
+                'multi-linear': _.nw.MultiScaleYAxis
             };
 
             if(!options[which].type) 
@@ -36,6 +37,9 @@
             
             if(options[which].type === 'linear' && options[which].smartAxis) 
                 options[which].type = 'smart';
+
+            if (options[which].type === 'linear' && options[which].multiScale)
+                options[which].type = 'multi-linear';
 
             if(!map[options[which].type]) 
                 throw new Error('Unknown axis type: "' + options[which].type + '"');
