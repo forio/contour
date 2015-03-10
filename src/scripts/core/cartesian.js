@@ -171,6 +171,20 @@
                 return axisConfig && (axisConfig.series == 'all' || axisConfig.series.length > 0);
             },
 
+            _seriesEq: function(seriesA, seriesB) {
+                if (seriesA.name != seriesB.name || seriesA.data.length != seriesB.data.length)
+                    return false;
+
+                for (var i=0; i < seriesA.data.length; ++i) {
+                    if (seriesA.data[i].x != seriesB.data[i].x ||
+                        seriesA.data[i].y != seriesB.data[i].y) {
+                       return false;
+                    }
+                }
+
+               return true;
+            },
+
             _pruneData: function(seriesWhiteList) {
                 var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
 
@@ -199,7 +213,7 @@
                 if (seriesWhiteList == 'all')
                     return dataSrc;
 
-                return dataSrc.filter(function(series) {
+                dataSrc = _.filter(dataSrc, function(series) {
                     var found = false;
                     seriesWhiteList.forEach(function(whiteSeries) {
                         if ((typeof whiteSeries == "string" && whiteSeries == series.name) || (whiteSeries.name == series.name))
@@ -207,6 +221,18 @@
                     });
                     return found;
                 });
+
+                dataSrc = _.filter(dataSrc, function(series, index) {
+                    for (var i=index + 1; i < dataSrc.length; ++i) {
+                        var series2 = dataSrc[i];
+                        if (this._seriesEq(series, series2))
+                            return false;
+                    }
+                    return true;
+
+                }.bind(this));
+
+                return dataSrc;
             },
 
             axisFor: function(series) {
