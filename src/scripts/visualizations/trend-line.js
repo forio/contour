@@ -8,13 +8,6 @@
         return isLinear ? all : _.map(all, normalizer);
     }
 
-    var axisFor = function(series, options) {
-        if (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0)          
-            return 'rightY';
-        else
-            return 'y';
-    };
-
     function ctor(raw, layer, options) {
         this.checkDependencies('cartesian');
         var data = normalizeDataSet(raw);
@@ -27,10 +20,14 @@
         var numericDomain = d3.extent(data, function(p) { return p.x; });
         var lineY = function (x) { return regression.intercept + regression.slope * x; };
 
+        var axisFor = _.bind(function(series) {
+            return this.axisFor(series);
+        }, this);
+
         var line = layer.selectAll('.trend-line')
             .data([1]);
 
-        var whichAxis = raw.length > 0 ? axisFor(raw[0], options) : 'y';
+        var whichAxis = raw.length > 0 ? axisFor(raw[0]) : 'y';
 
         line.enter().append('line')
             .attr('class', 'trend-line')

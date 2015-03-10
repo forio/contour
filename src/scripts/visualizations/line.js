@@ -16,13 +16,6 @@
         }
     };
 
-    var axisFor = function(series, options) {
-        if (!options.line.stacked && (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0))
-            return 'rightY';
-        else
-            return 'y';
-    };
-
     var duration;
     var animationDirection;
     var animationsMap = {
@@ -43,7 +36,7 @@
 
             update: function (line, options) {
                 this.attr('d', function (d) { 
-                    return line(d.data, axisFor(d, options)); 
+                    return line(d.data, d.name); 
                 });
 
                 this.each(function () {
@@ -63,14 +56,14 @@
             enter: function (line, options) {
                 this.transition().duration(duration)
                     .attr('d', function (d) { 
-                        return line(d.data, axisFor(d, options)); 
+                        return line(d.data, d.name); 
                     });
             },
 
             update: function (line, options) {
                 this.transition().duration(duration)
                     .attr('d', function (d) { 
-                        return line(d.data, axisFor(d, options)); 
+                        return line(d.data, d.name); 
                     });
             }
         }
@@ -92,11 +85,19 @@
             });
         }
 
+        var axisFor = _.bind(function(series) {
+            if (options.line.stacked)
+                return 'y';
+            
+            return this.axisFor(series);
+        }, this);
+
         var x = _.bind(function (d) { 
             return this.xScale(d.x) + this.rangeBand / 2 + 0.5; 
         }, this);
 
-        var y = _.bind(function (d, whichAxis) { 
+        var y = _.bind(function (d, seriesName) {
+            var whichAxis = axisFor({name:seriesName});             
             return this[whichAxis + 'Scale'](d.y + (d.y0 || 0)) + 0.5; 
         }, this);
 
@@ -126,26 +127,27 @@
         };
 
         function renderPaths() {
-            var startLine = function(data, whichAxis) {
+            var startLine = function(data, seriesName) {
+                var whichAxis = axisFor({name:seriesName}); 
                 var axis = options[whichAxis + 'Axis'];
                 return d3.svg.line()
                     .x(function (d) { 
                         return x(d); 
                     })
                     .y(function (d) { 
-                        return y({x: 0, y: axis.min || 0}, whichAxis); 
+                        return y({x: 0, y: axis.min || 0}, seriesName); 
                     })(data);
             };
 
             
 
-            var line = function(data, whichAxis) {
+            var line = function(data, seriesName) {
                 return d3.svg.line()
                     .x(function (d) { 
                         return x(d); 
                     })
                     .y(function (d) { 
-                        return y(d, whichAxis); 
+                        return y(d, seriesName); 
                     })(data);
             }; 
             
@@ -168,11 +170,11 @@
             if (shouldAnimate) {
                 var startLineFn = animationDirection === 'left-to-right' ? line : startLine;
                 var path = el.attr('d', function(d) { 
-                        return startLineFn(d.data, axisFor(d, options)); 
+                        return startLineFn(d.data, d.name); 
                     });
             } else {
                 el.attr('d', function (d) { 
-                    return line(d.data, axisFor(d, options)); 
+                    return line(d.data, d.name); 
                 });
             }
 
@@ -185,7 +187,7 @@
                 el.call(_.partial(animFn.update, line, options));
             } else  {
                 el.attr('d', function (d) { 
-                    return line(d.data, axisFor(d, options)); 
+                    return line(d.data, d.name); 
                 });
             }
 
@@ -225,13 +227,13 @@
                 dots.transition().delay(duration)
                     .attr('cx', x)
                     .attr('cy', function(d) {
-                        return y(d, axisFor(d, options));
+                        return y(d, d.name);
                     })
                     .attr('opacity', 1);
             } else {
                 dots.attr('cx', x)
                     .attr('cy', function(d) {
-                        return y(d, axisFor(d, options));
+                        return y(d, d.name);
                     })
                     .attr('opacity', 1);
             }
@@ -269,7 +271,7 @@
             dots.attr({
                 'cx': x,
                 'cy': function(d) {
-                    return y(d, axisFor(d, options));
+                    return y(d, d.name);
                 }
             });
 

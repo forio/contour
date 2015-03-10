@@ -1,8 +1,9 @@
 (function () {
 
-    var LogYAxis = function (data, options) {
+    var LogYAxis = function (data, options, domain, which) {
         this.data = data;
         this.options = options;
+        this.which = which;
     };
 
     function setRange(scale, options) {
@@ -13,7 +14,7 @@
 
     LogYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
         axis: function () {
-            var options = this.options.yAxis;
+            var options = this.options[this.which];
             var domain = this._scale.domain();
             var ticksHint = Math.ceil(Math.log(domain[1]) / Math.log(10));
             var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');

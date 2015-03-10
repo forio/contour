@@ -7,7 +7,17 @@
                 return;
             
             var isAll = axisOptions && axisOptions.series == 'all';
-            var hasSpecific = axisOptions && axisOptions.series && axisOptions.series.indexOf(d.name) >= 0;
+            var hasSpecific = axisOptions && axisOptions.series;
+            if (!isAll && hasSpecific) {
+                var found = false;
+                var seriesWhiteList = axisOptions.series;
+                seriesWhiteList.forEach(function(whiteSeries) {
+                    if ((typeof whiteSeries == "string" && whiteSeries == d.name) || (whiteSeries.name == d.name))
+                        found = true;
+                });
+
+                hasSpecific = found;
+            }
 
             if (field == 'x' || isAll || hasSpecific) {
                 var values = _.pluck(d.data, field);
@@ -24,19 +34,17 @@
 
 
     /*jshint eqnull:true */
-    var _stackedExtent = function (data, axisOptions) {
+    var _stackedExtent = function (data) {
         var stack = _.nw.stackLayout();
         var dataSets = stack(data);
         var min = {};
         var max = {};
         var ext = [];
         _.each(dataSets, function (set) {
-            if (axisOptions.series == 'all' || axisOptions.series.indexOf(set.name) >= 0) {
-                _.each(set.data, function (d, i) {
-                    var cur = ext[i] || 0;
-                    ext[i] = cur + d.y;
-                });
-            }
+            _.each(set.data, function (d, i) {
+                var cur = ext[i] || 0;
+                ext[i] = cur + d.y;
+            });
         });
 
         return [_.min(ext), _.max(ext)];
@@ -90,8 +98,8 @@
             if (isSupportedFormat(this.data)) {
                 this.xDomain = _.flatten(_.map(this.data, function (set) { return _.pluck(set.data, 'x'); }));
                 this.xExtent = _extent(this.data, this.ctx.options.xAxis, 'x');
-                this.yExtent = this.options[this.type].stacked ? _stackedExtent(this.data, this.ctx.options.yAxis, 'y') : _extent(this.data, this.ctx.options.yAxis, 'y');
-                this.rightYExtent = this.options[this.type].stacked ? _stackedExtent(this.data, this.ctx.options.rightYAxis, 'y') : _extent(this.data, this.ctx.options.rightYAxis, 'y');
+                this.yExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _extent(this.data, this.ctx.options.yAxis, 'y');
+                this.rightYExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _extent(this.data, this.ctx.options.rightYAxis, 'y');
             }
         }
 

@@ -40,7 +40,7 @@
             if(!map[options[which].type]) 
                 throw new Error('Unknown axis type: "' + options[which].type + '"');
 
-            return new map[options[which].type](data, options, domain);
+            return new map[options[which].type](data, options, domain, which);
         }
 
     };

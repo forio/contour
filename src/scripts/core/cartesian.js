@@ -138,19 +138,6 @@
             yDomain: [],
             rightYDomain: [],
 
-            _axisVisible: function(axisConfig) {
-                return axisConfig && (axisConfig.series == 'all' || axisConfig.series.length > 0);
-            },
-
-            _pruneData: function(data, series) {
-                if (series == 'all')
-                    return data;
-
-                return data.map(function(item) {
-                    return series.indexOf(item.name) >= 0;
-                });
-            },
-
             _getYScaledDomainForAxis: function (axis, domain) {
                 var absMin = axis.zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
                 var min = axis.min != null ? axis.min : absMin;
@@ -178,6 +165,64 @@
 
             _getRightYScaledDomain: function() {
                 return this._getYScaledDomainForAxis(this.options.rightYAxis, this.rightYDomain);
+            },
+
+             _axisVisible: function(axisConfig) {
+                return axisConfig && (axisConfig.series == 'all' || axisConfig.series.length > 0);
+            },
+
+            _pruneData: function(seriesWhiteList) {
+                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
+
+                var dataSrc = _.flatten(
+                    _.map(dataVis, function (v) {
+                        return _.map(v.data, function(series, index) {
+                            if (_.isObject(series) && _.isArray(series.data)) {
+                                series.data = _.map(series.data, function(point) {
+                                    return {
+                                        y: _.isObject(point) ? point.y : point,
+                                        x: _.isObject(point) ? point.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
+                                    };
+                                });
+                                return series;
+                            }
+
+                            return {
+                                y: _.isObject(series) ? series.y : series,
+                                x: _.isObject(series) ? series.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
+                            };
+
+                        });
+                    }, this)
+                );
+
+                if (seriesWhiteList == 'all')
+                    return dataSrc;
+
+                return dataSrc.filter(function(series) {
+                    var found = false;
+                    seriesWhiteList.forEach(function(whiteSeries) {
+                        if ((typeof whiteSeries == "string" && whiteSeries == series.name) || (whiteSeries.name == series.name))
+                            found = true;
+                    });
+                    return found;
+                });
+            },
+
+            axisFor: function(series) {
+                if (this.options.rightYAxis.series == 'all') {            
+                    return 'rightY';
+                } else {
+                    var found = false;
+
+                    this.options.rightYAxis.series.forEach(function(item) {
+                        if ((typeof item == "string" && item == series.name) || (item.name == series.name)) {
+                            found = true;
+                        }
+                    });
+
+                    return found ? 'rightY' : 'y';
+                }
             },
 
             /*jshint eqnull:true */
@@ -289,7 +334,7 @@
                 if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
                 var yScaleDomain = this._getYScaledDomain();
-                var dataSrc = this._pruneData(this.dataSrc, this.options.yAxis.series);
+                var dataSrc = this._pruneData(this.options.yAxis.series);
 
                 if(!this.yScale) {
                     this.yScaleGenerator = _.nw.yScaleFactory(dataSrc, this.options, this.yDomain, 'yAxis');
@@ -303,7 +348,7 @@
                 if (!this.rightYDomain) throw new Error('You are trying to render without setting data (rightYDomain).');
 
                 var yScaleDomain = this._getRightYScaledDomain();
-                var dataSrc = this._pruneData(this.dataSrc, this.options.rightYAxis.series);
+                var dataSrc = this._pruneData(this.options.rightYAxis.series);
 
                 if(!this.rightYScale) {
                     this.rightYScaleGenerator = _.nw.yScaleFactory(dataSrc, this.options, this.rightYDomain, 'rightYAxis');
@@ -389,6 +434,9 @@
             */
             redrawYAxis: function () {
                 this.svg.select(".y.axis").call(this.yAxis());
+                if (this.yScaleGenerator.postProcessAxis)
+                    this.yScaleGenerator.postProcessAxis(this._yAxisGroup);
+
                 this.renderGridlines();
             },
 
@@ -403,6 +451,9 @@
             */
             redrawRightYAxis: function () {
                 this.svg.select(".y.right.axis").call(this.rightYAxis());
+                if (this.rightYScaleGenerator.postProcessAxis)
+                    this.rightYScaleGenerator.postProcessAxis(this._rightYAxisGroup);
+
                 this.renderGridlines();
             },
 
@@ -501,6 +552,9 @@
                     .selectAll('.tick text')
                         .attr('dy', alignmentOffset[options.labels.verticalAlign]);
 
+                if (this.yScaleGenerator.postProcessAxis)
+                    this.yScaleGenerator.postProcessAxis(this._yAxisGroup);
+
                 return this;
             },
 
@@ -532,6 +586,9 @@
                     .call(this.rightYAxis())
                     .selectAll('.tick text')
                         .attr('dy', alignmentOffset[options.labels.verticalAlign]);
+
+                if (this.rightYScaleGenerator.postProcessAxis)
+                    this.rightYScaleGenerator.postProcessAxis(this._rightYAxisGroup);
 
                 return this;
             },

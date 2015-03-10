@@ -9,23 +9,25 @@
         }
     };
 
-    var axisFor = function(series, options) {
-        if (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0)
-            return 'rightY';
-        else
-            return 'y';
-    };
-
     function ScatterPlot(data, layer, options) {
         this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var opt = options.scatter;
         var halfRangeBand = this.rangeBand / 2;
-        var x = _.bind(function (d) { return this.xScale(d.x) + halfRangeBand; }, this);
+        
+        var axisFor = _.bind(function(series) {
+            return this.axisFor(series);
+        }, this);
+
+        var x = _.bind(function (d) { 
+            return this.xScale(d.x) + halfRangeBand; 
+        }, this);
+        
         var y = _.bind(function (d, whichAxis) { 
             return this[whichAxis + 'Scale'](d.y); 
         }, this);
+        
         var h = options.chart.plotHeight;
         var classFn = function (d, i) { return d.name + ' series s-' + (i+1); };
 
@@ -60,13 +62,13 @@
                 .attr('r', opt.radius)
                 .attr('cx', x)
                 .attr('cy', function(d) {
-                    return y(d, axisFor(d, options))
+                    return y(d, axisFor(d))
                 });
         } else {
             dots.attr('r', opt.radius)
                 .attr('cx', x)
                 .attr('cy', function(d) {
-                    return y(d, axisFor(d, options))
+                    return y(d, axisFor(d))
                 });
         }
 

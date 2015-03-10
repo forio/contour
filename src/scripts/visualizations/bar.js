@@ -11,13 +11,6 @@
         }
     };
 
-    var axisFor = function(series, options) {
-        if (!options.bar.stacked && (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0))            
-            return 'rightY';
-        else
-            return 'y';
-    };
-
     function barRender(data, layer, options) {
         this.checkDependencies(['cartesian', 'horizontal']);
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
@@ -30,6 +23,14 @@
         var stack = _.nw.stackLayout();
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
+        
+        var axisFor = _.bind(function(series) {
+            if (options.bar.stacked)
+                return 'y';
+            
+            return this.axisFor(series);
+        }, this);
+
         var x = function (d) { 
             return _this.xScale(d) - 0.5; 
         };
@@ -73,7 +74,7 @@
             bars.exit()
                 .transition().duration(duration)
                 .attr('width', function(d) {
-                    return y(0, axisFor(d, options))
+                    return y(0, axisFor(d))
                 })
                 .remove();
         } else {
@@ -91,7 +92,7 @@
             if (enter) {
                 return bar
                     .attr('x', function (d) { 
-                        return y(0, axisFor(d, options)); 
+                        return y(0, axisFor(d)); 
                     })
                     .attr('width', function (d) { 
                         return 0; 
@@ -101,13 +102,13 @@
                 return bar
                     .attr('x', function (d) { 
                         return d.y >= 0 ? 
-                            y(d.y0 || 0, axisFor(d, options)) : 
-                            y(d.y + d.y0, axisFor(d, options)); 
+                            y(d.y0 || 0, axisFor(d)) : 
+                            y(d.y + d.y0, axisFor(d)); 
                     })
                     .attr('width', function (d) { 
                         return d.y >=0 ? 
-                            y(d.y, axisFor(d, options)) - y(0, axisFor(d, options)) : 
-                            y(0, axisFor(d, options)) - y(d.y, axisFor(d, options)); 
+                            y(d.y, axisFor(d)) - y(0, axisFor(d)) : 
+                            y(0, axisFor(d)) - y(d.y, axisFor(d)); 
                     });
             }
         }
@@ -125,7 +126,7 @@
                     return x(d.x) + offset(d, j) + chartOffset; 
                 })
                 .attr('x', function(d) {
-                    return y(0, axisFor(d, options));
+                    return y(0, axisFor(d));
                 })
                 .attr('height', height);
 
@@ -136,13 +137,13 @@
                 return bar
                     .attr('width', function (d) { 
                         return d.y >= 0 ? 
-                            y(d.y, axisFor(d, options)) - y(0, axisFor(d, options)) : 
-                            y(0, axisFor(d, options)) - y(d.y, axisFor(d, options)); 
+                            y(d.y, axisFor(d)) - y(0, axisFor(d)) : 
+                            y(0, axisFor(d)) - y(d.y, axisFor(d)); 
                     })
                     .attr('x', function (d) { 
                         return d.y < 0 ? 
-                            y(d.y, axisFor(d, options)) : 
-                            y(0, axisFor(d, options)); 
+                            y(d.y, axisFor(d)) : 
+                            y(0, axisFor(d)); 
                     });
             }
         }

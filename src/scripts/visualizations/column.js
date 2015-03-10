@@ -12,13 +12,6 @@
         }
     };
 
-    var axisFor = function(series, options) {
-        if (!options.column.stacked && (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0))
-            return 'rightY';
-        else
-            return 'y';
-    };
-
     function render(data, layer, options) {
         this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
@@ -32,12 +25,22 @@
         var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
         var enter = _.partialRight((options.column.stacked ? stacked : grouped), true);
         var update = options.column.stacked ? stacked : grouped;
+        
+        var axisFor = _.bind(function(series) {
+            if (options.column.stacked)
+                return 'y';
+            
+            return this.axisFor(series);
+        }, this);
+
         var x = function (v) { 
             return Math.round(_this.xScale(v)) + 0.5; 
         };
+        
         var y = function (v, whichAxis) { 
             return Math.round(_this[whichAxis + 'Scale'](v)) - 0.5; 
         };
+
         var dataKey = function (d) { 
             return d.data.map(function(di) {
                     di.name = d.name; 
@@ -110,15 +113,15 @@
 
             if (enter) {
                 col.attr('y', function (d) { 
-                        return d.y >= 0 ? getBase(axisFor(d, options)) : getBase(axisFor(d, options)); 
+                        return d.y >= 0 ? getBase(axisFor(d)) : getBase(axisFor(d)); 
                     })
                     .attr('height', function (d) { return 0.5; });
             } else {
                 col.attr('y', function (d) { 
-                        return d.y >= 0 ? y(d.y, axisFor(d, options)) + y(d.y0, axisFor(d, options)) - getBase(axisFor(d, options)) : y(d.y0, axisFor(d, options)) ; 
+                        return d.y >= 0 ? y(d.y, axisFor(d)) + y(d.y0, axisFor(d)) - getBase(axisFor(d)) : y(d.y0, axisFor(d)) ; 
                     })
                     .attr('height', function (d) { 
-                        return d.y >=0 ? getBase(axisFor(d, options)) - y(d.y, axisFor(d, options)) : y(d.y, axisFor(d, options)) - getBase(axisFor(d, options)); 
+                        return d.y >=0 ? getBase(axisFor(d)) - y(d.y, axisFor(d)) : y(d.y, axisFor(d)) - getBase(axisFor(d)); 
                     });
             }
         }
@@ -137,15 +140,15 @@
 
             if (enter) {
                 col.attr('y', function(d) {
-                        return getBase(axisFor(d, options));
+                        return getBase(axisFor(d));
                     })
                     .attr('height', 0);
             } else {
                 col.attr('y', function (d) { 
-                        return d.y >= 0 ? y(d.y, axisFor(d, options)) : getBase(axisFor(d, options)); 
+                        return d.y >= 0 ? y(d.y, axisFor(d)) : getBase(axisFor(d)); 
                     })
                     .attr('height', function (d) { 
-                        return d.y >= 0 ? getBase(axisFor(d, options)) - y(d.y, axisFor(d, options)) : y(d.y, axisFor(d, options)) - getBase(axisFor(d, options)); 
+                        return d.y >= 0 ? getBase(axisFor(d)) - y(d.y, axisFor(d)) : y(d.y, axisFor(d)) - getBase(axisFor(d)); 
                     });
             }
         }
