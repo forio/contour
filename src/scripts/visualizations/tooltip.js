@@ -10,13 +10,6 @@
         }
     };
 
-    var axisFor = function(series, options) {
-        if (options.rightYAxis.series == 'all' || options.rightYAxis.series.indexOf(series.name) >= 0)
-            return 'rightY';
-        else
-            return 'y';
-    };
-
     function render(data, layer, options) {
 
         var clearHideTimer = function () {
@@ -56,7 +49,11 @@
             var pointY;
             var alignedRight;
 
-            var axis = axisFor(d, options);
+            var axisFor = _.bind(function(series) {
+                return this.axisFor(series);
+            }, this);
+
+            var axis = axisFor(d);
             if (axis == 'y')
                 pointY = yScale ? yScale(d.y) : pointOrCentroid.call(this)[1];
             else
