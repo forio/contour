@@ -33,8 +33,14 @@
         },
 
         postProcessAxis: function (axisGroup) {
-            var options = this.options.yAxis;
-            if (!options.labels || options.labels.rotation == null) return;
+            var options = this.options[this.which];
+            if (!options.labels) return;
+
+            axisGroup.selectAll('.tick text').remove();
+            var ticks = axisGroup.selectAll('.tick');
+
+            //make an array of labels [[0,0],[5,50],[10,100],[100,1000]] of length ticks, with sub length of this.data.length
+            //for each tick create an svg text element with that label text formatted and colored
 
             
         },
