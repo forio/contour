@@ -37,12 +37,54 @@
             if (!options.labels) return;
 
             axisGroup.selectAll('.tick text').remove();
-            var ticks = axisGroup.selectAll('.tick');
 
-            //make an array of labels [[0,0],[5,50],[10,100],[100,1000]] of length ticks, with sub length of this.data.length
-            //for each tick create an svg text element with that label text formatted and colored
+            var options = this.options[this.which];
+            var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
+            var adjustFactor = 40/46.609; // this factor is to account for the difference between the actual svg size and what we get from the DOM
+            var labelHeight = _.nw.textBounds('M', '.axis text').height * adjustFactor;               
+            var groupLabelHeight = labelHeight * this.data.length;
+            var format = options.labels.formatter || d3.format(options.labels.format);
 
+            var padding = maxTickSize(options) + (options.tickPadding || 0);
+
+            var tickEls = axisGroup.selectAll('.tick')[0];
+            var range = this.scale().range();
+            var tickIncrement = (range[1] - range[0]) / (tickEls.length - 1);
             
+            var seriesRanges = _.map(this.data, function(series) {
+                var seriesRange = this._seriesRange(series.name);
+                seriesRange.push((seriesRange[1] - seriesRange[0]) / (tickEls.length - 1));
+                return seriesRange;
+            }.bind(this));
+            
+           //make an array of labels [[0,0],[5,50],[10,100],[100,1000]] of length ticks, with sub length of this.data.length            
+            var labelData = _.map(tickEls, function(tickEl, tIndex) {
+                return _.map(seriesRanges, function(seriesRange) {
+                    return seriesRange[0] + tIndex * seriesRange[2];
+                });   
+            });
+
+            //for each tick create an svg text element with that label text formatted and colored
+            _.each(tickEls, function(tickEl, tIndex) {
+                _.each(seriesRanges, function(seriesRange, sIndex) {
+                    var text = format(labelData[tIndex][sIndex]);
+                    var textBounds = _.nw.textBounds(text, '.y.axis text');
+
+                    var textNode = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    textNode.appendChild(document.createTextNode(text));
+
+                    var offset = 0;
+                    if (tIndex == 0)
+                        offset = -groupLabelHeight/2 + labelHeight/2;
+                    else if (tIndex == tickEls.length - 1)
+                        offset = groupLabelHeight/2 - labelHeight/2;
+
+                    textNode.setAttribute('class', 's-' + (sIndex + 1));
+                    textNode.setAttribute('y', -groupLabelHeight / 2 + ((sIndex + 1) * labelHeight + offset));
+                    textNode.setAttribute('x', -textBounds.width - padding);
+                    tickEl.appendChild(textNode);
+                });
+            });
         },
 
         _seriesRange: function(seriesName) {
