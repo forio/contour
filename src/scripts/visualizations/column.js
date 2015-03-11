@@ -37,9 +37,16 @@
             return Math.round(_this.xScale(v)) + 0.5; 
         };
         
-        var y = function (v, whichAxis) { 
-            return Math.round(_this[whichAxis + 'Scale'](v)) - 0.5; 
-        };
+        var y = _.bind(function (d, seriesName) {
+            var whichAxis = axisFor({name:seriesName}); 
+            var axisConfig = options[whichAxis + 'Axis'];
+            if (axisConfig.multiScale && !options.column.stacked) {
+                return this[whichAxis + 'ScaleGenerator'].scaleForSeries(seriesName)(d) - 0.5;
+            } else {
+                return this[whichAxis + 'Scale'](d) - 0.5; 
+            }
+
+        }, this);
 
         var dataKey = function (d) { 
             return d.data.map(function(di) {
@@ -99,8 +106,8 @@
         // for every update
         cols.attr('style', rectStyle);
 
-        function getBase(whichAxis) {
-            return y(0, whichAxis);
+        function getBase(seriesName) {
+            return y(0, seriesName);
         }
 
         function stacked(col, enter) {
@@ -113,15 +120,15 @@
 
             if (enter) {
                 col.attr('y', function (d) { 
-                        return d.y >= 0 ? getBase(axisFor(d)) : getBase(axisFor(d)); 
+                        return d.y >= 0 ? getBase(d.name) : getBase(d.name); 
                     })
                     .attr('height', function (d) { return 0.5; });
             } else {
                 col.attr('y', function (d) { 
-                        return d.y >= 0 ? y(d.y, axisFor(d)) + y(d.y0, axisFor(d)) - getBase(axisFor(d)) : y(d.y0, axisFor(d)) ; 
+                        return d.y >= 0 ? y(d.y, d.name) + y(d.y0, d.name) - getBase(d.name) : y(d.y0, d.name) ; 
                     })
                     .attr('height', function (d) { 
-                        return d.y >=0 ? getBase(axisFor(d)) - y(d.y, axisFor(d)) : y(d.y, axisFor(d)) - getBase(axisFor(d)); 
+                        return d.y >=0 ? getBase(d.name) - y(d.y, d.name) : y(d.y, d.name) - getBase(d.name); 
                     });
             }
         }
@@ -140,15 +147,15 @@
 
             if (enter) {
                 col.attr('y', function(d) {
-                        return getBase(axisFor(d));
+                        return getBase(d.name);
                     })
                     .attr('height', 0);
             } else {
                 col.attr('y', function (d) { 
-                        return d.y >= 0 ? y(d.y, axisFor(d)) : getBase(axisFor(d)); 
+                        return d.y >= 0 ? y(d.y, d.name) : getBase(d.name); 
                     })
                     .attr('height', function (d) { 
-                        return d.y >= 0 ? getBase(axisFor(d)) - y(d.y, axisFor(d)) : y(d.y, axisFor(d)) - getBase(axisFor(d)); 
+                        return d.y >= 0 ? getBase(d.name) - y(d.y, d.name) : y(d.y, d.name) - getBase(d.name); 
                     });
             }
         }

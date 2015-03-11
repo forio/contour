@@ -74,20 +74,29 @@
                     var textNode = document.createElementNS("http://www.w3.org/2000/svg", "text");
                     textNode.appendChild(document.createTextNode(text));
 
-                    var offset = 0;
-                    if (tIndex == 0)
-                        offset = -groupLabelHeight/2 + labelHeight/2;
-                    else if (tIndex == tickEls.length - 1)
-                        offset = groupLabelHeight/2 - labelHeight/2;
-
                     textNode.setAttribute('class', 's-' + (ctx.seriesIndexFor(axisData[sIndex]) + 1));
-                    textNode.setAttribute('y', -groupLabelHeight / 2 + ((sIndex + 1) * labelHeight + offset));
                     
-                    if (options.orient == 'left')
-                        textNode.setAttribute('x', -1 * (textBounds.width + padding));
-                    else
-                        textNode.setAttribute('x', padding);
-
+                    if (options.orient == 'left' || options.orient == 'right') {
+                        var offset = tIndex == 0 ? -groupLabelHeight/2 + labelHeight/2 : (tIndex == tickEls.length - 1 ? groupLabelHeight/2 - labelHeight/2 : 0);
+                        textNode.setAttribute('y', -groupLabelHeight / 2 + ((sIndex + 1) * labelHeight + offset));
+                    
+                        if (options.orient == 'left')
+                            textNode.setAttribute('x', -1 * (textBounds.width + padding));
+                        else if (options.orient == 'right')
+                            textNode.setAttribute('x', padding);
+                    } else {
+                        var labelWidth = textBounds.width + 2;
+                        var groupLabelWidth = labelWidth * axisData.length
+                        
+                        var offset = tIndex == 0 ? labelWidth / 2 : (tIndex == tickEls.length - 1 ? -labelWidth/2 : 0);
+                        textNode.setAttribute('x', -groupLabelWidth + ((sIndex + 1) * labelWidth + offset));
+                    
+                        if (options.orient == 'top')
+                            textNode.setAttribute('y', -padding);
+                        else if (options.orient == 'bottom')
+                            textNode.setAttribute('y', padding + labelHeight);
+                    }
+                   
                     tickEl.appendChild(textNode);
                 });
             });

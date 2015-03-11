@@ -34,9 +34,17 @@
         var x = function (d) { 
             return _this.xScale(d) - 0.5; 
         };
-        var y = function (d, whichAxis) { 
-            return _this[whichAxis + "Scale"](d) + 0.5; 
-        };
+        
+        var y = _.bind(function (d, seriesName) { 
+            var whichAxis = axisFor({name:seriesName}); 
+            var axisConfig = options[whichAxis + 'Axis'];
+            if (axisConfig.multiScale && !options.bar.stacked) {
+                return this[whichAxis + 'ScaleGenerator'].scaleForSeries(seriesName)(d) + 0.5;
+            } else {
+                return this[whichAxis + 'Scale'](d) + 0.5; 
+            }
+        }, this);
+
         var classFn = function (d, i) { 
             return 'series s-' + (i+1) + ' ' + d.name; 
         };
@@ -74,7 +82,7 @@
             bars.exit()
                 .transition().duration(duration)
                 .attr('width', function(d) {
-                    return y(0, axisFor(d))
+                    return y(0, d.name)
                 })
                 .remove();
         } else {
@@ -92,7 +100,7 @@
             if (enter) {
                 return bar
                     .attr('x', function (d) { 
-                        return y(0, axisFor(d)); 
+                        return y(0, d.name); 
                     })
                     .attr('width', function (d) { 
                         return 0; 
@@ -102,13 +110,13 @@
                 return bar
                     .attr('x', function (d) { 
                         return d.y >= 0 ? 
-                            y(d.y0 || 0, axisFor(d)) : 
-                            y(d.y + d.y0, axisFor(d)); 
+                            y(d.y0 || 0, d.name) : 
+                            y(d.y + d.y0, d.name); 
                     })
                     .attr('width', function (d) { 
                         return d.y >=0 ? 
-                            y(d.y, axisFor(d)) - y(0, axisFor(d)) : 
-                            y(0, axisFor(d)) - y(d.y, axisFor(d)); 
+                            y(d.y, d.name) - y(0, d.name) : 
+                            y(0, d.name) - y(d.y, d.name); 
                     });
             }
         }
@@ -126,7 +134,7 @@
                     return x(d.x) + offset(d, j) + chartOffset; 
                 })
                 .attr('x', function(d) {
-                    return y(0, axisFor(d));
+                    return y(0, d.name);
                 })
                 .attr('height', height);
 
@@ -137,13 +145,13 @@
                 return bar
                     .attr('width', function (d) { 
                         return d.y >= 0 ? 
-                            y(d.y, axisFor(d)) - y(0, axisFor(d)) : 
-                            y(0, axisFor(d)) - y(d.y, axisFor(d)); 
+                            y(d.y, d.name) - y(0, d.name) : 
+                            y(0, d.name) - y(d.y, d.name); 
                     })
                     .attr('x', function (d) { 
                         return d.y < 0 ? 
-                            y(d.y, axisFor(d)) : 
-                            y(0, axisFor(d)); 
+                            y(d.y, d.name) : 
+                            y(0, d.name); 
                     });
             }
         }

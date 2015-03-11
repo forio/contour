@@ -97,6 +97,9 @@
                     .attr('transform', 'translate(' + x+ ',' + y + ')')
                     .call(yAxis);
 
+            if (this.yScaleGenerator.postProcessAxis)
+                    this.yScaleGenerator.postProcessAxis(this._yAxisGroup, this);
+
             return this;
         },
 
@@ -122,6 +125,8 @@
                     .attr('transform', 'translate(' + x + ',' + y + ')')
                     .call(rightYAxis);
 
+            if (this.rightYScaleGenerator.postProcessAxis)
+                    this.rightYScaleGenerator.postProcessAxis(this._rightYAxisGroup, this);
             return this;
         },
 

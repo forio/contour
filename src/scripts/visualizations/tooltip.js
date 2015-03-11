@@ -58,7 +58,7 @@
             var y = _.bind(function (d, seriesName) {
                 var whichAxis = axisFor({name:seriesName}); 
                 var axisConfig = options[whichAxis + 'Axis'];
-                if (axisConfig.multiScale && !options.line.stacked) {
+                if (axisConfig.multiScale) {
                     return this[whichAxis + 'ScaleGenerator'].scaleForSeries(seriesName)(d.y);
                 } else if (this[whichAxis + 'Scale']) {
                     return this[whichAxis + 'Scale'](d.y); 

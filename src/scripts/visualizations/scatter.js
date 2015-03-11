@@ -24,8 +24,15 @@
             return this.xScale(d.x) + halfRangeBand; 
         }, this);
         
-        var y = _.bind(function (d, whichAxis) { 
-            return this[whichAxis + 'Scale'](d.y); 
+        var y = _.bind(function (d, seriesName) {
+            var whichAxis = axisFor({name:seriesName}); 
+            var axisConfig = options[whichAxis + 'Axis'];
+            if (axisConfig.multiScale) {
+                return this[whichAxis + 'ScaleGenerator'].scaleForSeries(seriesName)(d.y);
+            } else {
+                return this[whichAxis + 'Scale'](d.y); 
+            }
+
         }, this);
         
         var h = options.chart.plotHeight;
@@ -62,13 +69,13 @@
                 .attr('r', opt.radius)
                 .attr('cx', x)
                 .attr('cy', function(d) {
-                    return y(d, axisFor(d))
+                    return y(d, d.name)
                 });
         } else {
             dots.attr('r', opt.radius)
                 .attr('cx', x)
                 .attr('cy', function(d) {
-                    return y(d, axisFor(d))
+                    return y(d, d.name)
                 });
         }
 
