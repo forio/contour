@@ -32,7 +32,7 @@
             return axis;
         },
 
-        postProcessAxis: function (axisGroup) {
+        postProcessAxis: function (axisGroup, ctx) {
             var options = this.options[this.which];
             if (!options.labels) return;
 
@@ -51,7 +51,8 @@
             var range = this.scale().range();
             var tickIncrement = (range[1] - range[0]) / (tickEls.length - 1);
             
-            var seriesRanges = _.map(this.data, function(series) {
+            var axisData = this.data;
+            var seriesRanges = _.map(axisData, function(series) {
                 var seriesRange = this._seriesRange(series.name);
                 seriesRange.push((seriesRange[1] - seriesRange[0]) / (tickEls.length - 1));
                 return seriesRange;
@@ -79,9 +80,14 @@
                     else if (tIndex == tickEls.length - 1)
                         offset = groupLabelHeight/2 - labelHeight/2;
 
-                    textNode.setAttribute('class', 's-' + (sIndex + 1));
+                    textNode.setAttribute('class', 's-' + (ctx.seriesIndexFor(axisData[sIndex]) + 1));
                     textNode.setAttribute('y', -groupLabelHeight / 2 + ((sIndex + 1) * labelHeight + offset));
-                    textNode.setAttribute('x', -textBounds.width - padding);
+                    
+                    if (options.orient == 'left')
+                        textNode.setAttribute('x', -1 * (textBounds.width + padding));
+                    else
+                        textNode.setAttribute('x', padding);
+
                     tickEl.appendChild(textNode);
                 });
             });

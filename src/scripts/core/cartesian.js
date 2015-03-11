@@ -185,7 +185,7 @@
                return true;
             },
 
-            _pruneData: function(seriesWhiteList) {
+            _formatDataSrc: function() {
                 var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
 
                 var dataSrc = _.flatten(
@@ -210,6 +210,20 @@
                     }, this)
                 );
 
+                return _.filter(dataSrc, function(series, index) {
+                    for (var i=index + 1; i < dataSrc.length; ++i) {
+                        var series2 = dataSrc[i];
+                        if (this._seriesEq(series, series2))
+                            return false;
+                    }
+                    return true;
+
+                }.bind(this));
+            },
+
+            _pruneData: function(seriesWhiteList) {
+                var dataSrc = this._formatDataSrc();
+
                 if (seriesWhiteList == 'all')
                     return dataSrc;
 
@@ -222,17 +236,20 @@
                     return found;
                 });
 
-                dataSrc = _.filter(dataSrc, function(series, index) {
-                    for (var i=index + 1; i < dataSrc.length; ++i) {
-                        var series2 = dataSrc[i];
-                        if (this._seriesEq(series, series2))
-                            return false;
-                    }
-                    return true;
+                return dataSrc;
+            },
 
+            seriesIndexFor: function(series) {
+                var dataSrc = this._formatDataSrc();
+                var ret = -1;
+
+                _.each(dataSrc, function(series2, index) {
+                    if (this._seriesEq(series, series2)) {
+                        ret = index;
+                    }
                 }.bind(this));
 
-                return dataSrc;
+                return ret;
             },
 
             axisFor: function(series) {
@@ -461,7 +478,7 @@
             redrawYAxis: function () {
                 this.svg.select(".y.axis").call(this.yAxis());
                 if (this.yScaleGenerator.postProcessAxis)
-                    this.yScaleGenerator.postProcessAxis(this._yAxisGroup);
+                    this.yScaleGenerator.postProcessAxis(this._yAxisGroup, this);
 
                 this.renderGridlines();
             },
@@ -478,7 +495,7 @@
             redrawRightYAxis: function () {
                 this.svg.select(".y.right.axis").call(this.rightYAxis());
                 if (this.rightYScaleGenerator.postProcessAxis)
-                    this.rightYScaleGenerator.postProcessAxis(this._rightYAxisGroup);
+                    this.rightYScaleGenerator.postProcessAxis(this._rightYAxisGroup, this);
 
                 this.renderGridlines();
             },
@@ -545,7 +562,7 @@
                     .transition().duration(this._animationDuration())
                     .call(xAxis);
 
-                this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
+                this.xScaleGenerator.postProcessAxis(this._xAxisGroup, this);
 
                 return this;
             },
@@ -579,7 +596,7 @@
                         .attr('dy', alignmentOffset[options.labels.verticalAlign]);
 
                 if (this.yScaleGenerator.postProcessAxis)
-                    this.yScaleGenerator.postProcessAxis(this._yAxisGroup);
+                    this.yScaleGenerator.postProcessAxis(this._yAxisGroup, this);
 
                 return this;
             },
@@ -614,7 +631,7 @@
                         .attr('dy', alignmentOffset[options.labels.verticalAlign]);
 
                 if (this.rightYScaleGenerator.postProcessAxis)
-                    this.rightYScaleGenerator.postProcessAxis(this._rightYAxisGroup);
+                    this.rightYScaleGenerator.postProcessAxis(this._rightYAxisGroup, this);
 
                 return this;
             },
