@@ -20,6 +20,53 @@
 
         seriesNameToClass: function (name) {
             return name || '';
+        },
+
+        minMaxFilter: function (desiredLen) {
+            return function(data) {
+                if (data.length <= desiredLen)
+                    return data;
+
+                var toReturn = [data[0]]; //always want the first
+                var index = 1;
+                var increment = Math.floor(data.length / desiredLen);
+
+                while (index < data.length - 1) {
+                    var hasValidPt = false;
+                    var maxPt;
+                    var minPt;
+                    var maxIndex = Math.min(index + increment, data.length);
+
+                    for (var intermediateIndex = index; intermediateIndex < maxIndex; intermediateIndex++) {
+                        var intermediatePt = data[index];
+                        if (intermediatePt.y) {
+                            if (!hasValidPt || intermediatePt.y > maxPt.y)
+                                maxPt = intermediatePt;
+
+                            if (!hasValidPt || intermediatePt.y < minPt.y)
+                                minPt = intermediatePt;
+
+                            hasValidPt = true;
+                        }
+                    }
+
+                    if (hasValidPt) {
+                        if (minPt.x == maxPt.x) {
+                            toReturn.push(minPt);
+                        } else if (minPt.x < maxPt.x) {
+                            toReturn.push(minPt);
+                            toReturn.push(maxPt);
+                        } else if (minPt.x > maxPt.x) {
+                            toReturn.push(maxPt);
+                            toReturn.push(minPt);
+                        }
+                    }
+
+                    index += Math.max(1, Math.min(data.length - 1 - index, increment));
+                }
+                toReturn.push(data[data.length - 1]); //always want the last
+                return toReturn;
+            };
         }
     };
 

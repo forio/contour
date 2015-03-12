@@ -7,7 +7,10 @@
             stacked: false,
             groupPadding: 2,      // two px between same group bars
             barWidth: function() { return this.rangeBand; },
-            offset: function() { return 0; }
+            offset: function() { return 0; },
+            preprocess: function(data) {
+                return data;
+            }
         }
     };
 
@@ -27,7 +30,7 @@
         var enter = _.partialRight(update, true);
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
 
-
+        data = options.bar.preprocess(data);
         var series = layer.selectAll('g.series')
             .data(stack(data));
 
