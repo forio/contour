@@ -19,7 +19,7 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['src/scripts/**/*.js'],
-                tasks: ['jshint', 'uglify']
+                tasks: ['jshint', 'jasmine', 'uglify']
             }
         },
         bumpup: {
@@ -195,18 +195,18 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['jshint', 'uglify:concatenate', 'uglify:dev', 'less:dev', 'watch']);
+    grunt.registerTask('default', ['jshint', 'jasmine', 'uglify:concatenate', 'uglify:dev', 'less:dev', 'watch']);
 
-    grunt.registerTask('production', ['jshint', 'ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'releaseNotes']);
+    grunt.registerTask('production', ['jshint', 'jasmine', 'ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'releaseNotes']);
 
     grunt.registerTask('release', function (type) {
         type = type ? type : 'patch';
-        ['jshint', 'bumpup:' + type, 'ver', 'uglify:concatenate', 'uglify:minify', 'less:production', 'less:uncompressed', 'releaseNotes', 'tagrelease'].forEach(function (task) {
+        ['jshint','jasmine', 'bumpup:' + type, 'ver', 'uglify:concatenate', 'uglify:minify', 'less:production', 'less:uncompressed', 'releaseNotes', 'tagrelease'].forEach(function (task) {
             grunt.task.run(task);
         });
     });
 
-    grunt.registerTask('linked', ['jshint', 'uglify:concatenate', 'uglify:dev', 'less:uncompressed', 'less:production', 'watch']);
+    grunt.registerTask('linked', ['jshint', 'jasmine', 'uglify:concatenate', 'uglify:dev', 'less:uncompressed', 'less:production', 'watch']);
 
 
     grunt.registerMultiTask('releaseNotes', 'Generate a release notes file with changes in git log since last tag', function () {
