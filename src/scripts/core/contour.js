@@ -34,7 +34,9 @@
             },
             internalPadding: {
                 bottom: 0,
-                left: 0
+                left: 0,
+                right: 0,
+                top: 0
             },
             // automatically false by default anyway; adding here to help generate docs
             rotatedFrame: false,
@@ -49,9 +51,15 @@
         },
 
         xAxis: {
+
         },
 
         yAxis: {
+
+        },
+
+        rightYAxis: {
+
         },
 
         tooltip: {
@@ -135,6 +143,8 @@
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
+
+            this.composeOptions(); // we compose the options here so that defaults are provided to each viz container on init
 
             data = data || lastData || [];
             sortSeries(data);
@@ -271,10 +281,10 @@
 
             this.options = _.merge(options, {
                 chart: {
-                    plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.internalPadding.left - options.chart.padding.right,
-                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.internalPadding.bottom,
+                    plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.internalPadding.left - options.chart.internalPadding.right,
+                    plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.internalPadding.top - options.chart.internalPadding.bottom,
                     plotLeft: options.chart.margin.left + options.chart.internalPadding.left,
-                    plotTop: options.chart.margin.top + options.chart.padding.top
+                    plotTop: options.chart.margin.top + options.chart.internalPadding.top
                 }
             });
 
@@ -310,7 +320,7 @@
             _.each(this._visualizations, mergeDefaults);
 
             // compose the final list of options right before start rendering
-            this.options = _.merge(this.options, _.merge({}, allDefaults, this.options));
+            this.options = _.merge({}, allDefaults, this.options);
         },
 
         baseRender: function () {
@@ -430,7 +440,7 @@
                 var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
                 var opt = _.merge({}, this.options, visualization.options);
 
-                layer.attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
+                layer.attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.internalPadding.top || 0) + ')');
 
                 visualization.layer = layer;
                 visualization.parent = this;

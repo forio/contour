@@ -15,8 +15,19 @@
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var opt = options.scatter;
         var halfRangeBand = this.rangeBand / 2;
-        var x = _.bind(function (d) { return this.xScale(d.x) + halfRangeBand; }, this);
-        var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+        
+        var axisFor = _.bind(function(series) {
+            return this.axisFor(series);
+        }, this);
+
+        var x = _.bind(function (d) { 
+            return this.xScale(d.x) + halfRangeBand; 
+        }, this);
+        
+        var y = _.bind(function (d, whichAxis) { 
+            return this[whichAxis + 'Scale'](d.y); 
+        }, this);
+        
         var h = options.chart.plotHeight;
         var classFn = function (d, i) { return d.name + ' series s-' + (i+1); };
 
@@ -31,7 +42,12 @@
         series.exit().remove();
 
         var dots = series.selectAll('.dot')
-            .data(function (d) { return d.data; }, function (d) {
+            .data(function (d) { 
+                return d.data.map(function(di) {
+                        di.name = d.name;
+                        return di;
+                    }); 
+            }, function (d) {
                 return options.scatter.dataKey ? d[options.scatter.dataKey] : d.x;
             });
 
@@ -45,11 +61,15 @@
             dots.transition().duration(duration)
                 .attr('r', opt.radius)
                 .attr('cx', x)
-                .attr('cy', y);
+                .attr('cy', function(d) {
+                    return y(d, axisFor(d))
+                });
         } else {
             dots.attr('r', opt.radius)
                 .attr('cx', x)
-                .attr('cy', y);
+                .attr('cy', function(d) {
+                    return y(d, axisFor(d))
+                });
         }
 
 

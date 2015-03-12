@@ -1,12 +1,29 @@
 (function () {
 
-    var _extent = function (series, field) {
+    var _extent = function (series, axisOptions, field) {
         var maxs = [], mins = [];
         _.each(series, function (d) {
-            if(!d.data.length) return;
-            var values = _.pluck(d.data, field);
-            maxs.push(d3.max(values));
-            mins.push(d3.min(values));
+            if(!d.data.length) 
+                return;
+            
+            var isAll = axisOptions && axisOptions.series == 'all';
+            var hasSpecific = axisOptions && axisOptions.series;
+            if (!isAll && hasSpecific) {
+                var found = false;
+                var seriesWhiteList = axisOptions.series;
+                seriesWhiteList.forEach(function(whiteSeries) {
+                    if ((typeof whiteSeries == "string" && whiteSeries == d.name) || (whiteSeries.name == d.name))
+                        found = true;
+                });
+
+                hasSpecific = found;
+            }
+
+            if (field == 'x' || isAll || hasSpecific) {
+                var values = _.pluck(d.data, field);
+                maxs.push(d3.max(values));
+                mins.push(d3.min(values));
+            }
         });
 
         //
@@ -32,9 +49,6 @@
 
         return [_.min(ext), _.max(ext)];
     };
-
-    var _xExtent = _.partialRight(_extent, 'x');
-    var _yExtent = _.partialRight(_extent, 'y');
 
     function VisInstanceContainer(data, categories, options, type, renderer, context) {
         this.type = type;
@@ -72,7 +86,7 @@
             opt[this.type] = options || {};
             this.options = {};
             this.options = _.merge({}, (this.renderer || {}).defaults || {}, opt);
-
+            
             return this.ctx;
         },
 
@@ -83,8 +97,9 @@
 
             if (isSupportedFormat(this.data)) {
                 this.xDomain = _.flatten(_.map(this.data, function (set) { return _.pluck(set.data, 'x'); }));
-                this.xExtent = _xExtent(this.data, 'x');
-                this.yExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);
+                this.xExtent = _extent(this.data, this.ctx.options.xAxis, 'x');
+                this.yExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _extent(this.data, this.ctx.options.yAxis, 'y');
+                this.rightYExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _extent(this.data, this.ctx.options.rightYAxis, 'y');
             }
         }
 

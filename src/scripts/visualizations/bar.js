@@ -18,14 +18,28 @@
         var opt = options.bar;
         var rectClass = opt.barClass;
         var style = opt.style;
-        var x = function (d) { return _this.xScale(d) - 0.5; };
-        var y = function (d) { return _this.yScale(d) + 0.5; };
         var chartOffset = _.nw.getValue(opt.offset, 0, this);
         var rangeBand = _.nw.getValue(opt.barWidth, this.rangeBand, this);
         var stack = _.nw.stackLayout();
         var update = options.bar.stacked ? stacked : grouped;
         var enter = _.partialRight(update, true);
-        var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
+        
+        var axisFor = _.bind(function(series) {
+            if (options.bar.stacked)
+                return 'y';
+            
+            return this.axisFor(series);
+        }, this);
+
+        var x = function (d) { 
+            return _this.xScale(d) - 0.5; 
+        };
+        var y = function (d, whichAxis) { 
+            return _this[whichAxis + "Scale"](d) + 0.5; 
+        };
+        var classFn = function (d, i) { 
+            return 'series s-' + (i+1) + ' ' + d.name; 
+        };
 
 
         var series = layer.selectAll('g.series')
@@ -37,7 +51,12 @@
         series.exit().remove();
 
         var bars = series.selectAll('.bar')
-            .data(function (d) { return d.data; });
+            .data(function (d) { 
+                return d.data.map(function(di) {
+                    di.name = d.name; 
+                    return di; 
+                }) 
+            });
 
         var cssClass = 'bar' + (options.tooltip.enable ? ' tooltip-tracker' : '');
         bars.enter().append('rect')
@@ -54,7 +73,9 @@
                 .transition().duration(duration).call(update);
             bars.exit()
                 .transition().duration(duration)
-                .attr('width', y(0))
+                .attr('width', function(d) {
+                    return y(0, axisFor(d))
+                })
                 .remove();
         } else {
             bars.attr('style', style).call(update);
@@ -63,28 +84,50 @@
 
         function stacked(bar, enter) {
             bar
-                .attr('y', function (d) { return x(d.x) + chartOffset; })
+                .attr('y', function (d) { 
+                    return x(d.x) + chartOffset; 
+                })
                 .attr('height', rangeBand);
 
             if (enter) {
                 return bar
-                    .attr('x', function (d) { return y(0); })
-                    .attr('width', function (d) { return 0; });
+                    .attr('x', function (d) { 
+                        return y(0, axisFor(d)); 
+                    })
+                    .attr('width', function (d) { 
+                        return 0; 
+                    });
 
             } else {
                 return bar
-                    .attr('x', function (d) { return d.y >= 0 ? y(d.y0 || 0) : y(d.y + d.y0); })
-                    .attr('width', function (d) { return d.y >=0 ? y(d.y) - y(0) : y(0) - y(d.y); });
+                    .attr('x', function (d) { 
+                        return d.y >= 0 ? 
+                            y(d.y0 || 0, axisFor(d)) : 
+                            y(d.y + d.y0, axisFor(d)); 
+                    })
+                    .attr('width', function (d) { 
+                        return d.y >=0 ? 
+                            y(d.y, axisFor(d)) - y(0, axisFor(d)) : 
+                            y(0, axisFor(d)) - y(d.y, axisFor(d)); 
+                    });
             }
         }
 
         function grouped(bar, enter) {
             var numSeries = data.length;
-            var height = function () { return rangeBand / numSeries - options.bar.groupPadding + 0.5; };
-            var offset = function (d, i) { return rangeBand / numSeries * i + 0.5; };
+            var height = function () { 
+                return rangeBand / numSeries - options.bar.groupPadding + 0.5; 
+            };
+            var offset = function (d, i) { 
+                return rangeBand / numSeries * i + 0.5; 
+            };
 
-            bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
-                .attr('x', y(0))
+            bar.attr('y', function (d, i, j) { 
+                    return x(d.x) + offset(d, j) + chartOffset; 
+                })
+                .attr('x', function(d) {
+                    return y(0, axisFor(d));
+                })
                 .attr('height', height);
 
             if (enter) {
@@ -92,8 +135,16 @@
                     .attr('width', function (d) { return 0.5; });
             } else {
                 return bar
-                    .attr('width', function (d) { return d.y >= 0 ? y(d.y) - y(0) : y(0) - y(d.y); })
-                    .attr('x', function (d) { return d.y < 0 ? y(d.y) : y(0); });
+                    .attr('width', function (d) { 
+                        return d.y >= 0 ? 
+                            y(d.y, axisFor(d)) - y(0, axisFor(d)) : 
+                            y(0, axisFor(d)) - y(d.y, axisFor(d)); 
+                    })
+                    .attr('x', function (d) { 
+                        return d.y < 0 ? 
+                            y(d.y, axisFor(d)) : 
+                            y(0, axisFor(d)); 
+                    });
             }
         }
     }

@@ -5,7 +5,7 @@
             gridlines: 'none',
             padding: {
                 top: 6,
-                right: 5,
+                right: undefined,
                 // this get's defined based on the axis & title
                 bottom: undefined,
                 // this get's defined based on the axis & title
@@ -55,6 +55,31 @@
             title: undefined,
             titlePadding: 4,
             orient: 'left',
+            series: 'all', //valid values are 'all' or an array of strings
+            labels: {
+                // top, middle, bottom
+                verticalAlign: 'middle',
+                format: 's', // d3 formats
+                formatter: undefined // a function that formats each value ie. function (datum) { return 'x: ' + datum.x + ', y:' + datum.y }
+            }
+        },
+
+        rightYAxis: {
+             // @param: {linear|smart|log}
+            // type: 'smart',
+            min: undefined,
+            max: undefined,
+            zeroAnchor: true,
+            smartAxis: false,
+            innerTickSize: 6,
+            outerTickSize: 6,
+            tickPadding: 4,
+            tickValues: undefined,
+            ticks: undefined,
+            title: undefined,
+            titlePadding: 4,
+            orient: 'right',
+            series: [], //valid values are 'all' or an array of strings
             labels: {
                 // top, middle, bottom
                 verticalAlign: 'middle',
@@ -99,7 +124,8 @@
                 _.merge(this.options, readOnlyProps);
 
                 var extraPadding = {};
-                if (!this.options.xAxis || !this.options.xAxis.firstAndLast) {
+
+                if ((!this.options.xAxis || !this.options.xAxis.firstAndLast) && !this._axisVisible(this.options.rightYAxis)) {
                     extraPadding = { chart : { padding: { right: 15 }}};
                 }
 
@@ -110,33 +136,131 @@
 
             xDomain: [],
             yDomain: [],
+            rightYDomain: [],
 
-            _getYScaledDomain: function () {
-                var absMin = this.options.yAxis.zeroAnchor && this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
-                var min = this.options.yAxis.min != null ? this.options.yAxis.min : absMin;
+            _getYScaledDomainForAxis: function (axis, domain) {
+                var absMin = axis.zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
+                var min = axis.min != null ? axis.min : absMin;
 
-                if (this.options.yAxis.tickValues) {
-                    if (this.options.yAxis.min != null && this.options.yAxis.max != null) {
-                        return [this.options.yAxis.min, this.options.yAxis.max];
-                    } else if (this.options.yAxis.min != null) {
-                        return [this.options.yAxis.min, d3.max(this.options.yAxis.zeroAnchor ? [0].concat(this.options.yAxis.tickValues) : this.options.yAxis.tickValues)];
-                    } else if (this.options.yAxis.max != null) {
-                        return [d3.min(this.options.yAxis.zeroAnchor ? [0].concat(this.options.yAxis.tickValues) : this.options.yAxis.tickValues), this.options.yAxis.max];
+                if (axis.tickValues) {
+                    if (axis.min != null && axis.max != null) {
+                        return [axis.min, axis.max];
+                    } else if (axis.min != null) {
+                        return [axis.min, d3.max(axis.zeroAnchor ? [0].concat(axis.tickValues) : axis.tickValues)];
+                    } else if (axis.max != null) {
+                        return [d3.min(axis.zeroAnchor ? [0].concat(axis.tickValues) : axis.tickValues), axis.max];
                     } else {
-                        return d3.extent(this.options.yAxis.zeroAnchor || this.options.yAxis.min != null ? [min].concat(this.options.yAxis.tickValues) : this.options.yAxis.tickValues);
+                        return d3.extent(axis.zeroAnchor || axis.min != null ? [min].concat(axis.tickValues) : axis.tickValues);
                     }
-                } else if (this.options.yAxis.smartAxis) {
-                    return d3.extent(this.options.yAxis.zeroAnchor || this.options.yAxis.min != null ? [min].concat(this.yDomain) : this.yDomain);
+                } else if (axis.smartAxis) {
+                    return d3.extent(axis.zeroAnchor || axis.min != null ? [min].concat(domain) : domain);
                 }
 
-                return _.nw.extractScaleDomain(this.yDomain, min, this.options.yAxis.max, this.options.yAxis.ticks);
+                return _.nw.extractScaleDomain(domain, min, axis.max, axis.ticks);
+            },
+
+            _getYScaledDomain: function() {
+                return this._getYScaledDomainForAxis(this.options.yAxis, this.yDomain);
+            },
+
+            _getRightYScaledDomain: function() {
+                return this._getYScaledDomainForAxis(this.options.rightYAxis, this.rightYDomain);
+            },
+
+             _axisVisible: function(axisConfig) {
+                return axisConfig && (axisConfig.series == 'all' || axisConfig.series.length > 0);
+            },
+
+            _seriesEq: function(seriesA, seriesB) {
+                if (seriesA.name != seriesB.name || seriesA.data.length != seriesB.data.length)
+                    return false;
+
+                for (var i=0; i < seriesA.data.length; ++i) {
+                    if (seriesA.data[i].x != seriesB.data[i].x ||
+                        seriesA.data[i].y != seriesB.data[i].y) {
+                       return false;
+                    }
+                }
+
+               return true;
+            },
+
+            _pruneData: function(seriesWhiteList) {
+                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
+
+                var dataSrc = _.flatten(
+                    _.map(dataVis, function (v) {
+                        return _.map(v.data, function(series, index) {
+                            if (_.isObject(series) && _.isArray(series.data)) {
+                                series.data = _.map(series.data, function(point) {
+                                    return {
+                                        y: _.isObject(point) ? point.y : point,
+                                        x: _.isObject(point) ? point.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
+                                    };
+                                });
+                                return series;
+                            }
+
+                            return {
+                                y: _.isObject(series) ? series.y : series,
+                                x: _.isObject(series) ? series.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
+                            };
+
+                        });
+                    }, this)
+                );
+
+                if (seriesWhiteList == 'all')
+                    return dataSrc;
+
+                dataSrc = _.filter(dataSrc, function(series) {
+                    var found = false;
+                    seriesWhiteList.forEach(function(whiteSeries) {
+                        if ((typeof whiteSeries == "string" && whiteSeries == series.name) || (whiteSeries.name == series.name))
+                            found = true;
+                    });
+                    return found;
+                });
+
+                dataSrc = _.filter(dataSrc, function(series, index) {
+                    for (var i=index + 1; i < dataSrc.length; ++i) {
+                        var series2 = dataSrc[i];
+                        if (this._seriesEq(series, series2))
+                            return false;
+                    }
+                    return true;
+
+                }.bind(this));
+
+                return dataSrc;
+            },
+
+            axisFor: function(series) {
+                if (this.options.rightYAxis.series == 'all') {            
+                    return 'rightY';
+                } else {
+                    var found = false;
+
+                    this.options.rightYAxis.series.forEach(function(item) {
+                        if ((typeof item == "string" && item == series.name) || (item.name == series.name)) {
+                            found = true;
+                        }
+                    });
+
+                    return found ? 'rightY' : 'y';
+                }
             },
 
             /*jshint eqnull:true */
             adjustPadding: function () {
                 var xOptions = this.options.xAxis;
                 var yOptions = this.options.yAxis;
+                var rightYOptions = this.options.rightYAxis;
+
                 var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
+                
+                this.options.chart.internalPadding.top = (this.options.chart.padding.top || 0);
+
                 // bottom padding calculations
                 if (this.options.chart.padding.bottom == null) {
                     if (xOptions.ticks !== 0) {
@@ -158,35 +282,64 @@
                 }
 
                 // left padding calculations
-                if (this.options.chart.padding.left == null) {
-                    var yDomainScaled = this._getYScaledDomain();
-                    // var yDomainScaled = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
-                    var tmpScale = d3.scale.linear().domain(yDomainScaled);
-                    var yLabels = tmpScale.ticks(yOptions.ticks);
+                if (this.options.chart.padding.left == null && this._axisVisible(this.options.yAxis)) {
+                    if (this._axisVisible(yOptions)) {
+                        var yDomainScaled = this._getYScaledDomain();
+                        // var yDomainScaled = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
+                        var tmpScale = d3.scale.linear().domain(yDomainScaled);
+                        var yLabels = tmpScale.ticks(yOptions.ticks);
 
-                    var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
-                    var yAxisText = _.map(yLabels, format).join('<br>');
-                    var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
-                    this.options.chart.internalPadding.left = this.options.chart.padding.left ||
-                        maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) +
-                        yLabelBounds.width;
+                        var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
+                        var yAxisText = _.map(yLabels, format).join('<br>');
+                        var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
+                        this.options.chart.internalPadding.left = maxTickSize(this.options.yAxis) + 
+                            (this.options.yAxis.tickPadding || 0) +
+                            yLabelBounds.width;
+                        } else {
+                            this.options.chart.internalPadding.left = 0;
+                        }
                 } else {
-                    this.options.chart.internalPadding.left = this.options.chart.padding.left;
+                    this.options.chart.internalPadding.left = this.options.chart.padding.left || 0;
+                }
+
+                // right padding calculations
+                if (this.options.chart.padding.right == null && this._axisVisible(this.options.rightYAxis)) {
+                    if (this._axisVisible(rightYOptions)) {
+                        var rightYDomainScaled = this._getRightYScaledDomain();
+                        // var rightYDomainScaled = _.nw.extractScaleDomain(this.rightYDomain.slice().concat([_.nw.niceRound(this.rightYDomain[1])]), rightYOptions.min, rightYOptions.max);
+                        var tmpScale = d3.scale.linear().domain(rightYDomainScaled);
+                        var rightYLabels = tmpScale.ticks(rightYOptions.ticks);
+
+                        var format = rightYOptions.labels.formatter || d3.format(rightYOptions.labels.format || ',.0f');
+                        var rightYAxisText = _.map(rightYLabels, format).join('<br>');
+                        var rightYLabelBounds = _.nw.textBounds(rightYAxisText, '.y.right.axis');
+                        this.options.chart.internalPadding.right = maxTickSize(this.options.rightYAxis) + 
+                            (this.options.rightYAxis.tickPadding || 0) +
+                            rightYLabelBounds.width;
+                        } else {
+                            this.options.chart.internalPadding.right = 5; //match old value... idk why 5???
+                        }
+                } else {
+                    this.options.chart.internalPadding.right = this.options.chart.padding.right || 0;
                 }
             },
 
             adjustTitlePadding: function () {
                 var titleBounds;
-                if (this.options.xAxis.title || this.options.yAxis.title) {
-                    if(this.options.xAxis.title) {
-                        titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
-                        this.options.chart.internalPadding.bottom += titleBounds.height + this.options.xAxis.titlePadding;
-                    }
+                
+                if(this.options.xAxis.title) {
+                    titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                    this.options.chart.internalPadding.bottom += titleBounds.height + this.options.xAxis.titlePadding;
+                }
 
-                    if(this.options.yAxis.title) {
-                        titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
-                        this.options.chart.internalPadding.left += titleBounds.height + this.options.yAxis.titlePadding;
-                    }
+                if(this.options.yAxis.title && this._axisVisible(this.options.yAxis)) {
+                    titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    this.options.chart.internalPadding.left += titleBounds.height + this.options.yAxis.titlePadding;
+                }
+
+                if(this.options.rightYAxis.title && this._axisVisible(this.options.rightYAxis)) {
+                    titleBounds = _.nw.textBounds(this.options.rightYAxis.title, '.y.right.axis-title');
+                    this.options.chart.internalPadding.right += titleBounds.height + this.options.rightYAxis.titlePadding;
                 }
             },
 
@@ -207,12 +360,27 @@
                 if (!this.yDomain) throw new Error('You are trying to render without setting data (yDomain).');
 
                 var yScaleDomain = this._getYScaledDomain();
+                var dataSrc = this._pruneData(this.options.yAxis.series);
 
                 if(!this.yScale) {
-                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yDomain);
+                    this.yScaleGenerator = _.nw.yScaleFactory(dataSrc, this.options, this.yDomain, 'yAxis');
                     this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                 } else {
-                    this.yScaleGenerator.update(yScaleDomain, this.dataSrc);
+                    this.yScaleGenerator.update(yScaleDomain, dataSrc);
+                }
+            },
+
+            computeRightYScale: function () {
+                if (!this.rightYDomain) throw new Error('You are trying to render without setting data (rightYDomain).');
+
+                var yScaleDomain = this._getRightYScaledDomain();
+                var dataSrc = this._pruneData(this.options.rightYAxis.series);
+
+                if(!this.rightYScale) {
+                    this.rightYScaleGenerator = _.nw.yScaleFactory(dataSrc, this.options, this.rightYDomain, 'rightYAxis');
+                    this.rightYScale = this.rightYScaleGenerator.scale(yScaleDomain);
+                } else {
+                    this.rightYScaleGenerator.update(yScaleDomain, dataSrc);
                 }
             },
 
@@ -243,6 +411,19 @@
             yScale: undefined,
 
             /**
+            * Provides a scaling function based on the rightYAxis values.
+            *
+            * ###Example:
+            *
+            *     var scaledValue = this.rightYScale(100);
+            *
+            * @function rightYScale
+            * @param {Number} value The value to be scaled.
+            * @return {Number} The scaled value according to the current rightYAxis settings.
+            */
+            rightYScale: undefined,
+
+            /**
             * Modifies the domain for the yAxis.
             *
             * ###Example:
@@ -256,6 +437,19 @@
             },
 
             /**
+            * Modifies the domain for the rightYAxis.
+            *
+            * ###Example:
+            *
+            *     this.setRightYDomain([100, 200]);
+            *
+            * @function setRightYDomain
+            * @param {Array} domain The domain array representing the min and max values visible on the rightYAxis.       */
+            setRightYDomain: function (domain) {
+                this.rightYScaleGenerator.setDomain(domain);
+            },
+
+            /**
             * Redraws the yAxis with the new settings and domain.
             *
             * ###Example:
@@ -266,6 +460,26 @@
             */
             redrawYAxis: function () {
                 this.svg.select(".y.axis").call(this.yAxis());
+                if (this.yScaleGenerator.postProcessAxis)
+                    this.yScaleGenerator.postProcessAxis(this._yAxisGroup);
+
+                this.renderGridlines();
+            },
+
+            /**
+            * Redraws the rightYAxis with the new settings and domain.
+            *
+            * ###Example:
+            *
+            *     this.redrawRightYAxis();
+            *
+            * @function redrawRightYAxis
+            */
+            redrawRightYAxis: function () {
+                this.svg.select(".y.right.axis").call(this.rightYAxis());
+                if (this.rightYScaleGenerator.postProcessAxis)
+                    this.rightYScaleGenerator.postProcessAxis(this._rightYAxisGroup);
+
                 this.renderGridlines();
             },
 
@@ -279,6 +493,7 @@
             computeScales: function () {
                 this.computeXScale();
                 this.computeYScale();
+                this.computeRightYScale();
 
                 return this;
             },
@@ -297,6 +512,14 @@
                     this._yAxis = this.yScaleGenerator.axis().orient(this.options.yAxis.orient);
                 }
                 return this._yAxis;
+            },
+
+            _rightYAxis: undefined,
+            rightYAxis: function () {
+                if(!this._rightYAxis) {
+                    this._rightYAxis = this.rightYScaleGenerator.axis().orient(this.options.rightYAxis.orient);
+                }
+                return this._rightYAxis;
             },
 
             renderXAxis: function () {
@@ -328,6 +551,9 @@
             },
 
             renderYAxis: function () {
+                if (!this._axisVisible(this.options.yAxis))
+                    return this;
+
                 var options = this.options.yAxis;
                 var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
                 var x = this.options.chart.internalPadding.left;
@@ -351,6 +577,44 @@
                     .call(this.yAxis())
                     .selectAll('.tick text')
                         .attr('dy', alignmentOffset[options.labels.verticalAlign]);
+
+                if (this.yScaleGenerator.postProcessAxis)
+                    this.yScaleGenerator.postProcessAxis(this._yAxisGroup);
+
+                return this;
+            },
+
+            renderRightYAxis: function () {
+                if (!this._axisVisible(this.options.rightYAxis))
+                    return this;
+
+                var options = this.options.rightYAxis;
+                var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
+                var x = this.options.chart.internalPadding.left + 
+                        this.options.chart.plotWidth;
+                var y = this.options.chart.padding.top;
+
+                this._rightYAxisGroup = this.svg.selectAll('.y.right.axis')
+                    .data([1]);
+
+                if (!this._rightYAxisGroup.node()) {
+                    this._rightYAxisGroup
+                        .enter().append('g')
+                        .attr('transform', 'translate(' + x + ',' + y + ')')
+                        .attr('class', 'y right axis');
+                } else {
+                    d3.select(this._rightYAxisGroup.node())
+                        .attr('transform', 'translate(' + x + ',' + y + ')');
+                }
+
+                this._rightYAxisGroup
+                    .transition().duration(this._animationDuration())
+                    .call(this.rightYAxis())
+                    .selectAll('.tick text')
+                        .attr('dy', alignmentOffset[options.labels.verticalAlign]);
+
+                if (this.rightYScaleGenerator.postProcessAxis)
+                    this.rightYScaleGenerator.postProcessAxis(this._rightYAxisGroup);
 
                 return this;
             },
@@ -378,7 +642,7 @@
                         .text(this.options.xAxis.title);
                 }
 
-                if (this.options.yAxis.title) {
+                if (this.options.yAxis.title && this._axisVisible(this.options.yAxis)) {
                     bounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
                     y = -this.options.chart.internalPadding.left + bounds.height * adjustFactor;
                     x = 0;
@@ -396,6 +660,26 @@
                         .attr('dx', -(this.options.chart.plotHeight + bounds.width) / 2)
                         .attr('dy', 0)
                         .text(this.options.yAxis.title);
+                }
+
+                if (this.options.rightYAxis.title && this._axisVisible(this.options.rightYAxis)) {
+                    bounds = _.nw.textBounds(this.options.rightYAxis.title, '.y.right.axis-title');
+                    y = -this.options.chart.internalPadding.right + bounds.height * adjustFactor;
+                    x = -bounds.width;
+                    el = this._rightYAxisGroup.selectAll('.y.right.axis-title').data([1]);
+                    if (!el.node()) {
+                        el.enter().append('text')
+                            .attr('class', 'y right axis-title');
+                    }
+                    
+                    d3.select(el.node()) 
+                        .attr('class', 'y right axis-title')
+                        .attr('transform', 'rotate(90)')
+                        .attr('x', x)
+                        .attr('y', y)
+                        .attr('dx', (this.options.chart.plotHeight + bounds.width) / 2)
+                        .attr('dy', 0)
+                        .text(this.options.rightYAxis.title);
                 }
 
                 return this;
@@ -515,6 +799,7 @@
                     .renderBackground()
                     .renderXAxis()
                     .renderYAxis()
+                    .renderRightYAxis()
                     .renderGridlines()
                     .renderAxisLabels()
                     .renderVisualizations();
@@ -533,11 +818,16 @@
             },
 
             adjustDomain: function () {
-                var extents = this.getExtents();
-                this.yDomain = extents.length ? extents : [0, 10];
+                var yAxisExtents = this.getExtents('y');
+                var rightYAxisExtents = this.getExtents('rightY');
+                this.yDomain = yAxisExtents.length ? yAxisExtents : [0, 10];
+                this.rightYDomain = rightYAxisExtents.length ? rightYAxisExtents : [0, 10];
                 this.xDomain = this.getXDomain();
                 this.yMin = this.yDomain[0];
                 this.yMax = this.yDomain[this.yDomain.length - 1];
+                this.rightYMin = this.rightYDomain[0];
+                this.rightYMax = this.rightYDomain[this.rightYDomain.length - 1];
+
                 var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
                 this.dataSrc = _.flatten(
                     _.map(dataVis, function (v) {
@@ -558,12 +848,16 @@
 
                 this._yAxis = null;
                 this._xAxis = null;
+                this._rightYAxis = null;
 
                 this.yScale = null;
+                this.rightYScale = null;
             },
 
             getExtents: function (axis) {
-                var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
+                axis = axis || 'y';
+
+                var field = axis + 'Extent';
                 var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
                 var all = _.flatten(_.pluck(dataVis, field));
                 return all.length ? d3.extent(all) : [];

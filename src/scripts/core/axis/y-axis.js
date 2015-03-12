@@ -1,9 +1,10 @@
 (function () {
 
-    var YAxis = function (data, options, domain) {
+    var YAxis = function (data, options, domain, which) {
         this.data = data;
         this.options = options;
         this.domain = domain;
+        this.which = which;
     };
 
     function setRange(scale, options) {
@@ -15,7 +16,7 @@
     YAxis.prototype = {
         axis: function () {
             /*jshint eqnull:true */
-            var options = this.options.yAxis;
+            var options = this.options[this.which];
             var domain = this.domain;
             var dMin = options.min != null ? options.min : options.zeroAnchor ? Math.min(0, domain[0]) : domain[0];
             var dMax = options.max != null ? options.max : domain[1];
@@ -56,7 +57,7 @@
 
         /*jshint eqnull:true*/
         numTicks: function () {
-            return this.options.yAxis.ticks != null ? this.options.yAxis.ticks : undefined;
+            return this.options[this.which].ticks != null ? this.options[this.which].ticks : undefined;
         },
 
         _niceTheScale: function () {

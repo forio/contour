@@ -1,12 +1,38 @@
 (function () {
 
-    var SmartYAxis = function (data, options, domain) {
+    var SmartYAxis = function (data, options, domain, which) {
         this.data = data;
         this.options = options;
         this.yMax = domain[0];
         this.yMin = domain[1];
-        this.dataMax = d3.max(_.pluck(data, 'y'));
+        this.which = which;
+        this.dataMax = _dataMax(this.data, this.options[which]);
     };
+
+    function _dataMax(data, axisOptions) {
+        var maxes = [];
+        _.each(data, function(d) {
+            var isAll = axisOptions && axisOptions.series == 'all';
+            var hasSpecific = axisOptions && axisOptions.series;
+            if (!isAll && hasSpecific) {
+                var found = false;
+                var seriesWhiteList = axisOptions.series;
+                seriesWhiteList.forEach(function(whiteSeries) {
+                    if ((typeof whiteSeries == "string" && whiteSeries == d.name) || (whiteSeries.name == d.name))
+                        found = true;
+                });
+
+                hasSpecific = found;
+            }
+
+            if (isAll || hasSpecific) {
+                var values = _.pluck(d.data, 'y');
+                maxes.push(d3.max(values));
+            }
+        });
+
+        return d3.max(maxes);
+    }
 
     /* jshint eqnull: true */
     function _extractYTickValues(domain, min, max, yMin, yMax, dataMax) {
@@ -33,7 +59,7 @@
 
     SmartYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
         axis: function () {
-            var options = this.options.yAxis;
+            var options = this.options[this.which];
             this.domain = this._scale.domain();
             var tickValues = _extractYTickValues(this.domain, options.min, options.max, this.yMin, this.yMax, this.dataMax);
             var numTicks = this.numTicks();
@@ -55,11 +81,18 @@
             this._niceTheScale();
         },
 
+        update: function (domain, dataSrc) {
+            this.data = dataSrc;
+            this.dataMax = _dataMax(this.data, this.options[this.which]);
+            this.setDomain(domain);
+            this.scale();
+        },
+
         _niceTheScale: function () {
             var perTreshold = 0.05;
             var domain = this._scale.domain();
-            var min = this.options.yAxis.min || domain[0];
-            var rawMax = this.options.yAxis.max || this.dataMax;
+            var min = this.options[this.which].min || domain[0];
+            var rawMax = this.options[this.which].max || this.dataMax;
             var nextTick = _.nw.roundToNextTick(rawMax);
 
             var max = Math.abs(nextTick - rawMax) < rawMax * perTreshold ? _.nw.roundToNextTick(rawMax + rawMax * perTreshold) : nextTick;
