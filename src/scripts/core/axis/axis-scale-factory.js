@@ -24,19 +24,27 @@
             return new _.nw.OrdinalScale(data, options);
         },
 
-        yScaleFactory: function (data, options, domain) {
+        yScaleFactory: function (data, options, domain, which) {
             var map = {
                 'log': _.nw.LogYAxis,
                 'smart': _.nw.SmartYAxis,
-                'linear': _.nw.YAxis
+                'linear': _.nw.YAxis,
+                'multi-linear': _.nw.MultiScaleYAxis
             };
 
-            if(!options.yAxis.type) options.yAxis.type = 'linear';
-            if(options.yAxis.type === 'linear' && options.yAxis.smartAxis) options.yAxis.type = 'smart';
+            if(!options[which].type) 
+                options[which].type = 'linear';
+            
+            if(options[which].type === 'linear' && options[which].smartAxis) 
+                options[which].type = 'smart';
 
-            if(!map[options.yAxis.type]) throw new Error('Unknown axis type: "' + options.yAxis.type + '"');
+            if (options[which].type === 'linear' && options[which].multiScale)
+                options[which].type = 'multi-linear';
 
-            return new map[options.yAxis.type](data, options, domain);
+            if(!map[options[which].type]) 
+                throw new Error('Unknown axis type: "' + options[which].type + '"');
+
+            return new map[options[which].type](data, options, domain, which);
         }
 
     };

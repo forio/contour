@@ -77,7 +77,8 @@
             return axis;
         },
 
-        update: function (domain, dataSrc) {
+        update: function (domain, dataSrc, options) {
+            this.options = options || this.options;
             this.data = dataSrc;
             this.scale(domain);
         },

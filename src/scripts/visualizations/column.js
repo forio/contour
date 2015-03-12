@@ -21,13 +21,39 @@
         var rectClass = options.column.columnClass;
         var rectStyle = options.column.style;
         var _this = this;
-        var x = function (v) { return Math.round(_this.xScale(v)) + 0.5; };
-        var y = function (v) { return Math.round(_this.yScale(v)) - 0.5; };
-        var dataKey = function (d) { return d.data; };
         var chartOffset = _.nw.getValue(opt.offset, 0, this);
         var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
         var enter = _.partialRight((options.column.stacked ? stacked : grouped), true);
         var update = options.column.stacked ? stacked : grouped;
+        
+        var axisFor = _.bind(function(series) {
+            if (options.column.stacked)
+                return 'y';
+            
+            return this.axisFor(series);
+        }, this);
+
+        var x = function (v) { 
+            return Math.round(_this.xScale(v)) + 0.5; 
+        };
+        
+        var y = _.bind(function (d, seriesName) {
+            var whichAxis = axisFor({name:seriesName}); 
+            var axisConfig = options[whichAxis + 'Axis'];
+            if (axisConfig.multiScale && !options.column.stacked) {
+                return this[whichAxis + 'ScaleGenerator'].scaleForSeries(seriesName)(d) - 0.5;
+            } else {
+                return this[whichAxis + 'Scale'](d) - 0.5; 
+            }
+
+        }, this);
+
+        var dataKey = function (d) { 
+            return d.data.map(function(di) {
+                    di.name = d.name; 
+                    return di; 
+                }); 
+        };
         var filteredData = _.map(data, function (series, j) {
             return {
                 name: series.name,
@@ -80,35 +106,57 @@
         // for every update
         cols.attr('style', rectStyle);
 
-        function stacked(col, enter) {
-            var base = y(0);
+        function getBase(seriesName) {
+            return y(0, seriesName);
+        }
 
-            col.attr('x', function (d) { return x(d.x) + chartOffset; })
-                .attr('width', function () { return rangeBand; });
+        function stacked(col, enter) {
+            col.attr('x', function (d) { 
+                    return x(d.x) + chartOffset; 
+                })
+                .attr('width', function () { 
+                    return rangeBand; 
+                });
 
             if (enter) {
-                col.attr('y', function (d) { return d.y >= 0 ? base : base; })
+                col.attr('y', function (d) { 
+                        return d.y >= 0 ? getBase(d.name) : getBase(d.name); 
+                    })
                     .attr('height', function (d) { return 0.5; });
             } else {
-                col.attr('y', function (d) { return d.y >= 0 ? y(d.y) + y(d.y0) - base : y(d.y0) ; })
-                    .attr('height', function (d) { return d.y >=0 ? base - y(d.y) : y(d.y) - base; });
+                col.attr('y', function (d) { 
+                        return d.y >= 0 ? y(d.y, d.name) + y(d.y0, d.name) - getBase(d.name) : y(d.y0, d.name) ; 
+                    })
+                    .attr('height', function (d) { 
+                        return d.y >=0 ? getBase(d.name) - y(d.y, d.name) : y(d.y, d.name) - getBase(d.name); 
+                    });
             }
         }
 
         function grouped(col, enter) {
             var width = rangeBand / data.length - opt.groupPadding + 0.5;
-            var offset = function (d, i) { return rangeBand / data.length * i + 0.5; };
-            var base = y(0);
 
-            col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
+            var offset = function (d, i) { 
+                return rangeBand / data.length * i + 0.5; 
+            };
+
+            col.attr('x', function (d, i, j) { 
+                    return x(d.x) + offset(d, j) + chartOffset; 
+                })
                 .attr('width', width);
 
             if (enter) {
-                col.attr('y', base)
+                col.attr('y', function(d) {
+                        return getBase(d.name);
+                    })
                     .attr('height', 0);
             } else {
-                col.attr('y', function (d) { return d.y >= 0 ? y(d.y) : base; })
-                    .attr('height', function (d) { return d.y >= 0 ? base - y(d.y) : y(d.y) - base; });
+                col.attr('y', function (d) { 
+                        return d.y >= 0 ? y(d.y, d.name) : getBase(d.name); 
+                    })
+                    .attr('height', function (d) { 
+                        return d.y >= 0 ? getBase(d.name) - y(d.y, d.name) : y(d.y, d.name) - getBase(d.name); 
+                    });
             }
         }
     }

@@ -37,6 +37,7 @@
             };
             var xScale = this.xScale;
             var yScale = this.yScale;
+            var rightYScale = this.rightYScale;
             var plotLeft = this.options.chart.plotLeft;
             var plotWidth = this.options.chart.plotWidth;
             var plotTop = this.options.chart.plotTop;
@@ -45,9 +46,29 @@
             var width = parseFloat(this.tooltipElement.node().offsetWidth);
             var height = parseFloat(this.tooltipElement.node().offsetHeight);
             var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];
-            var pointY = yScale ? yScale(d.y) : pointOrCentroid.call(this)[1];
+            var pointY;
             var alignedRight;
 
+            var axisFor = _.bind(function(series) {
+                return this.axisFor(series);
+            }, this);
+
+            var axis = axisFor(d);
+
+            var y = _.bind(function (d, seriesName) {
+                var whichAxis = axisFor({name:seriesName}); 
+                var axisConfig = options[whichAxis + 'Axis'];
+                if (axisConfig.multiScale) {
+                    return this[whichAxis + 'ScaleGenerator'].scaleForSeries(seriesName)(d.y);
+                } else if (this[whichAxis + 'Scale']) {
+                    return this[whichAxis + 'Scale'](d.y); 
+                } else {
+                    pointOrCentroid.call(this)[1]
+                }
+            }, this);
+
+            pointY = y(d, d.name);
+           
             var clampPosition = function (pos) {
                 // Check outside plot area (left)
                 if (pos.x < plotLeft) {

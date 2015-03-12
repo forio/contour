@@ -1,8 +1,9 @@
 (function () {
 
-    var LogYAxis = function (data, options) {
+    var LogYAxis = function (data, options, domain, which) {
         this.data = data;
         this.options = options;
+        this.which = which;
     };
 
     function setRange(scale, options) {
@@ -13,7 +14,7 @@
 
     LogYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
         axis: function () {
-            var options = this.options.yAxis;
+            var options = this.options[this.which];
             var domain = this._scale.domain();
             var ticksHint = Math.ceil(Math.log(domain[1]) / Math.log(10));
             var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
@@ -46,7 +47,8 @@
             return this._scale;
         },
 
-        update: function (domain, dataSrc) {
+        update: function (domain, dataSrc, options) {
+            this.options = options || this.options;
             this.data = dataSrc;
             if(domain[0] <= 0.1) domain[0] = 0.1; //throw new Error('Log scales don\'t support 0 or negative values');
             this.setDomain(domain).clamp(true);

@@ -17,7 +17,7 @@
             @color-def: extract(@colorList, @index);
             color: extract(@colorList, @index);
             stroke: @color-def;
-            fill: @color-def;
+            fill: @color-def !important;
 
             &.line, .line {
                 stroke-width: @data-line-width;
