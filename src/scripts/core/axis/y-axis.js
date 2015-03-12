@@ -49,7 +49,8 @@
             return this._scale;
         },
 
-        update: function (domain, dataSrc) {
+        update: function (domain, dataSrc, options) {
+            this.options = options || this.options;
             this.data = dataSrc;
             this.setDomain(domain);
             this.scale();

@@ -81,7 +81,8 @@
             this._niceTheScale();
         },
 
-        update: function (domain, dataSrc) {
+        update: function (domain, dataSrc, options) {
+            this.options = options || this.options;
             this.data = dataSrc;
             this.dataMax = _dataMax(this.data, this.options[this.which]);
             this.setDomain(domain);

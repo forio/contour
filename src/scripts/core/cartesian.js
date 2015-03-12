@@ -368,7 +368,7 @@
                     this.xScale = this.xScaleGenerator.scale(this.xDomain);
                     this.rangeBand = this.xScaleGenerator.rangeBand();
                 } else {
-                    this.xScaleGenerator.update(this.xDomain, this.dataSrc);
+                    this.xScaleGenerator.update(this.xDomain, this.dataSrc, this.options);
                     this.rangeBand = this.xScaleGenerator.rangeBand();
                 }
             },
@@ -383,7 +383,7 @@
                     this.yScaleGenerator = _.nw.yScaleFactory(dataSrc, this.options, this.yDomain, 'yAxis');
                     this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                 } else {
-                    this.yScaleGenerator.update(yScaleDomain, dataSrc);
+                    this.yScaleGenerator.update(yScaleDomain, dataSrc, this.options);
                 }
             },
 
@@ -397,7 +397,7 @@
                     this.rightYScaleGenerator = _.nw.yScaleFactory(dataSrc, this.options, this.rightYDomain, 'rightYAxis');
                     this.rightYScale = this.rightYScaleGenerator.scale(yScaleDomain);
                 } else {
-                    this.rightYScaleGenerator.update(yScaleDomain, dataSrc);
+                    this.rightYScaleGenerator.update(yScaleDomain, dataSrc, this.options);
                 }
             },
 
