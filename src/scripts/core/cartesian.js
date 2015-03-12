@@ -316,7 +316,7 @@
                     d3.select(this._xAxisGroup.node())
                         .attr('transform', 'translate(' + x + ',' + y + ')');
                 }
-                
+
 
                 this._xAxisGroup
                     .transition().duration(this._animationDuration())
@@ -369,12 +369,12 @@
                         el.enter().append('text')
                             .attr('class', 'x axis-title');
                     }
-                    
-                    d3.select(el.node())                        
+
+                    d3.select(el.node())
                         .attr('x', x)
                         .attr('y', y)
+                        .attr('alignment-baseline', 'after-edge')
                         .attr('dx', (this.options.chart.plotWidth - bounds.width) / 2)
-                        .attr('dy', -2) // just because
                         .text(this.options.xAxis.title);
                 }
 
@@ -387,8 +387,8 @@
                         el.enter().append('text')
                             .attr('class', 'y axis-title');
                     }
-                    
-                    d3.select(el.node()) 
+
+                    d3.select(el.node())
                         .attr('class', 'y axis-title')
                         .attr('transform', 'rotate(-90)')
                         .attr('x', x)
