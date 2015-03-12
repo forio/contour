@@ -26,11 +26,6 @@
             }
         };
 
-        function getPosition(options) {
-
-        }
-
-
         var positionTooltip = function (d) {
             var pointOrCentroid = function () {
                 return d3.event.target.tagName === 'path' ? _.nw.getCentroid(d3.event.target) : d3.mouse(this.container.node());
@@ -139,7 +134,7 @@
         var show = function (d) {
             clearHideTimer.call(this);
 
-            dataPoints = findOriginalDataPoint(d);
+            var dataPoints = findOriginalDataPoint(d);
 
             this.tooltipElement.select('.text').html(getTooltipText.call(this, dataPoints[0] || d, dataPoints));
 

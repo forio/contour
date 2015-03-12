@@ -265,7 +265,7 @@
             * @function redrawYAxis
             */
             redrawYAxis: function () {
-                this.svg.select(".y.axis").call(this.yAxis());
+                this.svg.select('.y.axis').call(this.yAxis());
                 this.renderGridlines();
             },
 
@@ -356,9 +356,9 @@
             },
 
             renderAxisLabels: function () {
-                var lineHeightAdjustment = this.titleOneEm * 0.25; // add 25% of font-size for a complete line-height
                 var adjustFactor = 40/46.609; // this factor is to account for the difference between the actual svg size and what we get from the DOM
                 var bounds, x, y;
+                var el;
 
                 if (this.options.xAxis.title) {
                     bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');

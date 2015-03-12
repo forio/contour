@@ -345,14 +345,14 @@
 
         /**
         * Clears this Contour instance and all its visualizations of any size information so that on the next call to render the instace is re-measured.
-        * 
+        *
         * The function takes two optional arguements width, height -- if given a specific width/height the chart will use that sizing information on the next render.
         * ### Example:
         *
         *     var contour = new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
         *           .render()
-        *     
+        *
         *     var onResize = function(e) {
         *          contour.resize().render();
         *     }
@@ -364,7 +364,7 @@
         * @param {Number} height (optional) The new height for the visualizations.  If left blank the height will be calcuated from options.el's parent.
         */
         resize: function(width, height) {
-            
+
             if (this.container)
                 this.container.style('height', 0);
 
@@ -535,12 +535,12 @@
     });
 
     // exports for commonJS and requireJS styles
-    if (typeof module === "object" && module && typeof module.exports === "object") {
+    if (typeof module === 'object' && module && typeof module.exports === 'object') {
         module.exports = Contour;
     } else {
         root.Contour = Contour;
-        if (typeof define === "function" && define.amd) {
-            define("contour", [], function () { return Contour; });
+        if (typeof define === 'function' && define.amd) {
+            define('contour', [], function () { return Contour; });
         }
     }
 

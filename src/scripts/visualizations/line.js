@@ -70,7 +70,6 @@
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y + (d.y0 || 0)) + 0.5; }, this);
-        var h = options.chart.plotHeight;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         animationDirection = options.line.animationDirection || 'left-to-right';
         duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
@@ -112,7 +111,7 @@
 
             if (shouldAnimate) {
                 var startLineFn = animationDirection === 'left-to-right' ? line : startLine;
-                var path = el.attr('d', function(d) { return startLineFn(d.data); })
+                el.attr('d', function(d) { return startLineFn(d.data); })
                     .call(_.partial(animFn.enter, line));
             } else {
                 el.attr('d', function (d) { return line(d.data); });

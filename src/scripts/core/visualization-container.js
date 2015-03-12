@@ -20,8 +20,6 @@
     var _stackedExtent = function (data) {
         var stack = _.nw.stackLayout();
         var dataSets = stack(data);
-        var min = {};
-        var max = {};
         var ext = [];
         _.each(dataSets, function (set) {
             _.each(set.data, function (d, i) {

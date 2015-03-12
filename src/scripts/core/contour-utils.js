@@ -51,7 +51,7 @@
                     }
 
                     if (hasValidPt) {
-                        if (minPt.x == maxPt.x) {
+                        if (minPt.x === maxPt.x) {
                             toReturn.push(minPt);
                         } else if (minPt.x < maxPt.x) {
                             toReturn.push(minPt);
@@ -202,13 +202,8 @@
                 var roundFn = function (v) { return v >= 0 ? Math.ceil(v) : Math.floor(v); };
                 return divFloat(roundFn(value * Math.pow(10, up)), Math.pow(10, up));
             };
-            var excelMax = function (a, b) { return a >= b ? a : b; };
             // 2 ticks seem to wokr for min max and passing 5 ticks to d3
             ticks = ticks || 2;
-
-            var nearestMul = function (val, mul) { return mulFloat(Math.ceil(val / mul), mul); };
-            var digits = function (val) { return Math.floor(Math.log(Math.abs(val)) / Math.LN10) + 1; };
-            var fac = function (digits) { return Math.pow(10, digits); };
 
             startAtZero = min === 0 ? 1 : origMax < 0 ? 1 : 0;
 
@@ -221,6 +216,7 @@
                 };
             }
 
+            var a;
             if (min === max) {
                 if (max === 0) {
                     a = -1.0;

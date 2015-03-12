@@ -13,13 +13,13 @@
 
     function validAlignmentClasses(options) {
         var classes = [];
-        if (['top', 'middle', 'bottom'].indexOf(options.legend.vAlign) != -1) {
+        if (['top', 'middle', 'bottom'].indexOf(options.legend.vAlign) !== -1) {
             classes.push(options.legend.vAlign);
         } else {
             classes.push('top');
         }
 
-        if (['left', 'center', 'right'].indexOf(options.legend.hAlign) != -1) {
+        if (['left', 'center', 'right'].indexOf(options.legend.hAlign) !== -1) {
             classes.push(options.legend.hAlign);
         } else {
             classes.push('right');
@@ -99,7 +99,7 @@
         var entries = container.selectAll('.contour-legend-entry')
             .data(data);
 
-        var enter = entries.enter()
+        entries.enter()
             .append('div')
             .attr('class', function () {
                 return 'contour-legend-entry';
