@@ -152,7 +152,8 @@ describe('Visualizations', function () {
                     it('should append the series name and number to the tooltip tracker class', function () {
                         var g = $el.find('g[vis-id="1"] .tooltip-trackers');
                         var seriesClasses = ['s-1', 'series', '1'];
-                        expect(_.all(seriesClasses.map(_.partial(_.contains, g[0].classList)))).toBe(true);
+                        var classes = d3.select(g[0]).attr('class').split(' ');
+                        expect(_.all(seriesClasses.map(_.partial(_.contains, classes)))).toBe(true);
                     });
 
 

@@ -153,11 +153,12 @@ describe('Cartesian frame', function () {
             expect(nw.yScale(4)).toEqual(h/2);
             expect(nw.yScale(8)).toEqual(0);
 
-            var yLables = $el.find('.y.axis .tick');
-            var text = yLables.find('text');
-            expect(yLables.length).toBe(2);
-            expect(text[0].innerHTML).toBe('4');
-            expect(text[1].innerHTML).toBe('8');
+            var text = $el.find('.y.axis .tick text');
+
+            // var text = yLables.find('text');
+            expect(text.length).toBe(2);
+            expect(d3.select(text[0]).text()).toBe('4');
+            expect(d3.select(text[1]).text()).toBe('8');
         });
 
         it('should use options.min as absolute min even with tick values', function () {

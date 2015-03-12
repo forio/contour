@@ -1,7 +1,7 @@
 describe('dateDiff', function () {
     it('should return the difference in days of two dates', function () {
-        var d1 = new Date('2010-01-01 10:00');
-        var d2 = new Date('2010-01-02 10:00');
+        var d1 = new Date('2010-01-01T10:00:00Z');
+        var d2 = new Date('2010-01-02T10:00:00Z');
 
         expect(_.nw.dateDiff(d2, d1)).toBe(1);
     });
@@ -131,51 +131,75 @@ describe('maxTickValues', function () {
 describe('normalizeSeries', function () {
 
     beforeEach(function () {
-        this.addMatchers({
-            toBeNormalizedDataPoint: function () {
-                var actual = this.actual;
-                var notText = this.isNot ? ' not' : '';
-                this.message = function () {
-                    return 'Expected ' + actual + notText + ' to be normalized data point and is not';
-                };
+        var isSeriesSorted = function (actual) {
+            var isSorted = true;
+            _.each(actual, function (series) {
+                if (!series.data.length || !isSorted) return;
+                var prev = series.data[0].x;
+                for (var j=1, len=series.data.length; j<len; j++) {
+                    if (prev > series.data[j].x) {
+                        isSorted = false;
+                        break;
+                    }
+                }
+            });
 
-                return actual.hasOwnProperty('x') && actual.hasOwnProperty('y');
+            return isSorted;
+        };
+
+        jasmine.addMatchers({
+            toBeNormalizedDataPoint: function () {
+                return function (actual, expected) {
+
+                    var notText = this.isNot ? ' not' : '';
+                    var message = function () {
+                        return 'Expected ' + actual + notText + ' to be normalized data point and is not';
+                    };
+
+                    return {
+                        pass: actual.hasOwnProperty('x') && actual.hasOwnProperty('y'),
+                        message: message()
+                    };
+
+                };
             },
 
             toBeNormalizedSeries: function () {
-                var actual = this.actual;
-                var notText = this.isNot ? ' not' : '';
-                var missing = [];
+                return {
+                    compare: function (actual, expected) {
+                        var notText = this.isNot ? ' not' : '';
+                        var missing = [];
 
-                if(!actual.hasOwnProperty('name')) missing.push('series name (name)');
-                if(!actual.hasOwnProperty('data')) missing.push('series data (data)');
-                if(!_.all(actual.data, function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
+                        if(!actual.hasOwnProperty('name')) missing.push('series name (name)');
+                        if(!actual.hasOwnProperty('data')) missing.push('series data (data)');
+                        if(!_.all(actual.data, function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
 
-                this.message = function () { return 'Expected object' + notText + ' to be normalize series and is missing: ' + missing.join(', '); };
+                        message = function () { return 'Expected object' + notText + ' to be normalize series and is missing: ' + missing.join(', '); };
 
-                return !missing.length;
+                        return {
+                            pass: !missing.length,
+                            message: message()
+                        };
+                    }
+                };
             },
 
             toBeSorted: function () {
-                var actual = this.actual;
-                var notText = this.isNot ? ' not' : '';
-                var isSorted = true;
-                this.message = function () {
-                    return 'Expected series data ' + notText + ' to be sorted ';
-                };
+                return {
+                    compare: function (actual, expect) {
+                        return {
+                            pass: isSeriesSorted(actual),
+                            message: 'expected series data to be sorted',
+                        };
+                    },
 
-                _.each(actual, function (series) {
-                    if (!series.data.length || !isSorted) return;
-                    var prev = series.data[0].x;
-                    for (var j=1, len=series.data.length; j<len; j++) {
-                        if (prev > series.data[j].x) {
-                            isSorted = false;
-                            break;
-                        }
+                    negativeCompare: function (actual) {
+                        return {
+                            pass: !isSeriesSorted(actual),
+                            message: 'expected series data NOT to be soreted'
+                        };
                     }
-                });
-
-                return isSorted ;
+                };
             }
         });
     });
