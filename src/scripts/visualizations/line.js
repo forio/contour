@@ -74,7 +74,7 @@
         animationDirection = options.line.animationDirection || 'left-to-right';
         duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         // jshint eqnull:true
-        var data = options.line.preprocess(rawData);
+        var data = options.line.preprocess(_.nw.cleanNullValues()(rawData));
 
         data = options.line.stacked ? d3.layout.stack().values(function (d) { return d.data; })(data) : data;
 

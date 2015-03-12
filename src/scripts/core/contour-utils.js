@@ -20,6 +20,25 @@
 
         seriesNameToClass: function (name) {
             return name || '';
+        }
+    };
+
+    var dataFilters = {
+
+        cleanNullValues: function () {
+            return function (series) {
+                return _.map(series, function (s) {
+                    return _.extend(s, {
+                        data: _.reduce(s.data, function (acum, datum) {
+                            if (datum.y != null) {
+                                acum.push(datum);
+                            }
+
+                            return acum;
+                        }, [])
+                    });
+                });
+            };
         },
 
         minMaxFilter: function (desiredLen) {
@@ -533,7 +552,7 @@
     };
 
     _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
-        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
+        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
 
     if (!_.noop) {
         _.noop = noop;
