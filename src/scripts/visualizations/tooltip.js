@@ -149,11 +149,11 @@
 
         function findOriginalDataPoint(d) {
             var res = [];
-            _.each(data, function (series) {
+            _.each(data, function (series, seriesIndex) {
                 var name = series.name;
                 _.each(series.data, function (point) {
                     if (point.x === d.x && d.y === point.y) {
-                        res.push(_.extend(point, { series: name }));
+                        res.push(_.extend(point, { series: name, seriesIndex:seriesIndex }));
                     }
                 });
             });
