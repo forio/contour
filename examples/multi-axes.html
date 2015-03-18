@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Example on How to User Contour</title>
+
+    <link rel="stylesheet" href="../examples/css/contour.css">
+    <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
+    <script src="../examples/js/vendor/d3.js"></script>
+    <script src="../examples/js/vendor/lodash.js"></script>
+    <script src="../dist/contour.js"></script>
+
+    <style>
+        .chart {
+            width: 600px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <h2>Contour Multiple Axes Example</h2>
+
+    <div class="container">
+        <div class="chart"></div>
+    </div>
+
+    <script>
+
+    Contour.expose('complex', {
+
+        yAxis: function () {
+            if (!this._yAxis || this.curAxis !== this._yAxis.index) {
+                this._yAxis = this.axes[this.curAxis || 0].axis()
+                    .orient(this.options.yAxis.orient);
+                this._yAxis.index = this.curAxis;
+            }
+
+            return this._yAxis;
+        },
+
+        computeYScale: function () {
+            var scaleDomains = _.map(this.yDomainByAxis, function (domain, index) {
+                return this._getYScaledDomain(domain, this.options);
+            }, this);
+
+            this.axes = _.map(this.yDomainByAxis, function (domain, index) {
+                return _.nw.yScaleFactory(this.dataSrc, this.options, domain);
+            }, this);
+
+            this.scales = _.map(this.axes, function (axis, index) {
+                return axis.scale(scaleDomains[index]);
+            });
+
+            this._changeAxis(0);
+        },
+
+        _adjustYDomain: function () {
+            var dataVis = _.filter(this._visualizations, function (v) {
+                return v.ownData && _.nw.isSupportedDataFormat(v.data);
+            });
+            var byAxis = _.groupBy(dataVis, function (vis) { return vis.options[vis.type].axis || 0; });
+            var extents = _.map(byAxis, function (vis, index) {
+                return d3.extent(_.flatten(_.pluck(vis, 'yExtent')));
+            });
+
+            this.yDomainByAxis = extents;
+        },
+
+        _setCurrentDomain: function (axisIndex) {
+            this.yMin = this.yDomainByAxis[axisIndex][0];
+            this.yMax = this.yDomainByAxis[axisIndex][1];
+            this.yDomain = this.yDomainByAxis[axisIndex];
+        },
+
+        _changeAxis: function (index) {
+            this.curAxis = index;
+            this._setCurrentDomain(index);
+            this.yScale = this.scales[index];
+        },
+
+        _renderYAxisElement: function () {
+            var options = this.options.yAxis;
+            var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
+            var l = 0, r = 0;
+
+            _.each(this.axes, function (axis, index) {
+                var pos = (this.options.multiAxes[index] || {}).position || 'left';
+                var axisOffset = _.nw.sum(this.axesWidths[pos].slice(0, pos === 'left' ? l++ : r++));
+
+                if (pos === 'right') {
+                    axisOffset = -(axisOffset + this.options.chart.plotWidth);
+                }
+
+                this._yAxisGroup.append('g')
+                    .attr('transform', 'translate(' + (-axisOffset) +', 0)')
+                    .transition().duration(this._animationDuration())
+                    .call(axis.axis().orient(pos))
+                    .selectAll('.tick text')
+                        .attr('dy', alignmentOffset[options.labels.verticalAlign]);
+            }, this);
+
+        },
+
+        _calcAxisWidth: function (domain, options) {
+            var maxTickSize = function (options) { return Math.max(options.outerTickSize || 0, options.innerTickSize || 0); };
+            var yOptions = options.yAxis;
+            var interAxisPadding = 5;
+
+            var yDomainScaled = this._getYScaledDomain(domain, options);
+            var tmpScale = d3.scale.linear().domain(yDomainScaled);
+            var yLabels = tmpScale.ticks(yOptions.ticks);
+
+            var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
+            var yAxisText = _.map(yLabels, format).join('<br>');
+            var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
+            return maxTickSize(yOptions) + (yOptions.tickPadding || 0) +
+                yLabelBounds.width + interAxisPadding;
+        },
+
+        _getAdjustedLeftPadding: function () {
+
+            var options = this.options;
+            var leftAxisDomains = _.filter(this.yDomainByAxis, function (domain, index) {
+                // include anything that is not position === 'right'
+                return (options.multiAxes[index] || {}).position !== 'right';
+            });
+
+            this.axesWidths = this.axesWidths || {};
+            this.axesWidths.left = _.map(leftAxisDomains, function (domain, index) {
+                return this._calcAxisWidth.call(this, domain, options);
+            }, this);
+
+            return _.nw.sum(this.axesWidths.left);
+        },
+
+        _getAdjustedRightPadding: function () {
+            var options = this.options;
+            var rightAxisDomains = _.filter(this.yDomainByAxis, function (domain, index) {
+                return (options.multiAxes[index] || {}).position === 'right';
+            });
+
+            this.axesWidths = this.axesWidths || {};
+            this.axesWidths.right = _.map(rightAxisDomains, function (domain, index) {
+                return this._calcAxisWidth.call(this, domain, options);
+            }, this);
+
+            return _.nw.sum(this.axesWidths.right);
+        },
+
+        renderVisualizations: function () {
+            this.curAxis = 0;
+            _.each(this._visualizations, function (visualization, index) {
+                var visAxis = visualization.options[visualization.type].axis || 0;
+                if (visAxis !== this.curAxis) {
+                    this._changeAxis(visAxis);
+                }
+
+                var id = index + 1;
+                var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
+                var opt = _.merge({}, this.options, visualization.options);
+
+                layer.attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
+
+                visualization.layer = layer;
+                visualization.parent = this;
+                visualization.render(layer, opt, this);
+            }, this);
+
+            return this;
+        },
+
+    });
+
+    var chart = new Contour({
+            el: '.chart',
+
+            xAxis: {
+                title: 'some title (kg)',
+            },
+
+            yAxis: {
+                title: 'other title',
+            },
+
+            multiAxes: [{
+                position: 'left'
+            }, {
+                position: 'left'
+            }, {
+                position: 'right'
+            }],
+
+            line: {
+                animationDirection: 'bottom-to-top'
+            }
+        })
+        .cartesian()
+        .complex()
+        .line([1,2,3,4,5, 10, 2,1], { axis: 0 })
+        .line([50,30,40,90,100], { axis: 1 })
+        .area([1, 100,200,300, 200, 5], { axis: 2 })
+        .tooltip()
+        .render();
+
+    </script>
+</body>
+</html>
