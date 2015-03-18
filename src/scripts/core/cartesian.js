@@ -144,11 +144,7 @@
                     this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || 0;
                 }
 
-                if (this.options.chart.padding.top == null) {
-                    this.options.chart.internalPadding.top = this._getAdjustedTopPadding(xOptions);
-                } else {
-                    this.options.chart.internalPadding.top = this.options.chart.padding.top || 0;
-                }
+                this.options.chart.padding.top = this.options.chart.internalPadding.top = this._getAdjustedTopPadding(xOptions);
 
                 // left padding calculations
                 if (this.options.chart.padding.left == null) {
@@ -157,15 +153,11 @@
                     this.options.chart.internalPadding.left = this.options.chart.padding.left;
                 }
 
-                if (this.options.chart.padding.right == null) {
-                    this.options.chart.internalPadding.right = this._getAdjustedRightPadding(yOptions);
-                } else {
-                    this.options.chart.internalPadding.right = this.options.chart.padding.right;
-                }
+                this.options.chart.padding.right = this.options.chart.internalPadding.right = this._getAdjustedRightPadding(yOptions);
             },
 
             _getAdjustedTopPadding: function (options) {
-                return null;
+                return this.options.chart.padding.top;
             },
 
             _getAdjustedBottomPadding: function (options) {
@@ -197,7 +189,7 @@
             },
 
             _getAdjustedRightPadding: function (options) {
-                return null;
+                return this.options.chart.padding.right;
             },
 
             adjustTitlePadding: function () {
@@ -353,8 +345,6 @@
             },
 
             renderYAxis: function () {
-                var options = this.options.yAxis;
-                var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
                 var x = this.options.chart.internalPadding.left;
                 var y = this.options.chart.padding.top;
 
@@ -371,13 +361,20 @@
                         .attr('transform', 'translate(' + x + ',' + y + ')');
                 }
 
+                this._renderYAxisElement();
+
+                return this;
+            },
+
+            _renderYAxisElement: function () {
+                var options = this.options.yAxis;
+                var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
+
                 this._yAxisGroup
                     .transition().duration(this._animationDuration())
                     .call(this.yAxis())
                     .selectAll('.tick text')
                         .attr('dy', alignmentOffset[options.labels.verticalAlign]);
-
-                return this;
             },
 
             renderAxisLabels: function () {
