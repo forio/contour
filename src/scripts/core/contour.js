@@ -135,10 +135,16 @@
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
+            var ownData = true;
 
-            data = data || lastData || [];
+            if (!data) {
+                data = lastData || [];
+                ownData = false;
+            }
+
             sortSeries(data);
             vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
+            vis.ownData = ownData;
             this._visualizations.push(vis);
             lastData = data;
             return this;
