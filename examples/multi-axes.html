@@ -45,7 +45,8 @@
             }, this);
 
             this.axes = _.map(this.yDomainByAxis, function (domain, index) {
-                return _.nw.yScaleFactory(this.dataSrc, this.options, domain);
+                var type = this.options.multiAxes[index].type || 'linear';
+                return _.nw.yScaleFactory(this.dataSrc, this.options, type, domain);
             }, this);
 
             this.scales = _.map(this.axes, function (axis, index) {
@@ -86,7 +87,9 @@
 
             _.each(this.axes, function (axis, index) {
                 var pos = (this.options.multiAxes[index] || {}).position || 'left';
-                var axisOffset = _.nw.sum(this.axesWidths[pos].slice(0, pos === 'left' ? l++ : r++));
+                var optOffset = (this.options.multiAxes[index] || {}).offset;
+                var offsetFactor =  optOffset != null ? optOffset : 1;
+                var axisOffset = offsetFactor * _.nw.sum(this.axesWidths[pos].slice(0, pos === 'left' ? l++ : r++));
 
                 if (pos === 'right') {
                     axisOffset = -(axisOffset + this.options.chart.plotWidth);
@@ -94,6 +97,7 @@
 
                 this._yAxisGroup.append('g')
                     .attr('transform', 'translate(' + (-axisOffset) +', 0)')
+                    .attr('class', 'axis-' + index)
                     .transition().duration(this._animationDuration())
                     .call(axis.axis().orient(pos))
                     .selectAll('.tick text')
@@ -184,9 +188,10 @@
             },
 
             multiAxes: [{
-                position: 'left'
+                position: 'left',
+                type: 'LogYAxis'
             }, {
-                position: 'left'
+                position: 'left',
             }, {
                 position: 'right'
             }],
