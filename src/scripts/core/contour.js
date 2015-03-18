@@ -128,17 +128,25 @@
             var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
             var opt =  _.extend({}, this.options[ctorName], options);
             var vis;
+            var ownData = true;
 
-            // used to pass the last specified dataset
+            if (!data) {
+                data = this.lastData || [];
+                ownData = false;
+            }
+
+            sortSeries(data);
+            vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
+            vis.ownData = ownData;
+            this._visualizations.push(vis);
+
+            // lastData is used to pass the last specified dataset
             // to the next visualiaztion in the chain wihtout
             // the need to specify it again.... this allows you to do
             // new Contour().cartesian().line(dataset).lengend().tooltip().render()
             // and legend and tooltip will recieve dataset
-            data = data || this.lastData || [];
-            sortSeries(data);
-            vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
-            this._visualizations.push(vis);
             this.lastData = data;
+
             return this;
         };
 
