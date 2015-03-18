@@ -128,6 +128,6 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, { OrdinalScale: OrdinalScale });
+    _.nw.addAxis('OrdinalScale', OrdinalScale );
 
 })();
