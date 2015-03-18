@@ -226,7 +226,7 @@
                 var yScaleDomain = this._getYScaledDomain(this.yDomain, this.options);
 
                 if(!this.yScale) {
-                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yDomain);
+                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
                     this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                 } else {
                     this.yScaleGenerator.update(yScaleDomain, this.dataSrc);

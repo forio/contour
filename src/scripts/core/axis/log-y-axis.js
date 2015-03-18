@@ -11,7 +11,8 @@
         return scale.range(range);
     }
 
-    LogYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
+    var __super = _.nw.axes.YAxis.prototype;
+    LogYAxis.prototype = _.extend({}, __super, {
         axis: function () {
             var options = this.options.yAxis;
             var domain = this._scale.domain();
@@ -42,7 +43,7 @@
             }
 
             setRange(this._scale, this.options);
-            
+
             return this._scale;
         },
 
@@ -54,6 +55,6 @@
         },
     });
 
-    _.extend(_.nw, { LogYAxis: LogYAxis });
+    _.nw.addAxis('LogYAxis', LogYAxis );
 
 })();

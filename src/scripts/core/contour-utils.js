@@ -187,6 +187,11 @@
     };
 
     var axisHelpers = {
+        addAxis: function (name, axisCtor) {
+            _.nw.axes = _.nw.axes || {};
+            _.nw.axes[name] = axisCtor;
+        },
+
         roundToNextTick: function (num) {
             var abs = Math.abs(num);
             var sign = abs === num ? 1 : -1;

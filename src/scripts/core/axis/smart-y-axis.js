@@ -31,13 +31,14 @@
         return _.nw.merge([min, max], yMax);
     }
 
-    SmartYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
+    var __super = _.nw.axes.YAxis.prototype;
+    SmartYAxis.prototype = _.extend({}, __super, {
         axis: function () {
             var options = this.options.yAxis;
             this.domain = this._scale.domain();
             var tickValues = _extractYTickValues(this.domain, options.min, options.max, this.yMin, this.yMax, this.dataMax);
             var numTicks = this.numTicks();
-            var axis = _.nw.YAxis.prototype.axis.call(this);
+            var axis = __super.axis.call(this);
             return axis.ticks(numTicks)
                 .tickValues(tickValues);
         },
@@ -69,6 +70,5 @@
         }
     });
 
-    _.extend(_.nw, { SmartYAxis: SmartYAxis });
-
+    _.nw.addAxis('SmartYAxis', SmartYAxis );
 })();

@@ -64,6 +64,6 @@
         }
     };
 
-    _.extend(_.nw, { YAxis: YAxis });
+    _.nw.addAxis('YAxis', YAxis);
 
 })();

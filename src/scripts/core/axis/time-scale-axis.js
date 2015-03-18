@@ -128,6 +128,5 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, { TimeScale: TimeScale });
-
+    _.nw.addAxis('TimeScale', TimeScale );
 })();

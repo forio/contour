@@ -36,7 +36,7 @@
             }
 
             this._setRange();
-            
+
             return this._scale;
         },
 
@@ -123,6 +123,6 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, { LinearScale: LinearScale });
+    _.nw.addAxis('LinearScale', LinearScale );
 
 })();
