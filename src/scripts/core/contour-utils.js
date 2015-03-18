@@ -492,6 +492,10 @@
             return result;
         },
 
+        sum: function (array) {
+            return _.reduce(array, function (acc, cur) { return acc += cur; }, 0);
+        },
+
         maxTickValues: function (max, domain) {
             var len = domain.length;
             var values = [];
