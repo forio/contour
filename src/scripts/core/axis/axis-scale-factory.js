@@ -44,7 +44,7 @@
             }
 
             // try by namespace
-            if (_.nw[axisType]) {
+            if (_.nw.axes[axisType]) {
                 return new _.nw.axes[axisType](data, options, domain);
             }
 

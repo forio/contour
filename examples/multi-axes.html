@@ -176,6 +176,8 @@
 
     });
 
+    _.nw.addAxis('MyCustomAxis', _.nw.axes.LogYAxis);
+
     var chart = new Contour({
             el: '.chart',
 
@@ -189,7 +191,7 @@
 
             multiAxes: [{
                 position: 'left',
-                type: 'LogYAxis'
+                type: 'MyCustomAxis'
             }, {
                 position: 'left',
             }, {
