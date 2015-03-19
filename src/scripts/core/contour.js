@@ -58,13 +58,6 @@
         }
     };
 
-    // used to pass the last specified dataset
-    // to the next visualiaztion in the chain wihtout
-    // the need to specify it again.... this allows you to do
-    // new Contour().cartesian().line(dataset).lengend().tooltip().render()
-    // and legend and tooltip will recieve dataset
-    this.lastData;
-
     /**
     * Creates a Contour instance, based on the core Contour visualizations object. This instance can contain a set of related visualizations.
     *
@@ -142,6 +135,11 @@
                 ownData = false;
             }
 
+            // used to pass the last specified dataset
+            // to the next visualiaztion in the chain wihtout
+            // the need to specify it again.... this allows you to do
+            // new Contour().cartesian().line(dataset).lengend().tooltip().render()
+            // and legend and tooltip will recieve dataset
             data = data || this.lastData || [];
             sortSeries(data);
             vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
