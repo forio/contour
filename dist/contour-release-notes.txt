@@ -1,21 +1,3 @@
-  * Merge pull request #211 from forio/axes
-  * joshing for the examples
-  * Added example of custom axis through the axes factory
-  * Allow for different axes types to be specified in the custom multi-axes component
-  * Namespace the axes constructors and allow for external axes types to be constructed through the factory
-  * Added multi-axes example
-  * added utility function to sum arrays
-  * Add flag to indicate to visualizations if they have their own dataset
-  * Fixed calculations of right and top paddings
-  * Refactor cartesian to allow extensibility of axes
-  * Merge pull request #210 from wasbridge/tooltip-fix
-  * include the series index in the tooltip data so that outside formatting functions can determine the appropriate formatting function
-  * Added mock for functions used in defaults so the documentation generator doesn't break
-  * Included running of test for grunt tasks
-  * Upgraded to jasmine 2.0 and fixed tests specs to work with jasmine 2.0 - also fixed some tests to run on phantomjs
-  * Fixed tests
-  * Made stricter jshint and fix violations
-  * Merge pull request #206 from wasbridge/optimization2
-  * Fixed positioning of x-axis title
-  * Hookup minMaxFilter and set as default for line and area charts
-  * setup the preprocess configuration method
+  * Implemented auto fitting of labels for ordinal axes
+  * Refactor fitting of x axis labels out of linear axis and into _.nw
+  * Switch order or build/test in build process to allow for development workflow

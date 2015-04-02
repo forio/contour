@@ -1,4 +1,4 @@
-/*! Contour - v0.9.113 - 2015-04-01 */
+/*! Contour - v0.9.114 - 2015-04-02 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -286,6 +286,51 @@
             niceTicks: function(min, max, ticks, zeroAnchor) {
                 var niceMinMax = axisHelpers.niceMinMax(min, max, ticks || 5, zeroAnchor);
                 return niceMinMax.tickValues;
+            },
+            calcXLabelsWidths: function(ticks) {
+                var padding = 8;
+                return _.compact(ticks).map(String).map(function(d) {
+                    if (!d) {
+                        return padding * 2;
+                    }
+                    return _.nw.textBounds(d, ".x.axis text").width + padding * 2;
+                });
+            },
+            doXLabelsFit: function(ticks, labelFormatter, options) {
+                var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
+                var availableWidthForLabels = options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2;
+                var axisLabelsWidth = _.nw.sum(tickWidths);
+                return axisLabelsWidth <= availableWidthForLabels;
+            },
+            getTicksThatFit: function(ticks, labelFormatter, options) {
+                // reduce the number of ticks incrementally by taking every 2nd, then every 3th, and so on
+                // until we find a set of ticks that fits the available space
+                function reduceTicksByMod() {
+                    var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
+                    var axisLabelsWidth = _.nw.sum(tickWidths);
+                    var availableWidthForLabels = options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2;
+                    var iter = 1;
+                    var filterMod = function(d, i) {
+                        return i % iter === 0;
+                    };
+                    var finalTicks = ticks;
+                    while (axisLabelsWidth > availableWidthForLabels && finalTicks.length !== 0) {
+                        iter++;
+                        finalTicks = _.filter(ticks, filterMod);
+                        axisLabelsWidth = _.nw.sum(_.nw.calcXLabelsWidths(finalTicks.map(labelFormatter)));
+                    }
+                    return finalTicks;
+                }
+                // possible alternative way using d3 ticks to calculate the number
+                // that fits
+                // function reduceTicksByD3() {
+                //     // while(axisLabelsWidth > availableWidthForLabels && ticks.length !== 1) {
+                //     //     ticks = axis.scale().ticks(Math.floor(--numAutoTicks));
+                //     //     axisLabelsWidth = sum(calcLabelsWidths(ticks.map(formatLabel)));
+                //     // }
+                //     // axis.ticks(ticks.length);
+                // }
+                return reduceTicksByMod();
             }
         };
         var stringHelpers = {
@@ -2069,7 +2114,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.113";
+    Contour.version = "0.9.114";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {
@@ -2113,18 +2158,6 @@
         _.nw = _.extend({}, _.nw, helpers);
     })();
     (function() {
-        var sum = _.partialRight(_.reduce, function(acc, d) {
-            return acc += d;
-        }, 0);
-        function calcLabelsWidths(ticks) {
-            var padding = 2;
-            return _.compact(ticks).map(String).map(function(d) {
-                if (!d) {
-                    return padding * 2;
-                }
-                return _.nw.textBounds(d, ".x.axis text").width + padding * 2;
-            });
-        }
         function LinearScale(data, options) {
             this.options = options;
             this.data = data;
@@ -2153,11 +2186,7 @@
                     return _.isDate(d) ? d.getDate() : formatLabel(d);
                 });
                 var ticks = axis.scale().ticks();
-                var tickWidths = calcLabelsWidths(ticks.map(formatLabel));
-                var availableWidthForLabels = this.options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2;
-                var numAutoTicks = ticks.length;
-                var axisLabelsWidth = sum(tickWidths);
-                var labelsFit = axisLabelsWidth <= availableWidthForLabels;
+                var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
                 if (options.firstAndLast) {
                     // show only first and last tick
                     axis.tickValues(_.nw.firstAndLast(this._domain));
@@ -2166,11 +2195,9 @@
                 } else if (options.ticks != null) {
                     axis.ticks(options.ticks);
                 } else if (!labelsFit) {
-                    while (axisLabelsWidth > availableWidthForLabels && ticks.length !== 1) {
-                        ticks = axis.scale().ticks(Math.floor(--numAutoTicks));
-                        axisLabelsWidth = sum(calcLabelsWidths(ticks.map(formatLabel)));
-                    }
-                    axis.ticks(ticks.length);
+                    var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                    axis.tickValues(finalTicks);
+                    axis.ticks(finalTicks.length);
                 }
                 return axis;
             },
@@ -2283,19 +2310,21 @@
             scale: function(domain) {
                 if (!this._scale) {
                     this._scale = new d3.scale.ordinal();
-                    this._range();
                 }
-                this.setDomain(domain);
+                this.setDomain(domain || this.data);
                 return this._scale;
             },
             /* jshint eqnull:true */
             axis: function() {
                 var options = this.options.xAxis;
                 var optFormat = options.labels.format ? d3.format(options.labels.format) : 0;
+                var formatLabel = options.labels.formatter || d3.format(options.labels.format || "g");
                 var tickFormat = options.labels.formatter || (!this.isCategorized ? optFormat : 0) || function(d) {
                     return _.isDate(d) ? d.getDate() : d;
                 };
                 var axis = d3.svg.axis().scale(this._scale).innerTickSize(options.innerTickSize).outerTickSize(options.outerTickSize).tickPadding(options.tickPadding).tickFormat(tickFormat);
+                var ticks = this.isCategorized && options.categories ? options.categories : _.range(this._domain.length) || [];
+                var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
                 if (options.firstAndLast) {
                     // show only first and last tick
                     axis.tickValues(_.nw.firstAndLast(this._domain));
@@ -2308,6 +2337,10 @@
                     if (options.ticks === 0) {
                         axis.tickValues([]);
                     }
+                } else if (!labelsFit) {
+                    var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                    axis.tickValues(finalTicks);
+                    axis.ticks(finalTicks.length);
                 } else {
                     axis.tickValues(options.categories);
                 }
