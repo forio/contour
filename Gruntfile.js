@@ -19,7 +19,7 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['src/scripts/**/*.js'],
-                tasks: ['jshint', 'jasmine', 'uglify']
+                tasks: ['uglify', 'jshint', 'jasmine']
             }
         },
         bumpup: {
@@ -195,7 +195,7 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['jshint', 'jasmine', 'uglify:concatenate', 'uglify:dev', 'less:dev', 'watch']);
+    grunt.registerTask('default', ['uglify:concatenate', 'uglify:dev', 'less:dev', 'watch', 'jshint', 'jasmine']);
 
     grunt.registerTask('production', ['jshint', 'jasmine', 'ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'releaseNotes']);
 
@@ -206,7 +206,7 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('linked', ['jshint', 'jasmine', 'uglify:concatenate', 'uglify:dev', 'less:uncompressed', 'less:production', 'watch']);
+    grunt.registerTask('linked', ['uglify:concatenate', 'uglify:dev', 'less:uncompressed', 'less:production','watch',  'jshint', 'jasmine']);
 
 
     grunt.registerMultiTask('releaseNotes', 'Generate a release notes file with changes in git log since last tag', function () {
