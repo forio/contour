@@ -94,10 +94,10 @@ describe('Linear axis scale', function () {
 
         ax = createAxis({ chart: {plotWidth: 150}});
         ax.scale();
-        expect(ax.axis().ticks()[0]).toBe(5);
+        expect(ax.axis().ticks()[0]).toBe(4);
 
         ax = createAxis({ chart: {plotWidth: 40}});
         ax.scale();
-        expect(ax.axis().ticks()[0]).toBe(1);
+        expect(ax.axis().ticks()[0]).toBe(2);
     });
 });

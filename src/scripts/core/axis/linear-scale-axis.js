@@ -1,17 +1,5 @@
 (function () {
 
-    var sum = _.partialRight(_.reduce, function (acc, d) { return acc += d; }, 0);
-
-    function calcLabelsWidths(ticks) {
-        var padding = 2;
-        return _.compact(ticks).map(String).map(function (d) {
-            if (!d) {
-                return padding * 2;
-            }
-            return _.nw.textBounds(d, '.x.axis text').width + (padding * 2);
-        });
-    }
-
     function LinearScale(data, options) {
         this.options = options;
         this.data = data;
@@ -52,11 +40,7 @@
                 });
 
             var ticks = axis.scale().ticks();
-            var tickWidths = calcLabelsWidths(ticks.map(formatLabel));
-            var availableWidthForLabels = (this.options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
-            var numAutoTicks = ticks.length;
-            var axisLabelsWidth = sum(tickWidths);
-            var labelsFit = axisLabelsWidth <= availableWidthForLabels;
+            var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
 
             if (options.firstAndLast) {
                 // show only first and last tick
@@ -66,12 +50,10 @@
             } else if (options.ticks != null) {
                 axis.ticks(options.ticks);
             } else if (!labelsFit) {
-                while(axisLabelsWidth > availableWidthForLabels && ticks.length !== 1) {
-                    ticks = axis.scale().ticks(Math.floor(--numAutoTicks));
-                    axisLabelsWidth = sum(calcLabelsWidths(ticks.map(formatLabel)));
-                }
+                var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                axis.tickValues(finalTicks);
+                axis.ticks(finalTicks.length);
 
-                axis.ticks(ticks.length);
             }
 
             return axis;

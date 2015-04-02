@@ -341,6 +341,56 @@
         niceTicks: function (min, max, ticks, zeroAnchor) {
             var niceMinMax = axisHelpers.niceMinMax(min, max, (ticks||5), zeroAnchor);
             return niceMinMax.tickValues;
+        },
+
+        calcXLabelsWidths: function (ticks) {
+            var padding = 8;
+            return _.compact(ticks).map(String).map(function (d) {
+                if (!d) {
+                    return padding * 2;
+                }
+                return _.nw.textBounds(d, '.x.axis text').width + (padding * 2);
+            });
+        },
+
+        doXLabelsFit: function (ticks, labelFormatter, options) {
+            var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
+            var availableWidthForLabels = (options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
+            var axisLabelsWidth = _.nw.sum(tickWidths);
+            return axisLabelsWidth <= availableWidthForLabels;
+        },
+
+        getTicksThatFit: function (ticks, labelFormatter, options) {
+            // reduce the number of ticks incrementally by taking every 2nd, then every 3th, and so on
+            // until we find a set of ticks that fits the available space
+            function reduceTicksByMod() {
+                var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
+                var axisLabelsWidth = _.nw.sum(tickWidths);
+                var availableWidthForLabels = (options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
+                var iter = 1;
+                var filterMod = function (d, i) { return (i % iter) === 0; };
+                var finalTicks = ticks;
+                while(axisLabelsWidth > availableWidthForLabels && finalTicks.length !== 0) {
+                    iter++;
+                    finalTicks = _.filter(ticks, filterMod);
+                    axisLabelsWidth = _.nw.sum(_.nw.calcXLabelsWidths(finalTicks.map(labelFormatter)));
+                }
+
+                return finalTicks;
+            }
+
+            // possible alternative way using d3 ticks to calculate the number
+            // that fits
+            // function reduceTicksByD3() {
+            //     // while(axisLabelsWidth > availableWidthForLabels && ticks.length !== 1) {
+            //     //     ticks = axis.scale().ticks(Math.floor(--numAutoTicks));
+            //     //     axisLabelsWidth = sum(calcLabelsWidths(ticks.map(formatLabel)));
+            //     // }
+
+            //     // axis.ticks(ticks.length);
+            // }
+
+            return reduceTicksByMod();
         }
     };
 
