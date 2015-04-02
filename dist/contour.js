@@ -1,4 +1,4 @@
-/*! Contour - v0.9.112 - 2015-02-12 */
+/*! Contour - v0.9.113 - 2015-04-01 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -47,6 +47,60 @@
             },
             seriesNameToClass: function(name) {
                 return name || "";
+            }
+        };
+        var dataFilters = {
+            cleanNullValues: function() {
+                return function(series) {
+                    return _.map(series, function(s) {
+                        return _.extend(s, {
+                            data: _.reduce(s.data, function(acum, datum) {
+                                if (datum.y != null) {
+                                    acum.push(datum);
+                                }
+                                return acum;
+                            }, [])
+                        });
+                    });
+                };
+            },
+            minMaxFilter: function(desiredLen) {
+                return function(data) {
+                    if (data.length <= desiredLen) return data;
+                    var toReturn = [ data[0] ];
+                    //always want the first
+                    var index = 1;
+                    var increment = Math.floor(data.length / desiredLen);
+                    while (index < data.length - 1) {
+                        var hasValidPt = false;
+                        var maxPt;
+                        var minPt;
+                        var maxIndex = Math.min(index + increment, data.length);
+                        for (var intermediateIndex = index; intermediateIndex < maxIndex; intermediateIndex++) {
+                            var intermediatePt = data[index];
+                            if (intermediatePt.y) {
+                                if (!hasValidPt || intermediatePt.y > maxPt.y) maxPt = intermediatePt;
+                                if (!hasValidPt || intermediatePt.y < minPt.y) minPt = intermediatePt;
+                                hasValidPt = true;
+                            }
+                        }
+                        if (hasValidPt) {
+                            if (minPt.x === maxPt.x) {
+                                toReturn.push(minPt);
+                            } else if (minPt.x < maxPt.x) {
+                                toReturn.push(minPt);
+                                toReturn.push(maxPt);
+                            } else if (minPt.x > maxPt.x) {
+                                toReturn.push(maxPt);
+                                toReturn.push(minPt);
+                            }
+                        }
+                        index += Math.max(1, Math.min(data.length - 1 - index, increment));
+                    }
+                    toReturn.push(data[data.length - 1]);
+                    //always want the last
+                    return toReturn;
+                };
             }
         };
         var logging = {
@@ -119,6 +173,10 @@
             }
         };
         var axisHelpers = {
+            addAxis: function(name, axisCtor) {
+                _.nw.axes = _.nw.axes || {};
+                _.nw.axes[name] = axisCtor;
+            },
             roundToNextTick: function(num) {
                 var abs = Math.abs(num);
                 var sign = abs === num ? 1 : -1;
@@ -150,20 +208,8 @@
                     };
                     return divFloat(roundFn(value * Math.pow(10, up)), Math.pow(10, up));
                 };
-                var excelMax = function(a, b) {
-                    return a >= b ? a : b;
-                };
                 // 2 ticks seem to wokr for min max and passing 5 ticks to d3
                 ticks = ticks || 2;
-                var nearestMul = function(val, mul) {
-                    return mulFloat(Math.ceil(val / mul), mul);
-                };
-                var digits = function(val) {
-                    return Math.floor(Math.log(Math.abs(val)) / Math.LN10) + 1;
-                };
-                var fac = function(digits) {
-                    return Math.pow(10, digits);
-                };
                 startAtZero = min === 0 ? 1 : origMax < 0 ? 1 : 0;
                 // check for errors... min cannot be > max
                 if (min > max) {
@@ -173,6 +219,7 @@
                         tickValues: []
                     };
                 }
+                var a;
                 if (min === max) {
                     if (max === 0) {
                         a = -1;
@@ -398,6 +445,11 @@
                 }
                 return result;
             },
+            sum: function(array) {
+                return _.reduce(array, function(acc, cur) {
+                    return acc += cur;
+                }, 0);
+            },
             maxTickValues: function(max, domain) {
                 var len = domain.length;
                 var values = [];
@@ -442,7 +494,7 @@
                 }
             }
         };
-        _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
+        _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
         if (!_.noop) {
             _.noop = noop;
         }
@@ -567,9 +619,14 @@
                 var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
                 var opt = _.extend({}, this.options[ctorName], options);
                 var vis;
-                data = data || lastData || [];
+                var ownData = true;
+                if (!data) {
+                    data = lastData || [];
+                    ownData = false;
+                }
                 sortSeries(data);
                 vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
+                vis.ownData = ownData;
                 this._visualizations.push(vis);
                 lastData = data;
                 return this;
@@ -733,14 +790,14 @@
             },
             /**
         * Clears this Contour instance and all its visualizations of any size information so that on the next call to render the instace is re-measured.
-        * 
+        *
         * The function takes two optional arguements width, height -- if given a specific width/height the chart will use that sizing information on the next render.
         * ### Example:
         *
         *     var contour = new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
         *           .render()
-        *     
+        *
         *     var onResize = function(e) {
         *          contour.resize().render();
         *     }
@@ -935,9 +992,7 @@
             },
             _niceTheScale: function() {}
         };
-        _.extend(_.nw, {
-            YAxis: YAxis
-        });
+        _.nw.addAxis("YAxis", YAxis);
     })();
     (function() {
         /*jshint eqnull:true */
@@ -1017,6 +1072,9 @@
     * @name cartesian
     */
         var cartesian = function() {
+            var maxTickSize = function(options) {
+                return Math.max(options.outerTickSize || 0, options.innerTickSize || 0);
+            };
             return {
                 dataSrc: [],
                 init: function(options) {
@@ -1047,61 +1105,71 @@
                 },
                 xDomain: [],
                 yDomain: [],
-                _getYScaledDomain: function() {
-                    var absMin = this.options.yAxis.zeroAnchor && this.yDomain && this.yDomain[0] > 0 ? 0 : undefined;
-                    var min = this.options.yAxis.min != null ? this.options.yAxis.min : absMin;
-                    if (this.options.yAxis.tickValues) {
-                        if (this.options.yAxis.min != null && this.options.yAxis.max != null) {
-                            return [ this.options.yAxis.min, this.options.yAxis.max ];
-                        } else if (this.options.yAxis.min != null) {
-                            return [ this.options.yAxis.min, d3.max(this.options.yAxis.zeroAnchor ? [ 0 ].concat(this.options.yAxis.tickValues) : this.options.yAxis.tickValues) ];
-                        } else if (this.options.yAxis.max != null) {
-                            return [ d3.min(this.options.yAxis.zeroAnchor ? [ 0 ].concat(this.options.yAxis.tickValues) : this.options.yAxis.tickValues), this.options.yAxis.max ];
+                _getYScaledDomain: function(domain, options) {
+                    var absMin = options.yAxis.zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
+                    var min = options.yAxis.min != null ? options.yAxis.min : absMin;
+                    if (options.yAxis.tickValues) {
+                        if (options.yAxis.min != null && options.yAxis.max != null) {
+                            return [ options.yAxis.min, options.yAxis.max ];
+                        } else if (options.yAxis.min != null) {
+                            return [ options.yAxis.min, d3.max(options.yAxis.zeroAnchor ? [ 0 ].concat(options.yAxis.tickValues) : options.yAxis.tickValues) ];
+                        } else if (options.yAxis.max != null) {
+                            return [ d3.min(options.yAxis.zeroAnchor ? [ 0 ].concat(options.yAxis.tickValues) : options.yAxis.tickValues), options.yAxis.max ];
                         } else {
-                            return d3.extent(this.options.yAxis.zeroAnchor || this.options.yAxis.min != null ? [ min ].concat(this.options.yAxis.tickValues) : this.options.yAxis.tickValues);
+                            return d3.extent(options.yAxis.zeroAnchor || options.yAxis.min != null ? [ min ].concat(options.yAxis.tickValues) : options.yAxis.tickValues);
                         }
-                    } else if (this.options.yAxis.smartAxis) {
-                        return d3.extent(this.options.yAxis.zeroAnchor || this.options.yAxis.min != null ? [ min ].concat(this.yDomain) : this.yDomain);
+                    } else if (options.yAxis.smartAxis) {
+                        return d3.extent(options.yAxis.zeroAnchor || options.yAxis.min != null ? [ min ].concat(domain) : domain);
                     }
-                    return _.nw.extractScaleDomain(this.yDomain, min, this.options.yAxis.max, this.options.yAxis.ticks);
+                    return _.nw.extractScaleDomain(domain, min, options.yAxis.max, options.yAxis.ticks);
                 },
                 /*jshint eqnull:true */
                 adjustPadding: function() {
                     var xOptions = this.options.xAxis;
                     var yOptions = this.options.yAxis;
-                    var maxTickSize = function(options) {
-                        return Math.max(options.outerTickSize || 0, options.innerTickSize || 0);
-                    };
                     // bottom padding calculations
                     if (this.options.chart.padding.bottom == null) {
-                        if (xOptions.ticks !== 0) {
-                            var xLabels = this.xDomain;
-                            var xAxisText = xLabels.join("<br>");
-                            var xLabelBounds = _.nw.textBounds(xAxisText, ".x.axis");
-                            var regularXBounds = _.nw.textBounds("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", ".x.axis");
-                            var em = regularXBounds.height;
-                            var ang = xOptions.labels && xOptions.labels.rotation ? xOptions.labels.rotation % 360 : 0;
-                            var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))) + em / 5);
-                            this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0) + xLabelHeightUsed;
-                        } else {
-                            this.options.chart.internalPadding.bottom = maxTickSize(this.options.xAxis) + (this.options.xAxis.tickPadding || 0);
-                        }
+                        this.options.chart.internalPadding.bottom = this._getAdjustedBottomPadding(xOptions);
                     } else {
                         this.options.chart.internalPadding.bottom = this.options.chart.padding.bottom || 0;
                     }
+                    this.options.chart.padding.top = this.options.chart.internalPadding.top = this._getAdjustedTopPadding(xOptions);
                     // left padding calculations
                     if (this.options.chart.padding.left == null) {
-                        var yDomainScaled = this._getYScaledDomain();
-                        // var yDomainScaled = _.nw.extractScaleDomain(this.yDomain.slice().concat([_.nw.niceRound(this.yDomain[1])]), yOptions.min, yOptions.max);
-                        var tmpScale = d3.scale.linear().domain(yDomainScaled);
-                        var yLabels = tmpScale.ticks(yOptions.ticks);
-                        var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ",.0f");
-                        var yAxisText = _.map(yLabels, format).join("<br>");
-                        var yLabelBounds = _.nw.textBounds(yAxisText, ".y.axis");
-                        this.options.chart.internalPadding.left = this.options.chart.padding.left || maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
+                        this.options.chart.internalPadding.left = this._getAdjustedLeftPadding(yOptions);
                     } else {
                         this.options.chart.internalPadding.left = this.options.chart.padding.left;
                     }
+                    this.options.chart.padding.right = this.options.chart.internalPadding.right = this._getAdjustedRightPadding(yOptions);
+                },
+                _getAdjustedTopPadding: function(options) {
+                    return this.options.chart.padding.top;
+                },
+                _getAdjustedBottomPadding: function(options) {
+                    if (options.ticks !== 0) {
+                        var xLabels = this.xDomain;
+                        var xAxisText = xLabels.join("<br>");
+                        var xLabelBounds = _.nw.textBounds(xAxisText, ".x.axis");
+                        var regularXBounds = _.nw.textBounds("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", ".x.axis");
+                        var em = regularXBounds.height;
+                        var ang = options.labels && options.labels.rotation ? options.labels.rotation % 360 : 0;
+                        var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))) + em / 5);
+                        return maxTickSize(options) + (options.tickPadding || 0) + xLabelHeightUsed;
+                    } else {
+                        return maxTickSize(options) + (options.tickPadding || 0);
+                    }
+                },
+                _getAdjustedLeftPadding: function(options) {
+                    var yDomainScaled = this._getYScaledDomain(this.yDomain, this.options);
+                    var tmpScale = d3.scale.linear().domain(yDomainScaled);
+                    var yLabels = tmpScale.ticks(options.ticks);
+                    var format = options.labels.formatter || d3.format(options.labels.format || ",.0f");
+                    var yAxisText = _.map(yLabels, format).join("<br>");
+                    var yLabelBounds = _.nw.textBounds(yAxisText, ".y.axis");
+                    return maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
+                },
+                _getAdjustedRightPadding: function(options) {
+                    return this.options.chart.padding.right;
                 },
                 adjustTitlePadding: function() {
                     var titleBounds;
@@ -1129,9 +1197,9 @@
                 },
                 computeYScale: function() {
                     if (!this.yDomain) throw new Error("You are trying to render without setting data (yDomain).");
-                    var yScaleDomain = this._getYScaledDomain();
+                    var yScaleDomain = this._getYScaledDomain(this.yDomain, this.options);
                     if (!this.yScale) {
-                        this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.yDomain);
+                        this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
                         this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                     } else {
                         this.yScaleGenerator.update(yScaleDomain, this.dataSrc);
@@ -1224,12 +1292,6 @@
                     return this;
                 },
                 renderYAxis: function() {
-                    var options = this.options.yAxis;
-                    var alignmentOffset = {
-                        bottom: ".8em",
-                        middle: ".35em",
-                        top: "0"
-                    };
                     var x = this.options.chart.internalPadding.left;
                     var y = this.options.chart.padding.top;
                     this._yAxisGroup = this.svg.selectAll(".y.axis").data([ 1 ]);
@@ -1238,15 +1300,23 @@
                     } else {
                         d3.select(this._yAxisGroup.node()).attr("transform", "translate(" + x + "," + y + ")");
                     }
-                    this._yAxisGroup.transition().duration(this._animationDuration()).call(this.yAxis()).selectAll(".tick text").attr("dy", alignmentOffset[options.labels.verticalAlign]);
+                    this._renderYAxisElement();
                     return this;
                 },
+                _renderYAxisElement: function() {
+                    var options = this.options.yAxis;
+                    var alignmentOffset = {
+                        bottom: ".8em",
+                        middle: ".35em",
+                        top: "0"
+                    };
+                    this._yAxisGroup.transition().duration(this._animationDuration()).call(this.yAxis()).selectAll(".tick text").attr("dy", alignmentOffset[options.labels.verticalAlign]);
+                },
                 renderAxisLabels: function() {
-                    var lineHeightAdjustment = this.titleOneEm * .25;
-                    // add 25% of font-size for a complete line-height
                     var adjustFactor = 40 / 46.609;
                     // this factor is to account for the difference between the actual svg size and what we get from the DOM
                     var bounds, x, y;
+                    var el;
                     if (this.options.xAxis.title) {
                         bounds = _.nw.textBounds(this.options.xAxis.title, ".x.axis-title");
                         y = this.options.chart.internalPadding.bottom;
@@ -1255,7 +1325,7 @@
                         if (!el.node()) {
                             el.enter().append("text").attr("class", "x axis-title");
                         }
-                        d3.select(el.node()).attr("x", x).attr("y", y).attr("dx", (this.options.chart.plotWidth - bounds.width) / 2).attr("dy", -2).text(this.options.xAxis.title);
+                        d3.select(el.node()).attr("x", x).attr("y", y).attr("alignment-baseline", "after-edge").attr("dx", (this.options.chart.plotWidth - bounds.width) / 2).text(this.options.xAxis.title);
                     }
                     if (this.options.yAxis.title) {
                         bounds = _.nw.textBounds(this.options.yAxis.title, ".y.axis-title");
@@ -1349,10 +1419,14 @@
                 },
                 adjustDomain: function() {
                     var extents = this.getExtents();
-                    this.yDomain = extents.length ? extents : [ 0, 10 ];
+                    this._adjustXDomain(extents);
+                    this._adjustYDomain(extents);
+                    this._yAxis = null;
+                    this._xAxis = null;
+                    this.yScale = null;
+                },
+                _adjustXDomain: function(extents) {
                     this.xDomain = this.getXDomain();
-                    this.yMin = this.yDomain[0];
-                    this.yMax = this.yDomain[this.yDomain.length - 1];
                     var dataVis = _.filter(this._visualizations, function(v) {
                         return _.nw.isSupportedDataFormat(v.data);
                     });
@@ -1368,9 +1442,11 @@
                     if (isCategoricalData && !(this.options.xAxis.categories && sameCats)) {
                         this.options.xAxis.categories = dataSrcCategories;
                     }
-                    this._yAxis = null;
-                    this._xAxis = null;
-                    this.yScale = null;
+                },
+                _adjustYDomain: function(extents) {
+                    this.yDomain = extents.length ? extents : [ 0, 10 ];
+                    this.yMin = this.yDomain[0];
+                    this.yMax = this.yDomain[this.yDomain.length - 1];
                 },
                 getExtents: function(axis) {
                     var field = axis && axis === "x" ? "xExtent" : "yExtent";
@@ -1565,6 +1641,7 @@
                 }
                 // convert base64/URLEncoded data component to raw binary data held in a string
                 function dataUrlToBlob(dataUrl) {
+                    /*jshint nonstandard:true*/
                     var byteString;
                     if (dataUrl.split(",")[0].indexOf("base64") >= 0) {
                         byteString = atob(dataUrl.split(",")[1]);
@@ -1967,7 +2044,7 @@
                     output += map.charAt(63 & block >> 8 - idx % 1 * 8)) {
                         charCode = str.charCodeAt(idx += 3 / 4);
                         if (charCode > 255) {
-                            throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+                            throw new InvalidCharacterError('"btoa" failed: The string to be encoded contains characters outside of the Latin1 range.');
                         }
                         block = block << 8 | charCode;
                     }
@@ -1992,7 +2069,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.112";
+    Contour.version = "0.9.113";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {
@@ -2004,23 +2081,33 @@
                 // if we get no data, we return an ordinal scale
                 var isTimeData = options.xAxis.type === "time" || (_.isArray(data) && data.length > 0 && data[0].data ? data[0].data[0].x && _.isDate(data[0].data[0].x) : _.isArray(data) && data.length > 0 && data[0].x && _.isDate(data[0].x));
                 if (isTimeData && options.xAxis.type !== "ordinal") {
-                    return new _.nw.TimeScale(data, options);
+                    return new _.nw.axes.TimeScale(data, options);
                 }
                 if (!options.xAxis.categories && options.xAxis.type === "linear") {
-                    return new _.nw.LinearScale(data, options);
+                    return new _.nw.axes.LinearScale(data, options);
                 }
-                return new _.nw.OrdinalScale(data, options);
+                return new _.nw.axes.OrdinalScale(data, options);
             },
-            yScaleFactory: function(data, options, domain) {
+            yScaleFactory: function(data, options, axisType, domain) {
                 var map = {
-                    log: _.nw.LogYAxis,
-                    smart: _.nw.SmartYAxis,
-                    linear: _.nw.YAxis
+                    log: _.nw.axes.LogYAxis,
+                    smart: _.nw.axes.SmartYAxis,
+                    linear: _.nw.axes.YAxis
                 };
-                if (!options.yAxis.type) options.yAxis.type = "linear";
-                if (options.yAxis.type === "linear" && options.yAxis.smartAxis) options.yAxis.type = "smart";
-                if (!map[options.yAxis.type]) throw new Error('Unknown axis type: "' + options.yAxis.type + '"');
-                return new map[options.yAxis.type](data, options, domain);
+                if (!axisType) {
+                    axisType = "linear";
+                }
+                if (axisType === "linear" && options.yAxis.smartAxis) {
+                    axisType = "smart";
+                }
+                if (map[axisType]) {
+                    return new map[axisType](data, options, domain);
+                }
+                // try by namespace
+                if (_.nw.axes[axisType]) {
+                    return new _.nw.axes[axisType](data, options, domain);
+                }
+                throw new Error('Unknown axis type: "' + axisType + '"');
             }
         };
         _.nw = _.extend({}, _.nw, helpers);
@@ -2123,9 +2210,7 @@
                 return [ optMin, optMax ];
             }
         };
-        _.nw = _.extend({}, _.nw, {
-            LinearScale: LinearScale
-        });
+        _.nw.addAxis("LinearScale", LinearScale);
     })();
     (function() {
         var LogYAxis = function(data, options) {
@@ -2137,7 +2222,8 @@
             var range = options.chart.rotatedFrame ? [ 0, rangeSize ] : [ rangeSize, 0 ];
             return scale.range(range);
         }
-        LogYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
+        var __super = _.nw.axes.YAxis.prototype;
+        LogYAxis.prototype = _.extend({}, __super, {
             axis: function() {
                 var options = this.options.yAxis;
                 var domain = this._scale.domain();
@@ -2169,9 +2255,7 @@
                 this.scale();
             }
         });
-        _.extend(_.nw, {
-            LogYAxis: LogYAxis
-        });
+        _.nw.addAxis("LogYAxis", LogYAxis);
     })();
     (function() {
         // implements the following interface
@@ -2240,9 +2324,8 @@
                 // center of text line is at .31em
                 var cos = Math.cos(rad);
                 var sin = Math.sin(rad);
-                var positive = options.labels.rotation > 0;
                 var anchor = options.labels.rotation < 0 ? "end" : options.labels.rotation > 0 ? "start" : "middle";
-                var labels = axisGroup.selectAll(".tick text").style({
+                axisGroup.selectAll(".tick text").style({
                     "text-anchor": anchor
                 }).attr("transform", function(d, i, j) {
                     var x = d3.select(this).attr("x") || 0;
@@ -2256,8 +2339,7 @@
             },
             update: function(domain, data) {
                 this.data = data;
-                this.setDomain(domain);
-                this.scale();
+                this.scale(domain);
             },
             setDomain: function(domain) {
                 this._domain = domain;
@@ -2278,9 +2360,7 @@
                 return this.isCategorized ? this._scale[rangeType](range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) : this._scale.rangePoints(range);
             }
         };
-        _.nw = _.extend({}, _.nw, {
-            OrdinalScale: OrdinalScale
-        });
+        _.nw.addAxis("OrdinalScale", OrdinalScale);
     })();
     (function() {
         var SmartYAxis = function(data, options, domain) {
@@ -2307,13 +2387,14 @@
             }
             return _.nw.merge([ min, max ], yMax);
         }
-        SmartYAxis.prototype = _.extend({}, _.nw.YAxis.prototype, {
+        var __super = _.nw.axes.YAxis.prototype;
+        SmartYAxis.prototype = _.extend({}, __super, {
             axis: function() {
                 var options = this.options.yAxis;
                 this.domain = this._scale.domain();
                 var tickValues = _extractYTickValues(this.domain, options.min, options.max, this.yMin, this.yMax, this.dataMax);
                 var numTicks = this.numTicks();
-                var axis = _.nw.YAxis.prototype.axis.call(this);
+                var axis = __super.axis.call(this);
                 return axis.ticks(numTicks).tickValues(tickValues);
             },
             numTicks: function() {
@@ -2338,9 +2419,7 @@
                 this._scale.domain(nice);
             }
         });
-        _.extend(_.nw, {
-            SmartYAxis: SmartYAxis
-        });
+        _.nw.addAxis("SmartYAxis", SmartYAxis);
     })();
     (function() {
         // implements the following interface
@@ -2440,9 +2519,7 @@
                 return [ 0, size ];
             }
         };
-        _.nw = _.extend({}, _.nw, {
-            TimeScale: TimeScale
-        });
+        _.nw.addAxis("TimeScale", TimeScale);
     })();
     (function() {
         var defaults = {
@@ -2572,8 +2649,6 @@
         var _stackedExtent = function(data) {
             var stack = _.nw.stackLayout();
             var dataSets = stack(data);
-            var min = {};
-            var max = {};
             var ext = [];
             _.each(dataSets, function(set) {
                 _.each(set.data, function(d, i) {
@@ -2636,7 +2711,8 @@
             },
             area: {
                 stacked: true,
-                areaBase: undefined
+                areaBase: undefined,
+                preprocess: _.nw.minMaxFilter(1e3)
             }
         };
         /* jshint eqnull:true */
@@ -2678,6 +2754,7 @@
             renderSeries();
             if (options.tooltip && options.tooltip.enable) renderTooltipTrackers();
             function renderSeries() {
+                data = options.area.preprocess(data);
                 var series = layer.selectAll("g.series").data(stack(data));
                 series.enter().append("svg:g").attr("class", classFn).append("path").datum(function(d) {
                     return d.data;
@@ -2752,6 +2829,9 @@
                 },
                 offset: function() {
                     return 0;
+                },
+                preprocess: function(data) {
+                    return data;
                 }
             }
         };
@@ -2776,6 +2856,7 @@
             var classFn = function(d, i) {
                 return "series s-" + (i + 1) + " " + d.name;
             };
+            data = options.bar.preprocess(data);
             var series = layer.selectAll("g.series").data(stack(data));
             series.enter().append("svg:g").attr("class", classFn);
             series.exit().remove();
@@ -2880,7 +2961,6 @@
             this.checkDependencies("cartesian");
             var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
             var opt = options.column;
-            var w = options.chart.plotWidth;
             var h = options.chart.plotHeight;
             var rectClass = options.column.columnClass;
             var rectStyle = options.column.style;
@@ -2915,10 +2995,6 @@
             var cols = series.selectAll(".column").data(dataKey, function(d) {
                 return d.x || d;
             });
-            var offset = function(d, i) {
-                return rangeBand / data.length * i;
-            };
-            var width = rangeBand / data.length - opt.groupPadding - .5;
             var cssClass = "column" + (options.tooltip.enable ? " tooltip-tracker" : "");
             cols.enter().append("rect").attr("class", function(d, i, j) {
                 if (!rectClass) return cssClass;
@@ -3015,12 +3091,12 @@
         };
         function validAlignmentClasses(options) {
             var classes = [];
-            if ([ "top", "middle", "bottom" ].indexOf(options.legend.vAlign) != -1) {
+            if ([ "top", "middle", "bottom" ].indexOf(options.legend.vAlign) !== -1) {
                 classes.push(options.legend.vAlign);
             } else {
                 classes.push("top");
             }
-            if ([ "left", "center", "right" ].indexOf(options.legend.hAlign) != -1) {
+            if ([ "left", "center", "right" ].indexOf(options.legend.hAlign) !== -1) {
                 classes.push(options.legend.hAlign);
             } else {
                 classes.push("right");
@@ -3085,7 +3161,7 @@
                 return styles.join(";");
             });
             var entries = container.selectAll(".contour-legend-entry").data(data);
-            var enter = entries.enter().append("div").attr("class", function() {
+            entries.enter().append("div").attr("class", function() {
                 return "contour-legend-entry";
             });
             entries.append("span").attr("class", function(d, i) {
@@ -3127,7 +3203,8 @@
                 marker: {
                     enable: true,
                     size: 3
-                }
+                },
+                preprocess: _.nw.minMaxFilter(1e3)
             }
         };
         var duration;
@@ -3167,30 +3244,17 @@
         /* jshint eqnull: true */
         function render(rawData, layer, options, id) {
             this.checkDependencies("cartesian");
-            function optimizeData(rawData) {
-                return _.map(rawData, function(s) {
-                    return _.extend(s, {
-                        data: _.filter(s.data, function(d, i) {
-                            if (i === 0 && d.y != null) return true;
-                            var differentX = x(s.data[i - 1]) !== x(d);
-                            // && y(s.data[i-1]) !== y(d);
-                            return d.y != null && differentX;
-                        })
-                    });
-                });
-            }
             var x = _.bind(function(d) {
                 return this.xScale(d.x) + this.rangeBand / 2 + .5;
             }, this);
             var y = _.bind(function(d) {
                 return this.yScale(d.y + (d.y0 || 0)) + .5;
             }, this);
-            var h = options.chart.plotHeight;
             var shouldAnimate = options.chart.animations && options.chart.animations.enable;
             animationDirection = options.line.animationDirection || "left-to-right";
             duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
             // jshint eqnull:true
-            var data = optimizeData(rawData);
+            var data = options.line.preprocess(_.nw.cleanNullValues()(rawData));
             data = options.line.stacked ? d3.layout.stack().values(function(d) {
                 return d.data;
             })(data) : data;
@@ -3225,7 +3289,7 @@
                 var el = series.enter().append("svg:g").attr("class", seriesClassName("series")).append("path").attr("class", "line");
                 if (shouldAnimate) {
                     var startLineFn = animationDirection === "left-to-right" ? line : startLine;
-                    var path = el.attr("d", function(d) {
+                    el.attr("d", function(d) {
                         return startLineFn(d.data);
                     }).call(_.partial(animFn.enter, line));
                 } else {
@@ -3359,7 +3423,7 @@
             };
         }
         function calcPadding(options) {
-            padding = normalizePadding(options);
+            var padding = normalizePadding(options);
             var w = options.chart.plotWidth;
             var h = options.chart.plotHeight;
             return clampBounds(padding, w, h);
@@ -3408,7 +3472,6 @@
             }).sort(null);
             var totalWidth = totalPadding + radius * numSeries * 2;
             var outerPaddingLeft = shouldCenterX ? (w - totalWidth) / 2 : pixelPadding.left;
-            var centerX = (w - radius * 2 * (numSeries - 1)) / 2;
             var centerY = h / 2;
             var classFn = function(d, i, j) {
                 var baseClass = "series arc" + (options.tooltip.enable ? " tooltip-tracker" : "") + " s-" + (i + 1) + " " + d.data.x;
@@ -3421,7 +3484,6 @@
                 // calc the left side coord of the pie, including padding for the prevousous pies
                 var offsetX = outerPaddingLeft + (radius * 2 * i + (pixelPadding.right + pixelPadding.left) * i);
                 // calc the center of the pie starting from offsetX
-                var posX = radius;
                 var posY = shouldCenterY ? centerY : radius + pixelPadding.top;
                 return "translate(" + (radius + offsetX) + "," + posY + ")";
             };
@@ -3493,7 +3555,10 @@
                 type: "linear"
             },
             scatter: {
-                radius: 4
+                radius: 4,
+                preprocess: function(data) {
+                    return data;
+                }
             }
         };
         function ScatterPlot(data, layer, options) {
@@ -3512,6 +3577,7 @@
             var classFn = function(d, i) {
                 return d.name + " series s-" + (i + 1);
             };
+            data = options.scatter.preprocess(data);
             var series = layer.selectAll(".series").data(data);
             series.attr("class", classFn);
             series.enter().append("svg:g").attr("class", classFn);
@@ -3634,7 +3700,6 @@
                     this.tooltipElement.style("opacity", opacity);
                 }
             };
-            function getPosition(options) {}
             var positionTooltip = function(d) {
                 var pointOrCentroid = function() {
                     return d3.event.target.tagName === "path" ? _.nw.getCentroid(d3.event.target) : d3.mouse(this.container.node());
@@ -3735,7 +3800,7 @@
             };
             var show = function(d) {
                 clearHideTimer.call(this);
-                dataPoints = findOriginalDataPoint(d);
+                var dataPoints = findOriginalDataPoint(d);
                 this.tooltipElement.select(".text").html(getTooltipText.call(this, dataPoints[0] || d, dataPoints));
                 var pos = positionTooltip.call(this, d);
                 this.tooltipElement.style("top", pos.y + "px").style("left", pos.x + "px");
@@ -3743,12 +3808,13 @@
             };
             function findOriginalDataPoint(d) {
                 var res = [];
-                _.each(data, function(series) {
+                _.each(data, function(series, seriesIndex) {
                     var name = series.name;
                     _.each(series.data, function(point) {
                         if (point.x === d.x && d.y === point.y) {
                             res.push(_.extend(point, {
-                                series: name
+                                series: name,
+                                seriesIndex: seriesIndex
                             }));
                         }
                     });
