@@ -29,10 +29,9 @@
         scale: function (domain) {
             if(!this._scale) {
                 this._scale = new d3.scale.ordinal();
-                this._range();
             }
 
-            this.setDomain(domain);
+            this.setDomain(domain || this.data);
 
             return this._scale;
         },
@@ -41,6 +40,7 @@
         axis: function () {
             var options = this.options.xAxis;
             var optFormat = (options.labels.format ? d3.format(options.labels.format) : 0);
+            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'g');
 
             var tickFormat = options.labels.formatter || (!this.isCategorized ? optFormat : 0) || function (d) { return _.isDate(d) ? d.getDate() : d; };
             var axis = d3.svg.axis()
@@ -49,6 +49,9 @@
                 .outerTickSize(options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickFormat(tickFormat);
+
+            var ticks = this.isCategorized && options.categories ? options.categories : _.range(this._domain.length) || [];
+            var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
 
             if (options.firstAndLast) {
                 // show only first and last tick
@@ -62,6 +65,10 @@
                 if (options.ticks === 0) {
                     axis.tickValues([]);
                 }
+            } else if (!labelsFit) {
+                var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                axis.tickValues(finalTicks);
+                axis.ticks(finalTicks.length);
             } else {
                 axis.tickValues(options.categories);
             }
