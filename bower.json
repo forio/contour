@@ -8,7 +8,7 @@
   ],
   "ignore": [
     "**/*",
-    "!dist/contour.{js,css}"
+    "!dist/**/*.*"
   ],
   "dependencies": {
     "lodash": "~2.4.1",
