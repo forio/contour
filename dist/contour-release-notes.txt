@@ -1,3 +1,2 @@
-  * Implemented auto fitting of labels for ordinal axes
-  * Refactor fitting of x axis labels out of linear axis and into _.nw
-  * Switch order or build/test in build process to allow for development workflow
+  * updated bower version
+  * fixed bower included files

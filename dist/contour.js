@@ -1,4 +1,4 @@
-/*! Contour - v0.9.114 - 2015-04-02 */
+/*! Contour - v0.9.115 - 2015-04-21 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -2114,7 +2114,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.114";
+    Contour.version = "0.9.115";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {

@@ -1,7 +1,7 @@
 {
   "name": "Contour",
   "description": "Forio's Visualization Library",
-  "version": "0.9.114",
+  "version": "0.9.115",
   "repository": {
     "url": "https://github.com/forio/contour",
     "type": "git"
