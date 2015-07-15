@@ -1,4 +1,4 @@
-/*! Contour - v0.9.116 - 2015-07-15 */
+/*! Contour - v0.9.117 - 2015-07-15 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -2114,7 +2114,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.116";
+    Contour.version = "0.9.117";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {
@@ -3366,7 +3366,7 @@
                     return d.x;
                 });
                 if (shouldAnimate) {
-                    dots.transition().delay(animationDelay).attr("cx", x).attr("cy", y).attr("opacity", 1);
+                    dots.transition().delay(animationDelay).duration(duration).attr("cx", x).attr("cy", y).attr("opacity", 1);
                 } else {
                     dots.attr("cx", x).attr("cy", y).attr("opacity", 1);
                 }
