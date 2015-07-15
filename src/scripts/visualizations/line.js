@@ -152,7 +152,7 @@
                 .data(function (d) { return d.data; }, function (d) { return d.x; });
 
             if (shouldAnimate) {
-                dots.transition().delay(animationDelay)
+                dots.transition().delay(animationDelay).duration(duration)
                     .attr('cx', x)
                     .attr('cy', y)
                     .attr('opacity', 1);
