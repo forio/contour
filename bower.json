@@ -1,7 +1,7 @@
 {
   "name": "Contour",
   "description": "Forio's Visualization Library",
-  "version": "0.9.115",
+  "version": "0.9.116",
   "main": [
     "dist/contour.css",
     "dist/contour.js"

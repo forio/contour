@@ -1,4 +1,4 @@
-/*! Contour - v0.9.115 - 2015-04-21 */
+/*! Contour - v0.9.116 - 2015-07-15 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -2114,7 +2114,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.115";
+    Contour.version = "0.9.116";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {
@@ -2353,7 +2353,9 @@
                 var deg = options.labels.rotation;
                 var rad = _.nw.degToRad(deg);
                 var sign = deg > 0 ? 1 : deg < 0 ? -1 : 0;
-                var lineCenter = .71;
+                var pos = deg < 0 ? -1 : 1;
+                var lineHeight = .71;
+                var lineCenter = lineHeight / 2;
                 // center of text line is at .31em
                 var cos = Math.cos(rad);
                 var sin = Math.sin(rad);
@@ -2365,8 +2367,12 @@
                     var y = d3.select(this).attr("y") || 0;
                     return "rotate(" + options.labels.rotation + " " + x + "," + y + ")";
                 }).attr("dy", function(d, i, j) {
-                    return (cos * lineCenter).toFixed(4) + "em";
+                    var ref = deg === 0 ? lineHeight : lineCenter;
+                    var num = cos * ref + sin * ref * pos;
+                    return num.toFixed(4) + "em";
                 }).attr("dx", function(d, i, j) {
+                    // var num = ((sin * lineCenter * pos));
+                    // return -num.toFixed(4) + 'em';
                     return -(sin * lineCenter - .31 * sign).toFixed(4) + "em";
                 });
             },
@@ -3235,7 +3241,8 @@
                 // animationDirection: 'bottom-to-top',
                 marker: {
                     enable: true,
-                    size: 3
+                    size: 3,
+                    animationDelay: 0
                 },
                 preprocess: _.nw.minMaxFilter(1e3)
             }
@@ -3347,6 +3354,7 @@
                 }
             }
             function renderMarkers() {
+                var animationDelay = options.line.marker.animationDelay;
                 var markers = layer.selectAll(".line-chart-markers").data(data, function(d) {
                     return d.name;
                 });
@@ -3357,15 +3365,13 @@
                 }, function(d) {
                     return d.x;
                 });
-                dots.enter().append("circle").attr("class", "dot").attr("r", options.line.marker.size).attr("opacity", 0);
-                // .attr('cx', x)
-                // .attr('cy', y);
-                dots.exit().remove();
                 if (shouldAnimate) {
-                    dots.transition().delay(duration).attr("cx", x).attr("cy", y).attr("opacity", 1);
+                    dots.transition().delay(animationDelay).attr("cx", x).attr("cy", y).attr("opacity", 1);
                 } else {
                     dots.attr("cx", x).attr("cy", y).attr("opacity", 1);
                 }
+                dots.enter().append("circle").attr("class", "dot").attr("r", options.line.marker.size).attr("opacity", 0).attr("cx", x).attr("cy", y).transition().delay(duration).attr("opacity", 1);
+                dots.exit().remove();
             }
             function renderTooltipTrackers() {
                 var trackerSize = 10;

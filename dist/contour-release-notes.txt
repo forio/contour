@@ -1,2 +1,4 @@
-  * updated bower version
-  * fixed bower included files
+  * Added animationDelay options to line markers to control independently of animationDuration and is turned off by default
+  * Changed the way rotated labels work to make then align with the ticks
+  * Updated notice.md with webcomponents and polymer
+  * Added web component wrappers for column and line charts
