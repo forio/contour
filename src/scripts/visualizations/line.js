@@ -11,7 +11,8 @@
             // animationDirection: 'bottom-to-top',
             marker: {
                 enable: true,
-                size: 3
+                size: 3,
+                animationDelay: 0,
             },
             preprocess: _.nw.minMaxFilter(1000)
         }
@@ -138,6 +139,7 @@
         }
 
         function renderMarkers() {
+            var animationDelay = options.line.marker.animationDelay;
             var markers = layer.selectAll('.line-chart-markers')
                 .data(data, function (d) { return d.name; });
 
@@ -149,17 +151,8 @@
             var dots = markers.selectAll('.dot')
                 .data(function (d) { return d.data; }, function (d) { return d.x; });
 
-            dots.enter().append('circle')
-                .attr('class', 'dot')
-                .attr('r', options.line.marker.size)
-                .attr('opacity', 0);
-                // .attr('cx', x)
-                // .attr('cy', y);
-
-            dots.exit().remove();
-
             if (shouldAnimate) {
-                dots.transition().delay(duration)
+                dots.transition().delay(animationDelay)
                     .attr('cx', x)
                     .attr('cy', y)
                     .attr('opacity', 1);
@@ -168,6 +161,19 @@
                     .attr('cy', y)
                     .attr('opacity', 1);
             }
+
+
+            dots.enter().append('circle')
+                .attr('class', 'dot')
+                .attr('r', options.line.marker.size)
+                .attr('opacity', 0)
+                .attr('cx', x)
+                .attr('cy', y)
+                .transition().delay(duration)
+                    .attr('opacity', 1);
+
+            dots.exit().remove();
+
         }
 
         function renderTooltipTrackers() {
