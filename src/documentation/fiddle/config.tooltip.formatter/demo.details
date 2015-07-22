@@ -1,0 +1,6 @@
+---
+ name: config.tooltip.formatter
+ authors:
+   - Forio
+ normalize_css: no
+ ...
