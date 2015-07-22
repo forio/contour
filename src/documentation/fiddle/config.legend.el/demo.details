@@ -1,0 +1,6 @@
+---
+ name: config.legend.el
+ authors:
+   - Forio
+ normalize_css: no
+ ...
