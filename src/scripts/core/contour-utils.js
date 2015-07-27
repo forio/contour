@@ -147,6 +147,20 @@
             return rad * 180 / Math.PI;
         },
 
+        rotatePoint: function (point, rad) {
+            return {
+                x: point.x * Math.cos(rad) - point.y * Math.sin(rad),
+                y: point.x * Math.sin(rad) + point.y * Math.cos(rad)
+            };
+        },
+
+        translatePoint: function (point, delta) {
+            return {
+                x: point.x + delta.x,
+                y: point.y + delta.y
+            };
+        },
+
         linearRegression: function (dataSrc) {
             var lr = {};
             var n = dataSrc.length;
