@@ -515,8 +515,8 @@
 
                 g.enter().append('rect')
                     .attr('class', 'plot-area-background')
-                    .attr('x', 0)
-                    .attr('y', 0)
+                    .attr('x', options.internalPadding.left)
+                    .attr('y', options.internalPadding.top)
                     .attr('width', options.plotWidth)
                     .attr('height', options.plotHeight);
 
