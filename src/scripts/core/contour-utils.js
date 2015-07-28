@@ -609,7 +609,22 @@
         },
 
         getCentroid: function (element) {
-            var parentBox = element.offsetParent.getBoundingClientRect();
+            var getOffsetParent = function () {
+                if (element.offsetParent) {
+                    return element.offsetParent;
+                }
+
+                // we we don't have an offsetParent, we may be in firefox
+                // let's just assume that the offset parent is the svg element
+                var t = element;
+                while(t && t.tagName !== 'svg') {
+                    t = t.parentNode;
+                }
+
+                return t;
+            };
+
+            var parentBox = getOffsetParent().getBoundingClientRect();
             var bbox = element.getBoundingClientRect();
 
             return [bbox.left - parentBox.left + bbox.width/2, bbox.top - parentBox.top + bbox.height/2];
