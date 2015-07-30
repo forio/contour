@@ -8,7 +8,7 @@ The default value is a function that:
 
 * Takes in an integer, which is 1000 in the default case.
 * If the number of points in your data set is less than or equal to this, simply returns the entire data set.
-* Otherwise, returns a filtered data set. The filtering creates a new, smaller, data set, which has at most two data points for each x value in the original data: one with the minimum y value and one with the maximum y value.
+* Otherwise, returns a filtered data set. The filtering creates a new, smaller, data set, which has at most two data points for each screen x value in the original data: one with the minimum y value and one with the maximum y value. (That is, the original data could have different x values, but if they will project onto the same x screen coordinate, they're filtered.)
 
 This configuration option allows you to define a `preprocess` attribute that returns only the data that should be drawn. This is a function that returns a data set, for example one created using a different filtering algorithm than the provided default function.
 
