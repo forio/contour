@@ -332,7 +332,7 @@
         *
         *     new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
-        *           .render()
+        *           .render();
         *
         * @function render
         *
@@ -350,14 +350,15 @@
         },
 
         /**
-        * Clears this Contour instance and all its visualizations of any size information so that on the next call to render the instace is re-measured.
+        * Clears this Contour instance and all its visualizations of any size information, so that on the next call to `render()` the instance is re-measured.
         *
-        * The function takes two optional arguements width, height -- if given a specific width/height the chart will use that sizing information on the next render.
+        * The function takes two optional arguments `width` and `height`. If given a specific width/height the chart uses that sizing information on the next render.
+        *
         * ### Example:
         *
         *     var contour = new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
-        *           .render()
+        *           .render();
         *
         *     var onResize = function(e) {
         *          contour.resize().render();
@@ -366,8 +367,8 @@
         *     window.addEventListener('resize', onResize);
         *
         * @function resize
-        * @param {Number} width (optional) The new width for the visualizations.  If left blank the width will be calcuated from options.el's parent.
-        * @param {Number} height (optional) The new height for the visualizations.  If left blank the height will be calcuated from options.el's parent.
+        * @param {Number} width (optional) The new width for the visualizations. If left blank, the width will be calcuated from options.el's parent.
+        * @param {Number} height (optional) The new height for the visualizations. If left blank, the height will be calcuated from options.el's parent.
         */
         resize: function(width, height) {
 
@@ -516,12 +517,12 @@
         *
         *     var chart = new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
-        *           .render()
+        *           .render();
         *
-        *     var myPie = chart.select(0)
+        *     var myPie = chart.select(0);
         *
         *     // do something with the visualization, for example updating its data set
-        *     myPie.setData([6,7,8,9]).render()
+        *     myPie.setData([6,7,8,9]).render();
         *
         * @function select
         *

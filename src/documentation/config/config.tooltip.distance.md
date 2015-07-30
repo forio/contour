@@ -15,7 +15,7 @@ In general the tooltip is drawn above and to the left of the data point. It is a
 	.cartesian()
 	.line(data)
 	.tooltip()
-	.render()
+	.render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 

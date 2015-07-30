@@ -7,7 +7,8 @@
             direction: 'vertical',
             formatter: function (d) {
                 return d.name;
-            }
+            },
+            el: undefined
         }
     };
 

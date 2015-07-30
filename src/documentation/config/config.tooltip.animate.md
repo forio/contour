@@ -15,7 +15,7 @@ When `false`, the tooltip appears instantaneously (`false`).
 	.cartesian()
 	.line(data)
 	.tooltip()
-	.render() 
+	.render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 

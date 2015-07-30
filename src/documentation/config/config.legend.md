@@ -15,7 +15,7 @@ To override any of the default configuration options in a `legend`, include the 
     .cartesian()
     .line(data)
     .legend(data)
-    .render()
+    .render();
 
 *[Try it.](<%= jsFiddleLink %>)*
 

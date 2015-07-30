@@ -6,7 +6,8 @@
             opacity: 0.85,
             showTime: 300,
             hideTime: 500,
-            distance: 5
+            distance: 5,
+            formatter: undefined //defined in formatters array in getTooltipText()
         }
     };
 
