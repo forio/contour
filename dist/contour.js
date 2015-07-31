@@ -1,4 +1,4 @@
-/*! Contour - v0.9.117 - 2015-07-15 */
+/*! Contour - v1.0.0 - 2015-07-31 */
 (function(exports, global) {
     global["true"] = exports;
     (function(undefined) {
@@ -146,6 +146,18 @@
             },
             radToDeg: function(rad) {
                 return rad * 180 / Math.PI;
+            },
+            rotatePoint: function(point, rad) {
+                return {
+                    x: point.x * Math.cos(rad) - point.y * Math.sin(rad),
+                    y: point.x * Math.sin(rad) + point.y * Math.cos(rad)
+                };
+            },
+            translatePoint: function(point, delta) {
+                return {
+                    x: point.x + delta.x,
+                    y: point.y + delta.y
+                };
             },
             linearRegression: function(dataSrc) {
                 var lr = {};
@@ -527,7 +539,19 @@
                 return style ? styles[style] : styles;
             },
             getCentroid: function(element) {
-                var parentBox = element.offsetParent.getBoundingClientRect();
+                var getOffsetParent = function() {
+                    if (element.offsetParent) {
+                        return element.offsetParent;
+                    }
+                    // we we don't have an offsetParent, we may be in firefox
+                    // let's just assume that the offset parent is the svg element
+                    var t = element;
+                    while (t && t.tagName !== "svg") {
+                        t = t.parentNode;
+                    }
+                    return t;
+                };
+                var parentBox = getOffsetParent().getBoundingClientRect();
                 var bbox = element.getBoundingClientRect();
                 return [ bbox.left - parentBox.left + bbox.width / 2, bbox.top - parentBox.top + bbox.height / 2 ];
             }
@@ -821,7 +845,7 @@
         *
         *     new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
-        *           .render()
+        *           .render();
         *
         * @function render
         *
@@ -834,14 +858,15 @@
                 return this;
             },
             /**
-        * Clears this Contour instance and all its visualizations of any size information so that on the next call to render the instace is re-measured.
+        * Clears this Contour instance and all its visualizations of any size information, so that on the next call to `render()` the instance is re-measured.
         *
-        * The function takes two optional arguements width, height -- if given a specific width/height the chart will use that sizing information on the next render.
+        * The function takes two optional arguments `width` and `height`. If given a specific width/height the chart uses that sizing information on the next render.
+        *
         * ### Example:
         *
         *     var contour = new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
-        *           .render()
+        *           .render();
         *
         *     var onResize = function(e) {
         *          contour.resize().render();
@@ -850,8 +875,8 @@
         *     window.addEventListener('resize', onResize);
         *
         * @function resize
-        * @param {Number} width (optional) The new width for the visualizations.  If left blank the width will be calcuated from options.el's parent.
-        * @param {Number} height (optional) The new height for the visualizations.  If left blank the height will be calcuated from options.el's parent.
+        * @param {Number} width (optional) The new width for the visualizations. If left blank, the width will be calcuated from options.el's parent.
+        * @param {Number} height (optional) The new height for the visualizations. If left blank, the height will be calcuated from options.el's parent.
         */
             resize: function(width, height) {
                 if (this.container) this.container.style("height", 0);
@@ -960,12 +985,12 @@
         *
         *     var chart = new Contour({ el:'.myChart' })
         *           .pie([1,2,3])
-        *           .render()
+        *           .render();
         *
-        *     var myPie = chart.select(0)
+        *     var myPie = chart.select(0);
         *
         *     // do something with the visualization, for example updating its data set
-        *     myPie.setData([6,7,8,9]).render()
+        *     myPie.setData([6,7,8,9]).render();
         *
         * @function select
         *
@@ -1442,7 +1467,7 @@
                     var options = this.options.chart;
                     this.background = this.background || this.createVisualizationLayer("background", 0);
                     var g = this.background.selectAll(".plot-area-background").data([ null ]);
-                    g.enter().append("rect").attr("class", "plot-area-background").attr("x", 0).attr("y", 0).attr("width", options.plotWidth).attr("height", options.plotHeight);
+                    g.enter().append("rect").attr("class", "plot-area-background").attr("x", options.internalPadding.left).attr("y", options.internalPadding.top).attr("width", options.plotWidth).attr("height", options.plotHeight);
                     g.exit().remove();
                     return this;
                 },
@@ -2114,7 +2139,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "0.9.117";
+    Contour.version = "1.0.0";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {
@@ -3125,7 +3150,8 @@
                 direction: "vertical",
                 formatter: function(d) {
                     return d.name;
-                }
+                },
+                el: undefined
             }
         };
         function validAlignmentClasses(options) {
@@ -3725,7 +3751,8 @@
                 opacity: .85,
                 showTime: 300,
                 hideTime: 500,
-                distance: 5
+                distance: 5,
+                formatter: undefined
             }
         };
         function render(data, layer, options) {
