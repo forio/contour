@@ -1,1 +1,2 @@
   * updated version file to 1.0.0
+  * updated version file to 1.0.0
