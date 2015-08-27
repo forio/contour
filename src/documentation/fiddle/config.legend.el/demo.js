@@ -7,7 +7,7 @@ $(function () {
     new Contour({
         el: '.myChart',
         xAxis: { type: 'linear' },
-        legend: { el: 'myLegend' }
+        legend: { el: '.myLegend' }
       })
     .cartesian()
     .line(data)
