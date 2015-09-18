@@ -3931,7 +3931,7 @@
         function ctor(raw, layer, options) {
             this.checkDependencies("cartesian");
             var data = normalizeDataSet(raw);
-            var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
+            var duration = options.chart.trendline.animations.duration != null ? options.chart.trendline.animations.duration : 400;
             var shouldAnimate = options.chart.animations && options.chart.animations.enable;
             var x = _.bind(function(d) {
                 return this.xScale(d) + this.rangeBand / 2;
