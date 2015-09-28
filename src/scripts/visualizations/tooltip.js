@@ -137,7 +137,7 @@
 
             var dataPoints = findOriginalDataPoint(d);
 
-            this.tooltipElement.select('.text').html(getTooltipText.call(this, dataPoints[0] || d, dataPoints));
+            this.tooltipElement.select('.text').html(getTooltipText.call(this, d || dataPoints[0], dataPoints));
 
             var pos = positionTooltip.call(this, d);
 
