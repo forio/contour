@@ -23,23 +23,27 @@
         var line = layer.selectAll('.trend-line')
             .data([1]);
 
-        line.enter().append('line')
-            .attr('class', 'trend-line')
-            .attr('x1', x(domain[0]))
-            .attr('y1', y(lineY(numericDomain[0])))
-            .attr('x2', x(domain[0]))
-            .attr('y2', y(lineY(numericDomain[0])));
+        if (isNaN(lineY(numericDomain[0])) || isNaN(lineY(numericDomain[1])) || isNaN(x(domain[0])) || isNaN(x(domain[1]))) {
+            line.remove();
+        } else {
+            line.enter().append('line')
+              .attr('class', 'trend-line')
+              .attr('x1', x(domain[0]))
+              .attr('y1', y(lineY(numericDomain[0])))
+              .attr('x2', x(domain[0]))
+              .attr('y2', y(lineY(numericDomain[0])));
 
-        line.exit().remove();
+            line.exit().remove();
 
-        if (shouldAnimate) {
-            line = line.transition().duration(duration);
+            if (shouldAnimate) {
+                line = line.transition().duration(duration);
+            }
+
+            line.attr('x1', x(domain[0]))
+              .attr('y1', y(lineY(numericDomain[0])))
+              .attr('x2', x(domain[1]))
+              .attr('y2', y(lineY(numericDomain[1])));
         }
-
-        line.attr('x1', x(domain[0]))
-            .attr('y1', y(lineY(numericDomain[0])))
-            .attr('x2', x(domain[1]))
-            .attr('y2', y(lineY(numericDomain[1])));
     }
 
     ctor.defaults = {};
