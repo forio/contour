@@ -80,22 +80,23 @@
 
             markers.exit().remove();
 
-            var dots = markers.selectAll('.tooltip-tracker')
+            var blocks = markers.selectAll('.tooltip-tracker')
                     .data(function (d) {
                         return d.data;
                     }, function (d, i) {
                         return [d.x,d.y,d.y0].join('&');
                     });
 
-            dots.enter().append('circle')
+            blocks.enter().append('rect')
                     .attr('class', 'tooltip-tracker')
                     .attr('opacity', 0)
-                    .attr('r', trackerSize);
+                    .attr('width', trackerSize * 2);
 
-            dots.attr('cx', function(d) { return x(d.x); })
-                .attr('cy', function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); });
+            blocks.attr('x', function(d) { return x(d.x) - trackerSize; })
+                .attr('y', function(d) { return y((options.area.stacked ? d.y0 : 0) + d.y); })
+                .attr('height', function(d) { return y(0) - y(d.y); });
 
-            dots.exit().remove();
+            blocks.exit().remove();
 
         }
     }
