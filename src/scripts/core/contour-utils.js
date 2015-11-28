@@ -227,23 +227,11 @@
         niceMinMax: function (min, max, ticks, startAtZero) {
             // return divFloat(Math.ceil(mulFloat(value, Math.pow(10, digits))), Math.pow(10, digits));
 
-            var swap = false;
-            var origMax = max;
-            if (max < 0 && min < 0) {
-                max = -min;
-                min = -origMax;
-                swap = true;
-            }
-
             var excelRoundUp = function (value, up) {
                 up = up != null ? up : 0;
                 var roundFn = function (v) { return v >= 0 ? Math.ceil(v) : Math.floor(v); };
                 return divFloat(roundFn(value * Math.pow(10, up)), Math.pow(10, up));
             };
-            // 2 ticks seem to wokr for min max and passing 5 ticks to d3
-            ticks = ticks || 2;
-
-            startAtZero = min === 0 ? 1 : origMax < 0 ? 1 : 0;
 
             // check for errors... min cannot be > max
             if (min > max) {
@@ -252,6 +240,20 @@
                     max: min,
                     tickValues: []
                 };
+            }
+
+            var swap = max < 0 && min < 0;
+            var origMax = max;
+            if (swap) {
+                max = -min;
+                min = -origMax;
+            }
+
+            // 2 ticks seem to wokr for min max and passing 5 ticks to d3
+            ticks = ticks || 2;
+
+            if (startAtZero == null) {
+                startAtZero = min === 0 || origMax < 0;
             }
 
             var exponent;
