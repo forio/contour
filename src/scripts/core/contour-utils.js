@@ -320,7 +320,7 @@
 
             return {
                 min: swap ? -finalMax : finalMin,
-                max: swap ? - finalMin : finalMax,
+                max: swap ? -finalMin : finalMax,
                 tickValues: ticksValues.map(function (a) { return swap ? -a : a; })
             };
 
