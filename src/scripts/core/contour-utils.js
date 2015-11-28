@@ -3,10 +3,10 @@
     // note that this fails for very large numbers
     var multiplier = function (x) { var dig = _.nw.decDigits(x); return dig === 0 ? 1 : Math.pow(10, dig); };
     var maxMultiplier = function (a,b) { return Math.max(multiplier(a), multiplier(b)); };
-    var addFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = a * factor, bb = b * factor; return (aa + bb) / factor; };
-    var subFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = a * factor, bb = b * factor; return (aa - bb) / factor; };
-    var mulFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = a * factor, bb = b * factor; return (aa * bb) / (factor*factor); };
-    var divFloat = function (a,b) { return +((a / b).toFixed(_.nw.digits(maxMultiplier(a,b)))); };
+    var addFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return (aa + bb) / factor; };
+    var subFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return (aa - bb) / factor; };
+    var mulFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return (aa * bb) / (factor*factor); };
+    var divFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return aa / bb; };
 
     var noop = function () {};
 
