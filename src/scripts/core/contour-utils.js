@@ -254,22 +254,22 @@
                 };
             }
 
-            var a;
+            var exponent;
             if (min === max) {
                 if (max === 0) {
-                    a = -1.0;
+                    exponent = -1.0;
                 } else {
-                    a = numberHelpers.log10(Math.abs(max));
+                    exponent = numberHelpers.log10(Math.abs(max));
                 }
             } else {
                 if(startAtZero) {
-                    a = numberHelpers.log10(Math.abs(max)) - 0.5;
+                    exponent = numberHelpers.log10(Math.abs(max)) - 0.5;
                 } else {
-                    a = numberHelpers.log10(max-min) - 0.5;
+                    exponent = numberHelpers.log10(max-min) - 0.5;
                 }
             }
 
-            var defaultRounding = -(a >= 0 ? numberHelpers.trunc(a) : Math.floor(a));
+            var defaultRounding = -(exponent >= 0 ? numberHelpers.trunc(exponent) : Math.floor(exponent));
 
             // var defaultRounding = -numberHelpers.trunc((min === max ?
             //     max === 0 ? -1.0 : numberHelpers.log10(Math.abs(max)) :
