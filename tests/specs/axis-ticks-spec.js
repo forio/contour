@@ -83,6 +83,34 @@ describe('contour-utils niceMinMax', function () {
         expect(nice.tickValues).toEqual([0, 1e-4, 2e-4, 3e-4, 4e-4, 5e-4]);
     });
 
+    it('should return a slightly different number of round ticks if possible', function () {
+        var nice = _.nw.niceMinMax(0, 3, 5);
+
+        expect(nice.min).toBe(0);
+        expect(nice.max).toBe(3);
+        expect(nice.tickValues).toEqual([0, 1, 2, 3]);
+    });
+
+    describe('when zeroAnchor is false', function () {
+        it('should not anchor at zero', function () {
+            var nice = _.nw.niceMinMax(1, 4, 5, false);
+
+            expect(nice.min).toBe(1);
+            expect(nice.max).toBe(4);
+            expect(nice.tickValues).toEqual([1, 2, 3, 4]);
+        });
+    });
+
+    describe('when zeroAnchor is true', function () {
+        it('should anchor at zero', function () {
+            var nice = _.nw.niceMinMax(1, 3, 5, true);
+
+            expect(nice.min).toBe(0);
+            expect(nice.max).toBe(3);
+            expect(nice.tickValues).toEqual([0, 1, 2, 3]);
+        });
+    });
+
     describe('when min > max', function () {
         it('should return empty ticks array', function () {
             var nice = _.nw.niceMinMax(2, 1, 5);
