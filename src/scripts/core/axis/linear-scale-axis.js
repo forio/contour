@@ -15,13 +15,10 @@
         /*jshint eqnull:true*/
         scale: function (domain) {
             this._domain = domain ? this._getAxisDomain(domain) : this._getAxisDomain(this.data);
-            if(!this._scale) {
-                this._scale = d3.scale.linear().domain(this._domain);
-            } else {
-                this._scale.domain(this._domain);
-            }
+            this._scale = this._scale || d3.scale.linear();
+            this._scale.domain(this._domain);
 
-            if(this.options.xAxis.min == null && this.options.xAxis.max == null){
+            if (this.options.xAxis.min == null && this.options.xAxis.max == null) {
                 this._scale.nice();
             }
 
