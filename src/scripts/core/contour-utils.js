@@ -256,18 +256,17 @@
             // if ticks is an array, use that as order of preferred ticks; otherwise return a
             // variable number of ticks in order to keep values round
             if (_.isNumber(ticks)) {
-                // for 1, check [1, 2]
-                // for 2, check [2, 3, 1]
-                // for 3, check [3, 4, 2]
+                // for 1, check [1]
+                // for 2, check [2, 1]
+                // for 3, check [3, 2]
                 // for 4, check [4, 5, 3]
                 // for 5, check [5, 6, 4, 3]
                 // for 6, check [6, 7, 5, 4]
                 // for 7, check [7, 8, 6, 5]
-                // for 8, check [8, 9, 7, 6]
-                // for 9, check [9, 10, 8, 7, 6]
-                // for 10, check [10, 11, 9, 8, 7]
-                ticks = [ticks]
-                    .concat(ticks + 1)
+                // for 8, check [8, 9, 10, 7, 6]
+                // for 9, check [9, 10, 11, 8, 7, 6]
+                // for 10, check [10, 11, 12, 9, 8, 7]
+                ticks = _.range(ticks, ticks * 1.28)
                     .concat(_.range(ticks - 1, (ticks - 1) * 0.72, -1));
             }
 
