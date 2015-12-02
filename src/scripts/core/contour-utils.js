@@ -119,8 +119,16 @@
         },
 
         decDigits: function (value) {
-            var parts = value.toString().split('.');
-            return parts.length < 2 ? 0 : parts[1].length;
+            var str = value.toString();
+            var parts = str.split('.');
+            if (parts.length === 2) {
+                return parts[1].length;
+            }
+            parts = str.split('e');
+            if (parts.length === 2) {
+                return -Math.min(0, parts[1]);
+            }
+            return 0;
         },
 
         log10: function (value) {
