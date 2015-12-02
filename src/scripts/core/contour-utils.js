@@ -252,7 +252,7 @@
             }
 
             // 2 ticks seem to work for min max and passing 5 ticks to d3
-            ticks = ticks || 2;
+            ticks = ticks == null ? 2 : Math.max(1, ticks);
             // if ticks is an array, use that as order of preferred ticks; otherwise return a
             // variable number of ticks in order to keep values round
             if (_.isNumber(ticks)) {
@@ -370,8 +370,9 @@
         extractScaleDomain: function (domain, min, max, ticks, zeroAnchor) {
             var dataMin = min != null ? min : _.min(domain);
             var dataMax = max != null ? max : _.max(domain);
+            ticks = ticks == null ? 5 : ticks;
 
-            var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, (ticks || 5), zeroAnchor);
+            var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, ticks, zeroAnchor);
 
             return [niceMinMax.min, niceMinMax.max];
 
@@ -393,7 +394,9 @@
         },
 
         niceTicks: function (min, max, ticks, zeroAnchor) {
-            var niceMinMax = axisHelpers.niceMinMax(min, max, (ticks||5), zeroAnchor);
+            ticks = ticks == null ? 5 : ticks;
+
+            var niceMinMax = axisHelpers.niceMinMax(min, max, ticks, zeroAnchor);
             return niceMinMax.tickValues;
         },
 
