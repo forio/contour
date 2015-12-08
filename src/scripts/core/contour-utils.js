@@ -119,7 +119,7 @@
         },
 
         decDigits: function (value) {
-            var str = value.toString();
+            var str = Math.abs(value).toString();
             var parts = str.split('.');
             if (parts.length === 2) {
                 return parts[1].length;
