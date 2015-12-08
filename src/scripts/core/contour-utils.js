@@ -115,7 +115,13 @@
 
         // only works for integers
         digits: function (value) {
-            return value === 0 ? 1 : Math.floor(Math.log(Math.abs(value)) / Math.LN10) + 1;
+            var str = Math.abs(value).toString();
+            var parts = str.split('e');
+            if (parts.length === 2) {
+                return Math.max(0, parts[1]) + 1;
+            }
+            parts = str.split('.');
+            return parts[0].length;
         },
 
         decDigits: function (value) {
