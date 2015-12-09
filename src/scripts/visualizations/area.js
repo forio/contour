@@ -6,7 +6,8 @@
         },
         area: {
             stacked: true,
-            areaBase: undefined
+            areaBase: undefined,
+            preprocess: _.nw.minMaxFilter(1000)
         }
     };
 
@@ -42,6 +43,8 @@
             renderTooltipTrackers();
 
         function renderSeries() {
+            data = options.area.preprocess(data);
+
             var series = layer.selectAll('g.series')
                     .data(stack(data));
 

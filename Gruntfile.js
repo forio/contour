@@ -19,7 +19,7 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['src/scripts/**/*.js'],
-                tasks: ['jshint', 'uglify']
+                tasks: ['uglify', 'jshint', 'jasmine']
             }
         },
         bumpup: {
@@ -88,6 +88,16 @@ module.exports = function (grunt) {
             vis: [
                 'src/scripts/visualizations/**/*.js'
             ]
+        },
+        copy: {
+            webcomponents: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/',
+                    src: 'webcomponents/**',
+                    dest: 'dist'
+                }]
+            }
         },
         include: {
             core: {
@@ -195,18 +205,18 @@ module.exports = function (grunt) {
     });
 
     // Default task.
-    grunt.registerTask('default', ['jshint', 'uglify:concatenate', 'uglify:dev', 'less:dev', 'watch']);
+    grunt.registerTask('default', ['uglify:concatenate', 'uglify:dev', 'less:dev', 'copy', 'watch', 'jshint', 'jasmine']);
 
-    grunt.registerTask('production', ['jshint', 'ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'releaseNotes']);
+    grunt.registerTask('production', ['jshint', 'jasmine', 'ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'copy', 'releaseNotes']);
 
     grunt.registerTask('release', function (type) {
         type = type ? type : 'patch';
-        ['jshint', 'bumpup:' + type, 'ver', 'uglify:concatenate', 'uglify:minify', 'less:production', 'less:uncompressed', 'releaseNotes', 'tagrelease'].forEach(function (task) {
+        ['jshint','jasmine', 'bumpup:' + type, 'ver', 'uglify:concatenate', 'uglify:minify', 'less:production', 'less:uncompressed', 'copy', 'releaseNotes', 'tagrelease'].forEach(function (task) {
             grunt.task.run(task);
         });
     });
 
-    grunt.registerTask('linked', ['jshint', 'uglify:concatenate', 'uglify:dev', 'less:uncompressed', 'less:production', 'watch']);
+    grunt.registerTask('linked', ['uglify:concatenate', 'uglify:dev', 'less:uncompressed', 'less:production','copy','watch',  'jshint', 'jasmine']);
 
 
     grunt.registerMultiTask('releaseNotes', 'Generate a release notes file with changes in git log since last tag', function () {

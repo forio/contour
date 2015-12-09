@@ -23,6 +23,72 @@
         }
     };
 
+    var dataFilters = {
+
+        cleanNullValues: function () {
+            return function (series) {
+                return _.map(series, function (s) {
+                    return _.extend(s, {
+                        data: _.reduce(s.data, function (acum, datum) {
+                            if (datum.y != null) {
+                                acum.push(datum);
+                            }
+
+                            return acum;
+                        }, [])
+                    });
+                });
+            };
+        },
+
+        minMaxFilter: function (desiredLen) {
+            return function(data) {
+                if (data.length <= desiredLen)
+                    return data;
+
+                var toReturn = [data[0]]; //always want the first
+                var index = 1;
+                var increment = Math.floor(data.length / desiredLen);
+
+                while (index < data.length - 1) {
+                    var hasValidPt = false;
+                    var maxPt;
+                    var minPt;
+                    var maxIndex = Math.min(index + increment, data.length);
+
+                    for (var intermediateIndex = index; intermediateIndex < maxIndex; intermediateIndex++) {
+                        var intermediatePt = data[index];
+                        if (intermediatePt.y) {
+                            if (!hasValidPt || intermediatePt.y > maxPt.y)
+                                maxPt = intermediatePt;
+
+                            if (!hasValidPt || intermediatePt.y < minPt.y)
+                                minPt = intermediatePt;
+
+                            hasValidPt = true;
+                        }
+                    }
+
+                    if (hasValidPt) {
+                        if (minPt.x === maxPt.x) {
+                            toReturn.push(minPt);
+                        } else if (minPt.x < maxPt.x) {
+                            toReturn.push(minPt);
+                            toReturn.push(maxPt);
+                        } else if (minPt.x > maxPt.x) {
+                            toReturn.push(maxPt);
+                            toReturn.push(minPt);
+                        }
+                    }
+
+                    index += Math.max(1, Math.min(data.length - 1 - index, increment));
+                }
+                toReturn.push(data[data.length - 1]); //always want the last
+                return toReturn;
+            };
+        }
+    };
+
     var logging = {
         warn: function (msg) {
             if (console && console.log)
@@ -81,6 +147,20 @@
             return rad * 180 / Math.PI;
         },
 
+        rotatePoint: function (point, rad) {
+            return {
+                x: point.x * Math.cos(rad) - point.y * Math.sin(rad),
+                y: point.x * Math.sin(rad) + point.y * Math.cos(rad)
+            };
+        },
+
+        translatePoint: function (point, delta) {
+            return {
+                x: point.x + delta.x,
+                y: point.y + delta.y
+            };
+        },
+
         linearRegression: function (dataSrc) {
             var lr = {};
             var n = dataSrc.length;
@@ -121,6 +201,11 @@
     };
 
     var axisHelpers = {
+        addAxis: function (name, axisCtor) {
+            _.nw.axes = _.nw.axes || {};
+            _.nw.axes[name] = axisCtor;
+        },
+
         roundToNextTick: function (num) {
             var abs = Math.abs(num);
             var sign = abs === num ? 1 : -1;
@@ -155,13 +240,8 @@
                 var roundFn = function (v) { return v >= 0 ? Math.ceil(v) : Math.floor(v); };
                 return divFloat(roundFn(value * Math.pow(10, up)), Math.pow(10, up));
             };
-            var excelMax = function (a, b) { return a >= b ? a : b; };
             // 2 ticks seem to wokr for min max and passing 5 ticks to d3
             ticks = ticks || 2;
-
-            var nearestMul = function (val, mul) { return mulFloat(Math.ceil(val / mul), mul); };
-            var digits = function (val) { return Math.floor(Math.log(Math.abs(val)) / Math.LN10) + 1; };
-            var fac = function (digits) { return Math.pow(10, digits); };
 
             startAtZero = min === 0 ? 1 : origMax < 0 ? 1 : 0;
 
@@ -174,6 +254,7 @@
                 };
             }
 
+            var a;
             if (min === max) {
                 if (max === 0) {
                     a = -1.0;
@@ -274,6 +355,56 @@
         niceTicks: function (min, max, ticks, zeroAnchor) {
             var niceMinMax = axisHelpers.niceMinMax(min, max, (ticks||5), zeroAnchor);
             return niceMinMax.tickValues;
+        },
+
+        calcXLabelsWidths: function (ticks) {
+            var padding = 8;
+            return _.compact(ticks).map(String).map(function (d) {
+                if (!d) {
+                    return padding * 2;
+                }
+                return _.nw.textBounds(d, '.x.axis text').width + (padding * 2);
+            });
+        },
+
+        doXLabelsFit: function (ticks, labelFormatter, options) {
+            var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
+            var availableWidthForLabels = (options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
+            var axisLabelsWidth = _.nw.sum(tickWidths);
+            return axisLabelsWidth <= availableWidthForLabels;
+        },
+
+        getTicksThatFit: function (ticks, labelFormatter, options) {
+            // reduce the number of ticks incrementally by taking every 2nd, then every 3th, and so on
+            // until we find a set of ticks that fits the available space
+            function reduceTicksByMod() {
+                var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
+                var axisLabelsWidth = _.nw.sum(tickWidths);
+                var availableWidthForLabels = (options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
+                var iter = 1;
+                var filterMod = function (d, i) { return (i % iter) === 0; };
+                var finalTicks = ticks;
+                while(axisLabelsWidth > availableWidthForLabels && finalTicks.length !== 0) {
+                    iter++;
+                    finalTicks = _.filter(ticks, filterMod);
+                    axisLabelsWidth = _.nw.sum(_.nw.calcXLabelsWidths(finalTicks.map(labelFormatter)));
+                }
+
+                return finalTicks;
+            }
+
+            // possible alternative way using d3 ticks to calculate the number
+            // that fits
+            // function reduceTicksByD3() {
+            //     // while(axisLabelsWidth > availableWidthForLabels && ticks.length !== 1) {
+            //     //     ticks = axis.scale().ticks(Math.floor(--numAutoTicks));
+            //     //     axisLabelsWidth = sum(calcLabelsWidths(ticks.map(formatLabel)));
+            //     // }
+
+            //     // axis.ticks(ticks.length);
+            // }
+
+            return reduceTicksByMod();
         }
     };
 
@@ -430,6 +561,10 @@
             return result;
         },
 
+        sum: function (array) {
+            return _.reduce(array, function (acc, cur) { return acc += cur; }, 0);
+        },
+
         maxTickValues: function (max, domain) {
             var len = domain.length;
             var values = [];
@@ -474,7 +609,22 @@
         },
 
         getCentroid: function (element) {
-            var parentBox = element.offsetParent.getBoundingClientRect();
+            var getOffsetParent = function () {
+                if (element.offsetParent) {
+                    return element.offsetParent;
+                }
+
+                // we we don't have an offsetParent, we may be in firefox
+                // let's just assume that the offset parent is the svg element
+                var t = element;
+                while(t && t.tagName !== 'svg') {
+                    t = t.parentNode;
+                }
+
+                return t;
+            };
+
+            var parentBox = getOffsetParent().getBoundingClientRect();
             var bbox = element.getBoundingClientRect();
 
             return [bbox.left - parentBox.left + bbox.width/2, bbox.top - parentBox.top + bbox.height/2];
@@ -490,7 +640,7 @@
     };
 
     _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
-        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging);
+        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
 
     if (!_.noop) {
         _.noop = noop;

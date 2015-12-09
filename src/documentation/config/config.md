@@ -1,4 +1,4 @@
-#### **config** : {<%= type %>}
+#### **config** : {<%= type %>} (Core)
 
 The Contour configuration object is a set of configuration options. 
 

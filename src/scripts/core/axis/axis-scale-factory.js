@@ -14,29 +14,41 @@
 
 
             if (isTimeData && options.xAxis.type !== 'ordinal') {
-                return new _.nw.TimeScale(data, options);
+                return new _.nw.axes.TimeScale(data, options);
             }
 
             if (!options.xAxis.categories && options.xAxis.type === 'linear') {
-                return new _.nw.LinearScale(data, options);
+                return new _.nw.axes.LinearScale(data, options);
             }
 
-            return new _.nw.OrdinalScale(data, options);
+            return new _.nw.axes.OrdinalScale(data, options);
         },
 
-        yScaleFactory: function (data, options, domain) {
+        yScaleFactory: function (data, options, axisType, domain) {
             var map = {
-                'log': _.nw.LogYAxis,
-                'smart': _.nw.SmartYAxis,
-                'linear': _.nw.YAxis
+                'log': _.nw.axes.LogYAxis,
+                'smart': _.nw.axes.SmartYAxis,
+                'linear': _.nw.axes.YAxis
             };
 
-            if(!options.yAxis.type) options.yAxis.type = 'linear';
-            if(options.yAxis.type === 'linear' && options.yAxis.smartAxis) options.yAxis.type = 'smart';
+            if (!axisType) {
+                axisType = 'linear';
+            }
 
-            if(!map[options.yAxis.type]) throw new Error('Unknown axis type: "' + options.yAxis.type + '"');
+            if (axisType === 'linear' && options.yAxis.smartAxis) {
+                axisType = 'smart';
+            }
 
-            return new map[options.yAxis.type](data, options, domain);
+            if (map[axisType]) {
+                return new map[axisType](data, options, domain);
+            }
+
+            // try by namespace
+            if (_.nw.axes[axisType]) {
+                return new _.nw.axes[axisType](data, options, domain);
+            }
+
+            throw new Error('Unknown axis type: "' + axisType + '"');
         }
 
     };

@@ -6,7 +6,8 @@
             opacity: 0.85,
             showTime: 300,
             hideTime: 500,
-            distance: 5
+            distance: 5,
+            formatter: undefined //defined in formatters array in getTooltipText()
         }
     };
 
@@ -25,11 +26,6 @@
                 this.tooltipElement.style('opacity', opacity);
             }
         };
-
-        function getPosition(options) {
-
-        }
-
 
         var positionTooltip = function (d) {
             var pointOrCentroid = function () {
@@ -139,7 +135,7 @@
         var show = function (d) {
             clearHideTimer.call(this);
 
-            dataPoints = findOriginalDataPoint(d);
+            var dataPoints = findOriginalDataPoint(d);
 
             this.tooltipElement.select('.text').html(getTooltipText.call(this, dataPoints[0] || d, dataPoints));
 
@@ -154,11 +150,11 @@
 
         function findOriginalDataPoint(d) {
             var res = [];
-            _.each(data, function (series) {
+            _.each(data, function (series, seriesIndex) {
                 var name = series.name;
                 _.each(series.data, function (point) {
                     if (point.x === d.x && d.y === point.y) {
-                        res.push(_.extend(point, { series: name }));
+                        res.push(_.extend(point, { series: name, seriesIndex:seriesIndex }));
                     }
                 });
             });

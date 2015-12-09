@@ -11,8 +11,12 @@ describe('default yAxis', function () {
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
         instance = createinstance();
+    });
+
+    afterEach(function() {
+        jasmine.clock().uninstall();
     });
 
     function createinstance(options) {

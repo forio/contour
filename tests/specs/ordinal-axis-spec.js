@@ -1,6 +1,20 @@
 describe('Ordinal xAxis', function () {
     var $el, el;
     var instance;
+    var data;
+
+    var defaults = {
+        chart: {
+            plotWidth: 500,
+            rotatedFrame: false
+        },
+        xAxis: {
+
+            labels: {
+
+            }
+        }
+    };
 
     function createinstance(options) {
         options = _.extend({ el: el }, options);
@@ -8,10 +22,16 @@ describe('Ordinal xAxis', function () {
         return instance;
     }
 
+
+    function createAxis(options) {
+        return new _.nw.axes.OrdinalScale(data, $.extend(true, {}, defaults, options));
+    }
+
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
         instance = createinstance();
+        data = _.range(10).map(function (n) { return 100 * n; });
     });
 
 
@@ -225,6 +245,24 @@ describe('Ordinal xAxis', function () {
         expect($el.find('.x.axis .tick text').eq(1).text()).toBe(text);
         expect($el.find('.x.axis .tick text').eq(2).text()).toBe(text);
     });
+
+    it('should reduce the number of ticks if they dont fit', function () {
+        ax = createAxis({ chart: {plotWidth: 500}});
+        ax.scale();
+        expect(ax.axis().ticks()[0]).toBe(10);
+
+
+        ax = createAxis({ chart: {plotWidth: 150}});
+        ax.scale();
+        // note that this may be different than the linear axis test
+        // since the domain is different for categorical axes
+        expect(ax.axis().ticks()[0]).toBe(5);
+
+        ax = createAxis({ chart: {plotWidth: 40}});
+        ax.scale();
+        expect(ax.axis().ticks()[0]).toBe(2);
+    });
+
 
 
 });

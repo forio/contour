@@ -7,6 +7,14 @@ String.prototype.regexIndexOf = function(regex, start) {
 };
 
 
+// external objects/functions used in defaults
+// we just need the mocks here
+_.nw = {
+    minMaxFilter: function () {}
+};
+
+
+
 var isSafeForEval = function(text) {
     // from json2 parser
     // for details goto: https://github.com/douglascrockford/JSON-js/blob/master/json2.js

@@ -115,10 +115,10 @@ describe('Contour', function () {
                 });
 
                 var data = [
-                    { x: new Date('2000-01-01 10:00'), y: 10 },
-                    { x: new Date('2010-01-01 10:00'), y: 10 },
-                    { x: new Date('2003-01-01 10:00'), y: 10 },
-                    { x: new Date('2012-01-01 10:00'), y: 10 }
+                    { x: new Date('2000-01-01T10:00:00Z'), y: 10 },
+                    { x: new Date('2010-01-01T10:00:00Z'), y: 10 },
+                    { x: new Date('2003-01-01T10:00:00Z'), y: 10 },
+                    { x: new Date('2012-01-01T10:00:00Z'), y: 10 }
                 ];
 
                 createContour()
@@ -363,7 +363,7 @@ describe('Contour', function () {
         it('should call each visualization with the context of the Contour instance', function () {
             var context = null;
             var mock = { render: function () { context = this; }};
-            spyOn(mock, 'render').andCallThrough();
+            spyOn(mock, 'render').and.callThrough();
             Contour.export('something', mock.render);
             // createVisMock('something', function () {
             //     context = this;

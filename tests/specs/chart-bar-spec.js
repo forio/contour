@@ -60,39 +60,54 @@ describe('Bar chart', function () {
     describe('given multiple series', function () {
         var data;
         beforeEach(function () {
-            this.addMatchers({
-                toHaveUniqeYCoord: function (expected) {
-                    var actual = this.actual;
-                    var notText = this.isNot ? '(not) ' : '';
-                    this.message = function () { return 'Expected '+ notText + expected + ' uniq Y corrdinates and got ' + uniq.length + ' different ones: [' + uniq.join() +']'; };
-                    var yCoords = {};
-                    var uniq = [];
-                    actual.each(function () {
-                        var key = $(this).attr('y');
-                        if(!yCoords[key]) {
-                            yCoords[key] = true;
-                            uniq.push(key);
-                        }
-                    });
+            jasmine.addMatchers({
+                toHaveUniqeYCoord: function (util, tester) {
+                    return {
+                        compare: function (actual, expected) {
+                            var notText = this.isNot ? '(not) ' : '';
+                            this.message = function () { return 'Expected '+ notText + expected + ' uniq Y corrdinates and got ' + uniq.length + ' different ones: [' + uniq.join() +']'; };
+                            var yCoords = {};
+                            var uniq = [];
+                            actual.each(function () {
+                                var key = $(this).attr('y');
+                                if(!yCoords[key]) {
+                                    yCoords[key] = true;
+                                    uniq.push(key);
+                                }
+                            });
 
-                    return uniq.length === expected;
+                            var passed = uniq.length === expected;
+
+                            return {
+                                pass: passed,
+                                message: 'Expected ' + actual + (passed ? '' : ' not') + ' to equal ' + expected
+                            };
+                        }
+                    };
+
                 },
 
                 toAllHaveDifferentYCoord: function () {
-                    var actual = this.actual;
-                    var notText = this.isNot ? ' not' : '';
-                    this.message = function () { return 'Expected all to' + notText + ' have different Y coordinates'; };
-                    var yCoords = {};
-                    var correct = true;
-                    actual.each(function () {
-                        var key = $(this).attr('y');
-                        if(!yCoords[key])
-                            yCoords[key] = true;
-                        else
-                            correct = false;
-                    });
+                    return {
+                        compare: function (actual, expected) {
+                            var notText = this.isNot ? ' not' : '';
+                            message = function () { return 'Expected all to' + notText + ' have different Y coordinates'; };
+                            var yCoords = {};
+                            var correct = true;
+                            actual.each(function () {
+                                var key = $(this).attr('y');
+                                if(!yCoords[key])
+                                    yCoords[key] = true;
+                                else
+                                    correct = false;
+                            });
 
-                    return correct;
+                            return {
+                                pass: correct,
+                                message: message()
+                            };
+                        }
+                    };
                 }
             });
 

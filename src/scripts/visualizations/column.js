@@ -16,7 +16,6 @@
         this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         var opt = options.column;
-        var w = options.chart.plotWidth;
         var h = options.chart.plotHeight;
         var rectClass = options.column.columnClass;
         var rectStyle = options.column.style;
@@ -51,8 +50,6 @@
         var cols = series.selectAll('.column')
                 .data(dataKey, function (d) { return d.x || d; });
 
-        var offset = function (d, i) { return rangeBand / data.length * i; };
-        var width = rangeBand / data.length - opt.groupPadding - 0.5;
         var cssClass = 'column' + (options.tooltip.enable ? ' tooltip-tracker' : '');
 
         cols.enter()

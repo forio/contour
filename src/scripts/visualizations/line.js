@@ -11,8 +11,10 @@
             // animationDirection: 'bottom-to-top',
             marker: {
                 enable: true,
-                size: 3
-            }
+                size: 3,
+                animationDelay: 0,
+            },
+            preprocess: _.nw.minMaxFilter(1000)
         }
     };
 
@@ -66,26 +68,14 @@
     /* jshint eqnull: true */
     function render(rawData, layer, options, id) {
         this.checkDependencies('cartesian');
-        function optimizeData(rawData) {
-            return _.map(rawData, function (s) {
-                return _.extend(s, {
-                    data: _.filter(s.data, function (d, i) {
-                        if (i === 0 && d.y != null) return true;
-                        var differentX = x(s.data[i-1]) !== x(d); // && y(s.data[i-1]) !== y(d);
-                        return d.y != null && differentX;
-                    })
-                });
-            });
-        }
 
         var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
         var y = _.bind(function (d) { return this.yScale(d.y + (d.y0 || 0)) + 0.5; }, this);
-        var h = options.chart.plotHeight;
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         animationDirection = options.line.animationDirection || 'left-to-right';
         duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         // jshint eqnull:true
-        var data = optimizeData(rawData);
+        var data = options.line.preprocess(_.nw.cleanNullValues()(rawData));
 
         data = options.line.stacked ? d3.layout.stack().values(function (d) { return d.data; })(data) : data;
 
@@ -122,7 +112,7 @@
 
             if (shouldAnimate) {
                 var startLineFn = animationDirection === 'left-to-right' ? line : startLine;
-                var path = el.attr('d', function(d) { return startLineFn(d.data); })
+                el.attr('d', function(d) { return startLineFn(d.data); })
                     .call(_.partial(animFn.enter, line));
             } else {
                 el.attr('d', function (d) { return line(d.data); });
@@ -149,6 +139,7 @@
         }
 
         function renderMarkers() {
+            var animationDelay = options.line.marker.animationDelay;
             var markers = layer.selectAll('.line-chart-markers')
                 .data(data, function (d) { return d.name; });
 
@@ -160,17 +151,8 @@
             var dots = markers.selectAll('.dot')
                 .data(function (d) { return d.data; }, function (d) { return d.x; });
 
-            dots.enter().append('circle')
-                .attr('class', 'dot')
-                .attr('r', options.line.marker.size)
-                .attr('opacity', 0);
-                // .attr('cx', x)
-                // .attr('cy', y);
-
-            dots.exit().remove();
-
             if (shouldAnimate) {
-                dots.transition().delay(duration)
+                dots.transition().delay(animationDelay).duration(duration)
                     .attr('cx', x)
                     .attr('cy', y)
                     .attr('opacity', 1);
@@ -179,6 +161,19 @@
                     .attr('cy', y)
                     .attr('opacity', 1);
             }
+
+
+            dots.enter().append('circle')
+                .attr('class', 'dot')
+                .attr('r', options.line.marker.size)
+                .attr('opacity', 0)
+                .attr('cx', x)
+                .attr('cy', y)
+                .transition().delay(duration)
+                    .attr('opacity', 1);
+
+            dots.exit().remove();
+
         }
 
         function renderTooltipTrackers() {

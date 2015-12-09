@@ -187,6 +187,7 @@
 
             // convert base64/URLEncoded data component to raw binary data held in a string
             function dataUrlToBlob(dataUrl) {
+                /*jshint nonstandard:true*/
                 var byteString;
                 if (dataUrl.split(',')[0].indexOf('base64') >= 0) {
                     byteString = atob(dataUrl.split(',')[1]);
@@ -689,7 +690,7 @@
                 ) {
                     charCode = str.charCodeAt(idx += 3 / 4);
                     if (charCode > 0xFF) {
-                        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+                        throw new InvalidCharacterError('"btoa" failed: The string to be encoded contains characters outside of the Latin1 range.');
                     }
                     block = block << 8 | charCode;
                 }

@@ -29,10 +29,9 @@
         scale: function (domain) {
             if(!this._scale) {
                 this._scale = new d3.scale.ordinal();
-                this._range();
             }
 
-            this.setDomain(domain);
+            this.setDomain(domain || this.data);
 
             return this._scale;
         },
@@ -41,6 +40,7 @@
         axis: function () {
             var options = this.options.xAxis;
             var optFormat = (options.labels.format ? d3.format(options.labels.format) : 0);
+            var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'g');
 
             var tickFormat = options.labels.formatter || (!this.isCategorized ? optFormat : 0) || function (d) { return _.isDate(d) ? d.getDate() : d; };
             var axis = d3.svg.axis()
@@ -49,6 +49,9 @@
                 .outerTickSize(options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickFormat(tickFormat);
+
+            var ticks = this.isCategorized && options.categories ? options.categories : _.range(this._domain.length) || [];
+            var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
 
             if (options.firstAndLast) {
                 // show only first and last tick
@@ -62,6 +65,10 @@
                 if (options.ticks === 0) {
                     axis.tickValues([]);
                 }
+            } else if (!labelsFit) {
+                var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                axis.tickValues(finalTicks);
+                axis.ticks(finalTicks.length);
             } else {
                 axis.tickValues(options.categories);
             }
@@ -77,12 +84,14 @@
             var deg = options.labels.rotation;
             var rad = _.nw.degToRad(deg);
             var sign = deg > 0 ? 1 : deg < 0 ? -1 : 0;
-            var lineCenter = 0.71; // center of text line is at .31em
+            var pos = deg < 0 ? -1 : 1;
+            var lineHeight = 0.71;
+            var lineCenter = lineHeight / 2; // center of text line is at .31em
             var cos = Math.cos(rad);
             var sin = Math.sin(rad);
-            var positive = options.labels.rotation > 0;
             var anchor = options.labels.rotation < 0 ? 'end' : options.labels.rotation > 0 ? 'start' : 'middle';
-            var labels = axisGroup.selectAll('.tick text')
+
+            axisGroup.selectAll('.tick text')
                 .style({'text-anchor': anchor})
                 .attr('transform', function (d, i, j) {
                     var x = d3.select(this).attr('x') || 0;
@@ -90,17 +99,22 @@
                     return 'rotate(' + options.labels.rotation + ' ' + x + ',' + y + ')';
                 })
                 .attr('dy', function (d, i, j) {
-                    return (cos * lineCenter).toFixed(4) + 'em';
+                    var ref = deg === 0 ? lineHeight : lineCenter;
+                    var num = ((cos * ref) + (sin * ref * pos));
+                    return (num).toFixed(4) + 'em';
+                    // return (sign * ((cos * lineCenter) + (sin * lineCenter))).toFixed(4) + 'em';
                 })
                 .attr('dx', function (d, i, j) {
+                    // var num = ((sin * lineCenter * pos));
+                    // return -num.toFixed(4) + 'em';
                     return -(sin * lineCenter - 0.31 * sign).toFixed(4) + 'em';
+
                 });
         },
 
         update: function (domain, data) {
             this.data = data;
-            this.setDomain(domain);
-            this.scale();
+            this.scale(domain);
         },
 
         setDomain: function (domain) {
@@ -129,6 +143,6 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, { OrdinalScale: OrdinalScale });
+    _.nw.addAxis('OrdinalScale', OrdinalScale );
 
 })();
