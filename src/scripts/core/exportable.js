@@ -713,7 +713,7 @@
                     remaining--;
                     if (remaining === 0) done();
                 };
-                script.src = 'http://canvg.googlecode.com/svn/trunk/' + src;
+                script.src = '//canvg.googlecode.com/svn/trunk/' + src;
                 document.head.appendChild(script);
             });
         }
