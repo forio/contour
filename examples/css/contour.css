@@ -9,7 +9,7 @@
   stroke: none;
 }
 .contour-chart .axis {
-  stroke: #666666;
+  stroke: #666;
   stroke-width: 1px;
   fill: none;
   shape-rendering: crispEdges;
@@ -17,29 +17,26 @@
   font-size: 13px;
   -webkit-user-select: none;
   /* Chrome all / Safari all */
-
   -moz-user-select: none;
   /* Firefox all */
-
   -ms-user-select: none;
   /* IE 10+ */
-
   user-select: none;
 }
 .contour-chart .axis text {
   stroke: none;
-  fill: #666666;
+  fill: #666;
 }
 .contour-chart .axis.x .tick,
 .contour-chart .axis.y .tick {
-  stroke: #666666;
+  stroke: #666;
 }
 .contour-chart .axis-title {
   font-family: "Consolas", "Monaco", monospace;
   font-size: 14px;
   line-height: 100%;
   stroke: none;
-  fill: #666666;
+  fill: #666;
 }
 .contour-chart .grid-line {
   stroke: #cfcfcf;
@@ -95,7 +92,7 @@
   padding: 4px 8px;
   font: 10px sans-serif;
   line-height: 16px;
-  background: #555555;
+  background: #555;
   border: solid 1px transparent;
   border-radius: 8px;
   pointer-events: none;
@@ -103,7 +100,7 @@
 }
 .nw-tooltip .text {
   opacity: 1;
-  color: #ffffff;
+  color: #fff;
 }
 .stack-tooltip {
   font-family: "Consolas", "Monaco", monospace;
@@ -130,9 +127,9 @@
   stroke-dasharray: none;
 }
 .s-2 {
-  color: #008c48;
-  stroke: #008c48;
-  fill: #008c48;
+  color: #008C48;
+  stroke: #008C48;
+  fill: #008C48;
 }
 .s-2.line,
 .s-2 .line {
@@ -140,16 +137,16 @@
   fill: none;
 }
 .s-2.contour-legend-key {
-  background-color: #008c48;
+  background-color: #008C48;
 }
 .s-2.dot,
 .s-2 .dot {
   stroke-dasharray: none;
 }
 .s-3 {
-  color: #ee2e2f;
-  stroke: #ee2e2f;
-  fill: #ee2e2f;
+  color: #EE2E2F;
+  stroke: #EE2E2F;
+  fill: #EE2E2F;
 }
 .s-3.line,
 .s-3 .line {
@@ -157,16 +154,16 @@
   fill: none;
 }
 .s-3.contour-legend-key {
-  background-color: #ee2e2f;
+  background-color: #EE2E2F;
 }
 .s-3.dot,
 .s-3 .dot {
   stroke-dasharray: none;
 }
 .s-4 {
-  color: #f47d23;
-  stroke: #f47d23;
-  fill: #f47d23;
+  color: #F47D23;
+  stroke: #F47D23;
+  fill: #F47D23;
 }
 .s-4.line,
 .s-4 .line {
@@ -174,16 +171,16 @@
   fill: none;
 }
 .s-4.contour-legend-key {
-  background-color: #f47d23;
+  background-color: #F47D23;
 }
 .s-4.dot,
 .s-4 .dot {
   stroke-dasharray: none;
 }
 .s-5 {
-  color: #662c91;
-  stroke: #662c91;
-  fill: #662c91;
+  color: #662C91;
+  stroke: #662C91;
+  fill: #662C91;
 }
 .s-5.line,
 .s-5 .line {
@@ -191,16 +188,16 @@
   fill: none;
 }
 .s-5.contour-legend-key {
-  background-color: #662c91;
+  background-color: #662C91;
 }
 .s-5.dot,
 .s-5 .dot {
   stroke-dasharray: none;
 }
 .s-6 {
-  color: #a21d21;
-  stroke: #a21d21;
-  fill: #a21d21;
+  color: #A21D21;
+  stroke: #A21D21;
+  fill: #A21D21;
 }
 .s-6.line,
 .s-6 .line {
@@ -208,16 +205,16 @@
   fill: none;
 }
 .s-6.contour-legend-key {
-  background-color: #a21d21;
+  background-color: #A21D21;
 }
 .s-6.dot,
 .s-6 .dot {
   stroke-dasharray: none;
 }
 .s-7 {
-  color: #b43894;
-  stroke: #b43894;
-  fill: #b43894;
+  color: #B43894;
+  stroke: #B43894;
+  fill: #B43894;
 }
 .s-7.line,
 .s-7 .line {
@@ -225,7 +222,7 @@
   fill: none;
 }
 .s-7.contour-legend-key {
-  background-color: #b43894;
+  background-color: #B43894;
 }
 .s-7.dot,
 .s-7 .dot {
@@ -266,9 +263,9 @@
   stroke-dasharray: none;
 }
 .palette-1.s-2 {
-  color: #008c48;
-  stroke: #008c48;
-  fill: #008c48;
+  color: #008C48;
+  stroke: #008C48;
+  fill: #008C48;
 }
 .palette-1.s-2.line,
 .palette-1.s-2 .line {
@@ -276,16 +273,16 @@
   fill: none;
 }
 .palette-1.s-2.contour-legend-key {
-  background-color: #008c48;
+  background-color: #008C48;
 }
 .palette-1.s-2.dot,
 .palette-1.s-2 .dot {
   stroke-dasharray: none;
 }
 .palette-1.s-3 {
-  color: #ee2e2f;
-  stroke: #ee2e2f;
-  fill: #ee2e2f;
+  color: #EE2E2F;
+  stroke: #EE2E2F;
+  fill: #EE2E2F;
 }
 .palette-1.s-3.line,
 .palette-1.s-3 .line {
@@ -293,16 +290,16 @@
   fill: none;
 }
 .palette-1.s-3.contour-legend-key {
-  background-color: #ee2e2f;
+  background-color: #EE2E2F;
 }
 .palette-1.s-3.dot,
 .palette-1.s-3 .dot {
   stroke-dasharray: none;
 }
 .palette-1.s-4 {
-  color: #f47d23;
-  stroke: #f47d23;
-  fill: #f47d23;
+  color: #F47D23;
+  stroke: #F47D23;
+  fill: #F47D23;
 }
 .palette-1.s-4.line,
 .palette-1.s-4 .line {
@@ -310,16 +307,16 @@
   fill: none;
 }
 .palette-1.s-4.contour-legend-key {
-  background-color: #f47d23;
+  background-color: #F47D23;
 }
 .palette-1.s-4.dot,
 .palette-1.s-4 .dot {
   stroke-dasharray: none;
 }
 .palette-1.s-5 {
-  color: #662c91;
-  stroke: #662c91;
-  fill: #662c91;
+  color: #662C91;
+  stroke: #662C91;
+  fill: #662C91;
 }
 .palette-1.s-5.line,
 .palette-1.s-5 .line {
@@ -327,16 +324,16 @@
   fill: none;
 }
 .palette-1.s-5.contour-legend-key {
-  background-color: #662c91;
+  background-color: #662C91;
 }
 .palette-1.s-5.dot,
 .palette-1.s-5 .dot {
   stroke-dasharray: none;
 }
 .palette-1.s-6 {
-  color: #a21d21;
-  stroke: #a21d21;
-  fill: #a21d21;
+  color: #A21D21;
+  stroke: #A21D21;
+  fill: #A21D21;
 }
 .palette-1.s-6.line,
 .palette-1.s-6 .line {
@@ -344,16 +341,16 @@
   fill: none;
 }
 .palette-1.s-6.contour-legend-key {
-  background-color: #a21d21;
+  background-color: #A21D21;
 }
 .palette-1.s-6.dot,
 .palette-1.s-6 .dot {
   stroke-dasharray: none;
 }
 .palette-1.s-7 {
-  color: #b43894;
-  stroke: #b43894;
-  fill: #b43894;
+  color: #B43894;
+  stroke: #B43894;
+  fill: #B43894;
 }
 .palette-1.s-7.line,
 .palette-1.s-7 .line {
@@ -361,7 +358,7 @@
   fill: none;
 }
 .palette-1.s-7.contour-legend-key {
-  background-color: #b43894;
+  background-color: #B43894;
 }
 .palette-1.s-7.dot,
 .palette-1.s-7 .dot {
@@ -385,9 +382,9 @@
   stroke-dasharray: none;
 }
 .palette-2.s-1 {
-  color: #5a9bd4;
-  stroke: #5a9bd4;
-  fill: #5a9bd4;
+  color: #5A9BD4;
+  stroke: #5A9BD4;
+  fill: #5A9BD4;
 }
 .palette-2.s-1.line,
 .palette-2.s-1 .line {
@@ -395,16 +392,16 @@
   fill: none;
 }
 .palette-2.s-1.contour-legend-key {
-  background-color: #5a9bd4;
+  background-color: #5A9BD4;
 }
 .palette-2.s-1.dot,
 .palette-2.s-1 .dot {
   stroke-dasharray: none;
 }
 .palette-2.s-2 {
-  color: #7ac36a;
-  stroke: #7ac36a;
-  fill: #7ac36a;
+  color: #7AC36A;
+  stroke: #7AC36A;
+  fill: #7AC36A;
 }
 .palette-2.s-2.line,
 .palette-2.s-2 .line {
@@ -412,16 +409,16 @@
   fill: none;
 }
 .palette-2.s-2.contour-legend-key {
-  background-color: #7ac36a;
+  background-color: #7AC36A;
 }
 .palette-2.s-2.dot,
 .palette-2.s-2 .dot {
   stroke-dasharray: none;
 }
 .palette-2.s-3 {
-  color: #f15a60;
-  stroke: #f15a60;
-  fill: #f15a60;
+  color: #F15A60;
+  stroke: #F15A60;
+  fill: #F15A60;
 }
 .palette-2.s-3.line,
 .palette-2.s-3 .line {
@@ -429,16 +426,16 @@
   fill: none;
 }
 .palette-2.s-3.contour-legend-key {
-  background-color: #f15a60;
+  background-color: #F15A60;
 }
 .palette-2.s-3.dot,
 .palette-2.s-3 .dot {
   stroke-dasharray: none;
 }
 .palette-2.s-4 {
-  color: #faa75b;
-  stroke: #faa75b;
-  fill: #faa75b;
+  color: #FAA75B;
+  stroke: #FAA75B;
+  fill: #FAA75B;
 }
 .palette-2.s-4.line,
 .palette-2.s-4 .line {
@@ -446,16 +443,16 @@
   fill: none;
 }
 .palette-2.s-4.contour-legend-key {
-  background-color: #faa75b;
+  background-color: #FAA75B;
 }
 .palette-2.s-4.dot,
 .palette-2.s-4 .dot {
   stroke-dasharray: none;
 }
 .palette-2.s-5 {
-  color: #9e67ab;
-  stroke: #9e67ab;
-  fill: #9e67ab;
+  color: #9E67AB;
+  stroke: #9E67AB;
+  fill: #9E67AB;
 }
 .palette-2.s-5.line,
 .palette-2.s-5 .line {
@@ -463,16 +460,16 @@
   fill: none;
 }
 .palette-2.s-5.contour-legend-key {
-  background-color: #9e67ab;
+  background-color: #9E67AB;
 }
 .palette-2.s-5.dot,
 .palette-2.s-5 .dot {
   stroke-dasharray: none;
 }
 .palette-2.s-6 {
-  color: #ce7058;
-  stroke: #ce7058;
-  fill: #ce7058;
+  color: #CE7058;
+  stroke: #CE7058;
+  fill: #CE7058;
 }
 .palette-2.s-6.line,
 .palette-2.s-6 .line {
@@ -480,16 +477,16 @@
   fill: none;
 }
 .palette-2.s-6.contour-legend-key {
-  background-color: #ce7058;
+  background-color: #CE7058;
 }
 .palette-2.s-6.dot,
 .palette-2.s-6 .dot {
   stroke-dasharray: none;
 }
 .palette-2.s-7 {
-  color: #d77fb4;
-  stroke: #d77fb4;
-  fill: #d77fb4;
+  color: #D77FB4;
+  stroke: #D77FB4;
+  fill: #D77FB4;
 }
 .palette-2.s-7.line,
 .palette-2.s-7 .line {
@@ -497,7 +494,7 @@
   fill: none;
 }
 .palette-2.s-7.contour-legend-key {
-  background-color: #d77fb4;
+  background-color: #D77FB4;
 }
 .palette-2.s-7.dot,
 .palette-2.s-7 .dot {
@@ -521,9 +518,9 @@
   stroke-dasharray: none;
 }
 .palette-3.s-1 {
-  color: #b8d2ec;
-  stroke: #b8d2ec;
-  fill: #b8d2ec;
+  color: #B8D2EC;
+  stroke: #B8D2EC;
+  fill: #B8D2EC;
 }
 .palette-3.s-1.line,
 .palette-3.s-1 .line {
@@ -531,16 +528,16 @@
   fill: none;
 }
 .palette-3.s-1.contour-legend-key {
-  background-color: #b8d2ec;
+  background-color: #B8D2EC;
 }
 .palette-3.s-1.dot,
 .palette-3.s-1 .dot {
   stroke-dasharray: none;
 }
 .palette-3.s-2 {
-  color: #d9e4aa;
-  stroke: #d9e4aa;
-  fill: #d9e4aa;
+  color: #D9E4AA;
+  stroke: #D9E4AA;
+  fill: #D9E4AA;
 }
 .palette-3.s-2.line,
 .palette-3.s-2 .line {
@@ -548,16 +545,16 @@
   fill: none;
 }
 .palette-3.s-2.contour-legend-key {
-  background-color: #d9e4aa;
+  background-color: #D9E4AA;
 }
 .palette-3.s-2.dot,
 .palette-3.s-2 .dot {
   stroke-dasharray: none;
 }
 .palette-3.s-3 {
-  color: #f2afad;
-  stroke: #f2afad;
-  fill: #f2afad;
+  color: #F2AFAD;
+  stroke: #F2AFAD;
+  fill: #F2AFAD;
 }
 .palette-3.s-3.line,
 .palette-3.s-3 .line {
@@ -565,16 +562,16 @@
   fill: none;
 }
 .palette-3.s-3.contour-legend-key {
-  background-color: #f2afad;
+  background-color: #F2AFAD;
 }
 .palette-3.s-3.dot,
 .palette-3.s-3 .dot {
   stroke-dasharray: none;
 }
 .palette-3.s-4 {
-  color: #f3d1b0;
-  stroke: #f3d1b0;
-  fill: #f3d1b0;
+  color: #F3D1B0;
+  stroke: #F3D1B0;
+  fill: #F3D1B0;
 }
 .palette-3.s-4.line,
 .palette-3.s-4 .line {
@@ -582,16 +579,16 @@
   fill: none;
 }
 .palette-3.s-4.contour-legend-key {
-  background-color: #f3d1b0;
+  background-color: #F3D1B0;
 }
 .palette-3.s-4.dot,
 .palette-3.s-4 .dot {
   stroke-dasharray: none;
 }
 .palette-3.s-5 {
-  color: #d5b2d4;
-  stroke: #d5b2d4;
-  fill: #d5b2d4;
+  color: #D5B2D4;
+  stroke: #D5B2D4;
+  fill: #D5B2D4;
 }
 .palette-3.s-5.line,
 .palette-3.s-5 .line {
@@ -599,16 +596,16 @@
   fill: none;
 }
 .palette-3.s-5.contour-legend-key {
-  background-color: #d5b2d4;
+  background-color: #D5B2D4;
 }
 .palette-3.s-5.dot,
 .palette-3.s-5 .dot {
   stroke-dasharray: none;
 }
 .palette-3.s-6 {
-  color: #ddb9a9;
-  stroke: #ddb9a9;
-  fill: #ddb9a9;
+  color: #DDB9A9;
+  stroke: #DDB9A9;
+  fill: #DDB9A9;
 }
 .palette-3.s-6.line,
 .palette-3.s-6 .line {
@@ -616,16 +613,16 @@
   fill: none;
 }
 .palette-3.s-6.contour-legend-key {
-  background-color: #ddb9a9;
+  background-color: #DDB9A9;
 }
 .palette-3.s-6.dot,
 .palette-3.s-6 .dot {
   stroke-dasharray: none;
 }
 .palette-3.s-7 {
-  color: #ebc0da;
-  stroke: #ebc0da;
-  fill: #ebc0da;
+  color: #EBC0DA;
+  stroke: #EBC0DA;
+  fill: #EBC0DA;
 }
 .palette-3.s-7.line,
 .palette-3.s-7 .line {
@@ -633,16 +630,16 @@
   fill: none;
 }
 .palette-3.s-7.contour-legend-key {
-  background-color: #ebc0da;
+  background-color: #EBC0DA;
 }
 .palette-3.s-7.dot,
 .palette-3.s-7 .dot {
   stroke-dasharray: none;
 }
 .palette-3.s-8 {
-  color: #cccccc;
-  stroke: #cccccc;
-  fill: #cccccc;
+  color: #CCCCCC;
+  stroke: #CCCCCC;
+  fill: #CCCCCC;
 }
 .palette-3.s-8.line,
 .palette-3.s-8 .line {
@@ -650,16 +647,16 @@
   fill: none;
 }
 .palette-3.s-8.contour-legend-key {
-  background-color: #cccccc;
+  background-color: #CCCCCC;
 }
 .palette-3.s-8.dot,
 .palette-3.s-8 .dot {
   stroke-dasharray: none;
 }
 .palette-4.s-1 {
-  color: #c76c16;
-  stroke: #c76c16;
-  fill: #c76c16;
+  color: #C76C16;
+  stroke: #C76C16;
+  fill: #C76C16;
 }
 .palette-4.s-1.line,
 .palette-4.s-1 .line {
@@ -667,7 +664,7 @@
   fill: none;
 }
 .palette-4.s-1.contour-legend-key {
-  background-color: #c76c16;
+  background-color: #C76C16;
 }
 .palette-4.s-1.dot,
 .palette-4.s-1 .dot {
@@ -708,9 +705,9 @@
   stroke-dasharray: none;
 }
 .palette-4.s-4 {
-  color: #5b4c00;
-  stroke: #5b4c00;
-  fill: #5b4c00;
+  color: #5B4C00;
+  stroke: #5B4C00;
+  fill: #5B4C00;
 }
 .palette-4.s-4.line,
 .palette-4.s-4 .line {
@@ -718,16 +715,16 @@
   fill: none;
 }
 .palette-4.s-4.contour-legend-key {
-  background-color: #5b4c00;
+  background-color: #5B4C00;
 }
 .palette-4.s-4.dot,
 .palette-4.s-4 .dot {
   stroke-dasharray: none;
 }
 .palette-4.s-5 {
-  color: #e1b79a;
-  stroke: #e1b79a;
-  fill: #e1b79a;
+  color: #E1B79A;
+  stroke: #E1B79A;
+  fill: #E1B79A;
 }
 .palette-4.s-5.line,
 .palette-4.s-5 .line {
@@ -735,16 +732,16 @@
   fill: none;
 }
 .palette-4.s-5.contour-legend-key {
-  background-color: #e1b79a;
+  background-color: #E1B79A;
 }
 .palette-4.s-5.dot,
 .palette-4.s-5 .dot {
   stroke-dasharray: none;
 }
 .palette-4.s-6 {
-  color: #6f8e3b;
-  stroke: #6f8e3b;
-  fill: #6f8e3b;
+  color: #6F8E3B;
+  stroke: #6F8E3B;
+  fill: #6F8E3B;
 }
 .palette-4.s-6.line,
 .palette-4.s-6 .line {
@@ -752,16 +749,16 @@
   fill: none;
 }
 .palette-4.s-6.contour-legend-key {
-  background-color: #6f8e3b;
+  background-color: #6F8E3B;
 }
 .palette-4.s-6.dot,
 .palette-4.s-6 .dot {
   stroke-dasharray: none;
 }
 .palette-4.s-7 {
-  color: #8accc0;
-  stroke: #8accc0;
-  fill: #8accc0;
+  color: #8ACCC0;
+  stroke: #8ACCC0;
+  fill: #8ACCC0;
 }
 .palette-4.s-7.line,
 .palette-4.s-7 .line {
@@ -769,7 +766,7 @@
   fill: none;
 }
 .palette-4.s-7.contour-legend-key {
-  background-color: #8accc0;
+  background-color: #8ACCC0;
 }
 .palette-4.s-7.dot,
 .palette-4.s-7 .dot {
@@ -810,9 +807,9 @@
   stroke-dasharray: none;
 }
 .palette-5.s-2 {
-  color: #7272b4;
-  stroke: #7272b4;
-  fill: #7272b4;
+  color: #7272B4;
+  stroke: #7272B4;
+  fill: #7272B4;
 }
 .palette-5.s-2.line,
 .palette-5.s-2 .line {
@@ -820,16 +817,16 @@
   fill: none;
 }
 .palette-5.s-2.contour-legend-key {
-  background-color: #7272b4;
+  background-color: #7272B4;
 }
 .palette-5.s-2.dot,
 .palette-5.s-2 .dot {
   stroke-dasharray: none;
 }
 .palette-5.s-3 {
-  color: #8686bf;
-  stroke: #8686bf;
-  fill: #8686bf;
+  color: #8686BF;
+  stroke: #8686BF;
+  fill: #8686BF;
 }
 .palette-5.s-3.line,
 .palette-5.s-3 .line {
@@ -837,16 +834,16 @@
   fill: none;
 }
 .palette-5.s-3.contour-legend-key {
-  background-color: #8686bf;
+  background-color: #8686BF;
 }
 .palette-5.s-3.dot,
 .palette-5.s-3 .dot {
   stroke-dasharray: none;
 }
 .palette-5.s-4 {
-  color: #9a9ac9;
-  stroke: #9a9ac9;
-  fill: #9a9ac9;
+  color: #9A9AC9;
+  stroke: #9A9AC9;
+  fill: #9A9AC9;
 }
 .palette-5.s-4.line,
 .palette-5.s-4 .line {
@@ -854,16 +851,16 @@
   fill: none;
 }
 .palette-5.s-4.contour-legend-key {
-  background-color: #9a9ac9;
+  background-color: #9A9AC9;
 }
 .palette-5.s-4.dot,
 .palette-5.s-4 .dot {
   stroke-dasharray: none;
 }
 .palette-5.s-5 {
-  color: #afafd4;
-  stroke: #afafd4;
-  fill: #afafd4;
+  color: #AFAFD4;
+  stroke: #AFAFD4;
+  fill: #AFAFD4;
 }
 .palette-5.s-5.line,
 .palette-5.s-5 .line {
@@ -871,16 +868,16 @@
   fill: none;
 }
 .palette-5.s-5.contour-legend-key {
-  background-color: #afafd4;
+  background-color: #AFAFD4;
 }
 .palette-5.s-5.dot,
 .palette-5.s-5 .dot {
   stroke-dasharray: none;
 }
 .palette-5.s-6 {
-  color: #c2c2df;
-  stroke: #c2c2df;
-  fill: #c2c2df;
+  color: #C2C2DF;
+  stroke: #C2C2DF;
+  fill: #C2C2DF;
 }
 .palette-5.s-6.line,
 .palette-5.s-6 .line {
@@ -888,16 +885,16 @@
   fill: none;
 }
 .palette-5.s-6.contour-legend-key {
-  background-color: #c2c2df;
+  background-color: #C2C2DF;
 }
 .palette-5.s-6.dot,
 .palette-5.s-6 .dot {
   stroke-dasharray: none;
 }
 .palette-5.s-7 {
-  color: #d7d7ea;
-  stroke: #d7d7ea;
-  fill: #d7d7ea;
+  color: #D7D7EA;
+  stroke: #D7D7EA;
+  fill: #D7D7EA;
 }
 .palette-5.s-7.line,
 .palette-5.s-7 .line {
@@ -905,16 +902,16 @@
   fill: none;
 }
 .palette-5.s-7.contour-legend-key {
-  background-color: #d7d7ea;
+  background-color: #D7D7EA;
 }
 .palette-5.s-7.dot,
 .palette-5.s-7 .dot {
   stroke-dasharray: none;
 }
 .palette-5.s-8 {
-  color: #ebebf4;
-  stroke: #ebebf4;
-  fill: #ebebf4;
+  color: #EBEBF4;
+  stroke: #EBEBF4;
+  fill: #EBEBF4;
 }
 .palette-5.s-8.line,
 .palette-5.s-8 .line {
@@ -922,16 +919,16 @@
   fill: none;
 }
 .palette-5.s-8.contour-legend-key {
-  background-color: #ebebf4;
+  background-color: #EBEBF4;
 }
 .palette-5.s-8.dot,
 .palette-5.s-8 .dot {
   stroke-dasharray: none;
 }
 .palette-6.s-1 {
-  color: #eeece1;
-  stroke: #eeece1;
-  fill: #eeece1;
+  color: #EEECE1;
+  stroke: #EEECE1;
+  fill: #EEECE1;
 }
 .palette-6.s-1.line,
 .palette-6.s-1 .line {
@@ -939,16 +936,16 @@
   fill: none;
 }
 .palette-6.s-1.contour-legend-key {
-  background-color: #eeece1;
+  background-color: #EEECE1;
 }
 .palette-6.s-1.dot,
 .palette-6.s-1 .dot {
   stroke-dasharray: none;
 }
 .palette-6.s-2 {
-  color: #4f81bd;
-  stroke: #4f81bd;
-  fill: #4f81bd;
+  color: #4F81BD;
+  stroke: #4F81BD;
+  fill: #4F81BD;
 }
 .palette-6.s-2.line,
 .palette-6.s-2 .line {
@@ -956,16 +953,16 @@
   fill: none;
 }
 .palette-6.s-2.contour-legend-key {
-  background-color: #4f81bd;
+  background-color: #4F81BD;
 }
 .palette-6.s-2.dot,
 .palette-6.s-2 .dot {
   stroke-dasharray: none;
 }
 .palette-6.s-3 {
-  color: #c0504d;
-  stroke: #c0504d;
-  fill: #c0504d;
+  color: #C0504D;
+  stroke: #C0504D;
+  fill: #C0504D;
 }
 .palette-6.s-3.line,
 .palette-6.s-3 .line {
@@ -973,16 +970,16 @@
   fill: none;
 }
 .palette-6.s-3.contour-legend-key {
-  background-color: #c0504d;
+  background-color: #C0504D;
 }
 .palette-6.s-3.dot,
 .palette-6.s-3 .dot {
   stroke-dasharray: none;
 }
 .palette-6.s-4 {
-  color: #9bbb59;
-  stroke: #9bbb59;
-  fill: #9bbb59;
+  color: #9BBB59;
+  stroke: #9BBB59;
+  fill: #9BBB59;
 }
 .palette-6.s-4.line,
 .palette-6.s-4 .line {
@@ -990,16 +987,16 @@
   fill: none;
 }
 .palette-6.s-4.contour-legend-key {
-  background-color: #9bbb59;
+  background-color: #9BBB59;
 }
 .palette-6.s-4.dot,
 .palette-6.s-4 .dot {
   stroke-dasharray: none;
 }
 .palette-6.s-5 {
-  color: #8064a2;
-  stroke: #8064a2;
-  fill: #8064a2;
+  color: #8064A2;
+  stroke: #8064A2;
+  fill: #8064A2;
 }
 .palette-6.s-5.line,
 .palette-6.s-5 .line {
@@ -1007,16 +1004,16 @@
   fill: none;
 }
 .palette-6.s-5.contour-legend-key {
-  background-color: #8064a2;
+  background-color: #8064A2;
 }
 .palette-6.s-5.dot,
 .palette-6.s-5 .dot {
   stroke-dasharray: none;
 }
 .palette-6.s-6 {
-  color: #4bacc6;
-  stroke: #4bacc6;
-  fill: #4bacc6;
+  color: #4BACC6;
+  stroke: #4BACC6;
+  fill: #4BACC6;
 }
 .palette-6.s-6.line,
 .palette-6.s-6 .line {
@@ -1024,16 +1021,16 @@
   fill: none;
 }
 .palette-6.s-6.contour-legend-key {
-  background-color: #4bacc6;
+  background-color: #4BACC6;
 }
 .palette-6.s-6.dot,
 .palette-6.s-6 .dot {
   stroke-dasharray: none;
 }
 .palette-6.s-7 {
-  color: #f79646;
-  stroke: #f79646;
-  fill: #f79646;
+  color: #F79646;
+  stroke: #F79646;
+  fill: #F79646;
 }
 .palette-6.s-7.line,
 .palette-6.s-7 .line {
@@ -1041,16 +1038,16 @@
   fill: none;
 }
 .palette-6.s-7.contour-legend-key {
-  background-color: #f79646;
+  background-color: #F79646;
 }
 .palette-6.s-7.dot,
 .palette-6.s-7 .dot {
   stroke-dasharray: none;
 }
 .palette-6.s-8 {
-  color: #1f497d;
-  stroke: #1f497d;
-  fill: #1f497d;
+  color: #1F497D;
+  stroke: #1F497D;
+  fill: #1F497D;
 }
 .palette-6.s-8.line,
 .palette-6.s-8 .line {
@@ -1058,7 +1055,7 @@
   fill: none;
 }
 .palette-6.s-8.contour-legend-key {
-  background-color: #1f497d;
+  background-color: #1F497D;
 }
 .palette-6.s-8.dot,
 .palette-6.s-8 .dot {

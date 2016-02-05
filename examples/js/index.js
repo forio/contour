@@ -117,7 +117,7 @@
 
             // force a specific contour version
             res = res.replace(/(https?:\/\/forio\.com\/tools\/contour\/)([\w\d\.\-\_]+)/g, function ($1, $2, $3) {
-                if (/local-ver/.test(window.location.href)) {
+                if (/local/.test(window.location.href)) {
                     return '/dist/' + $3;
                 }
 

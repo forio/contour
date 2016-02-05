@@ -59,6 +59,58 @@ describe('contour-utils niceMinMax', function () {
         expect(nice.tickValues).toEqual([0.4, 0.5, 0.6, 0.7, 0.8, 0.9]);
     });
 
+    it('should handle small values', function () {
+        var nice = _.nw.niceMinMax(0, 0.2, 5);
+
+        expect(nice.min).toBe(0);
+        expect(nice.max).toBe(0.2);
+        expect(nice.tickValues).toEqual([0, 0.04, 0.08, 0.12, 0.16, 0.2]);
+    });
+
+    it('should handle really small values', function () {
+        var nice = _.nw.niceMinMax(0, 0.01, 5);
+
+        expect(nice.min).toBe(0);
+        expect(nice.max).toBe(0.01);
+        expect(nice.tickValues).toEqual([0, 0.002, 0.004, 0.006, 0.008, 0.01]);
+    });
+
+    it('should handle really really small values', function () {
+        var nice = _.nw.niceMinMax(0, 5e-4, 5);
+
+        expect(nice.min).toBe(0);
+        expect(nice.max).toBe(5e-4);
+        expect(nice.tickValues).toEqual([0, 1e-4, 2e-4, 3e-4, 4e-4, 5e-4]);
+    });
+
+    it('should return a slightly different number of round ticks if possible', function () {
+        var nice = _.nw.niceMinMax(0, 3, 5);
+
+        expect(nice.min).toBe(0);
+        expect(nice.max).toBe(3);
+        expect(nice.tickValues).toEqual([0, 1, 2, 3]);
+    });
+
+    describe('when zeroAnchor is false', function () {
+        it('should not anchor at zero', function () {
+            var nice = _.nw.niceMinMax(1, 4, 5, false);
+
+            expect(nice.min).toBe(1);
+            expect(nice.max).toBe(4);
+            expect(nice.tickValues).toEqual([1, 2, 3, 4]);
+        });
+    });
+
+    describe('when zeroAnchor is true', function () {
+        it('should anchor at zero', function () {
+            var nice = _.nw.niceMinMax(1, 3, 5, true);
+
+            expect(nice.min).toBe(0);
+            expect(nice.max).toBe(3);
+            expect(nice.tickValues).toEqual([0, 1, 2, 3]);
+        });
+    });
+
     describe('when min > max', function () {
         it('should return empty ticks array', function () {
             var nice = _.nw.niceMinMax(2, 1, 5);

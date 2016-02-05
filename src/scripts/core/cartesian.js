@@ -113,24 +113,25 @@
             yDomain: [],
 
             _getYScaledDomain: function (domain, options) {
-                var absMin = options.yAxis.zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
-                var min = options.yAxis.min != null ? options.yAxis.min : absMin;
+                var opts = this.options.yAxis;
+                var absMin = opts.zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
+                var min = opts.min != null ? opts.min : absMin;
 
-                if (options.yAxis.tickValues) {
-                    if (options.yAxis.min != null && options.yAxis.max != null) {
-                        return [options.yAxis.min, options.yAxis.max];
-                    } else if (options.yAxis.min != null) {
-                        return [options.yAxis.min, d3.max(options.yAxis.zeroAnchor ? [0].concat(options.yAxis.tickValues) : options.yAxis.tickValues)];
-                    } else if (options.yAxis.max != null) {
-                        return [d3.min(options.yAxis.zeroAnchor ? [0].concat(options.yAxis.tickValues) : options.yAxis.tickValues), options.yAxis.max];
+                if (opts.tickValues) {
+                    if (opts.min != null && opts.max != null) {
+                        return [opts.min, opts.max];
+                    } else if (opts.min != null) {
+                        return [opts.min, d3.max(opts.zeroAnchor ? [0].concat(opts.tickValues) : opts.tickValues)];
+                    } else if (opts.max != null) {
+                        return [d3.min(opts.zeroAnchor ? [0].concat(opts.tickValues) : opts.tickValues), opts.max];
                     } else {
-                        return d3.extent(options.yAxis.zeroAnchor || options.yAxis.min != null ? [min].concat(options.yAxis.tickValues) : options.yAxis.tickValues);
+                        return d3.extent(opts.zeroAnchor || opts.min != null ? [min].concat(opts.tickValues) : opts.tickValues);
                     }
-                } else if (options.yAxis.smartAxis) {
-                    return d3.extent(options.yAxis.zeroAnchor || options.yAxis.min != null ? [min].concat(domain) : domain);
+                } else if (opts.smartAxis) {
+                    return d3.extent(opts.zeroAnchor || opts.min != null ? [min].concat(domain) : domain);
                 }
 
-                return _.nw.extractScaleDomain(domain, min, options.yAxis.max, options.yAxis.ticks);
+                return _.nw.extractScaleDomain(domain, min, opts.max, opts.ticks);
             },
 
             /*jshint eqnull:true */

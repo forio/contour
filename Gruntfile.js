@@ -123,7 +123,7 @@ module.exports = function (grunt) {
                     sourceMap: true,
                     mangle: true,
                     compress: true,
-                    preserveComments: 'none'
+                    preserveComments: false
                 },
                 files: [{
                     src: ['src/scripts/header.js', '<%= scripts.core %>', '<%= scripts.vis %>', 'src/scripts/footer.js'],
