@@ -601,7 +601,7 @@
 
             getXDomain: function () {
                 var dataVis = _.filter(this._visualizations, function (v) { return nw.isSupportedDataFormat(v.data); });
-                var all = nw.uniq(_.flatten(_.pluck(dataVis, 'xDomain')));
+                var all = _.uniq(_.flatten(_.pluck(dataVis, 'xDomain')));
 
                 return all;
             }

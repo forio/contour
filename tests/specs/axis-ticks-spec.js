@@ -2,7 +2,7 @@ describe('contour-utils niceMinMax', function () {
 
 
     it('should use increment of 2 when min=0, max=10, ticks=5', function () {
-        var nice = _.nw.niceMinMax(0, 10, 5);
+        var nice = nw.niceMinMax(0, 10, 5);
 
         expect(nice.min).toBe(0);
         expect(nice.max).toBe(10);
@@ -10,7 +10,7 @@ describe('contour-utils niceMinMax', function () {
     });
 
     it('should handle negative min & positive max', function () {
-        var nice = _.nw.niceMinMax(-3, 3, 6);
+        var nice = nw.niceMinMax(-3, 3, 6);
 
         expect(nice.min).toBe(-3);
         expect(nice.max).toBe(3);
@@ -19,7 +19,7 @@ describe('contour-utils niceMinMax', function () {
 
 
     it('should handle negative min & positive max decimal values', function () {
-        var nice = _.nw.niceMinMax(-0.3, 0.3, 6);
+        var nice = nw.niceMinMax(-0.3, 0.3, 6);
 
         expect(nice.min).toBe(-0.3);
         expect(nice.max).toBe(0.3);
@@ -27,7 +27,7 @@ describe('contour-utils niceMinMax', function () {
     });
 
     it('should handle |max| - |min| < 1 ', function () {
-        var nice = _.nw.niceMinMax(-10, 10.1, 5);
+        var nice = nw.niceMinMax(-10, 10.1, 5);
 
         expect(nice.min).toBe(-10);
         expect(nice.max).toBe(15);
@@ -35,7 +35,7 @@ describe('contour-utils niceMinMax', function () {
     });
 
     it('should handle negative min orders of mag bigger than positive max values', function () {
-        var nice = _.nw.niceMinMax(-12.1, 0.1, 5);
+        var nice = nw.niceMinMax(-12.1, 0.1, 5);
 
         expect(nice.min).toBe(-12.1);
         expect(nice.max).toBe(2.9);
@@ -44,7 +44,7 @@ describe('contour-utils niceMinMax', function () {
 
 
     it('should handle negative min many orders of mag bigger than positive max values', function () {
-        var nice = _.nw.niceMinMax(-100000, 0.1, 5);
+        var nice = nw.niceMinMax(-100000, 0.1, 5);
 
         expect(nice.min).toBe(-100000);
         expect(nice.max).toBe(50000);
@@ -52,7 +52,7 @@ describe('contour-utils niceMinMax', function () {
     });
 
     it('should handle decimal values all positive', function () {
-        var nice = _.nw.niceMinMax(0.4, 0.8, 5);
+        var nice = nw.niceMinMax(0.4, 0.8, 5);
 
         expect(nice.min).toBe(0.4);
         expect(nice.max).toBe(0.9);
@@ -60,7 +60,7 @@ describe('contour-utils niceMinMax', function () {
     });
 
     it('should handle small values', function () {
-        var nice = _.nw.niceMinMax(0, 0.2, 5);
+        var nice = nw.niceMinMax(0, 0.2, 5);
 
         expect(nice.min).toBe(0);
         expect(nice.max).toBe(0.2);
@@ -68,7 +68,7 @@ describe('contour-utils niceMinMax', function () {
     });
 
     it('should handle really small values', function () {
-        var nice = _.nw.niceMinMax(0, 0.01, 5);
+        var nice = nw.niceMinMax(0, 0.01, 5);
 
         expect(nice.min).toBe(0);
         expect(nice.max).toBe(0.01);
@@ -76,7 +76,7 @@ describe('contour-utils niceMinMax', function () {
     });
 
     it('should handle really really small values', function () {
-        var nice = _.nw.niceMinMax(0, 5e-4, 5);
+        var nice = nw.niceMinMax(0, 5e-4, 5);
 
         expect(nice.min).toBe(0);
         expect(nice.max).toBe(5e-4);
@@ -84,7 +84,7 @@ describe('contour-utils niceMinMax', function () {
     });
 
     it('should return a slightly different number of round ticks if possible', function () {
-        var nice = _.nw.niceMinMax(0, 3, 5);
+        var nice = nw.niceMinMax(0, 3, 5);
 
         expect(nice.min).toBe(0);
         expect(nice.max).toBe(3);
@@ -93,7 +93,7 @@ describe('contour-utils niceMinMax', function () {
 
     describe('when zeroAnchor is false', function () {
         it('should not anchor at zero', function () {
-            var nice = _.nw.niceMinMax(1, 4, 5, false);
+            var nice = nw.niceMinMax(1, 4, 5, false);
 
             expect(nice.min).toBe(1);
             expect(nice.max).toBe(4);
@@ -103,7 +103,7 @@ describe('contour-utils niceMinMax', function () {
 
     describe('when zeroAnchor is true', function () {
         it('should anchor at zero', function () {
-            var nice = _.nw.niceMinMax(1, 3, 5, true);
+            var nice = nw.niceMinMax(1, 3, 5, true);
 
             expect(nice.min).toBe(0);
             expect(nice.max).toBe(3);
@@ -113,12 +113,12 @@ describe('contour-utils niceMinMax', function () {
 
     describe('when min > max', function () {
         it('should return empty ticks array', function () {
-            var nice = _.nw.niceMinMax(2, 1, 5);
+            var nice = nw.niceMinMax(2, 1, 5);
             expect(nice.tickValues).toEqual([]);
         });
 
         it('shold return max = min', function () {
-            var nice = _.nw.niceMinMax(2, 1, 5);
+            var nice = nw.niceMinMax(2, 1, 5);
             expect(nice.min).toBe(2);
             expect(nice.max).toBe(2);
         });
@@ -130,12 +130,12 @@ describe('contour-utils niceMinMax', function () {
 
     describe('when min < max < 0', function () {
         it('should include zero by default', function () {
-            var nice = _.nw.niceMinMax(-5, -4, 5);
+            var nice = nw.niceMinMax(-5, -4, 5);
             expect(nice.max).toBe(0);
         });
 
         it('should have the min number as the min of the domain', function () {
-            var nice = _.nw.niceMinMax(-5, -4, 5);
+            var nice = nw.niceMinMax(-5, -4, 5);
             expect(nice.min).toBe(-5);
         });
     });

@@ -24,7 +24,7 @@ describe('Ordinal xAxis', function () {
 
 
     function createAxis(options) {
-        return new _.nw.axes.OrdinalScale(data, $.extend(true, {}, defaults, options));
+        return new nw.axes.OrdinalScale(data, $.extend(true, {}, defaults, options));
     }
 
     beforeEach(function () {

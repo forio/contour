@@ -28,9 +28,9 @@ describe('Column chart', function () {
         });
 
         it('should set the hight of each column to the corresponding yScale value', function () {
-            var nw = createinstance().column(data).render();
+            var narwal = createinstance().column(data).render();
             var rects = $el.find('rect.column');
-            var y = function (d) { return nw.yScale(0) - Math.round(nw.yScale(d)); };
+            var y = function (d) { return narwal.yScale(0) - Math.round(narwal.yScale(d)); };
 
             expect(+rects.eq(0).attr('height')).toBe(y(data[0]));
             expect(+rects.eq(1).attr('height')).toBe(y(data[1]));
@@ -42,13 +42,13 @@ describe('Column chart', function () {
 
             it('should move the columns by \'offset\' if specified', function () {
                 var offset = 50;
-                var nw = createinstance({
+                var narwal = createinstance({
                     chart: { width: 401 },
                     column: { offset: offset , stacked: true }
                 }).column(data).render();
 
                 var rects = $el.find('rect.column');
-                var x1 = +(nw.xScale(0) + offset + 0.5).toFixed(2);
+                var x1 = +(narwal.xScale(0) + offset + 0.5).toFixed(2);
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });
@@ -56,11 +56,11 @@ describe('Column chart', function () {
             it('should call the offset function with instance instance context if specified', function () {
                 var ctx;
                 var offset = function () { ctx = this; return 50; };
-                var nw = createinstance({
+                var narwal = createinstance({
                     column: { offset: offset , stacked: true }
                 }).column(data).render();
 
-                expect(ctx).toBe(nw);
+                expect(ctx).toBe(narwal);
             });
 
             it('should user columnWidth value to get the width for each column', function () {
@@ -92,12 +92,12 @@ describe('Column chart', function () {
 
             it('should move the columns by \'offset\' if specified', function () {
                 var offset = 50;
-                var nw = createinstance({
+                var narwal = createinstance({
                     column: { offset: offset, stacked: false }
                 }).column(data).render();
 
                 var rects = $el.find('rect.column');
-                var x1 = +(nw.xScale(0) + offset + 1).toFixed(1);
+                var x1 = +(narwal.xScale(0) + offset + 1).toFixed(1);
 
                 expect(+rects.eq(0).attr('x')).toBe(x1);
             });

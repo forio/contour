@@ -52,7 +52,7 @@
         }
 
     };
-
+    window.nw = window.nw || {};
     nw = _.extend({}, nw, helpers);
 
 })();

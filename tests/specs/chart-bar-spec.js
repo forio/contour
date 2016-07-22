@@ -1,6 +1,6 @@
 describe('Bar chart', function () {
 
-    var el, $el, nw;
+    var el, $el, narwal;
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
@@ -47,9 +47,9 @@ describe('Bar chart', function () {
         });
 
         it('should set the width of each Bar to the corresponding yScale value', function () {
-            var nw = createinstance().bar(data).render();
+            var narwal = createinstance().bar(data).render();
             var rects = $el.find('rect.bar');
-            var x = function (d) { return nw.yScale(d); };
+            var x = function (d) { return narwal.yScale(d); };
 
             expect(+rects.eq(0).attr('width')).toBe(x(data[0]));
             expect(+rects.eq(1).attr('width')).toBe(x(data[1]));
@@ -121,7 +121,7 @@ describe('Bar chart', function () {
 
         describe('without stacking', function () {
             beforeEach(function () {
-                nw = createinstance().bar([
+                narwal = createinstance().bar([
                     { name: 's1', data: [1,2,3] },
                     { name: 's2', data: [4,4,4] }
                 ]).render();
@@ -138,7 +138,7 @@ describe('Bar chart', function () {
 
         describe('with stacking', function () {
             beforeEach(function () {
-                nw = createinstance().bar([
+                narwal = createinstance().bar([
                     { name: 's1', data: [1,2,3] },
                     { name: 's2', data: [4,4,4] }
                 ], { stacked: true }).render();
@@ -156,7 +156,7 @@ describe('Bar chart', function () {
 
     describe('given multiple series with uneven data (ie. null values in some series)', function () {
         beforeEach(function () {
-            nw = createinstance().bar([
+            narwal = createinstance().bar([
                 { name: 's1', data: [1,null,3] },
                 { name: 's2', data: [4,5,3] },
                 { name: 's3', data: [4,null,4] }

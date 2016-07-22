@@ -2,7 +2,7 @@
 
 describe('Stacked Tooltip', function () {
 
-    var el, $el, nw;
+    var el, $el, narwal;
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
@@ -22,7 +22,7 @@ describe('Stacked Tooltip', function () {
                 { name: 's2', data: [4,5,3] },
                 { name: 's3', data: [4,null,4] }
             ];
-        nw = createContour().bar(data).stackedTooltip(data, {el: tooltip.get(0)});
+        narwal = createContour().bar(data).stackedTooltip(data, {el: tooltip.get(0)});
 
         // NEED A GOOD WAY TO TEST MOUSE EVENTS FOR TOOLTIPS!!
     });
