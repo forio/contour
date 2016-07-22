@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2016-01-26 */
+/*! Contour - v1.0.1 - 2016-07-22 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -15,7 +15,7 @@
         // cheap trick to add decimals without hitting javascript issues
         // note that this fails for very large numbers
         var multiplier = function(x) {
-            var dig = _.nw.decDigits(x);
+            var dig = nw.decDigits(x);
             return dig === 0 ? 1 : Math.pow(10, dig);
         };
         var maxMultiplier = function(a, b) {
@@ -200,22 +200,22 @@
         };
         var axisHelpers = {
             addAxis: function(name, axisCtor) {
-                _.nw.axes = _.nw.axes || {};
-                _.nw.axes[name] = axisCtor;
+                nw.axes = nw.axes || {};
+                nw.axes[name] = axisCtor;
             },
             roundToNextTick: function(num) {
                 var abs = Math.abs(num);
                 var sign = abs === num ? 1 : -1;
                 var mag, step;
                 if (abs >= 1) {
-                    mag = Math.floor(_.nw.log10(abs));
+                    mag = Math.floor(nw.log10(abs));
                     step = mag <= 1 ? 2 : Math.pow(10, mag - 1);
                 } else {
                     var exp = abs.toExponential().replace(/\.|e-\d+$/g, "");
                     mag = exp.length;
                     step = mulFloat(mag === 1 ? 2 : 10, Math.pow(10, -mag));
                 }
-                var raw = _.nw.roundToNearest(abs, step);
+                var raw = nw.roundToNearest(abs, step);
                 return sign * raw;
             },
             niceMinMax: function(min, max, ticks, startAtZero) {
@@ -289,7 +289,7 @@
                         var dig = numberHelpers.digits(inter);
                         var roundToDigits;
                         if (inter > 0) {
-                            roundToDigits = -Math.floor(_.nw.log10(inter));
+                            roundToDigits = -Math.floor(nw.log10(inter));
                         } else {
                             roundToDigits = Math.max(1, Math.abs(dig - 2));
                         }
@@ -349,21 +349,21 @@
                     if (!d) {
                         return padding * 2;
                     }
-                    return _.nw.textBounds(d, ".x.axis text").width + padding * 2;
+                    return nw.textBounds(d, ".x.axis text").width + padding * 2;
                 });
             },
             doXLabelsFit: function(ticks, labelFormatter, options) {
-                var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
+                var tickWidths = nw.calcXLabelsWidths(ticks.map(labelFormatter));
                 var availableWidthForLabels = options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2;
-                var axisLabelsWidth = _.nw.sum(tickWidths);
+                var axisLabelsWidth = nw.sum(tickWidths);
                 return axisLabelsWidth <= availableWidthForLabels;
             },
             getTicksThatFit: function(ticks, labelFormatter, options) {
                 // reduce the number of ticks incrementally by taking every 2nd, then every 3th, and so on
                 // until we find a set of ticks that fits the available space
                 function reduceTicksByMod() {
-                    var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
-                    var axisLabelsWidth = _.nw.sum(tickWidths);
+                    var tickWidths = nw.calcXLabelsWidths(ticks.map(labelFormatter));
+                    var axisLabelsWidth = nw.sum(tickWidths);
                     var availableWidthForLabels = options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2;
                     var iter = 1;
                     var filterMod = function(d, i) {
@@ -373,7 +373,7 @@
                     while (axisLabelsWidth > availableWidthForLabels && finalTicks.length !== 0) {
                         iter++;
                         finalTicks = _.filter(ticks, filterMod);
-                        axisLabelsWidth = _.nw.sum(_.nw.calcXLabelsWidths(finalTicks.map(labelFormatter)));
+                        axisLabelsWidth = nw.sum(nw.calcXLabelsWidths(finalTicks.map(labelFormatter)));
                     }
                     return finalTicks;
                 }
@@ -607,7 +607,9 @@
                 }
             }
         };
-        _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
+        window.nw = window.nw || {};
+        nw = _.extend({}, nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers, axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
+        console.log("fart", nw.getStyle);
         if (!_.noop) {
             _.noop = noop;
         }
@@ -819,17 +821,17 @@
             },
             calculateWidth: function() {
                 // assume all in pixel units and border-box box-sizing
-                var outerWidth = parseInt(_.nw.getStyle(this.options.el, "width") || 0, 10);
-                var paddingLeft = parseInt(_.nw.getStyle(this.options.el, "padding-left") || 0, 10);
-                var paddingRight = parseInt(_.nw.getStyle(this.options.el, "padding-right") || 0, 10);
+                var outerWidth = parseInt(nw.getStyle(this.options.el, "width") || 0, 10);
+                var paddingLeft = parseInt(nw.getStyle(this.options.el, "padding-left") || 0, 10);
+                var paddingRight = parseInt(nw.getStyle(this.options.el, "padding-right") || 0, 10);
                 var width = outerWidth - paddingRight - paddingLeft;
                 return this.options.el ? width || this.options.chart.defaultWidth : this.options.chart.defaultWidth;
             },
             calculateHeight: function() {
                 // assume all in pixel units and border-box box-sizing
-                var outerHeight = parseInt(_.nw.getStyle(this.options.el, "height") || 0, 10);
-                var paddingTop = parseInt(_.nw.getStyle(this.options.el, "padding-top") || 0, 10);
-                var paddingBottom = parseInt(_.nw.getStyle(this.options.el, "padding-bottom") || 0, 10);
+                var outerHeight = parseInt(nw.getStyle(this.options.el, "height") || 0, 10);
+                var paddingTop = parseInt(nw.getStyle(this.options.el, "padding-top") || 0, 10);
+                var paddingBottom = parseInt(nw.getStyle(this.options.el, "padding-bottom") || 0, 10);
                 var height = outerHeight - paddingTop - paddingBottom;
                 var containerHeight = this.options.el ? height : undefined;
                 var calcWidth = this.options.chart.width;
@@ -1043,8 +1045,8 @@
             },
             // place holder function for now
             data: function() {},
-            dataNormalizer: _.nw.normalizeSeries,
-            isSupportedDataFormat: _.nw.isSupportedDataFormat
+            dataNormalizer: nw.normalizeSeries,
+            isSupportedDataFormat: nw.isSupportedDataFormat
         });
         // exports for commonJS and requireJS styles
         if (typeof module === "object" && module && typeof module.exports === "object") {
@@ -1076,7 +1078,7 @@
                 var domain = this.domain;
                 var dMin = options.min != null ? options.min : options.zeroAnchor ? Math.min(0, domain[0]) : domain[0];
                 var dMax = options.max != null ? options.max : domain[1];
-                var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks);
+                var tickValues = options.tickValues || nw.niceTicks(dMin, dMax, options.ticks);
                 var numTicks = this.numTicks(domain, options.min, options.max);
                 var format = options.labels.formatter || d3.format(options.labels.format);
                 return d3.svg.axis().scale(this._scale).tickFormat(format).tickSize(options.innerTickSize, options.outerTickSize).tickPadding(options.tickPadding).ticks(numTicks).tickValues(tickValues);
@@ -1105,7 +1107,7 @@
             },
             _niceTheScale: function() {}
         };
-        _.nw.addAxis("YAxis", YAxis);
+        nw.addAxis("YAxis", YAxis);
     })();
     (function() {
         /*jshint eqnull:true */
@@ -1235,7 +1237,7 @@
                     } else if (opts.smartAxis) {
                         return d3.extent(opts.zeroAnchor || opts.min != null ? [ min ].concat(domain) : domain);
                     }
-                    return _.nw.extractScaleDomain(domain, min, opts.max, opts.ticks);
+                    return nw.extractScaleDomain(domain, min, opts.max, opts.ticks);
                 },
                 /*jshint eqnull:true */
                 adjustPadding: function() {
@@ -1263,11 +1265,11 @@
                     if (options.ticks !== 0) {
                         var xLabels = this.xDomain;
                         var xAxisText = xLabels.join("<br>");
-                        var xLabelBounds = _.nw.textBounds(xAxisText, ".x.axis");
-                        var regularXBounds = _.nw.textBounds("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", ".x.axis");
+                        var xLabelBounds = nw.textBounds(xAxisText, ".x.axis");
+                        var regularXBounds = nw.textBounds("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", ".x.axis");
                         var em = regularXBounds.height;
                         var ang = options.labels && options.labels.rotation ? options.labels.rotation % 360 : 0;
-                        var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))) + em / 5);
+                        var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(nw.degToRad(ang))) + em / 5);
                         return maxTickSize(options) + (options.tickPadding || 0) + xLabelHeightUsed;
                     } else {
                         return maxTickSize(options) + (options.tickPadding || 0);
@@ -1279,7 +1281,7 @@
                     var yLabels = tmpScale.ticks(options.ticks);
                     var format = options.labels.formatter || d3.format(options.labels.format || ",.0f");
                     var yAxisText = _.map(yLabels, format).join("<br>");
-                    var yLabelBounds = _.nw.textBounds(yAxisText, ".y.axis");
+                    var yLabelBounds = nw.textBounds(yAxisText, ".y.axis");
                     return maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) + yLabelBounds.width;
                 },
                 _getAdjustedRightPadding: function(options) {
@@ -1289,11 +1291,11 @@
                     var titleBounds;
                     if (this.options.xAxis.title || this.options.yAxis.title) {
                         if (this.options.xAxis.title) {
-                            titleBounds = _.nw.textBounds(this.options.xAxis.title, ".x.axis-title");
+                            titleBounds = nw.textBounds(this.options.xAxis.title, ".x.axis-title");
                             this.options.chart.internalPadding.bottom += titleBounds.height + this.options.xAxis.titlePadding;
                         }
                         if (this.options.yAxis.title) {
-                            titleBounds = _.nw.textBounds(this.options.yAxis.title, ".y.axis-title");
+                            titleBounds = nw.textBounds(this.options.yAxis.title, ".y.axis-title");
                             this.options.chart.internalPadding.left += titleBounds.height + this.options.yAxis.titlePadding;
                         }
                     }
@@ -1301,7 +1303,7 @@
                 computeXScale: function() {
                     if (!this.xDomain) throw new Error("You are trying to render without setting data (xDomain).");
                     if (!this.xScale) {
-                        this.xScaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
+                        this.xScaleGenerator = nw.xScaleFactory(this.dataSrc, this.options);
                         this.xScale = this.xScaleGenerator.scale(this.xDomain);
                         this.rangeBand = this.xScaleGenerator.rangeBand();
                     } else {
@@ -1313,7 +1315,7 @@
                     if (!this.yDomain) throw new Error("You are trying to render without setting data (yDomain).");
                     var yScaleDomain = this._getYScaledDomain(this.yDomain, this.options);
                     if (!this.yScale) {
-                        this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
+                        this.yScaleGenerator = nw.yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
                         this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                     } else {
                         this.yScaleGenerator.update(yScaleDomain, this.dataSrc);
@@ -1432,7 +1434,7 @@
                     var bounds, x, y;
                     var el;
                     if (this.options.xAxis.title) {
-                        bounds = _.nw.textBounds(this.options.xAxis.title, ".x.axis-title");
+                        bounds = nw.textBounds(this.options.xAxis.title, ".x.axis-title");
                         y = this.options.chart.internalPadding.bottom;
                         x = 0;
                         el = this._xAxisGroup.selectAll(".x.axis-title").data([ 1 ]);
@@ -1442,7 +1444,7 @@
                         d3.select(el.node()).attr("x", x).attr("y", y).attr("alignment-baseline", "after-edge").attr("dx", (this.options.chart.plotWidth - bounds.width) / 2).text(this.options.xAxis.title);
                     }
                     if (this.options.yAxis.title) {
-                        bounds = _.nw.textBounds(this.options.yAxis.title, ".y.axis-title");
+                        bounds = nw.textBounds(this.options.yAxis.title, ".y.axis-title");
                         y = -this.options.chart.internalPadding.left + bounds.height * adjustFactor;
                         x = 0;
                         el = this._yAxisGroup.selectAll(".y.axis-title").data([ 1 ]);
@@ -1542,7 +1544,7 @@
                 _adjustXDomain: function(extents) {
                     this.xDomain = this.getXDomain();
                     var dataVis = _.filter(this._visualizations, function(v) {
-                        return _.nw.isSupportedDataFormat(v.data);
+                        return nw.isSupportedDataFormat(v.data);
                     });
                     this.dataSrc = _.flatten(_.map(dataVis, function(v) {
                         return _.flatten(_.map(v.data, _.bind(this.datum, this)));
@@ -1565,16 +1567,16 @@
                 getExtents: function(axis) {
                     var field = axis && axis === "x" ? "xExtent" : "yExtent";
                     var dataVis = _.filter(this._visualizations, function(v) {
-                        return _.nw.isSupportedDataFormat(v.data);
+                        return nw.isSupportedDataFormat(v.data);
                     });
                     var all = _.flatten(_.pluck(dataVis, field));
                     return all.length ? d3.extent(all) : [];
                 },
                 getXDomain: function() {
                     var dataVis = _.filter(this._visualizations, function(v) {
-                        return _.nw.isSupportedDataFormat(v.data);
+                        return nw.isSupportedDataFormat(v.data);
                     });
-                    var all = _.nw.uniq(_.flatten(_.pluck(dataVis, "xDomain")));
+                    var all = _.uniq(_.flatten(_.pluck(dataVis, "xDomain")));
                     return all;
                 }
             };
@@ -2195,18 +2197,18 @@
                 // if we get no data, we return an ordinal scale
                 var isTimeData = options.xAxis.type === "time" || (_.isArray(data) && data.length > 0 && data[0].data ? data[0].data[0].x && _.isDate(data[0].data[0].x) : _.isArray(data) && data.length > 0 && data[0].x && _.isDate(data[0].x));
                 if (isTimeData && options.xAxis.type !== "ordinal") {
-                    return new _.nw.axes.TimeScale(data, options);
+                    return new nw.axes.TimeScale(data, options);
                 }
                 if (!options.xAxis.categories && options.xAxis.type === "linear") {
-                    return new _.nw.axes.LinearScale(data, options);
+                    return new nw.axes.LinearScale(data, options);
                 }
-                return new _.nw.axes.OrdinalScale(data, options);
+                return new nw.axes.OrdinalScale(data, options);
             },
             yScaleFactory: function(data, options, axisType, domain) {
                 var map = {
-                    log: _.nw.axes.LogYAxis,
-                    smart: _.nw.axes.SmartYAxis,
-                    linear: _.nw.axes.YAxis
+                    log: nw.axes.LogYAxis,
+                    smart: nw.axes.SmartYAxis,
+                    linear: nw.axes.YAxis
                 };
                 if (!axisType) {
                     axisType = "linear";
@@ -2218,13 +2220,14 @@
                     return new map[axisType](data, options, domain);
                 }
                 // try by namespace
-                if (_.nw.axes[axisType]) {
-                    return new _.nw.axes[axisType](data, options, domain);
+                if (nw.axes[axisType]) {
+                    return new nw.axes[axisType](data, options, domain);
                 }
                 throw new Error('Unknown axis type: "' + axisType + '"');
             }
         };
-        _.nw = _.extend({}, _.nw, helpers);
+        window.nw = window.nw || {};
+        nw = _.extend({}, nw, helpers);
     })();
     (function() {
         function LinearScale(data, options) {
@@ -2254,16 +2257,16 @@
                     return _.isDate(d) ? d.getDate() : formatLabel(d);
                 });
                 var ticks = axis.scale().ticks();
-                var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
+                var labelsFit = nw.doXLabelsFit(ticks, formatLabel, this.options);
                 if (options.firstAndLast) {
                     // show only first and last tick
-                    axis.tickValues(_.nw.firstAndLast(this._domain));
+                    axis.tickValues(nw.firstAndLast(this._domain));
                 } else if (options.tickValues) {
                     axis.tickValues(options.tickValues);
                 } else if (options.ticks != null) {
                     axis.ticks(options.ticks);
                 } else if (!labelsFit) {
-                    var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                    var finalTicks = nw.getTicksThatFit(ticks, formatLabel, this.options);
                     axis.tickValues(finalTicks);
                     axis.ticks(finalTicks.length);
                 }
@@ -2305,7 +2308,9 @@
                 return [ optMin, optMax ];
             }
         };
-        _.nw.addAxis("LinearScale", LinearScale);
+        console.log("linearsScale", nw.axes.LinearScale);
+        nw.addAxis("LinearScale", LinearScale);
+        console.log(nw.axes.LinearScale);
     })();
     (function() {
         var LogYAxis = function(data, options) {
@@ -2317,7 +2322,7 @@
             var range = options.chart.rotatedFrame ? [ 0, rangeSize ] : [ rangeSize, 0 ];
             return scale.range(range);
         }
-        var __super = _.nw.axes.YAxis.prototype;
+        var __super = nw.axes.YAxis.prototype;
         LogYAxis.prototype = _.extend({}, __super, {
             axis: function() {
                 var options = this.options.yAxis;
@@ -2350,7 +2355,7 @@
                 this.scale();
             }
         });
-        _.nw.addAxis("LogYAxis", LogYAxis);
+        nw.addAxis("LogYAxis", LogYAxis);
     })();
     (function() {
         // implements the following interface
@@ -2392,12 +2397,12 @@
                 };
                 var axis = d3.svg.axis().scale(this._scale).innerTickSize(options.innerTickSize).outerTickSize(options.outerTickSize).tickPadding(options.tickPadding).tickFormat(tickFormat);
                 var ticks = this.isCategorized && options.categories ? options.categories : _.range(this._domain.length) || [];
-                var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
+                var labelsFit = nw.doXLabelsFit(ticks, formatLabel, this.options);
                 if (options.firstAndLast) {
                     // show only first and last tick
-                    axis.tickValues(_.nw.firstAndLast(this._domain));
+                    axis.tickValues(nw.firstAndLast(this._domain));
                 } else if (options.maxTicks) {
-                    axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
+                    axis.tickValues(nw.maxTickValues(options.maxTicks, this._domain));
                 } else if (options.tickValues) {
                     axis.tickValues(options.tickValues);
                 } else if (options.ticks != null) {
@@ -2406,7 +2411,7 @@
                         axis.tickValues([]);
                     }
                 } else if (!labelsFit) {
-                    var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                    var finalTicks = nw.getTicksThatFit(ticks, formatLabel, this.options);
                     axis.tickValues(finalTicks);
                     axis.ticks(finalTicks.length);
                 } else {
@@ -2419,7 +2424,7 @@
                 var options = this.options.xAxis;
                 if (!options.labels || options.labels.rotation == null) return;
                 var deg = options.labels.rotation;
-                var rad = _.nw.degToRad(deg);
+                var rad = nw.degToRad(deg);
                 var sign = deg > 0 ? 1 : deg < 0 ? -1 : 0;
                 var pos = deg < 0 ? -1 : 1;
                 var lineHeight = .71;
@@ -2455,7 +2460,7 @@
             },
             rangeBand: function() {
                 var band = this._scale.rangeBand();
-                if (!band) _.nw.warn("rangeBand is 0, you may have too many points in in the domain for the size of the chart (ie. chartWidth = " + this.options.chart.plotWidth + "px and " + this._domain.length + " X-axis points (plus paddings) means less than 1 pixel per band and there're no half pixels");
+                if (!band) nw.warn("rangeBand is 0, you may have too many points in in the domain for the size of the chart (ie. chartWidth = " + this.options.chart.plotWidth + "px and " + this._domain.length + " X-axis points (plus paddings) means less than 1 pixel per band and there're no half pixels");
                 return this._scale.rangeBand();
             },
             _range: function() {
@@ -2467,7 +2472,7 @@
                 return this.isCategorized ? this._scale[rangeType](range, this.options.xAxis.innerRangePadding, this.options.xAxis.outerRangePadding) : this._scale.rangePoints(range);
             }
         };
-        _.nw.addAxis("OrdinalScale", OrdinalScale);
+        nw.addAxis("OrdinalScale", OrdinalScale);
     })();
     (function() {
         var SmartYAxis = function(data, options, domain) {
@@ -2479,22 +2484,22 @@
         };
         /* jshint eqnull: true */
         function _extractYTickValues(domain, min, max, yMin, yMax, dataMax) {
-            var adjustedDomain = _.uniq(_.nw.merge(_.nw.merge(domain, yMax), dataMax));
+            var adjustedDomain = _.uniq(nw.merge(nw.merge(domain, yMax), dataMax));
             // we want to be able to remove parameters with default values
             // so to remove the default yAxis.min: 0, you pass yAxis.min: null
             // and for that we need to to a truly comparison here (to get null or undefined)
             if (min == null && max == null) return adjustedDomain;
             if (min == null) {
-                return max > yMin ? _.nw.merge([ max ], adjustedDomain) : [ max ];
+                return max > yMin ? nw.merge([ max ], adjustedDomain) : [ max ];
             }
             if (max == null) {
                 if (min >= yMax) return [ min ];
                 adjustedDomain[0] = min;
                 return adjustedDomain;
             }
-            return _.nw.merge([ min, max ], yMax);
+            return nw.merge([ min, max ], yMax);
         }
-        var __super = _.nw.axes.YAxis.prototype;
+        var __super = nw.axes.YAxis.prototype;
         SmartYAxis.prototype = _.extend({}, __super, {
             axis: function() {
                 var options = this.options.yAxis;
@@ -2519,14 +2524,14 @@
                 var domain = this._scale.domain();
                 var min = this.options.yAxis.min || domain[0];
                 var rawMax = this.options.yAxis.max || this.dataMax;
-                var nextTick = _.nw.roundToNextTick(rawMax);
-                var max = Math.abs(nextTick - rawMax) < rawMax * perTreshold ? _.nw.roundToNextTick(rawMax + rawMax * perTreshold) : nextTick;
-                // var max = nextTick === rawMax ? _.nw.roundToNextTick(rawMax + Math.pow(10, -_.nw.decDigits(rawMax) - 1)) : nextTick;
+                var nextTick = nw.roundToNextTick(rawMax);
+                var max = Math.abs(nextTick - rawMax) < rawMax * perTreshold ? nw.roundToNextTick(rawMax + rawMax * perTreshold) : nextTick;
+                // var max = nextTick === rawMax ? nw.roundToNextTick(rawMax + Math.pow(10, -nw.decDigits(rawMax) - 1)) : nextTick;
                 var nice = [ min, max ];
                 this._scale.domain(nice);
             }
         });
-        _.nw.addAxis("SmartYAxis", SmartYAxis);
+        nw.addAxis("SmartYAxis", SmartYAxis);
     })();
     (function() {
         // implements the following interface
@@ -2569,10 +2574,10 @@
                 } else if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
                     // override the tickValues with custom array based on number of ticks
                     // we don't use D3 ticks() because you cannot force it to show a specific number of ticks
-                    axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
+                    axis.tickValues(nw.maxTickValues(options.maxTicks, this._domain));
                 } else if (this.options.xAxis.firstAndLast) {
                     // show only first and last tick
-                    axis.tickValues(_.nw.firstAndLast(this._domain));
+                    axis.tickValues(nw.firstAndLast(this._domain));
                 }
                 return axis;
             },
@@ -2626,7 +2631,7 @@
                 return [ 0, size ];
             }
         };
-        _.nw.addAxis("TimeScale", TimeScale);
+        nw.addAxis("TimeScale", TimeScale);
     })();
     (function() {
         var defaults = {
@@ -2647,8 +2652,8 @@
             adjustPadding: function() {
                 var categoryLabels = this.options.xAxis.categories || _.pluck(this.dataSrc, "x");
                 var text = categoryLabels.join("<br>");
-                var xLabel = _.nw.textBounds(text, ".x.axis");
-                var yLabel = _.nw.textBounds("ABC", ".y.axis");
+                var xLabel = nw.textBounds(text, ".x.axis");
+                var yLabel = nw.textBounds("ABC", ".y.axis");
                 var maxTickSize = function(options) {
                     return Math.max(options.outerTickSize, options.innerTickSize);
                 };
@@ -2659,11 +2664,11 @@
                 var titleBounds;
                 if (this.options.xAxis.title || this.options.yAxis.title) {
                     if (this.options.xAxis.title) {
-                        titleBounds = _.nw.textBounds(this.options.xAxis.title, ".x.axis-title");
+                        titleBounds = nw.textBounds(this.options.xAxis.title, ".x.axis-title");
                         this.options.chart.internalPadding.left += titleBounds.height + this.options.xAxis.titlePadding;
                     }
                     if (this.options.yAxis.title) {
-                        titleBounds = _.nw.textBounds(this.options.yAxis.title, ".y.axis-title");
+                        titleBounds = nw.textBounds(this.options.yAxis.title, ".y.axis-title");
                         this.options.chart.internalPadding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
                     }
                 }
@@ -2696,7 +2701,7 @@
                 var el;
                 var bounds, anchor, rotation, tickSize, x, y;
                 if (this.options.xAxis.title) {
-                    bounds = _.nw.textBounds(this.options.xAxis.title, ".x.axis-title");
+                    bounds = nw.textBounds(this.options.xAxis.title, ".x.axis-title");
                     x = this.options.chart.rotatedFrame ? -bounds.height : this.options.chart.plotWidth;
                     y = this.options.chart.rotatedFrame ? -this.options.chart.internalPadding.left : this.options.chart.internalPadding.bottom - lineHeightAdjustment;
                     rotation = this.options.chart.rotatedFrame ? "-90" : "0";
@@ -2706,7 +2711,7 @@
                     el.exit().remove();
                 }
                 if (this.options.yAxis.title) {
-                    bounds = _.nw.textBounds(this.options.yAxis.title, ".y.axis-title");
+                    bounds = nw.textBounds(this.options.yAxis.title, ".y.axis-title");
                     tickSize = Math.max(this.options.yAxis.innerTickSize, this.options.yAxis.outerTickSize);
                     anchor = this.options.chart.rotatedFrame ? "end" : "middle";
                     x = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : 0;
@@ -2754,7 +2759,7 @@
         };
         /*jshint eqnull:true */
         var _stackedExtent = function(data) {
-            var stack = _.nw.stackLayout();
+            var stack = nw.stackLayout();
             var dataSets = stack(data);
             var ext = [];
             _.each(dataSets, function(set) {
@@ -2785,7 +2790,7 @@
                 return this.ctx;
             },
             setData: function(data) {
-                var normalizeData = (this.ctx || {}).dataNormalizer || _.nw.normalizeSeries;
+                var normalizeData = (this.ctx || {}).dataNormalizer || nw.normalizeSeries;
                 this.data = normalizeData(data, this.categories);
                 this._updateDomain();
                 return this.ctx;
@@ -2799,7 +2804,7 @@
             },
             _updateDomain: function() {
                 if (!this.options[this.type]) throw new Error("Set the options before calling setData or _updateDomain");
-                var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
+                var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || nw.isSupportedDataFormat;
                 if (isSupportedFormat(this.data)) {
                     this.xDomain = _.flatten(_.map(this.data, function(set) {
                         return _.pluck(set.data, "x");
@@ -2819,7 +2824,7 @@
             area: {
                 stacked: true,
                 areaBase: undefined,
-                preprocess: _.nw.minMaxFilter(1e3)
+                preprocess: nw.minMaxFilter(1e3)
             }
         };
         /* jshint eqnull:true */
@@ -2957,9 +2962,9 @@
             var y = function(d) {
                 return _this.yScale(d) + .5;
             };
-            var chartOffset = _.nw.getValue(opt.offset, 0, this);
-            var rangeBand = _.nw.getValue(opt.barWidth, this.rangeBand, this);
-            var stack = _.nw.stackLayout();
+            var chartOffset = nw.getValue(opt.offset, 0, this);
+            var rangeBand = nw.getValue(opt.barWidth, this.rangeBand, this);
+            var stack = nw.stackLayout();
             var update = options.bar.stacked ? stacked : grouped;
             var enter = _.partialRight(update, true);
             var classFn = function(d, i) {
@@ -3083,8 +3088,8 @@
             var dataKey = function(d) {
                 return d.data;
             };
-            var chartOffset = _.nw.getValue(opt.offset, 0, this);
-            var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
+            var chartOffset = nw.getValue(opt.offset, 0, this);
+            var rangeBand = nw.getValue(opt.columnWidth, this.rangeBand, this);
             var enter = _.partialRight(options.column.stacked ? stacked : grouped, true);
             var update = options.column.stacked ? stacked : grouped;
             var filteredData = _.map(data, function(series, j) {
@@ -3095,7 +3100,7 @@
                     })
                 };
             });
-            var stack = _.nw.stackLayout();
+            var stack = nw.stackLayout();
             var series = layer.selectAll("g.series").data(stack(filteredData));
             series.enter().append("g").attr("class", function(d, i) {
                 return "series s-" + (i + 1) + " " + d.name;
@@ -3226,7 +3231,7 @@
             } else {
                 this.container.selectAll(".contour-legend").remove();
             }
-            var em = _.nw.textBounds("series", ".contour-legend.contour-legend-entry");
+            var em = nw.textBounds("series", ".contour-legend.contour-legend-entry");
             var count = data.length;
             var legendHeight = (em.height + 4) * count + 12;
             // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
@@ -3263,7 +3268,7 @@
                 if (options.legend.hAlign === "left") {
                     styles.push("left: " + options.chart.plotLeft + "px");
                 } else if (options.legend.hAlign === "center") {
-                    var bounds = _.nw.textBounds(this, ".contour-legend");
+                    var bounds = nw.textBounds(this, ".contour-legend");
                     styles.push("left: " + ((options.chart.plotWidth - bounds.width) / 2 + options.chart.internalPadding.left) + "px");
                 } else {
                     styles.push("right: 10px");
@@ -3275,7 +3280,7 @@
                 return "contour-legend-entry";
             });
             entries.append("span").attr("class", function(d, i) {
-                return "contour-legend-key series s-" + (i + 1) + " " + _.nw.seriesNameToClass(d.name);
+                return "contour-legend-key series s-" + (i + 1) + " " + nw.seriesNameToClass(d.name);
             });
             entries.append("span").attr("class", "series-name").text(options.legend.formatter).call(positioner);
             entries.exit().remove();
@@ -3315,7 +3320,7 @@
                     size: 3,
                     animationDelay: 0
                 },
-                preprocess: _.nw.minMaxFilter(1e3)
+                preprocess: nw.minMaxFilter(1e3)
             }
         };
         var duration;
@@ -3365,7 +3370,7 @@
             animationDirection = options.line.animationDirection || "left-to-right";
             duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
             // jshint eqnull:true
-            var data = options.line.preprocess(_.nw.cleanNullValues()(rawData));
+            var data = options.line.preprocess(nw.cleanNullValues()(rawData));
             data = options.line.stacked ? d3.layout.stack().values(function(d) {
                 return d.data;
             })(data) : data;
@@ -3374,7 +3379,7 @@
             if (options.tooltip && options.tooltip.enable) renderTooltipTrackers();
             function seriesClassName(extras) {
                 return function(d, i) {
-                    return (extras || "") + " s-" + (i + 1) + " " + _.nw.seriesNameToClass(d.name);
+                    return (extras || "") + " s-" + (i + 1) + " " + nw.seriesNameToClass(d.name);
                 };
             }
             function renderPaths() {
@@ -3526,10 +3531,10 @@
         }
         function clampBounds(bounds, maxWidth, maxHeight) {
             return {
-                top: _.nw.clamp(bounds.top, 0, maxHeight),
-                bottom: _.nw.clamp(bounds.bottom, 0, maxHeight),
-                left: _.nw.clamp(bounds.left, 0, maxWidth),
-                right: _.nw.clamp(bounds.right, 0, maxWidth)
+                top: nw.clamp(bounds.top, 0, maxHeight),
+                bottom: nw.clamp(bounds.bottom, 0, maxHeight),
+                left: nw.clamp(bounds.left, 0, maxWidth),
+                right: nw.clamp(bounds.right, 0, maxWidth)
             };
         }
         function calcPadding(options) {
@@ -3574,9 +3579,9 @@
             // for auto radius we need to take the min between the available with or height adjusted by padding and num series
             var totalPadding = pixelPadding.left + (pixelPadding.right + pixelPadding.left) * (numSeries - 1) + pixelPadding.right;
             var proposedRadius = Math.min((w - totalPadding) / numSeries / 2, (h - pixelPadding.top - pixelPadding.bottom) / 2);
-            var radius = resolveValueUnits(_.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius, referenceSize), referenceSize);
+            var radius = resolveValueUnits(nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius, referenceSize), referenceSize);
             // inner radius is a pixel value or % of the radius
-            var innerRadius = resolveValueUnits(_.nw.getValue(options.pie.innerRadius, 0, this, radius), radius);
+            var innerRadius = resolveValueUnits(nw.getValue(options.pie.innerRadius, 0, this, radius), radius);
             var pieData = d3.layout.pie().value(function(d) {
                 return d.y;
             }).sort(null);
@@ -3813,7 +3818,7 @@
             };
             var positionTooltip = function(d) {
                 var pointOrCentroid = function() {
-                    return d3.event.target.tagName === "path" ? _.nw.getCentroid(d3.event.target) : d3.mouse(this.container.node());
+                    return d3.event.target.tagName === "path" ? nw.getCentroid(d3.event.target) : d3.mouse(this.container.node());
                 };
                 var xScale = this.xScale;
                 var yScale = this.yScale;
@@ -3984,7 +3989,7 @@
             var y = _.bind(function(d) {
                 return this.yScale(d);
             }, this);
-            var regression = _.nw.linearRegression(data);
+            var regression = nw.linearRegression(data);
             var domain = d3.extent(this.xScale.domain());
             var numericDomain = d3.extent(data, function(p) {
                 return p.x;
