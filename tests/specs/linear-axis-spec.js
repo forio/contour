@@ -18,7 +18,7 @@ describe('Linear axis scale', function () {
     };
 
     function createAxis(options) {
-        return new _.nw.axes.LinearScale(data, $.extend(true, {}, defaults, options));
+        return new nw.axes.LinearScale(data, $.extend(true, {}, defaults, options));
     }
 
     beforeEach(function () {

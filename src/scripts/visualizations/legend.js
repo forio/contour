@@ -43,7 +43,7 @@
         } else {
             this.container.selectAll('.contour-legend').remove();
         }
-        var em = _.nw.textBounds('series', '.contour-legend.contour-legend-entry');
+        var em = nw.textBounds('series', '.contour-legend.contour-legend-entry');
         var count = data.length;
         var legendHeight = (em.height + 4) * count + 12; // legend has 1px border and 5px margin (12px) and each entry has ~2px margin
         var mid = (options.chart.plotHeight - legendHeight) / 2;
@@ -87,7 +87,7 @@
             if (options.legend.hAlign === 'left') {
                 styles.push('left: ' + options.chart.plotLeft + 'px');
             } else if (options.legend.hAlign === 'center') {
-                var bounds = _.nw.textBounds(this, '.contour-legend');
+                var bounds = nw.textBounds(this, '.contour-legend');
 
                 styles.push('left: ' + ((options.chart.plotWidth - bounds.width) / 2 + options.chart.internalPadding.left) + 'px' );
             } else {
@@ -107,7 +107,7 @@
             });
 
         entries.append('span')
-            .attr('class', function (d, i) { return 'contour-legend-key series s-' + (i+1) + ' ' + _.nw.seriesNameToClass(d.name); });
+            .attr('class', function (d, i) { return 'contour-legend-key series s-' + (i+1) + ' ' + nw.seriesNameToClass(d.name); });
 
         entries.append('span')
             .attr('class', 'series-name')

@@ -33,8 +33,8 @@ describe('default yAxis', function () {
     });
 
     it('should default to smartAxis=false', function () {
-        var nw = createinstance();
-        nw.nullVis([0,10,20,30]).render();
+        var narwal = createinstance();
+        narwal.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
@@ -51,8 +51,8 @@ describe('default yAxis', function () {
     });
 
     it('with smartAxis=false should use the options.yAxis.ticks override if present', function () {
-        var nw = createinstance({ yAxis: {smartAxis: false, ticks: 4 }});
-        nw.nullVis([0,10,20,30]).render();
+        var narwal = createinstance({ yAxis: {smartAxis: false, ticks: 4 }});
+        narwal.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
@@ -61,8 +61,8 @@ describe('default yAxis', function () {
     });
 
     it('with smartAxis=false should delegate to d3 if options.yAxis.ticks override is not present', function () {
-        var nw = createinstance({ yAxis: {smartAxis: false, ticks: null }});
-        nw.nullVis([0,10,20,30]).render();
+        var narwal = createinstance({ yAxis: {smartAxis: false, ticks: null }});
+        narwal.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
@@ -114,10 +114,10 @@ describe('default yAxis', function () {
 
         describe('calling setYDomain', function () {
             it('should recalculate yAxis and ticks with new domain', function () {
-                nw = createinstance({yAxis: { smartAxis: true }}).nullVis([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
+                narwal = createinstance({yAxis: { smartAxis: true }}).nullVis([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
 
                 // note that the max needs to be 5% away from 50
-                nw.setData([1,2,3,46]).render();
+                narwal.setData([1,2,3,46]).render();
                 var ticks = $el.find('.y.axis .tick text');
                 expect(+ticks.last().text()).toBe(50);
             });

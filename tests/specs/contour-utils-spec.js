@@ -3,14 +3,14 @@ describe('dateDiff', function () {
         var d1 = new Date('2010-01-01T10:00:00Z');
         var d2 = new Date('2010-01-02T10:00:00Z');
 
-        expect(_.nw.dateDiff(d2, d1)).toBe(1);
+        expect(nw.dateDiff(d2, d1)).toBe(1);
     });
 });
 
 describe('roundToNearest', function () {
     it('should round the given number to the neares specified multiple', function () {
-        expect(_.nw.roundToNearest(7, 14)).toBe(14);
-        expect(_.nw.roundToNearest(7, 10)).toBe(10);
+        expect(nw.roundToNearest(7, 14)).toBe(14);
+        expect(nw.roundToNearest(7, 10)).toBe(10);
     });
 });
 
@@ -19,33 +19,33 @@ describe('roundToNextTick', function () {
 
         describe('for decimal numbers', function () {
             it('with 1 significant digit, it shold round to nearest multiple of .2', function () {
-                expect(_.nw.roundToNextTick(-0.3)).toBe(-0.4);
+                expect(nw.roundToNextTick(-0.3)).toBe(-0.4);
             });
             it('with 2 significant digit, it shold round to nearest multiple of .1', function () {
-                expect(_.nw.roundToNextTick(-0.32)).toBe(-0.4);
+                expect(nw.roundToNextTick(-0.32)).toBe(-0.4);
             });
             it('with 3 significant digit, it shold round to nearest multiple of .01', function () {
-                expect(_.nw.roundToNextTick(-0.567)).toBe(-0.57);
+                expect(nw.roundToNextTick(-0.567)).toBe(-0.57);
             });
         });
 
         it('for single digit numbers should round nearest multiple of 2', function () {
-            expect(_.nw.roundToNextTick(-3.4)).toBe(-4);
-            expect(_.nw.roundToNextTick(-3.6)).toBe(-4);
+            expect(nw.roundToNextTick(-3.4)).toBe(-4);
+            expect(nw.roundToNextTick(-3.6)).toBe(-4);
         });
 
         describe('for two digit numbers', function () {
             it('should round to next multiple of 2', function () {
-                expect(_.nw.roundToNextTick(-22.5)).toBe(-24);
+                expect(nw.roundToNextTick(-22.5)).toBe(-24);
             });
         });
 
         describe('for three digits and up', function () {
             it('it should round to next multiple of 10', function () {
-                expect(_.nw.roundToNextTick(-223.5)).toBe(-230);
-                expect(_.nw.roundToNextTick(-1223.5)).toBe(-1300);
-                expect(_.nw.roundToNextTick(-198)).toBe(-200);
-                expect(_.nw.roundToNextTick(-998)).toBe(-1000);
+                expect(nw.roundToNextTick(-223.5)).toBe(-230);
+                expect(nw.roundToNextTick(-1223.5)).toBe(-1300);
+                expect(nw.roundToNextTick(-198)).toBe(-200);
+                expect(nw.roundToNextTick(-998)).toBe(-1000);
             });
         });
 
@@ -54,33 +54,33 @@ describe('roundToNextTick', function () {
     describe('for positive numebrs', function () {
         describe('for decimal numbers', function () {
             it('with 1 significant digit, it shold round to nearest multiple of .2', function () {
-                expect(_.nw.roundToNextTick(0.3)).toBe(0.4);
+                expect(nw.roundToNextTick(0.3)).toBe(0.4);
             });
             it('with 2 significant digit, it shold round to nearest multiple of .1', function () {
-                expect(_.nw.roundToNextTick(0.32)).toBe(0.4);
+                expect(nw.roundToNextTick(0.32)).toBe(0.4);
             });
             it('with 3 significant digit, it shold round to nearest multiple of .01', function () {
-                expect(_.nw.roundToNextTick(0.567)).toBe(0.57);
+                expect(nw.roundToNextTick(0.567)).toBe(0.57);
             });
         });
 
         it('for single digit numbers should round to the next multiple of 2', function () {
-            expect(_.nw.roundToNextTick(3.4)).toBe(4);
-            expect(_.nw.roundToNextTick(3.6)).toBe(4);
+            expect(nw.roundToNextTick(3.4)).toBe(4);
+            expect(nw.roundToNextTick(3.6)).toBe(4);
         });
 
         describe('for two digit numbers', function () {
             it('should round to next multiple of 2', function () {
-                expect(_.nw.roundToNextTick(22.5)).toBe(24);
+                expect(nw.roundToNextTick(22.5)).toBe(24);
             });
         });
 
         describe('for three digits and up', function () {
             it('it should round to next multiple of 10', function () {
-                expect(_.nw.roundToNextTick(223.5)).toBe(230);
-                expect(_.nw.roundToNextTick(1223.5)).toBe(1300);
-                expect(_.nw.roundToNextTick(198)).toBe(200);
-                expect(_.nw.roundToNextTick(998)).toBe(1000);
+                expect(nw.roundToNextTick(223.5)).toBe(230);
+                expect(nw.roundToNextTick(1223.5)).toBe(1300);
+                expect(nw.roundToNextTick(198)).toBe(200);
+                expect(nw.roundToNextTick(998)).toBe(1000);
             });
         });
     });
@@ -90,17 +90,17 @@ describe('roundToNextTick', function () {
 describe('maxTickValues', function () {
     it('should return domain if domain length is less then maxTicks', function () {
         var domain = [1,2,3];
-        expect(_.nw.maxTickValues(5, domain)).toEqual([1,2,3]);
+        expect(nw.maxTickValues(5, domain)).toEqual([1,2,3]);
     });
 
     it('should return domain if domain is empty', function () {
         var domain = [];
-        expect(_.nw.maxTickValues(5, domain)).toEqual([]);
+        expect(nw.maxTickValues(5, domain)).toEqual([]);
     });
 
     it('should return domain if domain length is equal to maxTicks', function () {
         var domain = [1,2,3];
-        expect(_.nw.maxTickValues(3, domain)).toEqual([1,2,3]);
+        expect(nw.maxTickValues(3, domain)).toEqual([1,2,3]);
     });
 
     describe('when maxTicks is less than domain length', function () {
@@ -109,7 +109,7 @@ describe('maxTickValues', function () {
         var maxTicks = 4;
 
         beforeEach(function () {
-            ticks = _.nw.maxTickValues(maxTicks, domain);
+            ticks = nw.maxTickValues(maxTicks, domain);
         });
 
         it('should return maxTicks as the length of the ticks array', function () {
@@ -121,7 +121,7 @@ describe('maxTickValues', function () {
         });
 
         it('should return evenly spaced ticks', function () {
-            ticks = _.nw.maxTickValues(5, domain);
+            ticks = nw.maxTickValues(5, domain);
             expect(ticks).toEqual([1,3,5,7,9]);
         });
 
@@ -211,19 +211,19 @@ describe('normalizeSeries', function () {
             { x: 2, y: 5 }
         ];
 
-        var series = _.nw.normalizeSeries(data);
+        var series = nw.normalizeSeries(data);
         expect(series).toBeSorted();
     });
 
     it('should not sort data if its categorized', function () {
         var data = [ 5,6,7];
-        var series = _.nw.normalizeSeries(data, ['d', 'x', 'a']);
+        var series = nw.normalizeSeries(data, ['d', 'x', 'a']);
         expect(series).not.toBeSorted();
     });
 
     it('should normalize a single array of values into an array with one series object', function () {
         var data = [1,2,3,4];
-        var series = _.nw.normalizeSeries(data);
+        var series = nw.normalizeSeries(data);
 
         expect(series.length).toBe(1);
         expect(series[0]).toBeNormalizedSeries();
@@ -235,7 +235,7 @@ describe('normalizeSeries', function () {
             { x: 'b', y:2 },
             { x: 'c', y:3 },
         ];
-        var series = _.nw.normalizeSeries(data);
+        var series = nw.normalizeSeries(data);
 
         expect(series.length).toBe(1);
         expect(series[0]).toBeNormalizedSeries();
@@ -247,7 +247,7 @@ describe('normalizeSeries', function () {
             { name: 's2', data: [1,2,3,4] },
             { name: 's3', data: [1,2,3,4] }
         ];
-        var series = _.nw.normalizeSeries(data);
+        var series = nw.normalizeSeries(data);
 
         expect(series.length).toBe(3);
         expect(series[0]).toBeNormalizedSeries();
@@ -261,7 +261,7 @@ describe('normalizeSeries', function () {
             [1,2,3,4],
             [1,2,3,4]
         ];
-        var series = _.nw.normalizeSeries(data);
+        var series = nw.normalizeSeries(data);
 
         expect(series.length).toBe(3);
         expect(series[0]).toBeNormalizedSeries();
@@ -276,7 +276,7 @@ describe('normalizeSeries', function () {
             { x: 'c' },
         ];
 
-        var series = _.nw.normalizeSeries(data);
+        var series = nw.normalizeSeries(data);
         var s1 = series[0];
 
         expect(s1.data[0].y).toBe(1);
@@ -286,7 +286,7 @@ describe('normalizeSeries', function () {
 
     it('should normalize null array values as y=null', function () {
         var data = [1,2,null,undefined,3];
-        var series = _.nw.normalizeSeries(data);
+        var series = nw.normalizeSeries(data);
         var s1 = series[0];
         expect(s1.data[0].y).toBe(1);
         expect(s1.data[1].y).toBe(2);
@@ -307,7 +307,7 @@ describe('normalizeSeries', function () {
             }
         ];
 
-        var series = _.nw.normalizeSeries(data);
+        var series = nw.normalizeSeries(data);
 
         expect(series).toBe(data);
     });
@@ -319,7 +319,7 @@ describe('normalizeSeries', function () {
             {x: 2, y: 3}
         ];
 
-        var series = _.nw.normalizeSeries(data);
+        var series = nw.normalizeSeries(data);
 
         expect(series[0].data).toBe(data);
     });
@@ -330,7 +330,7 @@ describe('normalizeSeries', function () {
             var data = [1,2,3,4];
             var cats = ['a', 'b', 'c', 'd'];
 
-            var series = _.nw.normalizeSeries(data, cats);
+            var series = nw.normalizeSeries(data, cats);
             var s1 = series[0];
 
             expect(s1.data[0].x).toBe('a');
@@ -348,7 +348,7 @@ describe('normalizeSeries', function () {
             var data = [1,2,3,4];
             var cats = ['a', 'b', null, 'd'];
 
-            var series = _.nw.normalizeSeries(data, cats);
+            var series = nw.normalizeSeries(data, cats);
             var s1 = series[0];
 
             expect(s1.data[2].x).toBeNull();
@@ -364,7 +364,7 @@ describe('normalizeSeries', function () {
             ];
             var cats = ['a', 'b', 'c'];
 
-            var series = _.nw.normalizeSeries(data, cats);
+            var series = nw.normalizeSeries(data, cats);
             var s1 = series[0];
 
             expect(s1.data[0].x).toBe('x');
@@ -386,7 +386,7 @@ describe('stacked layout', function () {
             { name: 'b', data: [{x: 0, y: 4, y0: 1}, {x: 1, y: 5, y0: 2}] }
         ];
 
-        var res = _.nw.stackLayout()(data);
+        var res = nw.stackLayout()(data);
 
         expect(res).toEqual(expected);
     });
@@ -406,7 +406,7 @@ describe('stacked layout', function () {
             { name: 'app4', data: [{x:'10.11', y: 3, y0: 9}] }
         ];
 
-        var res = _.nw.stackLayout()(data);
+        var res = nw.stackLayout()(data);
         expect(res).toEqual(expected);
     });
 
@@ -425,7 +425,7 @@ describe('stacked layout', function () {
             { "data": [{ "x": "10.0.17.22", "y": 146, y0: 6 } ], "name": "Free" }
         ];
 
-        var res = _.nw.stackLayout()(data);
+        var res = nw.stackLayout()(data);
         expect(res).toEqual(expected);
 
     });

@@ -1,5 +1,5 @@
 describe('Visualizations', function () {
-    var nw;
+    var narwal;
     var el, $el;
     var data = [1,2,3];
 
@@ -19,7 +19,7 @@ describe('Visualizations', function () {
 
         describe('without animations', function () {
             beforeEach(function () {
-                nw = createContour();
+                narwal = createContour();
             });
 
             it('should add a constructor function to the Contour prototype', function () {
@@ -30,11 +30,11 @@ describe('Visualizations', function () {
             describe('constructor', function () {
 
                 it('should return this (Contour instance)', function () {
-                    expect(nw.line(data)).toEqual(nw);
+                    expect(narwal.line(data)).toEqual(narwal);
                 });
 
                 it('should accept an 1-dimension array as data set', function () {
-                    nw.line([1,2,3]).render();
+                    narwal.line([1,2,3]).render();
                     var paths = $el.find('g[vis-id="1"] path');
 
                     expect(paths.length).toBe(1);
@@ -42,7 +42,7 @@ describe('Visualizations', function () {
                 });
 
                 it('should render more than 1 series if passed in', function () {
-                    nw.line([{
+                    narwal.line([{
                         name: 's1',
                         data: [1,2,3]
                     },{
@@ -57,7 +57,7 @@ describe('Visualizations', function () {
                 });
 
                 it('should add the name of the series as a class series-name to each path\'s group', function () {
-                    nw.line([{
+                    narwal.line([{
                         name: 's1',
                         data: [1,2,3]
                     },{
@@ -74,20 +74,20 @@ describe('Visualizations', function () {
 
             describe('render visualization', function () {
                 beforeEach(function () {
-                    nw.line(data).render();
+                    narwal.line(data).render();
                 });
 
                 it('should default to linear x scale', function () {
                     var chart = createContour();
                     chart.line([1,2,3]).render();
-                    expect(chart.xScaleGenerator instanceof _.nw.axes.LinearScale).toBeTruthy();
+                    expect(chart.xScaleGenerator instanceof nw.axes.LinearScale).toBeTruthy();
                 });
 
 
                 it('should render as ordinal scale if categorical data is passed in', function () {
                     var chart = createContour();
                     chart.line([{x: 'a', y: 1}, {x: 'b', y: 2}]).render();
-                    expect(chart.xScaleGenerator instanceof _.nw.axes.OrdinalScale).toBeTruthy();
+                    expect(chart.xScaleGenerator instanceof nw.axes.OrdinalScale).toBeTruthy();
                 });
 
                 it('should add a group with the visualization id', function () {
@@ -95,13 +95,13 @@ describe('Visualizations', function () {
                 });
 
                 it('should be translated to the plot area', function () {
-                    var padding = nw.options.chart.padding;
-                    expect($el.find('g[vis-id="1"]').attr('transform')).toEqual('translate(' + nw.options.chart.internalPadding.left +',' + padding.top +')');
+                    var padding = narwal.options.chart.padding;
+                    expect($el.find('g[vis-id="1"]').attr('transform')).toEqual('translate(' + narwal.options.chart.internalPadding.left +',' + padding.top +')');
                 });
 
                 it('should add a path per series', function (){
-                    nw = createContour();
-                    nw.line([{
+                    narwal = createContour();
+                    narwal.line([{
                         name: 's1',
                         data: [1,2,3]
                     },{
@@ -120,7 +120,7 @@ describe('Visualizations', function () {
 
                 describe('with tooltips disabled', function () {
                     beforeEach(function () {
-                        nw = createContour({tooltip: { enable: false }}).line(data).render();
+                        narwal = createContour({tooltip: { enable: false }}).line(data).render();
                     });
 
                     it('should NOT add any tooltip tracker marker', function () {
@@ -133,7 +133,7 @@ describe('Visualizations', function () {
 
                 describe('with tooltips enabled', function () {
                     beforeEach(function () {
-                        nw = createContour({tooltip: { enable: true }}).line(data).render();
+                        narwal = createContour({tooltip: { enable: true }}).line(data).render();
                     });
 
                     it('should add a marker tooltip target for each data point', function () {
@@ -163,7 +163,7 @@ describe('Visualizations', function () {
 
             describe('render with special case data', function () {
                 it('should not render markers when the data Y is null or undefined', function () {
-                    nw = createContour().line([
+                    narwal = createContour().line([
                         { x: 1, y: 10},
                         { x: 2, y: null},
                         { x: 3}
@@ -180,14 +180,14 @@ describe('Visualizations', function () {
         describe('with animations', function () {
             beforeEach(function () {
                 jasmine.Clock.useMock();
-                nw = new Contour({ el: el, chart: { animations: true }}).cartesian();
-                nw.line([1,2,3,4]);
+                narwal = new Contour({ el: el, chart: { animations: true }}).cartesian();
+                narwal.line([1,2,3,4]);
             });
 
             xit('should animate path', function () {
                 // need to figure out a way to test the animation
                 // this does not work right now.
-                nw.render();
+                narwal.render();
 
                 var path = $el.find('g[vis-id="1"] path');
                 expect(path.attr('d')).not.toBeDefined();

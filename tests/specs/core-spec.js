@@ -141,9 +141,9 @@ describe('Contour', function () {
             render.defaults = { vis: { xyz: 10} };
             Contour.export('vis', render);
 
-            nw = new Contour({}).vis().render();
-            expect(nw.options.vis).toBeDefined();
-            expect(nw.options.vis.xyz).toBe(10);
+            narwal = new Contour({}).vis().render();
+            expect(narwal.options.vis).toBeDefined();
+            expect(narwal.options.vis.xyz).toBe(10);
         });
 
         it('should allow to override default options defined in render function', function () {
@@ -151,9 +151,9 @@ describe('Contour', function () {
             render.defaults = { vis: { xyz: 10} };
             Contour.export('vis', render);
 
-            nw = new Contour({ vis: { xyz: 30 } }).vis().render();
-            expect(nw.options.vis).toBeDefined();
-            expect(nw.options.vis.xyz).toBe(30);
+            narwal = new Contour({ vis: { xyz: 30 } }).vis().render();
+            expect(narwal.options.vis).toBeDefined();
+            expect(narwal.options.vis.xyz).toBe(30);
         });
 
         it('should not override global config options if options are specificed for the visualization', function () {
@@ -168,7 +168,7 @@ describe('Contour', function () {
 
             Contour.export('vis', render);
 
-            nw = new Contour({})
+            narwal = new Contour({})
                 .vis([{name: 's1', data: [1]}], { option1: 10 })
                 .vis([{name: 's2', data:[2]}], { option1: 20 })
                 .render();
