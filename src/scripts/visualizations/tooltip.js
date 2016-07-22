@@ -29,7 +29,7 @@
 
         var positionTooltip = function (d) {
             var pointOrCentroid = function () {
-                return d3.event.target.tagName === 'path' ? _.nw.getCentroid(d3.event.target) : d3.mouse(this.container.node());
+                return d3.event.target.tagName === 'path' ? nw.getCentroid(d3.event.target) : d3.mouse(this.container.node());
             };
             var xScale = this.xScale;
             var yScale = this.yScale;

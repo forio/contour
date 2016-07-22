@@ -39,17 +39,17 @@
                 });
 
             var ticks = axis.scale().ticks();
-            var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
+            var labelsFit = nw.doXLabelsFit(ticks, formatLabel, this.options);
 
             if (options.firstAndLast) {
                 // show only first and last tick
-                axis.tickValues(_.nw.firstAndLast(this._domain));
+                axis.tickValues(nw.firstAndLast(this._domain));
             } else if (options.tickValues) {
                 axis.tickValues(options.tickValues);
             } else if (options.ticks != null) {
                 axis.ticks(options.ticks);
             } else if (!labelsFit) {
-                var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                var finalTicks = nw.getTicksThatFit(ticks, formatLabel, this.options);
                 axis.tickValues(finalTicks);
                 axis.ticks(finalTicks.length);
 
@@ -104,6 +104,6 @@
         }
     };
 
-    _.nw.addAxis('LinearScale', LinearScale );
+    nw.addAxis('LinearScale', LinearScale );
 
 })();

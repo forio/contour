@@ -10,7 +10,7 @@
 
     /* jshint eqnull: true */
     function _extractYTickValues(domain, min, max, yMin, yMax, dataMax) {
-        var adjustedDomain = _.uniq(_.nw.merge(_.nw.merge(domain, yMax), dataMax));
+        var adjustedDomain = _.uniq(nw.merge(nw.merge(domain, yMax), dataMax));
         // we want to be able to remove parameters with default values
         // so to remove the default yAxis.min: 0, you pass yAxis.min: null
         // and for that we need to to a truly comparison here (to get null or undefined)
@@ -18,7 +18,7 @@
             return adjustedDomain;
 
         if (min == null) {
-            return max > yMin ? _.nw.merge([max], adjustedDomain) : [max];
+            return max > yMin ? nw.merge([max], adjustedDomain) : [max];
         }
 
         if (max == null) {
@@ -28,10 +28,10 @@
             return adjustedDomain;
         }
 
-        return _.nw.merge([min, max], yMax);
+        return nw.merge([min, max], yMax);
     }
 
-    var __super = _.nw.axes.YAxis.prototype;
+    var __super = nw.axes.YAxis.prototype;
     SmartYAxis.prototype = _.extend({}, __super, {
         axis: function () {
             var options = this.options.yAxis;
@@ -61,14 +61,14 @@
             var domain = this._scale.domain();
             var min = this.options.yAxis.min || domain[0];
             var rawMax = this.options.yAxis.max || this.dataMax;
-            var nextTick = _.nw.roundToNextTick(rawMax);
+            var nextTick = nw.roundToNextTick(rawMax);
 
-            var max = Math.abs(nextTick - rawMax) < rawMax * perTreshold ? _.nw.roundToNextTick(rawMax + rawMax * perTreshold) : nextTick;
-            // var max = nextTick === rawMax ? _.nw.roundToNextTick(rawMax + Math.pow(10, -_.nw.decDigits(rawMax) - 1)) : nextTick;
+            var max = Math.abs(nextTick - rawMax) < rawMax * perTreshold ? nw.roundToNextTick(rawMax + rawMax * perTreshold) : nextTick;
+            // var max = nextTick === rawMax ? nw.roundToNextTick(rawMax + Math.pow(10, -nw.decDigits(rawMax) - 1)) : nextTick;
             var nice = [min, max];
             this._scale.domain(nice);
         }
     });
 
-    _.nw.addAxis('SmartYAxis', SmartYAxis );
+    nw.addAxis('SmartYAxis', SmartYAxis );
 })();

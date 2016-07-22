@@ -51,13 +51,13 @@
                 .tickFormat(tickFormat);
 
             var ticks = this.isCategorized && options.categories ? options.categories : _.range(this._domain.length) || [];
-            var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
+            var labelsFit = nw.doXLabelsFit(ticks, formatLabel, this.options);
 
             if (options.firstAndLast) {
                 // show only first and last tick
-                axis.tickValues(_.nw.firstAndLast(this._domain));
+                axis.tickValues(nw.firstAndLast(this._domain));
             } else if (options.maxTicks) {
-                axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
+                axis.tickValues(nw.maxTickValues(options.maxTicks, this._domain));
             } else if (options.tickValues) {
                 axis.tickValues(options.tickValues);
             } else if (options.ticks != null) {
@@ -66,7 +66,7 @@
                     axis.tickValues([]);
                 }
             } else if (!labelsFit) {
-                var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                var finalTicks = nw.getTicksThatFit(ticks, formatLabel, this.options);
                 axis.tickValues(finalTicks);
                 axis.ticks(finalTicks.length);
             } else {
@@ -82,7 +82,7 @@
             if (!options.labels || options.labels.rotation == null) return;
 
             var deg = options.labels.rotation;
-            var rad = _.nw.degToRad(deg);
+            var rad = nw.degToRad(deg);
             var sign = deg > 0 ? 1 : deg < 0 ? -1 : 0;
             var pos = deg < 0 ? -1 : 1;
             var lineHeight = 0.71;
@@ -125,7 +125,7 @@
 
         rangeBand: function () {
             var band = this._scale.rangeBand();
-            if (!band) _.nw.warn('rangeBand is 0, you may have too many points in in the domain for the size of the chart (ie. chartWidth = ' + this.options.chart.plotWidth + 'px and ' + (this._domain.length) + ' X-axis points (plus paddings) means less than 1 pixel per band and there\'re no half pixels');
+            if (!band) nw.warn('rangeBand is 0, you may have too many points in in the domain for the size of the chart (ie. chartWidth = ' + this.options.chart.plotWidth + 'px and ' + (this._domain.length) + ' X-axis points (plus paddings) means less than 1 pixel per band and there\'re no half pixels');
 
             return this._scale.rangeBand();
         },
@@ -143,6 +143,6 @@
         }
     };
 
-    _.nw.addAxis('OrdinalScale', OrdinalScale );
+    nw.addAxis('OrdinalScale', OrdinalScale );
 
 })();

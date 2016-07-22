@@ -18,7 +18,7 @@
 
     /*jshint eqnull:true */
     var _stackedExtent = function (data) {
-        var stack = _.nw.stackLayout();
+        var stack = nw.stackLayout();
         var dataSets = stack(data);
         var ext = [];
         _.each(dataSets, function (set) {
@@ -58,7 +58,7 @@
         },
 
         setData: function (data) {
-            var normalizeData = (this.ctx || {}).dataNormalizer || _.nw.normalizeSeries;
+            var normalizeData = (this.ctx || {}).dataNormalizer || nw.normalizeSeries;
             this.data = normalizeData(data, this.categories);
             this._updateDomain();
 
@@ -77,7 +77,7 @@
         _updateDomain: function () {
             if(!this.options[this.type]) throw new Error('Set the options before calling setData or _updateDomain');
 
-            var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
+            var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || nw.isSupportedDataFormat;
 
             if (isSupportedFormat(this.data)) {
                 this.xDomain = _.flatten(_.map(this.data, function (set) { return _.pluck(set.data, 'x'); }));
