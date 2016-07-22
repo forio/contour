@@ -687,7 +687,7 @@
         }
     };
 
-    window.nw = nw || {};
+    window.nw = {};
 
     nw = _.extend({}, nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
         axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
