@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2016-01-26 */
+/*! Contour - v1.0.1 - 2016-02-05 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -3912,7 +3912,7 @@
             var show = function(d) {
                 clearHideTimer.call(this);
                 var dataPoints = findOriginalDataPoint(d);
-                this.tooltipElement.select(".text").html(getTooltipText.call(this, dataPoints[0] || d, dataPoints));
+                this.tooltipElement.select(".text").html(getTooltipText.call(this, d || dataPoints[0], dataPoints));
                 var pos = positionTooltip.call(this, d);
                 this.tooltipElement.style("top", pos.y + "px").style("left", pos.x + "px");
                 changeOpacity.call(this, this.options.tooltip.opacity, this.options.tooltip.showTime);
