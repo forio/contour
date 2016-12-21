@@ -20,7 +20,7 @@ $(function () {
     }
 
     Contour.export('r2Info', function (data, layer, options) {
-        var reg = _.nw.linearRegression(_.flatten(_.pluck(data, 'data')));
+        var reg = _.nw.linearRegression(_.flatten(_.map(data, 'data')));
 
         layer.append('text')
             .attr('class', 'r2-info')

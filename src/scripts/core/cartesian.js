@@ -571,12 +571,12 @@
                 this.dataSrc = _.flatten(
                     _.map(dataVis, function (v) {
                         return _.flatten(_.map(v.data, _.bind(this.datum, this)));
-                    }, this)
+                    }.bind(this))
                 );
 
-                // _.all() on empty array returns true, so we guard against it
-                var isCategoricalData = this.dataSrc.length && _.all(this.dataSrc, function (d) { return +d.x !== d.x; });
-                var dataSrcCategories = _.uniq(_.pluck(this.dataSrc, 'x'));
+                // _.every() on empty array returns true, so we guard against it
+                var isCategoricalData = this.dataSrc.length && _.every(this.dataSrc, function (d) { return +d.x !== d.x; });
+                var dataSrcCategories = _.uniq(_.map(this.dataSrc, 'x'));
                 var sameCats = this.options.xAxis.categories ?
                     this.options.xAxis.categories.length === dataSrcCategories.length && _.intersection(this.options.xAxis.categories, dataSrcCategories).length === dataSrcCategories.length :
                     false;
@@ -595,13 +595,13 @@
             getExtents: function (axis) {
                 var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
                 var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                var all = _.flatten(_.pluck(dataVis, field));
+                var all = _.flatten(_.map(dataVis, field));
                 return all.length ? d3.extent(all) : [];
             },
 
             getXDomain: function () {
                 var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                var all = _.nw.uniq(_.flatten(_.pluck(dataVis, 'xDomain')));
+                var all = _.nw.uniq(_.flatten(_.map(dataVis, 'xDomain')));
 
                 return all;
             }

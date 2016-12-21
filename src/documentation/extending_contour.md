@@ -103,7 +103,7 @@ For example:
 			// when included in a Contour instance, 
 			// the function `.showData` is available in the visualizations
 			showScaledData: function (data) {
-                var yValues =  _.pluck(data[0].data, 'y').map(function(input) { return input * params.factor; }).join(',');
+                var yValues =  _.map(data[0].data, 'y').map(function(input) { return input * params.factor; }).join(',');
                 alert('The scaled data are: ' + yValues);
             }
 		};

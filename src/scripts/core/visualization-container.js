@@ -4,7 +4,7 @@
         var maxs = [], mins = [];
         _.each(series, function (d) {
             if(!d.data.length) return;
-            var values = _.pluck(d.data, field);
+            var values = _.map(d.data, field);
             maxs.push(d3.max(values));
             mins.push(d3.min(values));
         });
@@ -80,7 +80,7 @@
             var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
 
             if (isSupportedFormat(this.data)) {
-                this.xDomain = _.flatten(_.map(this.data, function (set) { return _.pluck(set.data, 'x'); }));
+                this.xDomain = _.flatten(_.map(this.data, function (set) { return _.map(set.data, 'x'); }));
                 this.xExtent = _xExtent(this.data, 'x');
                 this.yExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);
             }

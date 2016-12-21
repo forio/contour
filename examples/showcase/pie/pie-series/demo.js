@@ -46,7 +46,7 @@ $(function () {
         })
         .pie(data)
         .pieName(data)
-        .legend(_.map(_.pluck(data[0].data, 'x'), function (x) { return { name: x, data: [] }; }))
+        .legend(_.map(_.map(data[0].data, 'x'), function (x) { return { name: x, data: [] }; }))
         .tooltip()
         .render();
 

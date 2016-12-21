@@ -82,3 +82,8 @@ bower_components/
 /documentation/
 examples/demo.html
 dist/contour.js.map
+
+* Testing *
+###########
+
+examples/testing/

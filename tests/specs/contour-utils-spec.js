@@ -172,7 +172,7 @@ describe('normalizeSeries', function () {
 
                         if(!actual.hasOwnProperty('name')) missing.push('series name (name)');
                         if(!actual.hasOwnProperty('data')) missing.push('series data (data)');
-                        if(!_.all(actual.data, function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
+                        if(!_.every(actual.data, function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
 
                         message = function () { return 'Expected object' + notText + ' to be normalize series and is missing: ' + missing.join(', '); };
 

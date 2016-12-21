@@ -39,7 +39,7 @@ describe('Ordinal xAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.x.axis ');
-        expect(_.all(ticks.find('.tick line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '6'; })).toBe(true);
+        expect(_.every(ticks.find('.tick line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '6'; })).toBe(true);
         expect(ticks.find('.domain').attr('d')).toContain('M0');
     });
 

@@ -153,7 +153,7 @@ describe('Visualizations', function () {
                         var g = $el.find('g[vis-id="1"] .tooltip-trackers');
                         var seriesClasses = ['s-1', 'series', '1'];
                         var classes = d3.select(g[0]).attr('class').split(' ');
-                        expect(_.all(seriesClasses.map(_.partial(_.contains, classes)))).toBe(true);
+                        expect(_.every(seriesClasses.map(_.partial(_.includes, classes)))).toBe(true);
                     });
 
 

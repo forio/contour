@@ -23,7 +23,7 @@ $(function () {
             }
         })
         .pie(data)
-        .legend(_.map(_.pluck(data, 'x'), function (x) { return { name: x, data: [] }; }))
+        .legend(_.map(_.map(data, 'x'), function (x) { return { name: x, data: [] }; }))
         .tooltip()
         .render();
 });
