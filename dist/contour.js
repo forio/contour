@@ -321,10 +321,10 @@
                 };
                 var defaultMinMax;
                 var minMax;
-                var foundSomethingRound = _.any(ticks, function(ticks) {
+                var foundSomethingRound = _.some(ticks, function(ticks) {
                     minMax = nice(ticks);
                     defaultMinMax = defaultMinMax || minMax;
-                    return _.all(minMax.tickValues, function(tick) {
+                    return _.every(minMax.tickValues, function(tick) {
                         return tick === Math.round(tick);
                     });
                 });
@@ -434,16 +434,16 @@
                 });
             },
             isCorrectDataFormat: function(dataArray) {
-                return _.isArray(dataArray) && _.all(dataArray, function(p) {
+                return _.isArray(dataArray) && _.every(dataArray, function(p) {
                     return p.hasOwnProperty("x") && p.hasOwnProperty("y");
                 });
             },
             isCorrectSeriesFormat: function(data) {
                 var isArrayOfObjects = _.isArray(data) && _.isObject(data[0]);
-                var hasDataArrayPerSeries = _.all(data, function(d) {
+                var hasDataArrayPerSeries = _.every(data, function(d) {
                     return d.hasOwnProperty("data");
                 });
-                var hasSeriesNamePerSeries = _.all(data, function(d) {
+                var hasSeriesNamePerSeries = _.every(data, function(d) {
                     return d.hasOwnProperty("name");
                 });
                 var datumInCorrectFormat = isArrayOfObjects && hasDataArrayPerSeries && arrayHelpers.isCorrectDataFormat(data[0].data);
@@ -962,7 +962,7 @@
                     visualization.layer = layer;
                     visualization.parent = this;
                     visualization.render(layer, opt, this);
-                }, this);
+                }.bind(this));
                 return this;
             },
             /**
@@ -1018,7 +1018,7 @@
         *
         */
             setData: function(data) {
-                _.invoke(this._visualizations, "setData", data);
+                _.invokeMap(this._visualizations, "setData", data);
                 return this;
             },
             /**
@@ -1546,12 +1546,12 @@
                     });
                     this.dataSrc = _.flatten(_.map(dataVis, function(v) {
                         return _.flatten(_.map(v.data, _.bind(this.datum, this)));
-                    }, this));
-                    // _.all() on empty array returns true, so we guard against it
-                    var isCategoricalData = this.dataSrc.length && _.all(this.dataSrc, function(d) {
+                    }.bind(this)));
+                    // _.every() on empty array returns true, so we guard against it
+                    var isCategoricalData = this.dataSrc.length && _.every(this.dataSrc, function(d) {
                         return +d.x !== d.x;
                     });
-                    var dataSrcCategories = _.uniq(_.pluck(this.dataSrc, "x"));
+                    var dataSrcCategories = _.uniq(_.map(this.dataSrc, "x"));
                     var sameCats = this.options.xAxis.categories ? this.options.xAxis.categories.length === dataSrcCategories.length && _.intersection(this.options.xAxis.categories, dataSrcCategories).length === dataSrcCategories.length : false;
                     if (isCategoricalData && !(this.options.xAxis.categories && sameCats)) {
                         this.options.xAxis.categories = dataSrcCategories;
@@ -1567,14 +1567,14 @@
                     var dataVis = _.filter(this._visualizations, function(v) {
                         return _.nw.isSupportedDataFormat(v.data);
                     });
-                    var all = _.flatten(_.pluck(dataVis, field));
+                    var all = _.flatten(_.map(dataVis, field));
                     return all.length ? d3.extent(all) : [];
                 },
                 getXDomain: function() {
                     var dataVis = _.filter(this._visualizations, function(v) {
                         return _.nw.isSupportedDataFormat(v.data);
                     });
-                    var all = _.nw.uniq(_.flatten(_.pluck(dataVis, "xDomain")));
+                    var all = _.nw.uniq(_.flatten(_.map(dataVis, "xDomain")));
                     return all;
                 }
             };
@@ -2475,7 +2475,7 @@
             this.options = options;
             this.yMax = domain[0];
             this.yMin = domain[1];
-            this.dataMax = d3.max(_.pluck(data, "y"));
+            this.dataMax = d3.max(_.map(data, "y"));
         };
         /* jshint eqnull: true */
         function _extractYTickValues(domain, min, max, yMin, yMax, dataMax) {
@@ -2645,7 +2645,7 @@
                 _.merge(this.options, defaults);
             },
             adjustPadding: function() {
-                var categoryLabels = this.options.xAxis.categories || _.pluck(this.dataSrc, "x");
+                var categoryLabels = this.options.xAxis.categories || _.map(this.dataSrc, "x");
                 var text = categoryLabels.join("<br>");
                 var xLabel = _.nw.textBounds(text, ".x.axis");
                 var yLabel = _.nw.textBounds("ABC", ".y.axis");
@@ -2744,7 +2744,7 @@
             var maxs = [], mins = [];
             _.each(series, function(d) {
                 if (!d.data.length) return;
-                var values = _.pluck(d.data, field);
+                var values = _.map(d.data, field);
                 maxs.push(d3.max(values));
                 mins.push(d3.min(values));
             });
@@ -2802,7 +2802,7 @@
                 var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
                 if (isSupportedFormat(this.data)) {
                     this.xDomain = _.flatten(_.map(this.data, function(set) {
-                        return _.pluck(set.data, "x");
+                        return _.map(set.data, "x");
                     }));
                     this.xExtent = _xExtent(this.data, "x");
                     this.yExtent = this.options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);
@@ -3562,10 +3562,10 @@
             var numSeries = data.length;
             var style = options.pie.style;
             var _this = this;
-            var shouldCenterX = _.all([ options.pie.piePadding.left, options.pie.piePadding.right ], function(d) {
+            var shouldCenterX = _.every([ options.pie.piePadding.left, options.pie.piePadding.right ], function(d) {
                 return d == null;
             });
-            var shouldCenterY = _.all([ options.pie.piePadding.top, options.pie.piePadding.bottom ], function(d) {
+            var shouldCenterY = _.every([ options.pie.piePadding.top, options.pie.piePadding.bottom ], function(d) {
                 return d == null;
             });
             var pixelPadding = resolvePaddingUnits(padding, w, h);
@@ -3885,7 +3885,7 @@
                     var response = _.map(list, function(fn) {
                         return fn.apply(this, rest);
                     }).concat([ _.noop ]);
-                    return _.first(_.select(response));
+                    return _.first(_.filter(response));
                 }
                 var options = this.options.tooltip;
                 var formatters = [ function(d) {

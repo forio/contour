@@ -21,7 +21,7 @@
         },
 
         adjustPadding: function () {
-            var categoryLabels = this.options.xAxis.categories || _.pluck(this.dataSrc, 'x');
+            var categoryLabels = this.options.xAxis.categories || _.map(this.dataSrc, 'x');
             var text = categoryLabels.join('<br>');
             var xLabel = _.nw.textBounds(text, '.x.axis');
             var yLabel = _.nw.textBounds('ABC', '.y.axis');

@@ -83,8 +83,8 @@
         var numSeries = data.length;
         var style = options.pie.style;
         var _this = this;
-        var shouldCenterX = _.all([options.pie.piePadding.left, options.pie.piePadding.right], function (d) { return d == null; });
-        var shouldCenterY = _.all([options.pie.piePadding.top, options.pie.piePadding.bottom], function (d) { return d == null; });
+        var shouldCenterX = _.every([options.pie.piePadding.left, options.pie.piePadding.right], function (d) { return d == null; });
+        var shouldCenterY = _.every([options.pie.piePadding.top, options.pie.piePadding.bottom], function (d) { return d == null; });
         var pixelPadding = resolvePaddingUnits(padding, w, h);
         // the reference size is the min between with and height of the container
         var referenceSize = Math.min(w, h);

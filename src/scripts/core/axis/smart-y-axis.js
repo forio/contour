@@ -5,7 +5,7 @@
         this.options = options;
         this.yMax = domain[0];
         this.yMin = domain[1];
-        this.dataMax = d3.max(_.pluck(data, 'y'));
+        this.dataMax = d3.max(_.map(data, 'y'));
     };
 
     /* jshint eqnull: true */

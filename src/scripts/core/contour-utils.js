@@ -361,10 +361,10 @@
             var defaultMinMax;
             var minMax;
 
-            var foundSomethingRound = _.any(ticks, function (ticks) {
+            var foundSomethingRound = _.some(ticks, function (ticks) {
                 minMax = nice(ticks);
                 defaultMinMax = defaultMinMax || minMax;
-                return _.all(minMax.tickValues, function (tick) {
+                return _.every(minMax.tickValues, function (tick) {
                     return tick === Math.round(tick);
                 });
             });
@@ -502,13 +502,13 @@
         },
 
         isCorrectDataFormat: function (dataArray) {
-            return _.isArray(dataArray) && _.all(dataArray, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+            return _.isArray(dataArray) && _.every(dataArray, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
         },
 
         isCorrectSeriesFormat: function (data) {
             var isArrayOfObjects = _.isArray(data) && _.isObject(data[0]);
-            var hasDataArrayPerSeries = _.all(data, function (d) { return d.hasOwnProperty('data'); });
-            var hasSeriesNamePerSeries = _.all(data, function (d) { return d.hasOwnProperty('name'); });
+            var hasDataArrayPerSeries = _.every(data, function (d) { return d.hasOwnProperty('data'); });
+            var hasSeriesNamePerSeries = _.every(data, function (d) { return d.hasOwnProperty('name'); });
             var datumInCorrectFormat = isArrayOfObjects && hasDataArrayPerSeries && arrayHelpers.isCorrectDataFormat(data[0].data);
 
             return isArrayOfObjects && hasDataArrayPerSeries && hasSeriesNamePerSeries && datumInCorrectFormat;

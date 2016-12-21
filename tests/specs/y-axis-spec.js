@@ -74,7 +74,7 @@ describe('default yAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.all(ticks, function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
+        expect(_.every(ticks, function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
     });
 
     it('should align the middle of the label to the tick when set middle in options', function () {
@@ -82,7 +82,7 @@ describe('default yAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.all(ticks, function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
+        expect(_.every(ticks, function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
     });
 
     it('should be place the label above the tick when set top in options', function () {
@@ -90,7 +90,7 @@ describe('default yAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.all(ticks, function (t) { return $(t).attr('dy').contains('.8em'); })).toBe(true);
+        expect(_.every(ticks, function (t) { return $(t).attr('dy').contains('.8em'); })).toBe(true);
     });
 
     it('should be place the label below the tick when set top in options', function () {
@@ -98,7 +98,7 @@ describe('default yAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.all(ticks, function (t) { return $(t).attr('dy') === '0'; })).toBe(true);
+        expect(_.every(ticks, function (t) { return $(t).attr('dy') === '0'; })).toBe(true);
     });
 
     describe('with smart y axis', function () {

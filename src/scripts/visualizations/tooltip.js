@@ -116,7 +116,7 @@
 
                 var response = _.map(list, function(fn) { return fn.apply(this, rest); }).concat([_.noop]);
 
-                return _.first(_.select(response));
+                return _.first(_.filter(response));
             }
 
             var options = this.options.tooltip;

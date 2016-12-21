@@ -442,7 +442,7 @@
                 visualization.layer = layer;
                 visualization.parent = this;
                 visualization.render(layer, opt, this);
-            }, this);
+            }.bind(this));
 
             return this;
         },
@@ -505,7 +505,7 @@
         *
         */
         setData: function (data) {
-            _.invoke(this._visualizations, 'setData', data);
+            _.invokeMap(this._visualizations, 'setData', data);
 
             return this;
         },
