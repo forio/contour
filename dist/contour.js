@@ -336,12 +336,37 @@
                 var dataMax = max != null ? max : _.max(domain);
                 ticks = ticks == null ? 5 : ticks;
                 var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, ticks, zeroAnchor);
-                return [ niceMinMax.min, niceMinMax.max ];
+                // return [niceMinMax.min, niceMinMax.max];
+                // // we want null || undefined for all this comparasons
+                // // that == null gives us
+                if (min == null && max == null) {
+                    return [ niceMinMax.min, niceMinMax.max ];
+                }
+                if (min == null) {
+                    return [ Math.min(niceMinMax.min, max), max ];
+                }
+                if (max == null) {
+                    return [ min, Math.max(min, niceMinMax.max) ];
+                }
+                return [ min, max ];
             },
-            niceTicks: function(min, max, ticks, zeroAnchor) {
+            niceTicks: function(min, max, ticks, zeroAnchor, opts) {
                 ticks = ticks == null ? 5 : ticks;
                 var niceMinMax = axisHelpers.niceMinMax(min, max, ticks, zeroAnchor);
-                return niceMinMax.tickValues;
+                var tickValues = niceMinMax.tickValues;
+                // ensure that y-axis endpoints are labelled
+                if (opts.min != null && opts.max != null) {
+                    tickValues.push(min);
+                    tickValues.push(max);
+                } else if (opts.min != null) {
+                    tickValues.push(min);
+                } else if (opts.max != null) {
+                    tickValues.push(max);
+                }
+                tickValues = tickValues.sort(function(a, b) {
+                    return a - b;
+                });
+                return tickValues;
             },
             calcXLabelsWidths: function(ticks) {
                 var padding = 8;
@@ -1076,7 +1101,7 @@
                 var domain = this.domain;
                 var dMin = options.min != null ? options.min : options.zeroAnchor ? Math.min(0, domain[0]) : domain[0];
                 var dMax = options.max != null ? options.max : domain[1];
-                var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks);
+                var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks, options.zeroAnchor, options);
                 var numTicks = this.numTicks(domain, options.min, options.max);
                 var format = options.labels.formatter || d3.format(options.labels.format);
                 return d3.svg.axis().scale(this._scale).tickFormat(format).tickSize(options.innerTickSize, options.outerTickSize).tickPadding(options.tickPadding).ticks(numTicks).tickValues(tickValues);
