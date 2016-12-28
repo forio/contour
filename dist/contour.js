@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2016-02-05 */
+/*! Contour - v1.0.1 - 2016-12-28 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -3313,7 +3313,7 @@
                 marker: {
                     enable: true,
                     size: 3,
-                    animationDelay: 0
+                    animationDelay: null
                 },
                 preprocess: _.nw.minMaxFilter(1e3)
             }
@@ -3425,7 +3425,7 @@
                 }
             }
             function renderMarkers() {
-                var animationDelay = options.line.marker.animationDelay;
+                var animationDelay = options.line.marker.animationDelay == null ? duration : options.line.marker.animationDelay;
                 var markers = layer.selectAll(".line-chart-markers").data(data, function(d) {
                     return d.name;
                 });
@@ -3441,7 +3441,7 @@
                 } else {
                     dots.attr("cx", x).attr("cy", y).attr("opacity", 1);
                 }
-                dots.enter().append("circle").attr("class", "dot").attr("r", options.line.marker.size).attr("opacity", 0).attr("cx", x).attr("cy", y).transition().delay(duration).attr("opacity", 1);
+                dots.enter().append("circle").attr("class", "dot").attr("r", options.line.marker.size).attr("opacity", 0).attr("cx", x).attr("cy", y).transition().delay(animationDelay).attr("opacity", 1);
                 dots.exit().remove();
             }
             function renderTooltipTrackers() {
