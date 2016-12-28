@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2016-12-27 */
+/*! Contour - v1.0.1 - 2016-12-28 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -3312,7 +3312,8 @@
                 // animationDirection: 'bottom-to-top',
                 marker: {
                     enable: true,
-                    size: 3
+                    size: 3,
+                    animationDelay: null
                 },
                 preprocess: _.nw.minMaxFilter(1e3)
             }
@@ -3424,7 +3425,7 @@
                 }
             }
             function renderMarkers() {
-                var animationDelay = typeof options.line.marker.animationDelay === "undefined" ? duration : options.line.marker.animationDelay;
+                var animationDelay = options.line.marker.animationDelay == null ? duration : options.line.marker.animationDelay;
                 var markers = layer.selectAll(".line-chart-markers").data(data, function(d) {
                     return d.name;
                 });
