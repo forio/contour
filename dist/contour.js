@@ -350,17 +350,15 @@
                 }
                 return [ min, max ];
             },
-            niceTicks: function(min, max, ticks, zeroAnchor, opts) {
+            niceTicks: function(min, max, ticks, zeroAnchor, domain) {
                 ticks = ticks == null ? 5 : ticks;
                 var niceMinMax = axisHelpers.niceMinMax(min, max, ticks, zeroAnchor);
                 var tickValues = niceMinMax.tickValues;
                 // ensure that y-axis endpoints are labelled
-                if (opts.min != null && opts.max != null) {
+                if (min !== domain[0]) {
                     tickValues.push(min);
-                    tickValues.push(max);
-                } else if (opts.min != null) {
-                    tickValues.push(min);
-                } else if (opts.max != null) {
+                }
+                if (max !== domain[1]) {
                     tickValues.push(max);
                 }
                 tickValues = tickValues.sort(function(a, b) {
@@ -1101,7 +1099,7 @@
                 var domain = this.domain;
                 var dMin = options.min != null ? options.min : options.zeroAnchor ? Math.min(0, domain[0]) : domain[0];
                 var dMax = options.max != null ? options.max : domain[1];
-                var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks, options.zeroAnchor, options);
+                var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks, options.zeroAnchor, domain);
                 var numTicks = this.numTicks(domain, options.min, options.max);
                 var format = options.labels.formatter || d3.format(options.labels.format);
                 return d3.svg.axis().scale(this._scale).tickFormat(format).tickSize(options.innerTickSize, options.outerTickSize).tickPadding(options.tickPadding).ticks(numTicks).tickValues(tickValues);

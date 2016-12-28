@@ -398,19 +398,18 @@
             return [min, max];
         },
 
-        niceTicks: function (min, max, ticks, zeroAnchor, opts) {
+        niceTicks: function (min, max, ticks, zeroAnchor, domain) {
             ticks = ticks == null ? 5 : ticks;
 
             var niceMinMax = axisHelpers.niceMinMax(min, max, ticks, zeroAnchor);
             var tickValues = niceMinMax.tickValues;
 
             // ensure that y-axis endpoints are labelled
-            if (opts.min != null && opts.max != null) {
+            if (min !== domain[0]) {
                 tickValues.push(min);
-                tickValues.push(max);
-            } else if (opts.min != null) {
-                tickValues.push(min);
-            } else if (opts.max != null) {
+            }
+
+            if (max !== domain[1]) {
                 tickValues.push(max);
             }
 

@@ -19,7 +19,7 @@
             var domain = this.domain;
             var dMin = options.min != null ? options.min : options.zeroAnchor ? Math.min(0, domain[0]) : domain[0];
             var dMax = options.max != null ? options.max : domain[1];
-            var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks, options.zeroAnchor, options);
+            var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks, options.zeroAnchor, domain);
             var numTicks = this.numTicks(domain, options.min, options.max);
             var format = options.labels.formatter || d3.format(options.labels.format);
 
