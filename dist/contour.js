@@ -1181,6 +1181,7 @@
                 max: undefined,
                 zeroAnchor: true,
                 smartAxis: false,
+                centeredAxis: false,
                 innerTickSize: 6,
                 outerTickSize: 6,
                 tickPadding: 4,
@@ -1260,6 +1261,8 @@
                         }
                     } else if (opts.smartAxis) {
                         return d3.extent(opts.zeroAnchor || opts.min != null ? [ min ].concat(domain) : domain);
+                    } else if (opts.centeredAxis) {
+                        return d3.extent(domain);
                     }
                     return _.nw.extractScaleDomain(domain, min, opts.max, opts.ticks);
                 },
@@ -2232,13 +2235,17 @@
                 var map = {
                     log: _.nw.axes.LogYAxis,
                     smart: _.nw.axes.SmartYAxis,
-                    linear: _.nw.axes.YAxis
+                    linear: _.nw.axes.YAxis,
+                    centered: _.nw.axes.CenteredYAxis
                 };
                 if (!axisType) {
                     axisType = "linear";
                 }
                 if (axisType === "linear" && options.yAxis.smartAxis) {
                     axisType = "smart";
+                }
+                if (axisType === "linear" && options.yAxis.centeredAxis) {
+                    axisType = "centered";
                 }
                 if (map[axisType]) {
                     return new map[axisType](data, options, domain);
@@ -2251,6 +2258,56 @@
             }
         };
         _.nw = _.extend({}, _.nw, helpers);
+    })();
+    (function() {
+        // focus on vertically centering data - zero anchor is ignored
+        var CenteredYAxis = function(data, options, domain) {
+            this.data = data;
+            this.options = options;
+            this.yMax = domain[0];
+            this.yMin = domain[1];
+            this.NUM_DECIMALS = 1;
+        };
+        var __super = _.nw.axes.YAxis.prototype;
+        CenteredYAxis.prototype = _.extend({}, __super, {
+            axis: function() {
+                var options = this.options.yAxis;
+                this.domain = this._scale.domain();
+                var numTicks = options.ticks || 5;
+                var axis = __super.axis.call(this);
+                var tickValues = this._extractYTickValues(options.min, options.max, numTicks);
+                return axis.ticks(numTicks).tickValues(tickValues).tickFormat(undefined);
+            },
+            setDomain: function(domain) {
+                var scaledDomain = this._getScaledDomain(domain);
+                this.yMin = scaledDomain[0];
+                this.yMax = scaledDomain[1];
+                this._scale.domain(scaledDomain);
+            },
+            _getScaledDomain: function(domain) {
+                var extent = d3.extent(domain);
+                var dataRange = extent[1] - extent[0];
+                var domainPadding = dataRange * .1;
+                var scaledMin = d3.round(extent[0] - domainPadding, this.NUM_DECIMALS);
+                var scaledMax = d3.round(extent[1] + domainPadding, this.NUM_DECIMALS);
+                return [ scaledMin, scaledMax ];
+            },
+            _extractYTickValues: function(min, max, numTicks) {
+                var tickMin = min != null ? min : this.yMin;
+                var tickMax = max != null ? max : this.yMax;
+                var tickRange = tickMax - tickMin;
+                var tickSpacing = tickRange / numTicks;
+                var currentTick = tickMin;
+                var tickValues = [ tickMin ];
+                while (currentTick < tickMax) {
+                    currentTick += tickSpacing;
+                    tickValues.push(d3.round(currentTick, this.NUM_DECIMALS));
+                }
+                tickValues.push(tickMax);
+                return tickValues;
+            }
+        });
+        _.nw.addAxis("CenteredYAxis", CenteredYAxis);
     })();
     (function() {
         function LinearScale(data, options) {

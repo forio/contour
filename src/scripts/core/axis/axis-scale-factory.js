@@ -28,7 +28,8 @@
             var map = {
                 'log': _.nw.axes.LogYAxis,
                 'smart': _.nw.axes.SmartYAxis,
-                'linear': _.nw.axes.YAxis
+                'linear': _.nw.axes.YAxis,
+                'centered': _.nw.axes.CenteredYAxis
             };
 
             if (!axisType) {
@@ -37,6 +38,10 @@
 
             if (axisType === 'linear' && options.yAxis.smartAxis) {
                 axisType = 'smart';
+            }
+
+            if (axisType === 'linear' && options.yAxis.centeredAxis) {
+                axisType = 'centered';
             }
 
             if (map[axisType]) {

@@ -47,6 +47,7 @@
             max: undefined,
             zeroAnchor: true,
             smartAxis: false,
+            centeredAxis: false,
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
@@ -129,6 +130,8 @@
                     }
                 } else if (opts.smartAxis) {
                     return d3.extent(opts.zeroAnchor || opts.min != null ? [min].concat(domain) : domain);
+                } else if (opts.centeredAxis) {
+                    return d3.extent(domain);
                 }
 
                 return _.nw.extractScaleDomain(domain, min, opts.max, opts.ticks);
