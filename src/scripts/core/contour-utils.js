@@ -400,6 +400,8 @@
 
         niceTicks: function (min, max, ticks, zeroAnchor, domain) {
             ticks = ticks == null ? 5 : ticks;
+            min = min != null ? min : zeroAnchor ? Math.min(0, domain[0]) : domain[0];
+            max = max != null ? max : domain[1];
 
             var niceMinMax = axisHelpers.niceMinMax(min, max, ticks, zeroAnchor);
             var tickValues = niceMinMax.tickValues;
@@ -407,15 +409,17 @@
             // ensure that y-axis endpoints are labelled
             if (min !== domain[0]) {
                 tickValues.push(min);
+                tickValues = tickValues.filter(function(tick) {
+                    return tick >= min;
+                });
             }
 
             if (max !== domain[1]) {
                 tickValues.push(max);
+                tickValues = tickValues.filter(function(tick) {
+                    return tick <= max;
+                });
             }
-
-            tickValues = tickValues.sort(function (a, b) {
-                return a - b;
-            });
 
             return tickValues;
         },
