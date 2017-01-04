@@ -200,8 +200,8 @@ describe('default yAxis', function () {
             instance = createinstance({yAxis: { min: 5 }}).nullVis([1,2,3,4]).render();
             var ticks = $el.find('.y.axis .tick');
 
-            // we get no tick labels in this case.... the domains goes from 5 to 5
-            expect(ticks.length).toBe(0);
+            // since min is specified, it should be a tick value
+            expect(ticks.length).toBe(1);
         });
     });
 
