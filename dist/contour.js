@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2017-01-03 */
+/*! Contour - v1.0.1 - 2017-01-04 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -369,7 +369,7 @@
                         return tick <= max;
                     });
                 }
-                return tickValues;
+                return _.uniq(_.sortBy(tickValues));
             },
             calcXLabelsWidths: function(ticks) {
                 var padding = 8;

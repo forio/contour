@@ -421,7 +421,7 @@
                 });
             }
 
-            return tickValues;
+            return _.uniq(_.sortBy(tickValues));
         },
 
         calcXLabelsWidths: function (ticks) {

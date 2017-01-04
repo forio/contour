@@ -318,8 +318,8 @@ describe('Cartesian frame', function () {
 
             instance.render();
 
-            // should render 1 horizontal line per tick (except 0 wich is the x axis)
-            // for data 10,20,30 we get ticks every 5 so 5,10,15,20,25,30
+            // should render 1 horizontal line per tick (except 0 which is the x axis)
+            // for data 10,20,30 we get ticks every 6 so 6, 12, 18, 24, 30
             expect($el.find('.y.axis .grid-line').length).toBe(getNumTicks() - 1);
         });
 
