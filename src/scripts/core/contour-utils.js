@@ -379,30 +379,49 @@
 
             var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, ticks, zeroAnchor);
 
-            return [niceMinMax.min, niceMinMax.max];
+            // return [niceMinMax.min, niceMinMax.max];
 
             // // we want null || undefined for all this comparasons
             // // that == null gives us
-            // if (min == null && max == null) {
-            //     return [niceMinMax.min, niceMinMax.max];
-            // }
+            if (min == null && max == null) {
+                return [niceMinMax.min, niceMinMax.max];
+            }
 
-            // if (min == null) {
-            //     return [Math.min(niceMinMax.min, max), max];
-            // }
+            if (min == null) {
+                return [Math.min(niceMinMax.min, max), max];
+            }
 
-            // if (max == null) {
-            //     return [min, Math.max(min, niceMinMax.max)];
-            // }
+            if (max == null) {
+                return [min, Math.max(min, niceMinMax.max)];
+            }
 
-            // return [min, max];
+            return [min, max];
         },
 
-        niceTicks: function (min, max, ticks, zeroAnchor) {
+        niceTicks: function (min, max, ticks, zeroAnchor, domain) {
             ticks = ticks == null ? 5 : ticks;
+            min = min != null ? min : zeroAnchor ? Math.min(0, domain[0]) : domain[0];
+            max = max != null ? max : domain[1];
 
             var niceMinMax = axisHelpers.niceMinMax(min, max, ticks, zeroAnchor);
-            return niceMinMax.tickValues;
+            var tickValues = niceMinMax.tickValues;
+
+            // ensure that y-axis endpoints are labelled
+            if (min !== domain[0]) {
+                tickValues.push(min);
+                tickValues = tickValues.filter(function(tick) {
+                    return tick >= min;
+                });
+            }
+
+            if (max !== domain[1]) {
+                tickValues.push(max);
+                tickValues = tickValues.filter(function(tick) {
+                    return tick <= max;
+                });
+            }
+
+            return tickValues;
         },
 
         calcXLabelsWidths: function (ticks) {

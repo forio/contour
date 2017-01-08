@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2016-12-28 */
+/*! Contour - v1.0.1 - 2017-01-03 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -336,12 +336,40 @@
                 var dataMax = max != null ? max : _.max(domain);
                 ticks = ticks == null ? 5 : ticks;
                 var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, ticks, zeroAnchor);
-                return [ niceMinMax.min, niceMinMax.max ];
+                // return [niceMinMax.min, niceMinMax.max];
+                // // we want null || undefined for all this comparasons
+                // // that == null gives us
+                if (min == null && max == null) {
+                    return [ niceMinMax.min, niceMinMax.max ];
+                }
+                if (min == null) {
+                    return [ Math.min(niceMinMax.min, max), max ];
+                }
+                if (max == null) {
+                    return [ min, Math.max(min, niceMinMax.max) ];
+                }
+                return [ min, max ];
             },
-            niceTicks: function(min, max, ticks, zeroAnchor) {
+            niceTicks: function(min, max, ticks, zeroAnchor, domain) {
                 ticks = ticks == null ? 5 : ticks;
+                min = min != null ? min : zeroAnchor ? Math.min(0, domain[0]) : domain[0];
+                max = max != null ? max : domain[1];
                 var niceMinMax = axisHelpers.niceMinMax(min, max, ticks, zeroAnchor);
-                return niceMinMax.tickValues;
+                var tickValues = niceMinMax.tickValues;
+                // ensure that y-axis endpoints are labelled
+                if (min !== domain[0]) {
+                    tickValues.push(min);
+                    tickValues = tickValues.filter(function(tick) {
+                        return tick >= min;
+                    });
+                }
+                if (max !== domain[1]) {
+                    tickValues.push(max);
+                    tickValues = tickValues.filter(function(tick) {
+                        return tick <= max;
+                    });
+                }
+                return tickValues;
             },
             calcXLabelsWidths: function(ticks) {
                 var padding = 8;
@@ -1074,9 +1102,7 @@
                 /*jshint eqnull:true */
                 var options = this.options.yAxis;
                 var domain = this.domain;
-                var dMin = options.min != null ? options.min : options.zeroAnchor ? Math.min(0, domain[0]) : domain[0];
-                var dMax = options.max != null ? options.max : domain[1];
-                var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks);
+                var tickValues = options.tickValues || _.nw.niceTicks(options.min, options.max, options.ticks, options.zeroAnchor, domain);
                 var numTicks = this.numTicks(domain, options.min, options.max);
                 var format = options.labels.formatter || d3.format(options.labels.format);
                 return d3.svg.axis().scale(this._scale).tickFormat(format).tickSize(options.innerTickSize, options.outerTickSize).tickPadding(options.tickPadding).ticks(numTicks).tickValues(tickValues);
