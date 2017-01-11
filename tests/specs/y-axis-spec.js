@@ -43,7 +43,7 @@ describe('default yAxis', function () {
     });
 
     it('with smartAxis=true should only show 3 ticks (min, max + max rounded up)', function () {
-        instance = createinstance({yAxis: { smartAxis: true }}).nullVis([0,31]).render();
+        instance = createinstance({yAxis: {scaling: {smartAxis: true}}}).nullVis([0,31]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
 
@@ -51,7 +51,7 @@ describe('default yAxis', function () {
     });
 
     it('with smartAxis=false should use the options.yAxis.ticks override if present', function () {
-        var nw = createinstance({ yAxis: {smartAxis: false, ticks: 4 }});
+        var nw = createinstance({yAxis: {scaling: {smartAxis: false}, ticks: 4 }});
         nw.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
@@ -61,7 +61,7 @@ describe('default yAxis', function () {
     });
 
     it('with smartAxis=false should delegate to d3 if options.yAxis.ticks override is not present', function () {
-        var nw = createinstance({ yAxis: {smartAxis: false, ticks: null }});
+        var nw = createinstance({yAxis: {scaling: {smartAxis: false}, ticks: null }});
         nw.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
@@ -103,7 +103,7 @@ describe('default yAxis', function () {
 
     describe('with smart y axis', function () {
         it('should round the max tick value to a nice value', function () {
-            createinstance({yAxis: { smartAxis: true}}).nullVis([1,2,3,4.5]).render();
+            createinstance({yAxis: {scaling: {smartAxis: true}}}).nullVis([1,2,3,4.5]).render();
 
             d3.timer.flush();
             var lastTicks = $el.find('.y.axis .tick text').last();
@@ -114,7 +114,7 @@ describe('default yAxis', function () {
 
         describe('calling setYDomain', function () {
             it('should recalculate yAxis and ticks with new domain', function () {
-                nw = createinstance({yAxis: { smartAxis: true }}).nullVis([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
+                nw = createinstance({yAxis: {scaling: {smartAxis: true}}}).nullVis([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
 
                 // note that the max needs to be 5% away from 50
                 nw.setData([1,2,3,46]).render();
@@ -126,7 +126,7 @@ describe('default yAxis', function () {
         describe('with label formatter function set', function () {
             it('should use the function to format tick labels', function () {
                 var text = 'format';
-                instance = createinstance({yAxis:  { smartAxis: true, labels: {
+                instance = createinstance({yAxis:  { scaling: {smartAxis: true}, labels: {
                     formatter: function () { return text; }
                 }}});
 
@@ -138,10 +138,66 @@ describe('default yAxis', function () {
         });
     });
 
-    describe('without smartYAxis', function () {
+    describe('with centered y axis', function () {
+        var randomDataSet = function (length) {
+            var dataSet = [];
+            var pushRandomVal = function () {
+                dataSet.push(Math.random() * 100);
+            }
 
+            _.times(length, pushRandomVal);
+            return dataSet;
+        };
+
+        it('should display all data points for small data set', function () {
+            var dataSet = randomDataSet(10);
+            createinstance({yAxis: {scaling: {centeredAxis: true}}}).nullVis(dataSet).render();
+
+            d3.timer.flush();
+            var firstTicks = $el.find('.y.axis .tick text').first();
+            var lastTicks = $el.find('.y.axis .tick text').last();
+
+            expect(+firstTicks.text()).toBeLessThan(d3.min(dataSet));
+            expect(+lastTicks.text()).toBeGreaterThan(d3.max(dataSet)); 
+        });
+
+        it('should display all data points for large data set', function () {
+            var dataSet = randomDataSet(100);
+            createinstance({yAxis: {scaling: {centeredAxis: true}}}).nullVis(dataSet).render();
+
+            d3.timer.flush();
+            var firstTicks = $el.find('.y.axis .tick text').first();
+            var lastTicks = $el.find('.y.axis .tick text').last();
+
+            expect(+firstTicks.text()).toBeLessThan(d3.min(dataSet));
+            expect(+lastTicks.text()).toBeGreaterThan(d3.max(dataSet)); 
+        });
+
+        it('should not use a zero anchor with a high value, low variance data set', function () {
+            var highLow = [26.1, 26.3, 26.5, 26.7];
+            createinstance({yAxis: {scaling: {centeredAxis: true}}}).nullVis(highLow).render();
+
+            d3.timer.flush();
+            var firstTicks = $el.find('.y.axis .tick text').first();
+
+            expect(firstTicks.text()).not.toBe('0');
+        });
+
+        it('should not use a zero anchor with a high value, high variance data set', function () {
+            var lowHigh = [26, 100, 1000, 45, 45.89, 99];
+            createinstance({yAxis: {scaling: {centeredAxis: true}}}).nullVis(lowHigh).render();
+
+            d3.timer.flush();
+            var firstTicks = $el.find('.y.axis .tick text').first();
+
+            expect(firstTicks.text()).not.toBe('0');
+        });
     });
 
+    // TODO: test default contour scaling here
+    // describe('without smartYAxis', function () {
+
+    // });
 
     describe('with options.yAxis.max set', function () {
         beforeEach(function () {
@@ -223,7 +279,7 @@ describe('default yAxis', function () {
             var text = 'format';
             // this function should get called once per label
             var formatter = function (/*label, index, fullCollection*/) { return text; };
-            instance = createinstance({yAxis:  { smartAxis: false, labels: { formatter: formatter }}});
+            instance = createinstance({yAxis:  { scaling: {smartAxis: false}, labels: { formatter: formatter }}});
 
             instance.nullVis([1,2,3]).render();
             expect($el.find('.y.axis .tick text').eq(0).text()).toBe(text);

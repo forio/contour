@@ -312,7 +312,9 @@ describe('Cartesian frame', function () {
                     gridlines: 'horizontal'
                 },
                 yAxis: {
-                    smartAxis: false
+                    scaling: {
+                        smartAxis: false
+                    }
                 }
             }).nullVis([10,20,30]);
 
@@ -330,7 +332,9 @@ describe('Cartesian frame', function () {
                 },
 
                 yAxis: {
-                    smartAxis: false,
+                    scaling: {
+                        smartAxis: false
+                    }
                 }
             }).nullVis([10,20,30]);
 
