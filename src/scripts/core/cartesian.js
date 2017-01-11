@@ -45,9 +45,11 @@
             // type: 'smart',
             min: undefined,
             max: undefined,
-            zeroAnchor: true,
-            smartAxis: false,
-            centeredAxis: false,
+            scaling: {
+                zeroAnchor: true,
+                smartAxis: false,
+                centeredAxis: false
+            },
             innerTickSize: 6,
             outerTickSize: 6,
             tickPadding: 4,
@@ -115,22 +117,22 @@
 
             _getYScaledDomain: function (domain, options) {
                 var opts = this.options.yAxis;
-                var absMin = opts.zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
+                var absMin = (opts.zeroAnchor || opts.scaling.zeroAnchor) && domain && domain[0] > 0 ? 0 : undefined;
                 var min = opts.min != null ? opts.min : absMin;
 
                 if (opts.tickValues) {
                     if (opts.min != null && opts.max != null) {
                         return [opts.min, opts.max];
                     } else if (opts.min != null) {
-                        return [opts.min, d3.max(opts.zeroAnchor ? [0].concat(opts.tickValues) : opts.tickValues)];
+                        return [opts.min, d3.max((opts.zeroAnchor || opts.scaling.zeroAnchor) ? [0].concat(opts.tickValues) : opts.tickValues)];
                     } else if (opts.max != null) {
-                        return [d3.min(opts.zeroAnchor ? [0].concat(opts.tickValues) : opts.tickValues), opts.max];
+                        return [d3.min((opts.zeroAnchor || opts.scaling.zeroAnchor) ? [0].concat(opts.tickValues) : opts.tickValues), opts.max];
                     } else {
-                        return d3.extent(opts.zeroAnchor || opts.min != null ? [min].concat(opts.tickValues) : opts.tickValues);
+                        return d3.extent((opts.zeroAnchor || opts.scaling.zeroAnchor) || opts.min != null ? [min].concat(opts.tickValues) : opts.tickValues);
                     }
-                } else if (opts.smartAxis) {
-                    return d3.extent(opts.zeroAnchor || opts.min != null ? [min].concat(domain) : domain);
-                } else if (opts.centeredAxis) {
+                } else if (opts.smartAxis || opts.scaling.smartAxis) {
+                    return d3.extent((opts.zeroAnchor || opts.scaling.zeroAnchor) || opts.min != null ? [min].concat(domain) : domain);
+                } else if (opts.centeredAxis || opts.scaling.centeredAxis) {
                     return d3.extent(domain);
                 }
 
@@ -456,7 +458,8 @@
                 var y = this.yScale;
 
                 if(horizontal) {
-                    ticks = getYTicks(this.yAxis(), this.options.yAxis.smartAxis);
+                    var smartAxis = this.options.yAxis.smartAxis || this.options.yAxis.scaling.smartAxis
+                    ticks = getYTicks(this.yAxis(), smartAxis);
                     var w = this.options.chart.plotWidth;
 
                     // remove previous lines (TODO: we need a better way)
