@@ -17,7 +17,8 @@
             /*jshint eqnull:true */
             var options = this.options.yAxis;
             var domain = this.domain;
-            var tickValues = options.tickValues || _.nw.niceTicks(options.min, options.max, options.ticks, options.zeroAnchor, domain);
+            var zeroAnchor = options.zeroAnchor || options.scaling.zeroAnchor;
+            var tickValues = options.tickValues || _.nw.niceTicks(options.min, options.max, options.ticks, zeroAnchor, domain);
             var numTicks = this.numTicks(domain, options.min, options.max);
             var format = options.labels.formatter || d3.format(options.labels.format);
 
