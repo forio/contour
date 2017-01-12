@@ -46,9 +46,10 @@
             min: undefined,
             max: undefined,
             scaling: {
-                zeroAnchor: true,
-                smartAxis: false,
-                centeredAxis: false
+                type: 'auto', // || 'smart' || 'centered'
+                options: {
+                    zeroAnchor: true
+                }
             },
             innerTickSize: 6,
             outerTickSize: 6,
@@ -117,22 +118,22 @@
 
             _getYScaledDomain: function (domain, options) {
                 var opts = this.options.yAxis;
-                var absMin = (opts.zeroAnchor || opts.scaling.zeroAnchor) && domain && domain[0] > 0 ? 0 : undefined;
+                var absMin = (opts.zeroAnchor || opts.scaling.options.zeroAnchor) && domain && domain[0] > 0 ? 0 : undefined;
                 var min = opts.min != null ? opts.min : absMin;
 
                 if (opts.tickValues) {
                     if (opts.min != null && opts.max != null) {
                         return [opts.min, opts.max];
                     } else if (opts.min != null) {
-                        return [opts.min, d3.max((opts.zeroAnchor || opts.scaling.zeroAnchor) ? [0].concat(opts.tickValues) : opts.tickValues)];
+                        return [opts.min, d3.max((opts.zeroAnchor || opts.scaling.options.zeroAnchor) ? [0].concat(opts.tickValues) : opts.tickValues)];
                     } else if (opts.max != null) {
-                        return [d3.min((opts.zeroAnchor || opts.scaling.zeroAnchor) ? [0].concat(opts.tickValues) : opts.tickValues), opts.max];
+                        return [d3.min((opts.zeroAnchor || opts.scaling.options.zeroAnchor) ? [0].concat(opts.tickValues) : opts.tickValues), opts.max];
                     } else {
-                        return d3.extent((opts.zeroAnchor || opts.scaling.zeroAnchor) || opts.min != null ? [min].concat(opts.tickValues) : opts.tickValues);
+                        return d3.extent((opts.zeroAnchor || opts.scaling.options.zeroAnchor) || opts.min != null ? [min].concat(opts.tickValues) : opts.tickValues);
                     }
-                } else if (opts.smartAxis || opts.scaling.smartAxis) {
-                    return d3.extent((opts.zeroAnchor || opts.scaling.zeroAnchor) || opts.min != null ? [min].concat(domain) : domain);
-                } else if (opts.centeredAxis || opts.scaling.centeredAxis) {
+                } else if (opts.smartAxis || opts.scaling.type === 'smart') {
+                    return d3.extent((opts.zeroAnchor || opts.scaling.options.zeroAnchor) || opts.min != null ? [min].concat(domain) : domain);
+                } else if (opts.centeredAxis || opts.scaling.type === 'centered') {
                     return d3.extent(domain);
                 }
 
@@ -458,7 +459,7 @@
                 var y = this.yScale;
 
                 if(horizontal) {
-                    var smartAxis = this.options.yAxis.smartAxis || this.options.yAxis.scaling.smartAxis
+                    var smartAxis = this.options.yAxis.smartAxis || this.options.yAxis.scaling.type === 'smart'
                     ticks = getYTicks(this.yAxis(), smartAxis);
                     var w = this.options.chart.plotWidth;
 
