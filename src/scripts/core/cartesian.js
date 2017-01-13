@@ -118,21 +118,22 @@
 
             _getYScaledDomain: function (domain, options) {
                 var opts = this.options.yAxis;
-                var absMin = (opts.zeroAnchor || opts.scaling.options.zeroAnchor) && domain && domain[0] > 0 ? 0 : undefined;
+                var zeroAnchor = (typeof opts.zeroAnchor !== 'undefined') ? opts.zeroAnchor : opts.scaling.opts.zeroAnchor;
+                var absMin = zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
                 var min = opts.min != null ? opts.min : absMin;
 
                 if (opts.tickValues) {
                     if (opts.min != null && opts.max != null) {
                         return [opts.min, opts.max];
                     } else if (opts.min != null) {
-                        return [opts.min, d3.max((opts.zeroAnchor || opts.scaling.options.zeroAnchor) ? [0].concat(opts.tickValues) : opts.tickValues)];
+                        return [opts.min, d3.max(zeroAnchor ? [0].concat(opts.tickValues) : opts.tickValues)];
                     } else if (opts.max != null) {
-                        return [d3.min((opts.zeroAnchor || opts.scaling.options.zeroAnchor) ? [0].concat(opts.tickValues) : opts.tickValues), opts.max];
+                        return [d3.min(zeroAnchor ? [0].concat(opts.tickValues) : opts.tickValues), opts.max];
                     } else {
-                        return d3.extent((opts.zeroAnchor || opts.scaling.options.zeroAnchor) || opts.min != null ? [min].concat(opts.tickValues) : opts.tickValues);
+                        return d3.extent(zeroAnchor || opts.min != null ? [min].concat(opts.tickValues) : opts.tickValues);
                     }
                 } else if (opts.smartAxis || opts.scaling.type === 'smart') {
-                    return d3.extent((opts.zeroAnchor || opts.scaling.options.zeroAnchor) || opts.min != null ? [min].concat(domain) : domain);
+                    return d3.extent(zeroAnchor || opts.min != null ? [min].concat(domain) : domain);
                 } else if (opts.centeredAxis || opts.scaling.type === 'centered') {
                     return d3.extent(domain);
                 }
