@@ -77,7 +77,9 @@
         setVisibility: function (visible) {
             var node = this.layer.node();
 
-            visible ? $(node).show() : $(node).hide();
+            visible ? node.style.display = 'block' : node.style.display = 'none';
+
+            // visible ? $(node).show() : $(node).hide();
         },
 
         _updateDomain: function () {
