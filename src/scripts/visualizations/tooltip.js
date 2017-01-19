@@ -47,6 +47,7 @@
             var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];
             var pointY = yScale ? yScale(d.y) : pointOrCentroid.call(this)[1];
             var alignedRight;
+            var followCursor = this.options.tooltip.followCursor;
 
             var clampPosition = function (pos) {
                 // Check outside plot area (left)
@@ -79,7 +80,7 @@
 
                 return pos;
             };
-
+            var tooltipElement = this.tooltipElement;
             var positioner = {
                 'vertical': function verticalPositioner() {
                     var pos = {
@@ -97,10 +98,21 @@
                     };
 
                     return clampPosition(pos);
+                },
+
+                'cursor': function cursorPositioner() {
+                    var pos = d3.mouse(layer[0][0]);
+                    var tooltip = tooltipElement[0][0]
+                    var offsetX = 40;
+                    var offsetY = -(tooltip.clientHeight);
+                    return {
+                        x: pos[0] + offsetX,
+                        y: pos[1] + offsetY,
+                    };
                 }
             };
 
-            return options.chart.rotatedFrame ? positioner.horizontal() : positioner.vertical();
+            return options.tooltip.followCursor ? positioner.cursor() : (options.chart.rotatedFrame ? positioner.horizontal() : positioner.vertical());
 
         };
 
@@ -111,6 +123,12 @@
         var onMouseOut = function () {
             changeOpacity.call(this, 0, this.options.tooltip.hideTime);
         };
+
+        var onMouseMove = function (d) {
+            if (this.options.tooltip.followCursor) {
+                show.call(this, d)
+            }
+        }
 
         var getTooltipText = function (d, allPoints) {
             function match() {
@@ -179,7 +197,8 @@
 
         this.svg.selectAll('.tooltip-tracker')
             .on('mouseover.tooltip', onMouseOver.bind(this))
-            .on('mouseout.tooltip',  onMouseOut.bind(this));
+            .on('mouseout.tooltip',  onMouseOut.bind(this))
+            .on('mousemove.tooltip', onMouseMove.bind(this));
     }
 
     render.defaults = defaults;
