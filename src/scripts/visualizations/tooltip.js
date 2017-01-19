@@ -7,6 +7,8 @@
             showTime: 300,
             hideTime: 500,
             distance: 5,
+            distanceX: undefined,
+            distanceY: undefined,
             formatter: undefined //defined in formatters array in getTooltipText()
         }
     };
@@ -38,6 +40,8 @@
             var plotTop = this.options.chart.plotTop;
             var plotHeight = this.options.chart.plotHeight;
             var distance = this.options.tooltip.distance;
+            var distanceX = this.options.tooltip.distanceX ? this.options.tooltip.distanceX : distance;
+            var distanceY = this.options.tooltip.distanceY ? this.options.tooltip.distanceY : distance;
             var width = parseFloat(this.tooltipElement.node().offsetWidth);
             var height = parseFloat(this.tooltipElement.node().offsetHeight);
             var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];
@@ -47,30 +51,30 @@
             var clampPosition = function (pos) {
                 // Check outside plot area (left)
                 if (pos.x < plotLeft) {
-                    pos.x = plotLeft + distance;
+                    pos.x = plotLeft;
                 }
 
                 // Check outside plot area (right)
                 if (pos.x + width > plotLeft + plotWidth) {
                     pos.x -= (pos.x + width) - (plotLeft + plotWidth);
                     // Don't overlap point
-                    pos.y = plotTop + pointY - (height + distance);
+
                     alignedRight = true;
                 }
 
                 // Check outside the plot area (top)
                 if (pos.y < plotTop) {
-                    pos.y = plotTop + distance;
+                    pos.y = plotTop;
 
                     // Don't overlap point
                     if (alignedRight && pointY >= pos.y && pointY <= pos.y + height) {
-                        pos.y = pointY + plotTop + distance;
+                        pos.y = pointY + plotTop + distanceY;
                     }
                 }
 
                 // Check outside the plot area (bottom)
                 if (pos.y + height > plotTop + plotHeight) {
-                    pos.y = Math.max(plotTop, plotTop + plotHeight - (height + distance));
+                    pos.y = plotTop + plotHeight - (height);
                 }
 
                 return pos;
@@ -79,8 +83,8 @@
             var positioner = {
                 'vertical': function verticalPositioner() {
                     var pos = {
-                        x: plotLeft + pointX - (distance + width),
-                        y: plotTop + pointY - (distance + height)
+                        x: plotLeft + pointX - (distanceX + width),
+                        y: plotTop + pointY - (distanceY + height)
                     };
 
                     return clampPosition(pos);
@@ -88,8 +92,8 @@
 
                 'horizontal': function horizontalPositioner() {
                     var pos = {
-                        x: plotLeft + pointY - (distance + width),
-                        y: plotTop + pointX - (distance + height)
+                        x: plotLeft + pointY - (distanceX + width),
+                        y: plotTop + pointX - (distanceY + height)
                     };
 
                     return clampPosition(pos);
