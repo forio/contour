@@ -40,7 +40,7 @@
                 axisType = 'smart';
             }
 
-            if (axisType === 'linear' && (options.yAxis.centeredAxis || options.yAxis.scaling.type === 'centered')) {
+            if (axisType === 'linear' && options.yAxis.scaling.type === 'centered') {
                 axisType = 'centered';
             }
 

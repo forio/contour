@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2017-01-13 */
+/*! Contour - v1.0.1 - 2017-01-20 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -1102,7 +1102,7 @@
                 /*jshint eqnull:true */
                 var options = this.options.yAxis;
                 var domain = this.domain;
-                var zeroAnchor = typeof options.zeroAnchor !== "undefined" ? options.zeroAnchor : options.scaling.options.zeroAnchor;
+                var zeroAnchor = options.zeroAnchor != undefined ? options.zeroAnchor : options.scaling.options.zeroAnchor;
                 var tickValues = options.tickValues || _.nw.niceTicks(options.min, options.max, options.ticks, zeroAnchor, domain);
                 var numTicks = this.numTicks(domain, options.min, options.max);
                 var format = options.labels.formatter || d3.format(options.labels.format);
@@ -1252,7 +1252,7 @@
                 yDomain: [],
                 _getYScaledDomain: function(domain, options) {
                     var opts = this.options.yAxis;
-                    var zeroAnchor = typeof opts.zeroAnchor !== "undefined" ? opts.zeroAnchor : opts.scaling.opts.zeroAnchor;
+                    var zeroAnchor = opts.zeroAnchor != undefined ? opts.zeroAnchor : opts.scaling.options.zeroAnchor;
                     var absMin = zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
                     var min = opts.min != null ? opts.min : absMin;
                     if (opts.tickValues) {
@@ -1267,7 +1267,7 @@
                         }
                     } else if (opts.smartAxis || opts.scaling.type === "smart") {
                         return d3.extent(zeroAnchor || opts.min != null ? [ min ].concat(domain) : domain);
-                    } else if (opts.centeredAxis || opts.scaling.type === "centered") {
+                    } else if (opts.scaling.type === "centered") {
                         return d3.extent(domain);
                     }
                     return _.nw.extractScaleDomain(domain, min, opts.max, opts.ticks);
@@ -2251,7 +2251,7 @@
                 if (axisType === "linear" && (options.yAxis.smartAxis || options.yAxis.scaling.type === "smart")) {
                     axisType = "smart";
                 }
-                if (axisType === "linear" && (options.yAxis.centeredAxis || options.yAxis.scaling.type === "centered")) {
+                if (axisType === "linear" && options.yAxis.scaling.type === "centered") {
                     axisType = "centered";
                 }
                 if (map[axisType]) {

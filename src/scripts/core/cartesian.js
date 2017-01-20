@@ -118,7 +118,7 @@
 
             _getYScaledDomain: function (domain, options) {
                 var opts = this.options.yAxis;
-                var zeroAnchor = (typeof opts.zeroAnchor !== 'undefined') ? opts.zeroAnchor : opts.scaling.opts.zeroAnchor;
+                var zeroAnchor = (opts.zeroAnchor != undefined) ? opts.zeroAnchor : opts.scaling.options.zeroAnchor;
                 var absMin = zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
                 var min = opts.min != null ? opts.min : absMin;
 
@@ -134,7 +134,7 @@
                     }
                 } else if (opts.smartAxis || opts.scaling.type === 'smart') {
                     return d3.extent(zeroAnchor || opts.min != null ? [min].concat(domain) : domain);
-                } else if (opts.centeredAxis || opts.scaling.type === 'centered') {
+                } else if (opts.scaling.type === 'centered') {
                     return d3.extent(domain);
                 }
 
