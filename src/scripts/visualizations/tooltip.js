@@ -9,7 +9,8 @@
             distance: 5,
             distanceX: undefined,
             distanceY: undefined,
-            formatter: undefined //defined in formatters array in getTooltipText()
+            formatter: undefined, //defined in formatters array in getTooltipText()
+            followCursor: false,
         }
     };
 
@@ -111,9 +112,12 @@
                     };
                 }
             };
-
-            return options.tooltip.followCursor ? positioner.cursor() : (options.chart.rotatedFrame ? positioner.horizontal() : positioner.vertical());
-
+            
+            if (options.tooltip.followCursor) {
+                return positioner.cursor();
+            } else {
+                return options.chart.rotatedFrame ? positioner.horizontal() : positioner.vertical();
+            }
         };
 
         var onMouseOver = function (d) {
@@ -126,7 +130,7 @@
 
         var onMouseMove = function (d) {
             if (this.options.tooltip.followCursor) {
-                show.call(this, d)
+                show.call(this, d);
             }
         }
 
