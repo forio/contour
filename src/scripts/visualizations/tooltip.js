@@ -83,7 +83,7 @@
             var positioner = {
                 'vertical': function verticalPositioner() {
                     var pos = {
-                        x: plotLeft + pointX - (distanceX + width),
+                        x: plotLeft + pointX + (distanceX + width),
                         y: plotTop + pointY - (distanceY + height)
                     };
 
@@ -92,7 +92,7 @@
 
                 'horizontal': function horizontalPositioner() {
                     var pos = {
-                        x: plotLeft + pointY - (distanceX + width),
+                        x: plotLeft + pointY + (distanceX + width),
                         y: plotTop + pointX - (distanceY + height)
                     };
 
