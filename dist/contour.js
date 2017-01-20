@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2016-02-05 */
+/*! Contour - v1.0.1 - 2017-01-20 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -3797,7 +3797,11 @@
                 showTime: 300,
                 hideTime: 500,
                 distance: 5,
-                formatter: undefined
+                distanceX: undefined,
+                distanceY: undefined,
+                formatter: undefined,
+                //defined in formatters array in getTooltipText()
+                followCursor: false
             }
         };
         function render(data, layer, options) {
@@ -3822,60 +3826,82 @@
                 var plotTop = this.options.chart.plotTop;
                 var plotHeight = this.options.chart.plotHeight;
                 var distance = this.options.tooltip.distance;
+                var distanceX = this.options.tooltip.distanceX ? this.options.tooltip.distanceX : distance;
+                var distanceY = this.options.tooltip.distanceY ? this.options.tooltip.distanceY : distance;
                 var width = parseFloat(this.tooltipElement.node().offsetWidth);
                 var height = parseFloat(this.tooltipElement.node().offsetHeight);
                 var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];
                 var pointY = yScale ? yScale(d.y) : pointOrCentroid.call(this)[1];
                 var alignedRight;
+                var followCursor = this.options.tooltip.followCursor;
                 var clampPosition = function(pos) {
                     // Check outside plot area (left)
                     if (pos.x < plotLeft) {
-                        pos.x = plotLeft + distance;
+                        pos.x = plotLeft;
                     }
                     // Check outside plot area (right)
                     if (pos.x + width > plotLeft + plotWidth) {
                         pos.x -= pos.x + width - (plotLeft + plotWidth);
                         // Don't overlap point
-                        pos.y = plotTop + pointY - (height + distance);
                         alignedRight = true;
                     }
                     // Check outside the plot area (top)
                     if (pos.y < plotTop) {
-                        pos.y = plotTop + distance;
+                        pos.y = plotTop;
                         // Don't overlap point
                         if (alignedRight && pointY >= pos.y && pointY <= pos.y + height) {
-                            pos.y = pointY + plotTop + distance;
+                            pos.y = pointY + plotTop + distanceY;
                         }
                     }
                     // Check outside the plot area (bottom)
                     if (pos.y + height > plotTop + plotHeight) {
-                        pos.y = Math.max(plotTop, plotTop + plotHeight - (height + distance));
+                        pos.y = plotTop + plotHeight - height;
                     }
                     return pos;
                 };
+                var tooltipElement = this.tooltipElement;
                 var positioner = {
                     vertical: function verticalPositioner() {
                         var pos = {
-                            x: plotLeft + pointX - (distance + width),
-                            y: plotTop + pointY - (distance + height)
+                            x: plotLeft + pointX + (distanceX - width),
+                            y: plotTop + pointY - (distanceY + height)
                         };
                         return clampPosition(pos);
                     },
                     horizontal: function horizontalPositioner() {
                         var pos = {
-                            x: plotLeft + pointY - (distance + width),
-                            y: plotTop + pointX - (distance + height)
+                            x: plotLeft + pointY + (distanceX - width),
+                            y: plotTop + pointX - (distanceY + height)
                         };
                         return clampPosition(pos);
+                    },
+                    cursor: function cursorPositioner() {
+                        var pos = d3.mouse(layer[0][0]);
+                        var tooltip = tooltipElement[0][0];
+                        var offsetX = 40;
+                        var offsetY = -tooltip.clientHeight;
+                        return {
+                            x: pos[0] + offsetX,
+                            y: pos[1] + offsetY
+                        };
                     }
                 };
-                return options.chart.rotatedFrame ? positioner.horizontal() : positioner.vertical();
+                if (options.tooltip.followCursor) {
+                    return positioner.cursor();
+                } else {
+                    return options.chart.rotatedFrame ? positioner.horizontal() : positioner.vertical();
+                }
             };
             var onMouseOver = function(d) {
                 show.call(this, d);
             };
             var onMouseOut = function() {
                 changeOpacity.call(this, 0, this.options.tooltip.hideTime);
+            };
+            var onMouseMove = function(d) {
+                if (this.options.tooltip.followCursor) {
+                    show.call(this, d);
+                }
             };
             var getTooltipText = function(d, allPoints) {
                 function match() {
@@ -3934,7 +3960,7 @@
             }
             this.tooltipElement = this.container.style("position", "relative").selectAll(".nw-tooltip").data([ 1 ]);
             this.tooltipElement.enter().append("div").attr("class", "nw-tooltip").style("opacity", 0).append("div").attr("class", "text");
-            this.svg.selectAll(".tooltip-tracker").on("mouseover.tooltip", onMouseOver.bind(this)).on("mouseout.tooltip", onMouseOut.bind(this));
+            this.svg.selectAll(".tooltip-tracker").on("mouseover.tooltip", onMouseOver.bind(this)).on("mouseout.tooltip", onMouseOut.bind(this)).on("mousemove.tooltip", onMouseMove.bind(this));
         }
         render.defaults = defaults;
         /**
