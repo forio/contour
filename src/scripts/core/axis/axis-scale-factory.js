@@ -28,15 +28,20 @@
             var map = {
                 'log': _.nw.axes.LogYAxis,
                 'smart': _.nw.axes.SmartYAxis,
-                'linear': _.nw.axes.YAxis
+                'linear': _.nw.axes.YAxis,
+                'centered': _.nw.axes.CenteredYAxis
             };
 
             if (!axisType) {
                 axisType = 'linear';
             }
 
-            if (axisType === 'linear' && options.yAxis.smartAxis) {
+            if (axisType === 'linear' && (options.yAxis.smartAxis || options.yAxis.scaling.smartAxis)) {
                 axisType = 'smart';
+            }
+
+            if (axisType === 'linear' && (options.yAxis.centeredAxis || options.yAxis.scaling.centeredAxis)) {
+                axisType = 'centered';
             }
 
             if (map[axisType]) {
