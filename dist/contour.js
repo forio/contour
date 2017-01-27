@@ -2887,6 +2887,10 @@
                 this.options = _.merge({}, (this.renderer || {}).defaults || {}, opt);
                 return this.ctx;
             },
+            setVisibility: function(visible) {
+                var node = this.layer.node();
+                visible ? $(node).show() : $(node).hide();
+            },
             _updateDomain: function() {
                 if (!this.options[this.type]) throw new Error("Set the options before calling setData or _updateDomain");
                 var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
@@ -3283,6 +3287,7 @@
                 vAlign: "middle",
                 hAlign: "right",
                 direction: "vertical",
+                enabled: true,
                 formatter: function(d) {
                     return d.name;
                 },
@@ -3307,6 +3312,9 @@
             return classes;
         }
         function Legend(data, layer, options) {
+            if (options.legend.enabled === false) {
+                return;
+            }
             var container;
             if (options.legend.el) {
                 container = d3.select(options.legend.el).node();
