@@ -36,11 +36,11 @@
                 axisType = 'linear';
             }
 
-            if (axisType === 'linear' && (options.yAxis.smartAxis || options.yAxis.scaling.smartAxis)) {
+            if (axisType === 'linear' && (options.yAxis.smartAxis || options.yAxis.scaling.type === 'smart')) {
                 axisType = 'smart';
             }
 
-            if (axisType === 'linear' && (options.yAxis.centeredAxis || options.yAxis.scaling.centeredAxis)) {
+            if (axisType === 'linear' && options.yAxis.scaling.type === 'centered') {
                 axisType = 'centered';
             }
 
