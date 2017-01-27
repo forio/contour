@@ -101,6 +101,32 @@ describe('default yAxis', function () {
         expect(_.every(ticks, function (t) { return $(t).attr('dy') === '0'; })).toBe(true);
     });
 
+    it('should take a simple function for tick values', function () {
+        simpleInstance = createinstance({yAxis: { tickValues: function (data) { return data; }}});
+
+        var data = [0, 10, 20, 30];
+        simpleInstance.nullVis(data).render();
+        d3.timer.flush();
+        var ticks = $el.find('.y.axis .tick text').map(function(idx, tick) {
+            return +tick.innerHTML;
+        });
+        expect($.makeArray(ticks)).toEqual(data);
+    });
+
+    it('should take a marginally less simple function for tick values', function () {
+        instance = createinstance({yAxis: { tickValues: function (data) { return data + 1; }}});
+        
+        var data = [0, 10, 20, 30];
+        instance.nullVis(data).render();
+        d3.timer.flush();
+        var ticks = $el.find('.y.axis .tick text').map(function(idx, tick) {
+            return +tick.innerHTML;
+        });
+        expect($.makeArray(ticks)).toEqual(data.map(function(d) {
+            return d + 1;
+        }));
+    });
+
     describe('with smart y axis', function () {
         it('should round the max tick value to a nice value', function () {
             createinstance({yAxis: {scaling: {type: 'smart'}}}).nullVis([1,2,3,4.5]).render();
