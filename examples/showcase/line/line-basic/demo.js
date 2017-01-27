@@ -7,7 +7,9 @@ $(function () {
     new Contour({
         el: '.chart',
         yAxis: {
-            tickValues: [1,2,3,4]
+            tickValues: function (data) {
+                return data.map(function(d) {  return d.y; });
+            }
         }
     })
     // adding a cartesian frame to the instance gives use an X and Y axis

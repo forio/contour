@@ -101,8 +101,10 @@ describe('default yAxis', function () {
         expect(_.every(ticks, function (t) { return $(t).attr('dy') === '0'; })).toBe(true);
     });
 
-    it('should take a simple function for tick values', function () {
-        simpleInstance = createinstance({yAxis: { tickValues: function (data) { return data; }}});
+    it('should take a function for tick values, such that tick values match data', function () {
+        simpleInstance = createinstance({yAxis: { tickValues: function (data) {
+            return data.map(function(d) { return d.y });; 
+        }}});
 
         var data = [0, 10, 20, 30];
         simpleInstance.nullVis(data).render();
@@ -113,8 +115,10 @@ describe('default yAxis', function () {
         expect($.makeArray(ticks)).toEqual(data);
     });
 
-    it('should take a marginally less simple function for tick values', function () {
-        instance = createinstance({yAxis: { tickValues: function (data) { return data + 1; }}});
+    it('should take a function for tick values, such that tick values are 1 greater than data points', function () {
+        instance = createinstance({yAxis: { tickValues: function (data) { 
+            return data.map(function(d) { return d.y + 1 });
+        }}});
         
         var data = [0, 10, 20, 30];
         instance.nullVis(data).render();
@@ -125,6 +129,22 @@ describe('default yAxis', function () {
         expect($.makeArray(ticks)).toEqual(data.map(function(d) {
             return d + 1;
         }));
+    });
+
+    it('should take a function for tick values, and respect whatever values function returns', function () {
+        // random tick values
+        var tickValues = [0, 1.5, 3, 3.2, 6.7, 8];
+        instance = createinstance({yAxis: { tickValues: function (data) { 
+            return tickValues;
+        }}});
+        
+        var data = [0, 10, 20, 30];
+        instance.nullVis(data).render();
+        d3.timer.flush();
+        var ticks = $el.find('.y.axis .tick text').map(function(idx, tick) {
+            return +tick.innerHTML;
+        });
+        expect($.makeArray(ticks)).toEqual(tickValues);
     });
 
     describe('with smart y axis', function () {

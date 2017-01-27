@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2017-01-20 */
+/*! Contour - v1.0.1 - 2017-01-27 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -1256,6 +1256,9 @@
                     var absMin = zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
                     var min = opts.min != null ? opts.min : absMin;
                     if (opts.tickValues) {
+                        if (_.isFunction(opts.tickValues)) {
+                            opts.tickValues = opts.tickValues.call(null, this.dataSrc);
+                        }
                         if (opts.min != null && opts.max != null) {
                             return [ opts.min, opts.max ];
                         } else if (opts.min != null) {
@@ -2889,7 +2892,7 @@
             },
             setVisibility: function(visible) {
                 var node = this.layer.node();
-                visible ? $(node).show() : $(node).hide();
+                visible ? node.style.display = "block" : node.style.display = "none";
             },
             _updateDomain: function() {
                 if (!this.options[this.type]) throw new Error("Set the options before calling setData or _updateDomain");
