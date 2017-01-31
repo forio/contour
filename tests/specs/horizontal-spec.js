@@ -24,10 +24,11 @@ describe('Horizontal frame', function () {
         beforeEach(function () {
             var options = {
                 yAxis: {
-                    smartAxis: false,
+                    scaling: {
+                        smartAxis: false
+                    },
                     title: 'A'
                 },
-
                 xAxis: {
                     firstAndLast: false,
                     title: 'B'

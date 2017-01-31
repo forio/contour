@@ -5,6 +5,7 @@
             vAlign: 'middle',
             hAlign: 'right',
             direction: 'vertical',
+            enabled: true,
             formatter: function (d) {
                 return d.name;
             },
@@ -34,6 +35,9 @@
     }
 
     function Legend(data, layer, options) {
+        if (options.legend.enabled === false) {
+            return;
+        }
         var container;
         if (options.legend.el) {
             container = d3.select(options.legend.el).node();

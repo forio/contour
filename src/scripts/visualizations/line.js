@@ -12,7 +12,7 @@
             marker: {
                 enable: true,
                 size: 3,
-                animationDelay: 0,
+                animationDelay: null
             },
             preprocess: _.nw.minMaxFilter(1000)
         }
@@ -139,7 +139,7 @@
         }
 
         function renderMarkers() {
-            var animationDelay = options.line.marker.animationDelay;
+            var animationDelay = (options.line.marker.animationDelay == null) ? duration : options.line.marker.animationDelay;
             var markers = layer.selectAll('.line-chart-markers')
                 .data(data, function (d) { return d.name; });
 
@@ -169,7 +169,7 @@
                 .attr('opacity', 0)
                 .attr('cx', x)
                 .attr('cy', y)
-                .transition().delay(duration)
+                .transition().delay(animationDelay)
                     .attr('opacity', 1);
 
             dots.exit().remove();

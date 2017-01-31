@@ -74,6 +74,12 @@
             return this.ctx;
         },
 
+        setVisibility: function (visible) {
+            var node = this.layer.node();
+
+            visible ? node.style.display = 'block' : node.style.display = 'none';
+        },
+
         _updateDomain: function () {
             if(!this.options[this.type]) throw new Error('Set the options before calling setData or _updateDomain');
 
