@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2017-01-20 */
+/*! Contour - v1.0.1 - 2017-01-31 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -336,12 +336,40 @@
                 var dataMax = max != null ? max : _.max(domain);
                 ticks = ticks == null ? 5 : ticks;
                 var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, ticks, zeroAnchor);
-                return [ niceMinMax.min, niceMinMax.max ];
+                // return [niceMinMax.min, niceMinMax.max];
+                // // we want null || undefined for all this comparasons
+                // // that == null gives us
+                if (min == null && max == null) {
+                    return [ niceMinMax.min, niceMinMax.max ];
+                }
+                if (min == null) {
+                    return [ Math.min(niceMinMax.min, max), max ];
+                }
+                if (max == null) {
+                    return [ min, Math.max(min, niceMinMax.max) ];
+                }
+                return [ min, max ];
             },
-            niceTicks: function(min, max, ticks, zeroAnchor) {
+            niceTicks: function(min, max, ticks, zeroAnchor, domain) {
                 ticks = ticks == null ? 5 : ticks;
+                min = min != null ? min : zeroAnchor ? Math.min(0, domain[0]) : domain[0];
+                max = max != null ? max : domain[1];
                 var niceMinMax = axisHelpers.niceMinMax(min, max, ticks, zeroAnchor);
-                return niceMinMax.tickValues;
+                var tickValues = niceMinMax.tickValues;
+                // ensure that y-axis endpoints are labelled
+                if (min !== domain[0]) {
+                    tickValues.push(min);
+                    tickValues = tickValues.filter(function(tick) {
+                        return tick >= min;
+                    });
+                }
+                if (max !== domain[1]) {
+                    tickValues.push(max);
+                    tickValues = tickValues.filter(function(tick) {
+                        return tick <= max;
+                    });
+                }
+                return _.uniq(_.sortBy(tickValues));
             },
             calcXLabelsWidths: function(ticks) {
                 var padding = 8;
@@ -1074,9 +1102,8 @@
                 /*jshint eqnull:true */
                 var options = this.options.yAxis;
                 var domain = this.domain;
-                var dMin = options.min != null ? options.min : options.zeroAnchor ? Math.min(0, domain[0]) : domain[0];
-                var dMax = options.max != null ? options.max : domain[1];
-                var tickValues = options.tickValues || _.nw.niceTicks(dMin, dMax, options.ticks);
+                var zeroAnchor = options.zeroAnchor != undefined ? options.zeroAnchor : options.scaling.options.zeroAnchor;
+                var tickValues = options.tickValues || _.nw.niceTicks(options.min, options.max, options.ticks, zeroAnchor, domain);
                 var numTicks = this.numTicks(domain, options.min, options.max);
                 var format = options.labels.formatter || d3.format(options.labels.format);
                 return d3.svg.axis().scale(this._scale).tickFormat(format).tickSize(options.innerTickSize, options.outerTickSize).tickPadding(options.tickPadding).ticks(numTicks).tickValues(tickValues);
@@ -1153,8 +1180,13 @@
                 // type: 'smart',
                 min: undefined,
                 max: undefined,
-                zeroAnchor: true,
-                smartAxis: false,
+                scaling: {
+                    type: "auto",
+                    // || 'smart' || 'centered'
+                    options: {
+                        zeroAnchor: true
+                    }
+                },
                 innerTickSize: 6,
                 outerTickSize: 6,
                 tickPadding: 4,
@@ -1220,20 +1252,23 @@
                 yDomain: [],
                 _getYScaledDomain: function(domain, options) {
                     var opts = this.options.yAxis;
-                    var absMin = opts.zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
+                    var zeroAnchor = opts.zeroAnchor != undefined ? opts.zeroAnchor : opts.scaling.options.zeroAnchor;
+                    var absMin = zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
                     var min = opts.min != null ? opts.min : absMin;
                     if (opts.tickValues) {
                         if (opts.min != null && opts.max != null) {
                             return [ opts.min, opts.max ];
                         } else if (opts.min != null) {
-                            return [ opts.min, d3.max(opts.zeroAnchor ? [ 0 ].concat(opts.tickValues) : opts.tickValues) ];
+                            return [ opts.min, d3.max(zeroAnchor ? [ 0 ].concat(opts.tickValues) : opts.tickValues) ];
                         } else if (opts.max != null) {
-                            return [ d3.min(opts.zeroAnchor ? [ 0 ].concat(opts.tickValues) : opts.tickValues), opts.max ];
+                            return [ d3.min(zeroAnchor ? [ 0 ].concat(opts.tickValues) : opts.tickValues), opts.max ];
                         } else {
-                            return d3.extent(opts.zeroAnchor || opts.min != null ? [ min ].concat(opts.tickValues) : opts.tickValues);
+                            return d3.extent(zeroAnchor || opts.min != null ? [ min ].concat(opts.tickValues) : opts.tickValues);
                         }
-                    } else if (opts.smartAxis) {
-                        return d3.extent(opts.zeroAnchor || opts.min != null ? [ min ].concat(domain) : domain);
+                    } else if (opts.smartAxis || opts.scaling.type === "smart") {
+                        return d3.extent(zeroAnchor || opts.min != null ? [ min ].concat(domain) : domain);
+                    } else if (opts.scaling.type === "centered") {
+                        return d3.extent(domain);
                     }
                     return _.nw.extractScaleDomain(domain, min, opts.max, opts.ticks);
                 },
@@ -1475,7 +1510,8 @@
                     var x = this.xScale;
                     var y = this.yScale;
                     if (horizontal) {
-                        ticks = getYTicks(this.yAxis(), this.options.yAxis.smartAxis);
+                        var smartAxis = this.options.yAxis.smartAxis || this.options.yAxis.scaling.type === "smart";
+                        ticks = getYTicks(this.yAxis(), smartAxis);
                         var w = this.options.chart.plotWidth;
                         // remove previous lines (TODO: we need a better way)
                         // this._yAxisGroup.select('g.grid-lines').remove();
@@ -2206,13 +2242,17 @@
                 var map = {
                     log: _.nw.axes.LogYAxis,
                     smart: _.nw.axes.SmartYAxis,
-                    linear: _.nw.axes.YAxis
+                    linear: _.nw.axes.YAxis,
+                    centered: _.nw.axes.CenteredYAxis
                 };
                 if (!axisType) {
                     axisType = "linear";
                 }
-                if (axisType === "linear" && options.yAxis.smartAxis) {
+                if (axisType === "linear" && (options.yAxis.smartAxis || options.yAxis.scaling.type === "smart")) {
                     axisType = "smart";
+                }
+                if (axisType === "linear" && options.yAxis.scaling.type === "centered") {
+                    axisType = "centered";
                 }
                 if (map[axisType]) {
                     return new map[axisType](data, options, domain);
@@ -2225,6 +2265,56 @@
             }
         };
         _.nw = _.extend({}, _.nw, helpers);
+    })();
+    (function() {
+        // focus on vertically centering data - zero anchor is ignored
+        var CenteredYAxis = function(data, options, domain) {
+            this.data = data;
+            this.options = options;
+            this.yMax = domain[0];
+            this.yMin = domain[1];
+            this.NUM_DECIMALS = 1;
+        };
+        var __super = _.nw.axes.YAxis.prototype;
+        CenteredYAxis.prototype = _.extend({}, __super, {
+            axis: function() {
+                var options = this.options.yAxis;
+                this.domain = this._scale.domain();
+                var numTicks = options.ticks || 5;
+                var axis = __super.axis.call(this);
+                var tickValues = this._extractYTickValues(options.min, options.max, numTicks);
+                return axis.ticks(numTicks).tickValues(tickValues).tickFormat(undefined);
+            },
+            setDomain: function(domain) {
+                var scaledDomain = this._getScaledDomain(domain);
+                this.yMin = scaledDomain[0];
+                this.yMax = scaledDomain[1];
+                this._scale.domain(scaledDomain);
+            },
+            _getScaledDomain: function(domain) {
+                var extent = d3.extent(domain);
+                var dataRange = extent[1] - extent[0];
+                var domainPadding = dataRange * .1;
+                var scaledMin = d3.round(extent[0] - domainPadding, this.NUM_DECIMALS);
+                var scaledMax = d3.round(extent[1] + domainPadding, this.NUM_DECIMALS);
+                return [ scaledMin, scaledMax ];
+            },
+            _extractYTickValues: function(min, max, numTicks) {
+                var tickMin = min != null ? min : this.yMin;
+                var tickMax = max != null ? max : this.yMax;
+                var tickRange = tickMax - tickMin;
+                var tickSpacing = tickRange / numTicks;
+                var currentTick = tickMin;
+                var tickValues = [ tickMin ];
+                while (currentTick < tickMax) {
+                    currentTick += tickSpacing;
+                    tickValues.push(d3.round(currentTick, this.NUM_DECIMALS));
+                }
+                tickValues.push(tickMax);
+                return tickValues;
+            }
+        });
+        _.nw.addAxis("CenteredYAxis", CenteredYAxis);
     })();
     (function() {
         function LinearScale(data, options) {
@@ -2797,6 +2887,10 @@
                 this.options = _.merge({}, (this.renderer || {}).defaults || {}, opt);
                 return this.ctx;
             },
+            setVisibility: function(visible) {
+                var node = this.layer.node();
+                visible ? node.style.display = "block" : node.style.display = "none";
+            },
             _updateDomain: function() {
                 if (!this.options[this.type]) throw new Error("Set the options before calling setData or _updateDomain");
                 var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
@@ -3193,6 +3287,7 @@
                 vAlign: "middle",
                 hAlign: "right",
                 direction: "vertical",
+                enabled: true,
                 formatter: function(d) {
                     return d.name;
                 },
@@ -3217,6 +3312,9 @@
             return classes;
         }
         function Legend(data, layer, options) {
+            if (options.legend.enabled === false) {
+                return;
+            }
             var container;
             if (options.legend.el) {
                 container = d3.select(options.legend.el).node();
@@ -3313,7 +3411,7 @@
                 marker: {
                     enable: true,
                     size: 3,
-                    animationDelay: 0
+                    animationDelay: null
                 },
                 preprocess: _.nw.minMaxFilter(1e3)
             }
@@ -3425,7 +3523,7 @@
                 }
             }
             function renderMarkers() {
-                var animationDelay = options.line.marker.animationDelay;
+                var animationDelay = options.line.marker.animationDelay == null ? duration : options.line.marker.animationDelay;
                 var markers = layer.selectAll(".line-chart-markers").data(data, function(d) {
                     return d.name;
                 });
@@ -3441,7 +3539,7 @@
                 } else {
                     dots.attr("cx", x).attr("cy", y).attr("opacity", 1);
                 }
-                dots.enter().append("circle").attr("class", "dot").attr("r", options.line.marker.size).attr("opacity", 0).attr("cx", x).attr("cy", y).transition().delay(duration).attr("opacity", 1);
+                dots.enter().append("circle").attr("class", "dot").attr("r", options.line.marker.size).attr("opacity", 0).attr("cx", x).attr("cy", y).transition().delay(animationDelay).attr("opacity", 1);
                 dots.exit().remove();
             }
             function renderTooltipTrackers() {
@@ -3796,12 +3894,12 @@
                 opacity: .85,
                 showTime: 300,
                 hideTime: 500,
-                distance: 5,
-                distanceX: undefined,
-                distanceY: undefined,
-                formatter: undefined,
-                //defined in formatters array in getTooltipText()
-                followCursor: false
+                followCursor: false,
+                distance: {
+                    x: 5,
+                    y: 5
+                },
+                formatter: undefined
             }
         };
         function render(data, layer, options) {
@@ -3825,9 +3923,8 @@
                 var plotWidth = this.options.chart.plotWidth;
                 var plotTop = this.options.chart.plotTop;
                 var plotHeight = this.options.chart.plotHeight;
-                var distance = this.options.tooltip.distance;
-                var distanceX = this.options.tooltip.distanceX ? this.options.tooltip.distanceX : distance;
-                var distanceY = this.options.tooltip.distanceY ? this.options.tooltip.distanceY : distance;
+                var distanceX = this.options.tooltip.distance.x !== undefined ? this.options.tooltip.distance.x : this.options.tooltip.distance;
+                var distanceY = this.options.tooltip.distance.y !== undefined ? this.options.tooltip.distance.y : this.options.tooltip.distance;
                 var width = parseFloat(this.tooltipElement.node().offsetWidth);
                 var height = parseFloat(this.tooltipElement.node().offsetHeight);
                 var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];

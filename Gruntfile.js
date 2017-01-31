@@ -175,9 +175,6 @@ module.exports = function (grunt) {
             }
         },
 
-        // this task does not currently work... our tests are done in jasmine 1.3.1
-        // and grunt-contrib-jasmin only supports 2.0.0
-        // TODO: upgrade tests for jasmin 2.0
         jasmine: {
             contour: {
                 src: [
