@@ -3894,7 +3894,10 @@
                 opacity: .85,
                 showTime: 300,
                 hideTime: 500,
-                distance: 5,
+                distance: {
+                    x: 5,
+                    y: 5
+                },
                 formatter: undefined
             }
         };
@@ -3919,9 +3922,8 @@
                 var plotWidth = this.options.chart.plotWidth;
                 var plotTop = this.options.chart.plotTop;
                 var plotHeight = this.options.chart.plotHeight;
-                var distance = typeof this.options.tooltip.distance === "object" ? this.tooltip.distance : this.options.tooltips.distance;
-                var distanceX = this.options.tooltip.distance.x ? this.options.tooltip.distance.x : distance;
-                var distanceY = this.options.tooltip.distance.y ? this.options.tooltip.distance.y : distance;
+                var distanceX = this.options.tooltip.distance.x !== undefined ? this.options.tooltip.distance.x : this.options.tooltip.distance;
+                var distanceY = this.options.tooltip.distance.y !== undefined ? this.options.tooltip.distance.y : this.options.tooltip.distance;
                 var width = parseFloat(this.tooltipElement.node().offsetWidth);
                 var height = parseFloat(this.tooltipElement.node().offsetHeight);
                 var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];
