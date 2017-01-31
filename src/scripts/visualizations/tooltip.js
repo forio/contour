@@ -7,8 +7,6 @@
             showTime: 300,
             hideTime: 500,
             distance: 5,
-            distanceX: undefined,
-            distanceY: undefined,
             formatter: undefined //defined in formatters array in getTooltipText()
         }
     };
@@ -39,9 +37,9 @@
             var plotWidth = this.options.chart.plotWidth;
             var plotTop = this.options.chart.plotTop;
             var plotHeight = this.options.chart.plotHeight;
-            var distance = this.options.tooltip.distance;
-            var distanceX = this.options.tooltip.distanceX ? this.options.tooltip.distanceX : distance;
-            var distanceY = this.options.tooltip.distanceY ? this.options.tooltip.distanceY : distance;
+            var distance = typeof this.options.tooltip.distance === 'object' ? this.tooltip.distance : this.options.tooltips.distance;
+            var distanceX = this.options.tooltip.distance.x ? this.options.tooltip.distance.x : distance;
+            var distanceY = this.options.tooltip.distance.y ? this.options.tooltip.distance.y : distance;
             var width = parseFloat(this.tooltipElement.node().offsetWidth);
             var height = parseFloat(this.tooltipElement.node().offsetHeight);
             var pointX = xScale ? xScale(d.x) : pointOrCentroid.call(this)[0];
