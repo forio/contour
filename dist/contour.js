@@ -3894,7 +3894,7 @@
                 opacity: .85,
                 showTime: 300,
                 hideTime: 500,
-                followCursor: false,
+                followCursor: true,
                 distance: {
                     x: 5,
                     y: 5
