@@ -6,6 +6,11 @@ $(function () {
     // we create a Contour instance
     new Contour({
         el: '.chart',
+        yAxis: {
+            tickValues: function (data) {
+                return data.map(function(d) {  return d.y; });
+            }
+        }
     })
     // adding a cartesian frame to the instance gives use an X and Y axis
     // and provide scaling service for the visualizations

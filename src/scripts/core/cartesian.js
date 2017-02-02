@@ -123,6 +123,9 @@
                 var min = opts.min != null ? opts.min : absMin;
 
                 if (opts.tickValues) {
+                    if (_.isFunction(opts.tickValues)) {
+                        opts.tickValues = opts.tickValues.call(null, this.dataSrc);
+                    }
                     if (opts.min != null && opts.max != null) {
                         return [opts.min, opts.max];
                     } else if (opts.min != null) {
