@@ -204,7 +204,11 @@ module.exports = function (grunt) {
     // Default task.
     grunt.registerTask('default', ['uglify:concatenate', 'uglify:dev', 'less:dev', 'copy', 'watch', 'jshint', 'jasmine']);
 
-    grunt.registerTask('production', ['jshint', 'jasmine', 'ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'copy', 'releaseNotes']);
+    grunt.registerTask('test', ['jasmine']);
+
+    grunt.registerTask('lint', ['jshint']);
+
+    grunt.registerTask('production', ['ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'copy', 'releaseNotes']);
 
     grunt.registerTask('release', function (type) {
         type = type ? type : 'patch';
