@@ -118,7 +118,7 @@
 
             _getYScaledDomain: function (domain, options) {
                 var opts = this.options.yAxis;
-                var zeroAnchor = (opts.zeroAnchor != undefined) ? opts.zeroAnchor : opts.scaling.options.zeroAnchor;
+                var zeroAnchor = (opts.zeroAnchor != null) ? opts.zeroAnchor : opts.scaling.options.zeroAnchor;
                 var absMin = zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
                 var min = opts.min != null ? opts.min : absMin;
 
@@ -460,7 +460,7 @@
                 var y = this.yScale;
 
                 if(horizontal) {
-                    var smartAxis = this.options.yAxis.smartAxis || this.options.yAxis.scaling.type === 'smart'
+                    var smartAxis = this.options.yAxis.smartAxis || this.options.yAxis.scaling.type === 'smart';
                     ticks = getYTicks(this.yAxis(), smartAxis);
                     var w = this.options.chart.plotWidth;
 
