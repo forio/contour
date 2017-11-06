@@ -9,6 +9,7 @@
         "area/area-stacked",
         "bar/bar-basic",
         "bar/bar-export",
+        "bar/bar-export-2",
         "bar/bar-grouped",
         "bar/bar-stacked",
         "bar/bar-styled",
