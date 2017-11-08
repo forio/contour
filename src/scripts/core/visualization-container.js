@@ -77,7 +77,11 @@
         setVisibility: function (visible) {
             var node = this.layer.node();
 
-            visible ? node.style.display = 'block' : node.style.display = 'none';
+            if (visible) {
+                node.style.display = 'block';
+            } else {
+                node.style.display = 'none';
+            }
         },
 
         _updateDomain: function () {
