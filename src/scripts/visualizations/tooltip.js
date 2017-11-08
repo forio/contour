@@ -10,6 +10,7 @@
                 x: 5,
                 y: 5,
             },
+            verticalTrack: false,
             formatter: undefined //defined in formatters array in getTooltipText()
         }
     };
@@ -25,8 +26,15 @@
                 this.tooltipElement
                     .transition().duration(delay)
                         .style('opacity', opacity);
+
+                if (this.options.tooltip.verticalTrack) {
+                    this.verticalTrackElement
+                        .transition().duration(delay)
+                            .style('opacity', opacity);
+                }
             } else {
                 this.tooltipElement.style('opacity', opacity);
+                this.verticalTrackElement.style('opacity', opacity)
             }
         };
 
@@ -49,6 +57,8 @@
             var alignedRight;
 
             var clampPosition = function (pos) {
+                //save for vert
+                pos.verticalTrackX = pointX + plotLeft;
                 // Check outside plot area (left)
                 if (pos.x < plotLeft) {
                     pos.x = plotLeft;
@@ -150,6 +160,9 @@
                 .style('left', pos.x + 'px');
 
             changeOpacity.call(this, this.options.tooltip.opacity, this.options.tooltip.showTime);
+        
+            this.verticalTrackElement
+                .style('left', pos.verticalTrackX + 'px');
         };
 
         function findOriginalDataPoint(d) {
@@ -166,8 +179,16 @@
             return res;
         }
 
-        this.tooltipElement = this.container
+        this.verticalTrackElement = this.container
             .style('position', 'relative')
+            .selectAll('.nw-vertical-track').data([1]);
+
+        this.verticalTrackElement
+            .enter().append('div')
+            .attr('class', 'nw-vertical-track')
+            .style('opacity', 0);
+
+        this.tooltipElement = this.container
             .selectAll('.nw-tooltip').data([1]);
 
         this.tooltipElement
