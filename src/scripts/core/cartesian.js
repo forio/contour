@@ -138,7 +138,7 @@
                     return d3.extent(domain);
                 }
 
-                return _.nw.extractScaleDomain(domain, min, opts.max, opts.ticks);
+                return NwUtils.extractScaleDomain(domain, min, opts.max, opts.ticks);
             },
 
             /*jshint eqnull:true */
@@ -172,11 +172,11 @@
                 if (options.ticks !== 0) {
                     var xLabels = this.xDomain;
                     var xAxisText = xLabels.join('<br>');
-                    var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
-                    var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
+                    var xLabelBounds = NwUtils.textBounds(xAxisText, '.x.axis');
+                    var regularXBounds = NwUtils.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
                     var em = regularXBounds.height;
                     var ang = options.labels && options.labels.rotation ? options.labels.rotation % 360 : 0;
-                    var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))) + em / 5) ;
+                    var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(NwUtils.degToRad(ang))) + em / 5) ;
                     return maxTickSize(options) + (options.tickPadding || 0) +
                         xLabelHeightUsed;
                 } else {
@@ -191,7 +191,7 @@
 
                 var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
                 var yAxisText = _.map(yLabels, format).join('<br>');
-                var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
+                var yLabelBounds = NwUtils.textBounds(yAxisText, '.y.axis');
                 return maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) +
                     yLabelBounds.width;
             },
@@ -204,12 +204,12 @@
                 var titleBounds;
                 if (this.options.xAxis.title || this.options.yAxis.title) {
                     if(this.options.xAxis.title) {
-                        titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                        titleBounds = NwUtils.textBounds(this.options.xAxis.title, '.x.axis-title');
                         this.options.chart.internalPadding.bottom += titleBounds.height + this.options.xAxis.titlePadding;
                     }
 
                     if(this.options.yAxis.title) {
-                        titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                        titleBounds = NwUtils.textBounds(this.options.yAxis.title, '.y.axis-title');
                         this.options.chart.internalPadding.left += titleBounds.height + this.options.yAxis.titlePadding;
                     }
                 }
@@ -219,7 +219,7 @@
                 if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
                 if(!this.xScale) {
-                    this.xScaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
+                    this.xScaleGenerator = NwUtils.xScaleFactory(this.dataSrc, this.options);
                     this.xScale = this.xScaleGenerator.scale(this.xDomain);
                     this.rangeBand = this.xScaleGenerator.rangeBand();
                 } else {
@@ -234,7 +234,7 @@
                 var yScaleDomain = this._getYScaledDomain(this.yDomain, this.options);
 
                 if(!this.yScale) {
-                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
+                    this.yScaleGenerator = NwUtils.yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
                     this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                 } else {
                     this.yScaleGenerator.update(yScaleDomain, this.dataSrc);
@@ -391,7 +391,7 @@
                 var el;
 
                 if (this.options.xAxis.title) {
-                    bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                    bounds = NwUtils.textBounds(this.options.xAxis.title, '.x.axis-title');
                     y = this.options.chart.internalPadding.bottom;
                     x = 0;
                     el = this._xAxisGroup.selectAll('.x.axis-title').data([1]);
@@ -409,7 +409,7 @@
                 }
 
                 if (this.options.yAxis.title) {
-                    bounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    bounds = NwUtils.textBounds(this.options.yAxis.title, '.y.axis-title');
                     y = -this.options.chart.internalPadding.left + bounds.height * adjustFactor;
                     x = 0;
                     el = this._yAxisGroup.selectAll('.y.axis-title').data([1]);
@@ -575,7 +575,7 @@
 
             _adjustXDomain: function (extents) {
                 this.xDomain = this.getXDomain();
-                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
+                var dataVis = _.filter(this._visualizations, function (v) { return NwUtils.isSupportedDataFormat(v.data); });
                 this.dataSrc = _.flatten(
                     _.map(dataVis, function (v) {
                         return _.flatten(_.map(v.data, _.bind(this.datum, this)));
@@ -602,14 +602,14 @@
 
             getExtents: function (axis) {
                 var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
-                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
+                var dataVis = _.filter(this._visualizations, function (v) { return NwUtils.isSupportedDataFormat(v.data); });
                 var all = _.flatten(_.map(dataVis, field));
                 return all.length ? d3.extent(all) : [];
             },
 
             getXDomain: function () {
-                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                var all = _.nw.uniq(_.flatten(_.map(dataVis, 'xDomain')));
+                var dataVis = _.filter(this._visualizations, function (v) { return NwUtils.isSupportedDataFormat(v.data); });
+                var all = NwUtils.uniq(_.flatten(_.map(dataVis, 'xDomain')));
 
                 return all;
             }

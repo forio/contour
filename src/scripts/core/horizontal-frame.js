@@ -23,8 +23,8 @@
         adjustPadding: function () {
             var categoryLabels = this.options.xAxis.categories || _.map(this.dataSrc, 'x');
             var text = categoryLabels.join('<br>');
-            var xLabel = _.nw.textBounds(text, '.x.axis');
-            var yLabel = _.nw.textBounds('ABC', '.y.axis');
+            var xLabel = NwUtils.textBounds(text, '.x.axis');
+            var yLabel = NwUtils.textBounds('ABC', '.y.axis');
             var maxTickSize = function (options) { return Math.max(options.outerTickSize, options.innerTickSize); };
 
             this.options.chart.internalPadding.left = this.options.chart.padding.left || maxTickSize(this.options.xAxis) + this.options.xAxis.tickPadding + xLabel.width;
@@ -35,12 +35,12 @@
             var titleBounds;
             if (this.options.xAxis.title || this.options.yAxis.title) {
                 if(this.options.xAxis.title) {
-                    titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                    titleBounds = NwUtils.textBounds(this.options.xAxis.title, '.x.axis-title');
                     this.options.chart.internalPadding.left += titleBounds.height + this.options.xAxis.titlePadding;
                 }
 
                 if(this.options.yAxis.title) {
-                    titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    titleBounds = NwUtils.textBounds(this.options.yAxis.title, '.y.axis-title');
                     this.options.chart.internalPadding.bottom += titleBounds.height + this.options.yAxis.titlePadding;
                 }
             }
@@ -99,7 +99,7 @@
             var bounds, anchor, rotation, tickSize, x, y;
 
             if (this.options.xAxis.title) {
-                bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                bounds = NwUtils.textBounds(this.options.xAxis.title, '.x.axis-title');
                 x = this.options.chart.rotatedFrame ? -bounds.height : this.options.chart.plotWidth;
                 y = this.options.chart.rotatedFrame ? -this.options.chart.internalPadding.left : this.options.chart.internalPadding.bottom - lineHeightAdjustment;
 
@@ -120,7 +120,7 @@
             }
 
             if (this.options.yAxis.title) {
-                bounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                bounds = NwUtils.textBounds(this.options.yAxis.title, '.y.axis-title');
                 tickSize = Math.max(this.options.yAxis.innerTickSize, this.options.yAxis.outerTickSize);
                 anchor = this.options.chart.rotatedFrame ? 'end' : 'middle';
                 x = this.options.chart.rotatedFrame ? this.options.chart.plotWidth : 0;

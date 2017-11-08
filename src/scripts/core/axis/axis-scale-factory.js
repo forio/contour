@@ -14,22 +14,22 @@
 
 
             if (isTimeData && options.xAxis.type !== 'ordinal') {
-                return new _.nw.axes.TimeScale(data, options);
+                return new NwUtils.axes.TimeScale(data, options);
             }
 
             if (!options.xAxis.categories && options.xAxis.type === 'linear') {
-                return new _.nw.axes.LinearScale(data, options);
+                return new NwUtils.axes.LinearScale(data, options);
             }
 
-            return new _.nw.axes.OrdinalScale(data, options);
+            return new NwUtils.axes.OrdinalScale(data, options);
         },
 
         yScaleFactory: function (data, options, axisType, domain) {
             var map = {
-                'log': _.nw.axes.LogYAxis,
-                'smart': _.nw.axes.SmartYAxis,
-                'linear': _.nw.axes.YAxis,
-                'centered': _.nw.axes.CenteredYAxis
+                'log': NwUtils.axes.LogYAxis,
+                'smart': NwUtils.axes.SmartYAxis,
+                'linear': NwUtils.axes.YAxis,
+                'centered': NwUtils.axes.CenteredYAxis
             };
 
             if (!axisType) {
@@ -49,8 +49,8 @@
             }
 
             // try by namespace
-            if (_.nw.axes[axisType]) {
-                return new _.nw.axes[axisType](data, options, domain);
+            if (NwUtils.axes[axisType]) {
+                return new NwUtils.axes[axisType](data, options, domain);
             }
 
             throw new Error('Unknown axis type: "' + axisType + '"');
@@ -58,6 +58,6 @@
 
     };
 
-    _.nw = _.extend({}, _.nw, helpers);
+    NwUtils = _.extend({}, NwUtils, helpers);
 
 })();

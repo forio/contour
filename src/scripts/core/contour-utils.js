@@ -1,7 +1,7 @@
 (function () {
     // cheap trick to add decimals without hitting javascript issues
     // note that this fails for very large numbers
-    var multiplier = function (x) { var dig = _.nw.decDigits(x); return dig === 0 ? 1 : Math.pow(10, dig); };
+    var multiplier = function (x) { var dig = NwUtils.decDigits(x); return dig === 0 ? 1 : Math.pow(10, dig); };
     var maxMultiplier = function (a,b) { return Math.max(multiplier(a), multiplier(b)); };
     var addFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return (aa + bb) / factor; };
     var subFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return (aa - bb) / factor; };
@@ -206,18 +206,18 @@
             // var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
             // var fac = Math.pow(10, digits);
 
-            // if(val < 1) return _.nw.roundToNearest(val, 1);
+            // if(val < 1) return NwUtils.roundToNearest(val, 1);
 
-            // if(val < fac / 2) return _.nw.roundToNearest(val, fac / 2);
+            // if(val < fac / 2) return NwUtils.roundToNearest(val, fac / 2);
 
-            // return _.nw.roundToNearest(val, fac);
+            // return NwUtils.roundToNearest(val, fac);
         }
     };
 
     var axisHelpers = {
         addAxis: function (name, axisCtor) {
-            _.nw.axes = _.nw.axes || {};
-            _.nw.axes[name] = axisCtor;
+            NwUtils.axes = NwUtils.axes || {};
+            NwUtils.axes[name] = axisCtor;
         },
 
         roundToNextTick: function (num) {
@@ -225,7 +225,7 @@
             var sign = abs === num ? 1 : -1;
             var mag, step;
             if (abs >= 1) {
-                mag = Math.floor(_.nw.log10(abs));
+                mag = Math.floor(NwUtils.log10(abs));
                 step = mag <= 1 ? 2 : Math.pow(10, mag - 1);
             } else {
 
@@ -234,7 +234,7 @@
                 step = mulFloat((mag === 1 ? 2 : 10), Math.pow(10, -mag));
             }
 
-            var raw = _.nw.roundToNearest(abs, step);
+            var raw = NwUtils.roundToNearest(abs, step);
             return sign * raw;
         },
 
@@ -320,7 +320,7 @@
                     var dig = numberHelpers.digits(inter);
                     var roundToDigits;
                     if (inter > 0) {
-                        roundToDigits =  -Math.floor(_.nw.log10(inter));
+                        roundToDigits =  -Math.floor(NwUtils.log10(inter));
                     } else {
                         roundToDigits = (Math.max(1, Math.abs(dig-2)));
                     }
@@ -430,14 +430,14 @@
                 if (!d) {
                     return padding * 2;
                 }
-                return _.nw.textBounds(d, '.x.axis text').width + (padding * 2);
+                return NwUtils.textBounds(d, '.x.axis text').width + (padding * 2);
             });
         },
 
         doXLabelsFit: function (ticks, labelFormatter, options) {
-            var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
+            var tickWidths = NwUtils.calcXLabelsWidths(ticks.map(labelFormatter));
             var availableWidthForLabels = (options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
-            var axisLabelsWidth = _.nw.sum(tickWidths);
+            var axisLabelsWidth = NwUtils.sum(tickWidths);
             return axisLabelsWidth <= availableWidthForLabels;
         },
 
@@ -445,8 +445,8 @@
             // reduce the number of ticks incrementally by taking every 2nd, then every 3th, and so on
             // until we find a set of ticks that fits the available space
             function reduceTicksByMod() {
-                var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
-                var axisLabelsWidth = _.nw.sum(tickWidths);
+                var tickWidths = NwUtils.calcXLabelsWidths(ticks.map(labelFormatter));
+                var axisLabelsWidth = NwUtils.sum(tickWidths);
                 var availableWidthForLabels = (options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
                 var iter = 1;
                 var filterMod = function (d, i) { return (i % iter) === 0; };
@@ -454,7 +454,7 @@
                 while(axisLabelsWidth > availableWidthForLabels && finalTicks.length !== 0) {
                     iter++;
                     finalTicks = _.filter(ticks, filterMod);
-                    axisLabelsWidth = _.nw.sum(_.nw.calcXLabelsWidths(finalTicks.map(labelFormatter)));
+                    axisLabelsWidth = NwUtils.sum(NwUtils.calcXLabelsWidths(finalTicks.map(labelFormatter)));
                 }
 
                 return finalTicks;
@@ -706,7 +706,7 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
+    window.NwUtils = _.extend({}, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
         axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
 
     if (!_.noop) {
