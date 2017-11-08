@@ -15,7 +15,7 @@
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var x = _.bind(function(d) { return this.xScale(d) + this.rangeBand / 2; }, this);
         var y = _.bind(function(d) { return this.yScale(d); }, this);
-        var regression = _.nw.linearRegression(data);
+        var regression = NwUtils.linearRegression(data);
         var domain = d3.extent(this.xScale.domain());
         var numericDomain = d3.extent(data, function(p) { return p.x; });
         var lineY = function (x) { return regression.intercept + regression.slope * x; };

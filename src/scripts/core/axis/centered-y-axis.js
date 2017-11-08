@@ -8,7 +8,7 @@
         this.NUM_DECIMALS = 1;
     };
 
-    var __super = _.nw.axes.YAxis.prototype;
+    var __super = NwUtils.axes.YAxis.prototype;
     CenteredYAxis.prototype = _.extend({}, __super, {
         axis: function () {
             var options = this.options.yAxis;
@@ -60,5 +60,5 @@
         }
     });
 
-    _.nw.addAxis('CenteredYAxis', CenteredYAxis);
+    NwUtils.addAxis('CenteredYAxis', CenteredYAxis);
 })();

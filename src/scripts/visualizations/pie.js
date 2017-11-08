@@ -42,10 +42,10 @@
 
     function clampBounds(bounds, maxWidth, maxHeight) {
         return {
-            top: _.nw.clamp(bounds.top, 0, maxHeight),
-            bottom: _.nw.clamp(bounds.bottom, 0, maxHeight),
-            left: _.nw.clamp(bounds.left, 0, maxWidth),
-            right: _.nw.clamp(bounds.right, 0, maxWidth)
+            top: NwUtils.clamp(bounds.top, 0, maxHeight),
+            bottom: NwUtils.clamp(bounds.bottom, 0, maxHeight),
+            left: NwUtils.clamp(bounds.left, 0, maxWidth),
+            right: NwUtils.clamp(bounds.right, 0, maxWidth)
         };
     }
 
@@ -92,9 +92,9 @@
         // for auto radius we need to take the min between the available with or height adjusted by padding and num series
         var totalPadding = pixelPadding.left + (pixelPadding.right + pixelPadding.left) * (numSeries - 1) + pixelPadding.right;
         var proposedRadius = Math.min(((w - totalPadding) / numSeries) / 2, (h - pixelPadding.top - pixelPadding.bottom) / 2);
-        var radius = resolveValueUnits(_.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius, referenceSize), referenceSize);
+        var radius = resolveValueUnits(NwUtils.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius, referenceSize), referenceSize);
         // inner radius is a pixel value or % of the radius
-        var innerRadius = resolveValueUnits(_.nw.getValue(options.pie.innerRadius, 0, this, radius), radius);
+        var innerRadius = resolveValueUnits(NwUtils.getValue(options.pie.innerRadius, 0, this, radius), radius);
         var pieData = d3.layout.pie().value(function (d) { return d.y; }).sort(null);
         var totalWidth = totalPadding + radius * numSeries * 2;
         var outerPaddingLeft = shouldCenterX ? (w - totalWidth) / 2 : pixelPadding.left;

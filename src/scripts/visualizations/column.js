@@ -23,8 +23,8 @@
         var x = function (v) { return Math.round(_this.xScale(v)) + 0.5; };
         var y = function (v) { return Math.round(_this.yScale(v)) - 0.5; };
         var dataKey = function (d) { return d.data; };
-        var chartOffset = _.nw.getValue(opt.offset, 0, this);
-        var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
+        var chartOffset = NwUtils.getValue(opt.offset, 0, this);
+        var rangeBand = NwUtils.getValue(opt.columnWidth, this.rangeBand, this);
         var enter = _.partialRight((options.column.stacked ? stacked : grouped), true);
         var update = options.column.stacked ? stacked : grouped;
         var filteredData = _.map(data, function (series, j) {
@@ -36,7 +36,7 @@
             };
         });
 
-        var stack = _.nw.stackLayout();
+        var stack = NwUtils.stackLayout();
         var series = layer.selectAll('g.series')
                 .data(stack(filteredData));
 
