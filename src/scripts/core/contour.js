@@ -125,8 +125,8 @@
         }
 
         Contour.prototype[ctorName] = function (data, options) {
-            var categories = this.options ? this.options.xAxis ? this.options.xAxis.categories : undefined : undefined;
-            var opt =  _.extend({}, this.options[ctorName], options);
+            var vizOpt = {};
+            vizOpt[ctorName] = options || {};
             var vis;
             var ownData = true;
 
@@ -136,7 +136,7 @@
             }
 
             sortSeries(data);
-            vis = new Contour.VisualizationContainer(data, categories, opt, ctorName, renderer, this);
+            vis = new Contour.VisualizationContainer(data, vizOpt, ctorName, renderer, this);
             vis.ownData = ownData;
             this._visualizations.push(vis);
 
@@ -203,7 +203,7 @@
             _.extend(this, _.omit(functionality, 'init'));
 
             if(functionality.init) {
-                functionality.init.call(this, this.options);
+                functionality.init.call(this, this.originalOptions);
             }
 
             // keep a list of the included functionality into this instance
@@ -230,7 +230,7 @@
             // for now, just  store this options here...
             // the final set of options will be composed before rendering
             // after all components/visualizations have been added
-            this.options = options || {};
+            this.originalOptions = options || {};
 
             this._extraOptions = [];
             this._visualizations = [];
@@ -315,8 +315,34 @@
             _.each(this._extraOptions, mergeExtraOptions);
             _.each(this._visualizations, mergeDefaults);
 
+            var opt = _.extend({}, this.originalOptions);
+
             // compose the final list of options right before start rendering
-            this.options = _.merge(this.options, _.merge({}, allDefaults, this.options));
+            this.options = _.merge(opt, _.merge({}, allDefaults, opt));
+        },
+
+        /**
+         * Updates the contour configuration for the instance.
+         * The passed options are merged with the current options in the object
+         *
+         * ### Example:
+         *
+         *     var chart = new Contour({
+         *         el: '.myChart'
+         *     })
+         *     .cartesian()
+         *     .line([1,2,3,4,5])
+         *     .render();
+         *
+         *     chart.updateOptions({ yAxis: { max: 100 }}).render();
+         *
+         *
+         * @param {object} options - Options object to be merged with current options.
+         * @function updateConfig
+         */
+        updateOptions: function (options) {
+            this.originalOptions = Object.assign({}, this.originalOptions, options);
+            return this;
         },
 
         baseRender: function () {
@@ -438,9 +464,9 @@
                 var opt = _.merge({}, this.options, visualization.options);
 
                 layer.attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
-
                 visualization.layer = layer;
                 visualization.parent = this;
+                visualization.normalizeData(opt);
                 visualization.render(layer, opt, this);
             }.bind(this));
 

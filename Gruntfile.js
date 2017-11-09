@@ -18,7 +18,7 @@ module.exports = function (grunt) {
                 tasks: ['less:dev']
             },
             js: {
-                files: ['src/scripts/**/*.js'],
+                files: ['src/scripts/**/*.js', 'test/specs/**/*.js'],
                 tasks: ['uglify', 'jshint', 'jasmine']
             }
         },
@@ -189,13 +189,14 @@ module.exports = function (grunt) {
                     'src/scripts/visualizations/**/*.js',
                 ],
                 options: {
-
                     vendor: [
                         'examples/js/vendor/d3.min.js',
                         'examples/js/vendor/jquery.js',
                         'examples/js/vendor/lodash.js'
                     ],
-                    specs: 'tests/specs/*-spec.js'
+                    specs: [
+                        'tests/specs/**/*-spec.js'
+                    ]
                 }
             }
         }

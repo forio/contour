@@ -537,6 +537,7 @@
             render: function () {
 
                 this.composeOptions();
+                this._normalizeData();
                 this.adjustDomain();
                 this.calcMetrics();
                 this.computeScales();
@@ -598,6 +599,14 @@
                 this.yDomain = extents.length ? extents : [0, 10];
                 this.yMin = this.yDomain[0];
                 this.yMax = this.yDomain[this.yDomain.length - 1];
+            },
+
+            _normalizeData: function () {
+                var opt = this.options;
+                this._visualizations.forEach(function (viz) {
+                    var vizOpt = _.merge({}, opt, viz.options);
+                    viz.normalizeData(vizOpt);
+                });
             },
 
             getExtents: function (axis) {

@@ -11,7 +11,7 @@ describe('Cartesian frame', function () {
     function createinstance(options) {
         $el = $('<div>');
         el = $el.get(0);
-        options = _.extend({ el: el }, options);
+        options = _.extend({ el: el, chart: { animations: { enable: false } } }, options);
 
         instance = new Contour(options).cartesian();
         return instance;
@@ -81,7 +81,9 @@ describe('Cartesian frame', function () {
 
     describe('with categories array', function () {
         it('should override the x axis type to be ordinal', function () {
-            var instance = createinstance({xAxis: { type: 'linear', categories: [1,2,3,4] }});
+            var instance = createinstance({
+                xAxis: { type: 'linear', categories: [1,2,3,4] }
+            });
             instance.render();
 
             expect(instance.xScale.rangeRoundBands).toBeDefined();
