@@ -321,6 +321,30 @@
             this.options = _.merge(opt, _.merge({}, allDefaults, opt));
         },
 
+        /**
+         * Updates the contour configuration for the instance.
+         * The passed options are merged with the current options in the object
+         *
+         * ### Example:
+         *
+         *     var chart = new Contour({
+         *         el: '.myChart'
+         *     })
+         *     .cartesian()
+         *     .line([1,2,3,4,5])
+         *     .render();
+         *
+         *     chart.updateOptions({ yAxis: { max: 100 }}).render();
+         *
+         *
+         * @param {object} options - Options object to be merged with current options.
+         * @function updateConfig
+         */
+        updateOptions: function (options) {
+            this.originalOptions = Object.assign({}, this.originalOptions, options);
+            return this;
+        },
+
         baseRender: function () {
             this.plotArea();
 
