@@ -1,7 +1,23 @@
 {
-  "name": "Contour",
+  "name": "contour",
   "description": "Forio's Visualization Library",
   "version": "1.0.1",
+  "author": {
+    "name": "Forio Corporation",
+    "url": "https://forio.com",
+    "email": "info@forio.com"
+  },
+  "license": "Apache-2.0",
+  "main": "dist/contour.js",
+  "unpkg": "dist/contour.min.js",
+  "scripts": {
+    "prepush": "npm run lint && npm test",
+    "prepublish": "npm run build",
+    "build": "grunt production",
+    "start": "grunt",
+    "test": "grunt test",
+    "lint": "jshint ./src/scripts"
+  },
   "repository": {
     "url": "https://github.com/forio/contour",
     "type": "git"
@@ -11,21 +27,24 @@
     "d3": "~3.5.10"
   },
   "devDependencies": {
-    "grunt-contrib-watch": "0.6.1",
-    "grunt-contrib-less": "1.1.0",
-    "grunt-contrib-concat": "0.5.1",
-    "grunt-contrib-uglify": "0.11.0",
-    "grunt-contrib-copy": "0.8.2",
+    "async": "1.5.0",
+    "glob": "6.0.1",
     "grunt": "0.4.5",
     "grunt-bumpup": "0.6.2",
+    "grunt-contrib-concat": "0.5.1",
+    "grunt-contrib-copy": "0.8.2",
+    "grunt-contrib-jasmine": "1.1.0",
+    "grunt-contrib-jshint": "0.11.3",
+    "grunt-contrib-less": "1.1.0",
+    "grunt-contrib-uglify": "0.11.0",
+    "grunt-contrib-watch": "0.6.1",
     "grunt-tagrelease": "0.3.3",
-    "glob": "6.0.1",
+    "husky": "^0.14.3",
+    "jasmine-node": "^1.14.5",
+    "jsdom": "^11.3.0",
     "markdox": "0.1.10",
-    "async": "1.5.0",
-    "lodash": "4.17.2",
-    "underscore": "1.8.3",
-    "grunt-contrib-jasmine": "0.9.2",
     "shelljs": "0.5.3",
-    "grunt-contrib-jshint": "0.11.3"
+    "underscore": "1.8.3",
+    "webpack": "^3.8.1"
   }
 }
