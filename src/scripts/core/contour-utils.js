@@ -20,6 +20,26 @@
 
         seriesNameToClass: function (name) {
             return name || '';
+        },
+
+        materialize: function (object, ctx) {
+            var isDom = function (obj) { return obj && typeof obj === 'object' && obj.nodeType === 1 && typeof obj.style === 'object' && typeof obj.ownerDocument === 'object'; };
+            if ( object == null ) {
+                return object;
+            } else if (Array.isArray(object)) {
+                return object;
+            } if (isDom(object)) {
+                return object;
+            } else if (typeof object === 'function') {
+                return generalHelpers.getValue(object, null, ctx);
+            } else if (typeof object === 'object') {
+                return Object.keys(object).reduce(function (prev, key) {
+                    prev[key] = generalHelpers.materialize(object[key], ctx);
+                    return prev;
+                }, {});
+            } else {
+                return object;
+            }
         }
     };
 
