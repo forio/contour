@@ -284,8 +284,19 @@
         materialize: function (object, ctx, options, curPath) {
             var isDom = function (obj) { return obj && typeof obj === 'object' && obj.nodeType === 1 && typeof obj.style === 'object' && typeof obj.ownerDocument === 'object'; };
             var skipList = (options || {}).skip || [];
-            var skipMatch = (options || {}).skipMatch;
-            if ( object == null ) {
+
+            var shouldSkip = function (path) {
+                return skipList.some(function (e) {
+                    if (!e) return false;
+                    if (typeof e === 'object' && e instanceof RegExp) {
+                        return e.test(path);
+                    }
+
+                    return e.toString() === path;
+                });
+            };
+
+            if (object == null) {
                 return object;
             } else if (Array.isArray(object)) {
                 return object;
@@ -296,10 +307,9 @@
             } else if (typeof object === 'object') {
                 return Object.keys(object).reduce(function (prev, key) {
                     var curKeyPath = curPath ? curPath + '.' + key : key;
-                    var notInSkipList =  skipList.indexOf(curKeyPath) === -1;
-                    var notSkipMatch = (skipMatch && skipMatch.test ? !skipMatch.test(curKeyPath) : true);
-                    var expectsParam = /(function)?\s?\(.+\)\s*({|=>)/.test((object[key] || '').toString());
-                    var shouldMaterialize = notInSkipList && notSkipMatch && !expectsParam;
+                    var expectsParam = (typeof object[key] === 'function' && !!object[key].length);
+                    var shouldMaterialize = !shouldSkip(curKeyPath) && !expectsParam;
+
                     if (shouldMaterialize) {
                         prev[key] = generalHelpers.materialize(object[key], ctx, options, curKeyPath);
                     } else {

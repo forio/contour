@@ -373,4 +373,30 @@ describe('Contour', function () {
         });
     });
 
+    describe('composeOptions', function () {
+        var instance;
+        var formatter = function () { return 1; };
+        beforeEach(function () {
+            instance = createContour({
+                width: function () { return 80; },
+                skip: ['abc'],
+                formatter: formatter
+            });
+        });
+
+        it('should call options to materialzie', function () {
+            instance.composeOptions();
+            expect(instance.options).toEqual(jasmine.objectContaining({
+                width: 80,
+            }));
+        });
+        it('should not materialize skip list plus defaults', function () {
+            instance.composeOptions();
+            expect(instance.options).toEqual(jasmine.objectContaining({
+                skip: ['abc'],
+                formatter: formatter
+            }));
+        });
+    });
+
 });

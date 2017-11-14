@@ -478,8 +478,7 @@ describe('utils', function () {
 
 
                 res = mat(input, expectedContext, {
-                    skip: ['x', 'd.x'],
-                    skipMatch: /zzz/
+                    skip: ['x', 'd.x', /zzz/],
                 });
             });
 
