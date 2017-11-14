@@ -456,18 +456,31 @@ describe('utils', function () {
             var res;
             var passCtx;
             var expectedContext = {};
+            var input;
             beforeEach(function () {
-                res = mat({
+                input = {
                     a: 1,
                     b: 'hello',
                     c: function () { return 2; },
+                    x: function () { return 'keep'; },
                     d: {
                         a: 11,
                         b: 'hello world',
                         c: function () { return true; },
-                        d: function () { passCtx = this; return 'do'; }
+                        d: function () { passCtx = this; return 'do'; },
+                        x: function () { return 'keep'; },
+                        zzz: function () { return 'keep'; },
+                        other: function (d) {
+                            return d.x;
+                        }
                     }
-                }, expectedContext);
+                };
+
+
+                res = mat(input, expectedContext, {
+                    skip: ['x', 'd.x'],
+                    skipMatch: /zzz/
+                });
             });
 
             it('should materialize all props that are functions', function () {
@@ -486,6 +499,19 @@ describe('utils', function () {
             it('should pass the correct context to the functions', function () {
                 expect(passCtx).toBe(expectedContext);
             });
-        })
+
+            it('should skip the skip list', function () {
+                expect(res.x).toEqual(input.x);
+                expect(res.d.x).toEqual(input.d.x);
+            });
+
+            it('should skip the skipMatch', function () {
+                expect(res.d.zzz).toEqual(input.d.zzz);
+            });
+
+            it('should skip functions that expect parameters', function () {
+                expect(res.d.other).toEqual(input.d.other);
+            });
+        });
     });
 });

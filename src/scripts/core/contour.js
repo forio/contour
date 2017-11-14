@@ -315,7 +315,7 @@
             _.each(this._extraOptions, mergeExtraOptions);
             _.each(this._visualizations, mergeDefaults);
 
-            var opt = _.extend({}, this.originalOptions);
+            var opt = _.nw.materialize(this.originalOptions, this, { skipMatch: /formatter/ });
 
             // compose the final list of options right before start rendering
             this.options = _.merge(opt, _.merge({}, allDefaults, opt));

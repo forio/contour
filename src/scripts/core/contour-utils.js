@@ -22,8 +22,10 @@
             return name || '';
         },
 
-        materialize: function (object, ctx) {
+        materialize: function (object, ctx, options, curPath) {
             var isDom = function (obj) { return obj && typeof obj === 'object' && obj.nodeType === 1 && typeof obj.style === 'object' && typeof obj.ownerDocument === 'object'; };
+            var skipList = (options || {}).skip || [];
+            var skipMatch = (options || {}).skipMatch;
             if ( object == null ) {
                 return object;
             } else if (Array.isArray(object)) {
@@ -34,7 +36,16 @@
                 return generalHelpers.getValue(object, null, ctx);
             } else if (typeof object === 'object') {
                 return Object.keys(object).reduce(function (prev, key) {
-                    prev[key] = generalHelpers.materialize(object[key], ctx);
+                    var curKeyPath = curPath ? curPath + '.' + key : key;
+                    var notInSkipList =  skipList.indexOf(curKeyPath) === -1;
+                    var notSkipMatch = (skipMatch && skipMatch.test ? !skipMatch.test(curKeyPath) : true);
+                    var expectsParam = /(function)?\s?\(.+\)\s*({|=>)/.test((object[key] || '').toString());
+                    var shouldMaterialize = notInSkipList && notSkipMatch && !expectsParam;
+                    if (shouldMaterialize) {
+                        prev[key] = generalHelpers.materialize(object[key], ctx, options, curKeyPath);
+                    } else {
+                        prev[key] = object[key];
+                    }
                     return prev;
                 }, {});
             } else {
