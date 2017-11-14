@@ -9,7 +9,7 @@
     };
 
     var __super = _.nw.axes.YAxis.prototype;
-    CenteredYAxis.prototype = _.extend({}, __super, {
+    CenteredYAxis.prototype = Object.assign({}, __super, {
         axis: function () {
             var options = this.options.yAxis;
             this.domain = this._scale.domain();
@@ -55,7 +55,7 @@
                 tickValues.push(d3.round(currentTick, this.NUM_DECIMALS));
             }
             tickValues.push(tickMax);
-            
+
             return tickValues;
         }
     });

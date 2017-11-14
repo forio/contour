@@ -118,9 +118,9 @@
                 var list = params[0];
                 var rest = params.slice(1);
 
-                var response = _.map(list, function(fn) { return fn.apply(this, rest); }).concat([_.noop]);
+                var response = list.map(function(fn) { return fn.apply(this, rest); }).concat([_.noop]);
 
-                return _.first(_.filter(response));
+                return response.filter(function (a) { return a; })[0];
             }
 
             var options = this.options.tooltip;
@@ -154,11 +154,11 @@
 
         function findOriginalDataPoint(d) {
             var res = [];
-            _.each(data, function (series, seriesIndex) {
+            data.forEach(function (series, seriesIndex) {
                 var name = series.name;
-                _.each(series.data, function (point) {
+                series.data.forEach(function (point) {
                     if (point.x === d.x && d.y === point.y) {
-                        res.push(_.extend(point, { series: name, seriesIndex:seriesIndex }));
+                        res.push(Object.assign(point, { series: name, seriesIndex:seriesIndex }));
                     }
                 });
             });

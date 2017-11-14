@@ -58,6 +58,6 @@
 
     };
 
-    _.nw = _.extend({}, _.nw, helpers);
+    _.nw = Object.assign({}, _.nw, helpers);
 
 })();

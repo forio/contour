@@ -112,7 +112,7 @@
             if(!data || !data.length) return [];
 
             if(data[0].data) {
-                _.each(data, sortSeries);
+                data.forEach(sortSeries);
             }
 
             var shouldSort = _.isObject(data[0]) && _.isDate(data[0].x);
@@ -200,7 +200,7 @@
             }
 
             // extend the --instance-- we don't want all charts to be overriden...
-            _.extend(this, _.omit(functionality, 'init'));
+            Object.assign(this, _.omit(functionality, 'init'));
 
             if(functionality.init) {
                 functionality.init.call(this, this.originalOptions);
@@ -218,7 +218,7 @@
         return this;
     };
 
-    Contour.prototype = _.extend(Contour.prototype, {
+    Contour.prototype = Object.assign(Contour.prototype, {
         _visualizations: undefined,
 
         _extraOptions: undefined,
@@ -312,8 +312,8 @@
             var mergeExtraOptions = function (opt) { _.merge(allDefaults, opt); };
             var mergeDefaults = function (vis) { _.merge(allDefaults, vis.renderer.defaults); };
 
-            _.each(this._extraOptions, mergeExtraOptions);
-            _.each(this._visualizations, mergeDefaults);
+            this._extraOptions.forEach(mergeExtraOptions);
+            this._visualizations.forEach(mergeDefaults);
 
             var opt = _.nw.materialize(this.originalOptions, this, { skipMatch: /formatter/ });
 
@@ -458,7 +458,7 @@
 
         renderVisualizations: function () {
 
-            _.each(this._visualizations, function (visualization, index) {
+            this._visualizations.forEach(function (visualization, index) {
                 var id = index + 1;
                 var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
                 var opt = _.merge({}, this.options, visualization.options);
@@ -488,7 +488,7 @@
             var _this = this;
             var missing = [];
 
-            _.each(listOfDependencies, function (dep) {
+            listOfDependencies.forEach(function (dep) {
                 if (_this._exposed.indexOf(dep) === -1) {
                     missing.push(dep);
                 }
@@ -531,7 +531,9 @@
         *
         */
         setData: function (data) {
-            _.invokeMap(this._visualizations, 'setData', data);
+            this._visualizations.forEach(function (v) {
+                v.setData(data);
+            });
 
             return this;
         },

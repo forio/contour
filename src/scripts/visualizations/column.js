@@ -27,10 +27,10 @@
         var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
         var enter = _.partialRight((options.column.stacked ? stacked : grouped), true);
         var update = options.column.stacked ? stacked : grouped;
-        var filteredData = _.map(data, function (series, j) {
+        var filteredData = data.map(function (series, j) {
             return {
                 name: series.name,
-                data: _.filter(series.data, function (d, i) {
+                data: series.data.filter(function (d, i) {
                     return i === 0 ? true : x(d.x) !== x(series.data[i-1].x);
                 })
             };

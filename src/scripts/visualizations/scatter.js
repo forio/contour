@@ -18,13 +18,13 @@
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var opt = options.scatter;
         var halfRangeBand = this.rangeBand / 2;
-        var x = _.bind(function (d) { return this.xScale(d.x) + halfRangeBand; }, this);
-        var y = _.bind(function (d) { return this.yScale(d.y); }, this);
+        var x = function (d) { return this.xScale(d.x) + halfRangeBand; }.bind(this);
+        var y = function (d) { return this.yScale(d.y); }.bind(this);
         var h = options.chart.plotHeight;
         var classFn = function (d, i) { return d.name + ' series s-' + (i+1); };
 
         data = options.scatter.preprocess(data);
-        
+
         var series = layer.selectAll('.series')
             .data(data);
 

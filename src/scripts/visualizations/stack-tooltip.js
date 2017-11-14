@@ -44,8 +44,8 @@
                     { seriesName: p.name, value: p.data[index].y, cssClass: 's-' + (i+1) } :
                     null;
             };
-            var filtered = _.filter(_.map(data, mapFn), function (x) { return x; });
-            var text = _.map(filtered, function (t) { return '<span class="' + t.cssClass + '"">' + t.seriesName + ': ' + valueFormatter(t.value) + '</span>'; }).join(' / ');
+            var filtered =data.map(mapFn).filter(function (x) { return x; });
+            var text = filtered.map(function (t) { return '<span class="' + t.cssClass + '"">' + t.seriesName + ': ' + valueFormatter(t.value) + '</span>'; }).join(' / ');
             tooltip.html(text).style({display: 'block'});
         };
 

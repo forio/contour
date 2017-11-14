@@ -189,6 +189,9 @@ module.exports = function (grunt) {
                     'src/scripts/visualizations/**/*.js',
                 ],
                 options: {
+                    polyfills: [
+                        'tests/lib/setup.js',
+                    ],
                     vendor: [
                         'examples/js/vendor/d3.min.js',
                         'examples/js/vendor/jquery.js',

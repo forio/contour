@@ -5,7 +5,7 @@
         this.options = options;
         this.yMax = domain[0];
         this.yMin = domain[1];
-        this.dataMax = d3.max(_.map(data, 'y'));
+        this.dataMax = d3.max(data.map(function (d) { return d.y; }));
     };
 
     /* jshint eqnull: true */
@@ -32,7 +32,7 @@
     }
 
     var __super = _.nw.axes.YAxis.prototype;
-    SmartYAxis.prototype = _.extend({}, __super, {
+    SmartYAxis.prototype = Object.assign({}, __super, {
         axis: function () {
             var options = this.options.yAxis;
             this.domain = this._scale.domain();

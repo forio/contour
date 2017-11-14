@@ -12,7 +12,7 @@
     }
 
     var __super = _.nw.axes.YAxis.prototype;
-    LogYAxis.prototype = _.extend({}, __super, {
+    LogYAxis.prototype = Object.assign({}, __super, {
         axis: function () {
             var options = this.options.yAxis;
             var domain = this._scale.domain();

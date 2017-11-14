@@ -69,8 +69,8 @@
     function render(rawData, layer, options, id) {
         this.checkDependencies('cartesian');
 
-        var x = _.bind(function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }, this);
-        var y = _.bind(function (d) { return this.yScale(d.y + (d.y0 || 0)) + 0.5; }, this);
+        var x = function (d) { return this.xScale(d.x) + this.rangeBand / 2 + 0.5; }.bind(this);
+        var y = function (d) { return this.yScale(d.y + (d.y0 || 0)) + 0.5; }.bind(this);
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         animationDirection = options.line.animationDirection || 'left-to-right';
         duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;

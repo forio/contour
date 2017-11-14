@@ -58,9 +58,9 @@
 
         cleanNullValues: function () {
             return function (series) {
-                return _.map(series, function (s) {
-                    return _.extend(s, {
-                        data: _.reduce(s.data, function (acum, datum) {
+                return series.map(function (s) {
+                    return Object.assign(s, {
+                        data: s.data.reduce(function (acum, datum) {
                             if (datum.y != null) {
                                 acum.push(datum);
                             }
@@ -392,10 +392,10 @@
             var defaultMinMax;
             var minMax;
 
-            var foundSomethingRound = _.some(ticks, function (ticks) {
+            var foundSomethingRound = ticks.some(function (ticks) {
                 minMax = nice(ticks);
                 defaultMinMax = defaultMinMax || minMax;
-                return _.every(minMax.tickValues, function (tick) {
+                return minMax.tickValues.every(function (tick) {
                     return tick === Math.round(tick);
                 });
             });
@@ -484,7 +484,7 @@
                 var finalTicks = ticks;
                 while(axisLabelsWidth > availableWidthForLabels && finalTicks.length !== 0) {
                     iter++;
-                    finalTicks = _.filter(ticks, filterMod);
+                    finalTicks = ticks.filter(filterMod);
                     axisLabelsWidth = _.nw.sum(_.nw.calcXLabelsWidths(finalTicks.map(labelFormatter)));
                 }
 
@@ -552,13 +552,17 @@
         },
 
         isCorrectDataFormat: function (dataArray) {
-            return _.isArray(dataArray) && _.every(dataArray, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+            return _.isArray(dataArray) && dataArray.every(function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
         },
 
         isCorrectSeriesFormat: function (data) {
-            var isArrayOfObjects = _.isArray(data) && _.isObject(data[0]);
-            var hasDataArrayPerSeries = _.every(data, function (d) { return d.hasOwnProperty('data'); });
-            var hasSeriesNamePerSeries = _.every(data, function (d) { return d.hasOwnProperty('name'); });
+            var isArrayOfObjects = Array.isArray(data) && _.isObject(data[0]);
+            if (!isArrayOfObjects) {
+                return false;
+            }
+
+            var hasDataArrayPerSeries = data.every(function (d) { return d.hasOwnProperty('data'); });
+            var hasSeriesNamePerSeries = data.every(function (d) { return d.hasOwnProperty('name'); });
             var datumInCorrectFormat = isArrayOfObjects && hasDataArrayPerSeries && arrayHelpers.isCorrectDataFormat(data[0].data);
 
             return isArrayOfObjects && hasDataArrayPerSeries && hasSeriesNamePerSeries && datumInCorrectFormat;
@@ -572,12 +576,12 @@
             function normal(set, name) {
                 var d = {
                     name: name,
-                    data: _.map(set, function (d, i) {
+                    data: set.map(function (d, i) {
                         var hasX = d != null && d.hasOwnProperty('x');
                         var val = function (v) { return v != null ? v : null; };
                         // make sure we return a valid category and not cast nulls as string
                         var categoryAt = function (i) { return !hasCategories ? i : categories[i] == null ? null : categories[i] + ''; };
-                        return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: categoryAt(i), y: val(d) };
+                        return hasX ? Object.assign(d, { x: d.x, y: val(d.y) }) : { x: categoryAt(i), y: val(d) };
                     })
                 };
 
@@ -606,7 +610,7 @@
             if (_.isArray(data)) {
                 if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
                     // this would be the shape for multiple series
-                    return _.map(data, function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
+                    return data.map(function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
                 } else {
                     // this is just the shape [1,2,3,4] or [{x:0, y:1}, { x: 1, y:2}...]
                     return [normal(data, 'series 1')];
@@ -737,7 +741,7 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
+    _.nw = Object.assign({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
         axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
 
     if (!_.noop) {

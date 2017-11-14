@@ -1,9 +1,9 @@
 (function () {
     var _extent = function (series, field) {
         var maxs = [], mins = [];
-        _.each(series, function (d) {
+        series.forEach(function (d) {
             if(!d.data.length) return;
-            var values = _.map(d.data, field);
+            var values = d.data.map(function (d) { return d[field]; });
             maxs.push(d3.max(values));
             mins.push(d3.min(values));
         });
@@ -20,8 +20,8 @@
         var stack = _.nw.stackLayout();
         var dataSets = stack(data);
         var ext = [];
-        _.each(dataSets, function (set) {
-            _.each(set.data, function (d, i) {
+        dataSets.forEach(function (set) {
+            set.data.forEach(function (d, i) {
                 var cur = ext[i] || 0;
                 ext[i] = cur + d.y;
             });
@@ -84,7 +84,7 @@
             var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
 
             if (isSupportedFormat(this.data)) {
-                this.xDomain = _.flatten(_.map(this.data, function (set) { return _.map(set.data, 'x'); }));
+                this.xDomain = _.flatten(this.data.map(function (set) { return set.data.map(function (d) { return d.x; }); }));
                 this.xExtent = _xExtent(this.data, 'x');
                 this.yExtent = options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);
             }

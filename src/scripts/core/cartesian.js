@@ -190,7 +190,7 @@
                 var yLabels = tmpScale.ticks(options.ticks);
 
                 var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
-                var yAxisText = _.map(yLabels, format).join('<br>');
+                var yAxisText = yLabels.map(format).join('<br>');
                 var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
                 return maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) +
                     yLabelBounds.width;
@@ -556,7 +556,7 @@
 
             datum: function (d, index) {
                 if(_.isObject(d) && _.isArray(d.data))
-                    return _.map(d.data, _.bind(this.datum, this));
+                    return d.data.map(this.datum.bind(this));
 
                 return {
                     y: _.isObject(d) ? d.y : d,
@@ -576,16 +576,16 @@
 
             _adjustXDomain: function (extents) {
                 this.xDomain = this.getXDomain();
-                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
+                var dataVis = this._visualizations.filter(function (v) { return _.nw.isSupportedDataFormat(v.data); });
                 this.dataSrc = _.flatten(
-                    _.map(dataVis, function (v) {
-                        return _.flatten(_.map(v.data, _.bind(this.datum, this)));
+                    dataVis.map(function (v) {
+                        return _.flatten(v.data.map(this.datum.bind(this)));
                     }.bind(this))
                 );
 
                 // _.every() on empty array returns true, so we guard against it
-                var isCategoricalData = this.dataSrc.length && _.every(this.dataSrc, function (d) { return +d.x !== d.x; });
-                var dataSrcCategories = _.uniq(_.map(this.dataSrc, 'x'));
+                var isCategoricalData = this.dataSrc.length && this.dataSrc.every(function (d) { return +d.x !== d.x; });
+                var dataSrcCategories = _.uniq(this.dataSrc.map(function (d) { return d.x; }));
                 var sameCats = this.options.xAxis.categories ?
                     this.options.xAxis.categories.length === dataSrcCategories.length && _.intersection(this.options.xAxis.categories, dataSrcCategories).length === dataSrcCategories.length :
                     false;
@@ -611,14 +611,14 @@
 
             getExtents: function (axis) {
                 var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
-                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                var all = _.flatten(_.map(dataVis, field));
+                var dataVis = this._visualizations.filter(function (v) { return _.nw.isSupportedDataFormat(v.data); });
+                var all = _.flatten(dataVis.map(function (d) { return d[field]; }));
                 return all.length ? d3.extent(all) : [];
             },
 
             getXDomain: function () {
-                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                var all = _.nw.uniq(_.flatten(_.map(dataVis, 'xDomain')));
+                var dataVis = this._visualizations.filter(function (v) { return _.nw.isSupportedDataFormat(v.data); });
+                var all = _.nw.uniq(_.flatten(dataVis.map(function (d) { return d.xDomain; })));
 
                 return all;
             }
