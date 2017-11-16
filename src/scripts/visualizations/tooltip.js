@@ -125,10 +125,10 @@
 
             var options = this.options.tooltip;
             var formatters = [
-                function (d) { return options.formatter ? _.partial(options.formatter, d, allPoints) : null; },
-                function (d) { return d.hasOwnProperty('x') ? _.partial(function (d) { return d.series + '<br>' + d.x + '<br>' + d.y; }, d) : null; },
-                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.partial(function (d) { return d.series + '<br>' +  d.x + '<br>' + d.y; }, d.data) : null; },
-                function (d) { return d.hasOwnProperty('value') ? _.partial(function (d) { return d.value; }, d) : null;  },
+                function (d) { return options.formatter ? _.nw.partial(options.formatter, d, allPoints) : null; },
+                function (d) { return d.hasOwnProperty('x') ? _.nw.partial(function (d) { return d.series + '<br>' + d.x + '<br>' + d.y; }, d) : null; },
+                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.nw.partial(function (d) { return d.series + '<br>' +  d.x + '<br>' + d.y; }, d.data) : null; },
+                function (d) { return d.hasOwnProperty('value') ? _.nw.partial(function (d) { return d.value; }, d) : null;  },
                 function () { return function () { return 'NA'; }; }
             ];
 

@@ -28,7 +28,7 @@
     };
 
     function normalizePadding(options) {
-        if (_.isNumber(options.pie.piePadding)) {
+        if (_.nw.isNumber(options.pie.piePadding)) {
             return {
                 top: options.pie.piePadding,
                 left: options.pie.piePadding,

@@ -39,7 +39,7 @@
                 return !(p && p.y != null);
             };
             var mapFn = function (p, i) {
-                var index = _.isNumber(d.x) ? d.x : options.xAxis.categories.indexOf(d.x);
+                var index = _.nw.isNumber(d.x) ? d.x : options.xAxis.categories.indexOf(d.x);
                 return !isNull(p.data[index]) ?
                     { seriesName: p.name, value: p.data[index].y, cssClass: 's-' + (i+1) } :
                     null;

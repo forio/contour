@@ -35,7 +35,7 @@
                 .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickFormat(function (d) {
-                    return _.isDate(d) ? d.getDate() : formatLabel(d);
+                    return _.nw.isDate(d) ? d.getDate() : formatLabel(d);
                 });
 
             var ticks = axis.scale().ticks();

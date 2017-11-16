@@ -514,4 +514,86 @@ describe('utils', function () {
             });
         });
     });
+
+    describe('partial', function () {
+        it('should return a partially binded function', function () {
+            var fn = function (a, b) { return a + b; };
+            var a = _.nw.partial(fn, 2);
+            expect(a(3)).toBe(5)
+        });
+    });
+
+    describe('partialRight', function () {
+        it('should return a partially binded function with params at the end', function () {
+            var fn = function (a, b) { return a - b; };
+            var a = _.nw.partialRight(fn, 2);
+            expect(a(3)).toBe(1)
+        });
+    });
+
+    describe('isDate', function () {
+        it('should return true for date objects', function () {
+            expect(_.nw.isDate(new Date())).toBe(true);
+        });
+
+        it('should return false for other objects', function () {
+            expect(_.nw.isDate({})).toBe(false);
+        });
+    });
+
+    describe('isNumber', function () {
+        it('should return true for date objects', function () {
+            expect(_.nw.isNumber(5)).toBe(true);
+        });
+
+        it('should return false for other objects', function () {
+            expect(_.nw.isNumber('5')).toBe(false);
+            expect(_.nw.isNumber('hello')).toBe(false);
+            expect(_.nw.isNumber({})).toBe(false);
+            expect(_.nw.isNumber(new Date())).toBe(false);
+            expect(_.nw.isNumber(null)).toBe(false);
+        });
+    });
+
+    describe('range', function () {
+        it('should create range with default step 1', function () {
+            expect(_.nw.range(1,5)).toEqual([1,2,3,4])
+        });
+
+        it('if only one param it should be the size of the range [0...n]', function () {
+            expect(_.nw.range(5)).toEqual([0,1,2,3,4])
+        });
+
+        it('should accept a step', function () {
+            expect(_.nw.range(1, 5, 2)).toEqual([1,3])
+        });
+
+        it('should get emtpy range if 0', function () {
+            expect(_.nw.range(0)).toEqual([]);
+        });
+
+        it('should accept negative ranges', function () {
+            expect(_.nw.range(-4)).toEqual([0, -1, -2, -3]);
+            expect(_.nw.range(0, -4, -1)).toEqual([0, -1, -2, -3]);
+        });
+
+        it('should accept fractional ranges', function () {
+            expect(_.nw.range(0, 2, .5)).toEqual([0, .5, 1, 1.5]);
+        })
+    });
+
+    describe('uniq', function () {
+        it('should return empty array if null of not array', function () {
+            expect(_.nw.uniq(5)).toEqual([]);
+            expect(_.nw.uniq(null)).toEqual([]);
+            expect(_.nw.uniq([])).toEqual([]);
+        });
+
+        it('should return uniq values', function () {
+            // expect(_.nw.uniq([1,2,3,4])).toEqual([1,2,3,4]);
+            expect(_.nw.uniq([1,2,3,4,4])).toEqual([1,2,3,4]);
+            expect(_.nw.uniq([1,2,3,3,4])).toEqual([1,2,3,4]);
+            expect(_.nw.uniq([1,1, 2, 2 ,3, 3, 4, 4])).toEqual([1,2,3,4]);
+        })
+    });
 });

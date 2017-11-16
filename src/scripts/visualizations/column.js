@@ -25,7 +25,7 @@
         var dataKey = function (d) { return d.data; };
         var chartOffset = _.nw.getValue(opt.offset, 0, this);
         var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
-        var enter = _.partialRight((options.column.stacked ? stacked : grouped), true);
+        var enter = _.nw.partialRight((options.column.stacked ? stacked : grouped), true);
         var update = options.column.stacked ? stacked : grouped;
         var filteredData = data.map(function (series, j) {
             return {

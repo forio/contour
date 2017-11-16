@@ -1,3 +1,4 @@
+// jshint eqnull:true
 (function () {
     // cheap trick to add decimals without hitting javascript issues
     // note that this fails for very large numbers
@@ -8,7 +9,142 @@
     var mulFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return (aa * bb) / (factor*factor); };
     var divFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return aa / bb; };
 
+    var root = this;
+
     var noop = function () {};
+
+    var objectProto = Object.prototype;
+    var hasOwnProperty = objectProto.hasOwnProperty;
+    var toString = objectProto.toString;
+
+    // jshint undef:false
+    var symToStringTag = typeof Symbol !== 'undefined' ? Symbol.toStringTag : undefined;
+
+    function baseGetTag(value) {
+        if (value == null) {
+          return value === undefined ? '[object Undefined]' : '[object Null]';
+        }
+
+        if (!(symToStringTag && symToStringTag in Object(value))) {
+          return toString.call(value);
+        }
+
+        var isOwn = hasOwnProperty.call(value, symToStringTag);
+        var tag = value[symToStringTag];
+        var unmasked = false;
+
+        try {
+          value[symToStringTag] = undefined;
+          unmasked = true;
+        } catch (e) {}
+
+        var result = toString.call(value);
+        if (unmasked) {
+          if (isOwn) {
+            value[symToStringTag] = tag;
+          } else {
+            delete value[symToStringTag];
+          }
+        }
+        return result;
+      }
+
+    var lodashFns = {
+        partial: function (fn /*args*/) {
+            // prevent leaking arguments object outside of the current scope
+            // https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#32-leaking-arguments
+            var args = new Array (arguments.length -1);
+            for (var i = 1; i < arguments.length; ++i) {
+              args[i-1] = arguments[i];
+            }
+
+            return function () {
+                var newArgs = new Array(arguments.length);
+                for (var i = 0; i < arguments.length; ++i) {
+                    newArgs[i] = arguments[i];
+                }
+
+                var fullArgs = args.concat(newArgs);
+                return fn.apply(this, fullArgs);
+            };
+        },
+
+        partialRight: function (fn /*, args */) {
+            // prevent leaking arguments object outside of the current scope
+            // https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#32-leaking-arguments
+            var args = new Array (arguments.length -1);
+            for (var i = 1; i < arguments.length; ++i) {
+              args[i-1] = arguments[i];
+            }
+
+            return function () {
+                var newArgs = new Array(arguments.length);
+                for (var i = 0; i < arguments.length; ++i) {
+                    newArgs[i] = arguments[i];
+                }
+
+                var fullArgs = newArgs.concat(args);
+                return fn.apply(this, fullArgs);
+            };
+        },
+
+        isObject: function  (value) {
+            var type = typeof value;
+            return value != null && (type === 'object' || type === 'function');
+        },
+
+        isObjectLike: function (value) {
+            return typeof value === 'object' && value !== null;
+        },
+
+        isDate: function (value) {
+            return lodashFns.isObjectLike(value) && baseGetTag(value) === '[object Date]';
+        },
+
+        isNumber: function (value) {
+            return typeof value === 'number' ||
+                (lodashFns.isObjectLike(value) && baseGetTag(value) === '[object Number]');
+        },
+
+        isString: function (value) {
+            return typeof value === 'string' || value instanceof String;
+        },
+
+        range: function (start, end, step) {
+            if (arguments.length === 1) {
+                var t = start;
+                start = 0;
+                end = t;
+            }
+
+            step = step || (end >= start ? 1 : -1);
+            var index = -1;
+            var length = Math.max(Math.ceil((end - start) / (step || 1)), 0);
+            var result = new Array(length);
+
+            while (length--) {
+              result[++index] = start;
+              start += step;
+            }
+            return result;
+        },
+
+        uniq: function (value) {
+            if (value == null || !value.length) return [];
+            var set = {};
+            for (var j=0; j<value.length; j++) set[value[j]] = true;
+
+            var res = [];
+            for (j=0; j<value.length; j++) {
+                if (set[value[j]]) {
+                    res.push(value[j]);
+                    delete set[value[j]];
+                }
+            }
+
+            return res;
+        }
+    };
 
     var generalHelpers = {
         // the src is a function returns the function evaluated
@@ -292,7 +428,7 @@
             ticks = ticks == null ? 2 : Math.max(1, ticks);
             // if ticks is an array, use that as order of preferred ticks; otherwise return a
             // variable number of ticks in order to keep values round
-            if (_.isNumber(ticks)) {
+            if (lodashFns.isNumber(ticks)) {
                 // for 1, check [1]
                 // for 2, check [2, 1]
                 // for 3, check [3, 2]
@@ -303,8 +439,8 @@
                 // for 8, check [8, 9, 10, 7, 6]
                 // for 9, check [9, 10, 11, 8, 7, 6]
                 // for 10, check [10, 11, 12, 9, 8, 7]
-                ticks = _.range(ticks, ticks * 1.28)
-                    .concat(_.range(ticks - 1, (ticks - 1) * 0.72, -1));
+                ticks = lodashFns.range(ticks, ticks * 1.28)
+                    .concat(lodashFns.range(ticks - 1, (ticks - 1) * 0.72, -1));
             }
 
             if (startAtZero == null) {
@@ -404,8 +540,8 @@
 
         /*jshint eqnull:true */
         extractScaleDomain: function (domain, min, max, ticks, zeroAnchor) {
-            var dataMin = min != null ? min : _.min(domain);
-            var dataMax = max != null ? max : _.max(domain);
+            var dataMin = min != null ? min : Math.min.apply(null, domain);
+            var dataMax = max != null ? max : Math.max.apply(null, domain);
             ticks = ticks == null ? 5 : ticks;
 
             var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, ticks, zeroAnchor);
@@ -452,7 +588,7 @@
                 });
             }
 
-            return _.uniq(_.sortBy(tickValues));
+            return lodashFns.uniq(_.sortBy(tickValues));
         },
 
         calcXLabelsWidths: function (ticks) {
@@ -552,11 +688,11 @@
         },
 
         isCorrectDataFormat: function (dataArray) {
-            return _.isArray(dataArray) && dataArray.every(function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+            return Array.isArray(dataArray) && dataArray.every(function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
         },
 
         isCorrectSeriesFormat: function (data) {
-            var isArrayOfObjects = Array.isArray(data) && _.isObject(data[0]);
+            var isArrayOfObjects = Array.isArray(data) && lodashFns.isObject(data[0]);
             if (!isArrayOfObjects) {
                 return false;
             }
@@ -571,7 +707,7 @@
         /*jshint eqnull:true */
         // we are using != null to get null & undefined but not 0
         normalizeSeries: function (data, categories) {
-            var hasCategories = !!(categories && _.isArray(categories));
+            var hasCategories = !!(categories && Array.isArray(categories));
             function sortFn(a, b) { return a.x - b.x; }
             function normal(set, name) {
                 var d = {
@@ -607,8 +743,8 @@
             }
 
             // for the rest of the cases we need to normalize to the full format of the series
-            if (_.isArray(data)) {
-                if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
+            if (Array.isArray(data)) {
+                if ((lodashFns.isObject(data[0]) && data[0].hasOwnProperty('data')) || Array.isArray(data[0])) {
                     // this would be the shape for multiple series
                     return data.map(function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
                 } else {
@@ -664,7 +800,7 @@
         },
 
         sum: function (array) {
-            return _.reduce(array, function (acc, cur) { return acc += cur; }, 0);
+            return array.reduce(function (acc, cur) { return acc += cur; }, 0);
         },
 
         maxTickValues: function (max, domain) {
@@ -689,9 +825,9 @@
             // this covers all supported formats so far:
             // [ {data: [...] }, ... ]
             // [ [...], [...] ]
-            return _.isArray(data) &&
-                (_.isObject(data[0]) && data[0].hasOwnProperty('data') && _.isArray(data[0].data)) ||
-                _.isArray(data[0]);
+            return Array.isArray(data) &&
+                (lodashFns.isObject(data[0]) && data[0].hasOwnProperty('data') && Array.isArray(data[0].data)) ||
+                Array.isArray(data[0]);
         }
 
     };
@@ -741,8 +877,8 @@
         }
     };
 
-    _.nw = Object.assign({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
-        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
+    _.nw = root.nw = Object.assign({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
+        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters, lodashFns);
 
     if (!_.noop) {
         _.noop = noop;

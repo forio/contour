@@ -113,7 +113,7 @@
             if (shouldAnimate) {
                 var startLineFn = animationDirection === 'left-to-right' ? line : startLine;
                 el.attr('d', function(d) { return startLineFn(d.data); })
-                    .call(_.partial(animFn.enter, line));
+                    .call(_.nw.partial(animFn.enter, line));
             } else {
                 el.attr('d', function (d) { return line(d.data); });
             }
@@ -124,7 +124,7 @@
                 .select('.line');
 
             if (shouldAnimate) {
-                el.call(_.partial(animFn.update, line));
+                el.call(_.nw.partial(animFn.update, line));
             } else  {
                 el.attr('d', function (d) { return line(d.data); });
             }

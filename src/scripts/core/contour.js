@@ -115,7 +115,7 @@
                 data.forEach(sortSeries);
             }
 
-            var shouldSort = _.isObject(data[0]) && _.isDate(data[0].x);
+            var shouldSort = _.nw.isObject(data[0]) && _.nw.isDate(data[0].x);
             var sortFunc = function (a, b) { return a.x - b.x; };
             if(shouldSort) {
                 data.sort(sortFunc);
@@ -484,7 +484,7 @@
         *
         */
         checkDependencies: function (listOfDependencies) {
-            listOfDependencies = _.isArray(listOfDependencies) ? listOfDependencies : [listOfDependencies];
+            listOfDependencies = Array.isArray(listOfDependencies) ? listOfDependencies : [listOfDependencies];
             var _this = this;
             var missing = [];
 
@@ -500,7 +500,7 @@
         },
 
         ensureDefaults: function (options, renderer) {
-            if (_.isString(renderer)) {
+            if (_.nw.isString(renderer)) {
                 renderer = this[renderer].renderer;
             }
 

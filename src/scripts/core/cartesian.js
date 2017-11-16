@@ -555,12 +555,12 @@
             },
 
             datum: function (d, index) {
-                if(_.isObject(d) && _.isArray(d.data))
+                if(_.nw.isObject(d) && Array.isArray(d.data))
                     return d.data.map(this.datum.bind(this));
 
                 return {
-                    y: _.isObject(d) ? d.y : d,
-                    x: _.isObject(d) ? d.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
+                    y: _.nw.isObject(d) ? d.y : d,
+                    x: _.nw.isObject(d) ? d.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
                 };
             },
 
@@ -585,7 +585,7 @@
 
                 // _.every() on empty array returns true, so we guard against it
                 var isCategoricalData = this.dataSrc.length && this.dataSrc.every(function (d) { return +d.x !== d.x; });
-                var dataSrcCategories = _.uniq(this.dataSrc.map(function (d) { return d.x; }));
+                var dataSrcCategories = _.nw.uniq(this.dataSrc.map(function (d) { return d.x; }));
                 var sameCats = this.options.xAxis.categories ?
                     this.options.xAxis.categories.length === dataSrcCategories.length && _.intersection(this.options.xAxis.categories, dataSrcCategories).length === dataSrcCategories.length :
                     false;

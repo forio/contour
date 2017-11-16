@@ -42,7 +42,7 @@
             var optFormat = (options.labels.format ? d3.format(options.labels.format) : 0);
             var formatLabel = options.labels.formatter || d3.format(options.labels.format || 'g');
 
-            var tickFormat = options.labels.formatter || (!this.isCategorized ? optFormat : 0) || function (d) { return _.isDate(d) ? d.getDate() : d; };
+            var tickFormat = options.labels.formatter || (!this.isCategorized ? optFormat : 0) || function (d) { return _.nw.isDate(d) ? d.getDate() : d; };
             var axis = d3.svg.axis()
                 .scale(this._scale)
                 .innerTickSize(options.innerTickSize)
@@ -50,7 +50,7 @@
                 .tickPadding(options.tickPadding)
                 .tickFormat(tickFormat);
 
-            var ticks = this.isCategorized && options.categories ? options.categories : _.range(this._domain.length) || [];
+            var ticks = this.isCategorized && options.categories ? options.categories : _.nw.range(this._domain.length) || [];
             var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
 
             if (options.firstAndLast) {

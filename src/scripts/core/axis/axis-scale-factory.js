@@ -8,9 +8,9 @@
             //  [{ x: date, y: 1}, {x: date, y: 2}]
             //  [{ data: [ x: date, y: 1]}, {data: [x: date, y: 100]}]
             // if we get no data, we return an ordinal scale
-            var isTimeData = options.xAxis.type === 'time' || (_.isArray(data) && data.length > 0 && data[0].data ?
-                data[0].data[0].x && _.isDate(data[0].data[0].x) :
-                _.isArray(data) && data.length > 0 && data[0].x && _.isDate(data[0].x));
+            var isTimeData = options.xAxis.type === 'time' || (Array.isArray(data) && data.length > 0 && data[0].data ?
+                data[0].data[0].x && _.nw.isDate(data[0].data[0].x) :
+                Array.isArray(data) && data.length > 0 && data[0].x && _.nw.isDate(data[0].x));
 
 
             if (isTimeData && options.xAxis.type !== 'ordinal') {

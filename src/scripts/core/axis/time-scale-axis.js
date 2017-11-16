@@ -121,7 +121,7 @@
             var size = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
 
             if(this.options.xAxis.linearDomain) {
-                return _.range(0, size, size / (domain.length - 1)).concat([size]);
+                return _.nw.range(0, size, size / (domain.length - 1)).concat([size]);
             }
 
             return [0, size];

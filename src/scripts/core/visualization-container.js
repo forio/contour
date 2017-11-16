@@ -11,7 +11,7 @@
         //
         if(!mins.length || !maxs.length) return [];
 
-        return [_.min(mins), _.max(maxs)];
+        return [Math.min.apply(null, mins), Math.max.apply(null, maxs)];
     };
 
 
@@ -27,11 +27,11 @@
             });
         });
 
-        return [_.min(ext), _.max(ext)];
+        return [Math.min.apply(null, ext), Math.max.apply(null, ext)];
     };
 
-    var _xExtent = _.partialRight(_extent, 'x');
-    var _yExtent = _.partialRight(_extent, 'y');
+    var _xExtent = _.nw.partialRight(_extent, 'x');
+    var _yExtent = _.nw.partialRight(_extent, 'y');
 
     function VisInstanceContainer(data, vizOptions, type, renderer, context) {
         this.type = type;
