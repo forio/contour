@@ -101,14 +101,14 @@
 
                 this.options = options || {};
 
-                _.merge(this.options, readOnlyProps);
+                _.nw.merge(this.options, readOnlyProps);
 
                 var extraPadding = {};
                 if (!this.options.xAxis || !this.options.xAxis.firstAndLast) {
                     extraPadding = { chart : { padding: { right: 15 }}};
                 }
 
-                this._extraOptions.push(_.merge({}, defaults, extraPadding));
+                this._extraOptions.push(_.nw.merge({}, defaults, extraPadding));
 
                 return this;
             },
@@ -577,17 +577,17 @@
             _adjustXDomain: function (extents) {
                 this.xDomain = this.getXDomain();
                 var dataVis = this._visualizations.filter(function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                this.dataSrc = _.flatten(
+                this.dataSrc = _.nw.flatten(
                     dataVis.map(function (v) {
-                        return _.flatten(v.data.map(this.datum.bind(this)));
+                        return _.nw.flatten(v.data.map(this.datum.bind(this)));
                     }.bind(this))
                 );
 
-                // _.every() on empty array returns true, so we guard against it
+                // every() on empty array returns true, so we guard against it
                 var isCategoricalData = this.dataSrc.length && this.dataSrc.every(function (d) { return +d.x !== d.x; });
                 var dataSrcCategories = _.nw.uniq(this.dataSrc.map(function (d) { return d.x; }));
                 var sameCats = this.options.xAxis.categories ?
-                    this.options.xAxis.categories.length === dataSrcCategories.length && _.intersection(this.options.xAxis.categories, dataSrcCategories).length === dataSrcCategories.length :
+                    this.options.xAxis.categories.length === dataSrcCategories.length && _.nw.intersection(this.options.xAxis.categories, dataSrcCategories).length === dataSrcCategories.length :
                     false;
 
                 if (isCategoricalData && !(this.options.xAxis.categories && sameCats)) {
@@ -604,7 +604,7 @@
             _normalizeData: function () {
                 var opt = this.options;
                 this._visualizations.forEach(function (viz) {
-                    var vizOpt = _.merge({}, opt, viz.options);
+                    var vizOpt = _.nw.merge({}, opt, viz.options);
                     viz.normalizeData(vizOpt);
                 });
             },
@@ -612,13 +612,13 @@
             getExtents: function (axis) {
                 var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
                 var dataVis = this._visualizations.filter(function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                var all = _.flatten(dataVis.map(function (d) { return d[field]; }));
+                var all = _.nw.flatten(dataVis.map(function (d) { return d[field]; }));
                 return all.length ? d3.extent(all) : [];
             },
 
             getXDomain: function () {
                 var dataVis = this._visualizations.filter(function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                var all = _.nw.uniq(_.flatten(dataVis.map(function (d) { return d.xDomain; })));
+                var all = _.nw.uniq(_.nw.flatten(dataVis.map(function (d) { return d.xDomain; })));
 
                 return all;
             }

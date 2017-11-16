@@ -84,7 +84,7 @@
             var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
 
             if (isSupportedFormat(this.data)) {
-                this.xDomain = _.flatten(this.data.map(function (set) { return set.data.map(function (d) { return d.x; }); }));
+                this.xDomain = _.nw.flatten(this.data.map(function (set) { return set.data.map(function (d) { return d.x; }); }));
                 this.xExtent = _xExtent(this.data, 'x');
                 this.yExtent = options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);
             }

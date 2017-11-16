@@ -143,6 +143,90 @@
             }
 
             return res;
+        },
+
+        flatten: function (array) {
+            if (!array || !array.length) {
+                return [];
+            }
+
+            return array.reduce(function (acc, cur) {
+                return acc.concat(Array.isArray(cur) ? lodashFns.flatten(cur) : cur);
+            }, []);
+        },
+
+        compact: function (array) {
+            if (!array || !array.length) {
+                return [];
+            }
+
+            return array.reduce(function (acc, cur) {
+                if (cur) {
+                    acc.push(cur);
+                }
+                return acc;
+            }, []);
+        },
+
+        intersection: function (a, b) {
+            if (!a || !b) return [];
+            if (!a.length || !b.length) return [];
+
+            var map = b.reduce(function (acc, cur) {
+                acc[cur] = true;
+                return acc;
+            }, {});
+
+            return a.reduce(function (acc, cur) {
+                if (map[cur]) {
+                    acc.push(cur);
+                    delete map[cur];
+                }
+
+                return acc;
+            }, []);
+        },
+
+        merge: function (a, b) {
+            var args = new Array(arguments.length);
+            for (var i = 0; i < arguments.length; ++i) {
+              args[i] = arguments[i];
+            }
+
+            var isObjectLike = function (prop) { return typeof prop === 'object' && prop != null; };
+            var isArrayLike = function (prop) { return prop && !!prop.length; };
+            var isArrayLikeObject = function (prop) { return isObjectLike(prop) && isArrayLike(prop); };
+            var isMergable = function (prop) { return prop && Object.prototype.toString.call(prop) === '[object Object]'; };
+            var cloneIfNeeded = function (val) { return val && Object.prototype.toString.call(val) === '[object Object]' ? lodashFns.merge({}, val) : val; };
+
+            if (!isMergable(a)) {
+                return b;
+            }
+
+            if (!b) {
+                return a;
+            }
+
+            var target = a;
+            for (var j=1, src = args[1]; j<args.length; j++, src=args[j]) {
+                Object.keys(src).forEach(function (key) {
+                    if (target[key]) {
+                        if (Array.isArray(target[key]) && Array.isArray(src[key])) {
+                            target[key] = target[key].map(function (el, i) {
+                                return lodashFns.merge(el, src[key][i]);
+                            });
+                        } else if (isMergable(target[key]) && isMergable(src[key])) {
+                            target[key] = lodashFns.merge(target[key], src[key]);
+                        } else if (src[key] != null) {
+                            target[key] = src[key];
+                        }
+                    } else {
+                        target[key] = cloneIfNeeded(src[key]);
+                    }
+                });
+            }
+
+            return target;
         }
     };
 
@@ -678,7 +762,7 @@
     var arrayHelpers = {
         // concatenate and sort two arrays to the resulting array
         // is sorted ie. merge [2,4,6] and [1,3,5] = [1,2,3,4,5,6]
-        merge: function (array1, array2) {
+        mergeArrays: function (array1, array2) {
             if(typeof(array1) === 'number') array1 = [array1];
             if(typeof(array2) === 'number') array2 = [array2];
             if(!array1 || !array1.length) return array2;

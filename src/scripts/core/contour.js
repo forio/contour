@@ -275,7 +275,7 @@
             options.chart.width = options.chart.width || this.calculateWidth();
             options.chart.height = options.chart.height || this.calculateHeight();
 
-            this.options = _.merge(options, {
+            this.options = _.nw.merge(options, {
                 chart: {
                     plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.internalPadding.left - options.chart.padding.right,
                     plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.internalPadding.bottom,
@@ -308,9 +308,9 @@
         },
 
         composeOptions: function () {
-            var allDefaults = _.merge({}, defaults);
-            var mergeExtraOptions = function (opt) { _.merge(allDefaults, opt); };
-            var mergeDefaults = function (vis) { _.merge(allDefaults, vis.renderer.defaults); };
+            var allDefaults = _.nw.merge({}, defaults);
+            var mergeExtraOptions = function (opt) { _.nw.merge(allDefaults, opt); };
+            var mergeDefaults = function (vis) { _.nw.merge(allDefaults, vis.renderer.defaults); };
 
             this._extraOptions.forEach(mergeExtraOptions);
             this._visualizations.forEach(mergeDefaults);
@@ -318,7 +318,7 @@
             var opt = _.nw.materialize(this.originalOptions, this, { skipMatch: /formatter/ });
 
             // compose the final list of options right before start rendering
-            this.options = _.merge(opt, _.merge({}, allDefaults, opt));
+            this.options = _.nw.merge(opt, _.nw.merge({}, allDefaults, opt));
         },
 
         /**
@@ -461,7 +461,7 @@
             this._visualizations.forEach(function (visualization, index) {
                 var id = index + 1;
                 var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
-                var opt = _.merge({}, this.options, visualization.options);
+                var opt = _.nw.merge({}, this.options, visualization.options);
 
                 layer.attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
                 visualization.layer = layer;

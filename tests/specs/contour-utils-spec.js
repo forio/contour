@@ -596,4 +596,140 @@ describe('utils', function () {
             expect(_.nw.uniq([1,1, 2, 2 ,3, 3, 4, 4])).toEqual([1,2,3,4]);
         })
     });
+
+    describe('flatten', function () {
+        it('should flatten inner arrays', function () {
+            var a = [[1,2],3, [[[4]]]];
+            expect(_.nw.flatten(a)).toEqual([1,2,3,4]);
+        });
+
+        it('should return empty array if empty array is passed in', function () {
+            expect(_.nw.flatten([])).toEqual([]);
+        });
+
+        it('should return empty array if empty null is passed in', function () {
+            expect(_.nw.flatten()).toEqual([]);
+        });
+    });
+
+    describe('compact', function () {
+        it('should remove falsy elements', function () {
+            expect(_.nw.compact([0, 1, 2, undefined, null, NaN, '', 3, undefined])).toEqual([1,2,3]);
+        })
+    });
+
+    describe('intersection', function () {
+        it('should return the common elements between two arrays', function () {
+            var a = [1,2,3,4,5];
+            var b = [2,4,6,8,10,12];
+            expect(_.nw.intersection(a, b)).toEqual([2,4]);
+        });
+
+        it('should preseve the order of the first array', function () {
+            var a = [5,4,2,6,8];
+            var b = [2,5,8];
+
+            var res = _.nw.intersection(a, b);
+            expect(res).toEqual([5,2,8]);
+        });
+
+        it('should return empty array if any array is null or empty', function () {
+            expect(_.nw.intersection(null, [1,2,3])).toEqual([]);
+            expect(_.nw.intersection([1,2,3], null)).toEqual([]);
+            expect(_.nw.intersection([1,2,3], [])).toEqual([]);
+            expect(_.nw.intersection([], [1,2,3])).toEqual([]);
+        });
+    });
+
+    describe('merge', function () {
+        it('should merge all props in both objects', function () {
+            var a = { a: 1, b: 2 };
+            var b = { c: 3, x: 4 };
+
+            expect(_.nw.merge(a, b)).toEqual({ a: 1, b: 2, c: 3, x: 4 });
+        });
+
+        it('should override common non mergable props with the second object', function () {
+            var a = { a: 1, b: 2 };
+            var b = { a: 3, x: 4 };
+
+            expect(_.nw.merge(a, b)).toEqual({ a: 3, b: 2, x: 4 });
+        });
+
+        it('should deep merge simple mergable object', function () {
+            var a = { a: { x: 1 }, b: 2 };
+            var b = { a: { y: 2 }, c: 3 };
+            expect(_.nw.merge(a, b)).toEqual({ a: { x: 1, y: 2 }, b: 2, c: 3 });
+        });
+
+        it('should not deep merge arrays (replace)', function () {
+            var a = { a: { x: [1,2,3] }, b: 2 };
+            var b = { a: { x: [4,5,6] }, c: 4 };
+
+            expect(_.nw.merge(a, b)).toEqual({
+                a: { x: b.a.x },
+                b: 2, c: 4
+            });
+        });
+
+        it('should skip undefined props from source object that exist in target', function () {
+            var a = { a: 1, b: 2 };
+            var b = { b: undefined };
+            expect(_.nw.merge(a, b)).toEqual({ a: 1, b: 2 });
+        });
+
+        it('should merge array of objects', function () {
+            var object = { a: [{ 'b': 2 }, { 'd': 4 }] };
+            var other = { a: [{ 'c': 3 }, { 'e': 5 }]};
+
+            expect(_.nw.merge(object, other)).toEqual({ 'a': [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }] });
+        });
+
+        it('for both value types just pass the second one back', function () {
+            expect(_.nw.merge(5, 6)).toEqual(6);
+        });
+
+        it('should mutate first object', function () {
+            var a = {};
+            var b = { x: 1, y: 2 };
+            _.nw.merge(a, b);
+            expect(a).toEqual({ x: 1, y: 2 });
+        });
+
+        it('should merge any number of objects > 2', function () {
+            var a = { x: 1 };
+            var b = { y: 2 };
+            var c = { z: 3 };
+            var d = { zz: 4 };
+
+            expect(_.nw.merge(a, b, c, d)).toEqual({ x: 1, y: 2, z: 3, zz: 4 });
+        });
+
+        it('should return the destination if target is undefined', function () {
+            var a = { x: 1 };
+            expect(_.nw.merge(a, undefined)).toEqual(a);
+        });
+
+        it('should merge boolean false values from target', function () {
+            var a = { x: true };
+            var b = { x: false };
+            expect(_.nw.merge(a, b)).toEqual({ x: false });
+        });
+
+        it('should merge boolean false values from src', function () {
+            var a = { x: false };
+            var b = { x: 5 };
+            expect(_.nw.merge(a, b)).toEqual({ x: 5 });
+        });
+
+        it('should deep merge objects that are not in target', function () {
+            var a = { chart: { padding: { top: undefined, left: undefined }}};
+            var b = { chart: { padding: { right: 15 }}};
+
+            var res = _.nw.merge({}, a, b);
+            expect(a.chart.padding.right).toBe(undefined);
+        });
+
+
+    });
 });

@@ -17,7 +17,7 @@
     var frame = {
 
         init: function () {
-            _.merge(this.options, defaults);
+            _.nw.merge(this.options, defaults);
         },
 
         adjustPadding: function () {

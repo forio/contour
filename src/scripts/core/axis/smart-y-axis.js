@@ -10,7 +10,7 @@
 
     /* jshint eqnull: true */
     function _extractYTickValues(domain, min, max, yMin, yMax, dataMax) {
-        var adjustedDomain = _.nw.uniq(_.nw.merge(_.nw.merge(domain, yMax), dataMax));
+        var adjustedDomain = _.nw.uniq(_.nw.mergeArrays(_.nw.mergeArrays(domain, yMax), dataMax));
         // we want to be able to remove parameters with default values
         // so to remove the default yAxis.min: 0, you pass yAxis.min: null
         // and for that we need to to a truly comparison here (to get null or undefined)
@@ -18,7 +18,7 @@
             return adjustedDomain;
 
         if (min == null) {
-            return max > yMin ? _.nw.merge([max], adjustedDomain) : [max];
+            return max > yMin ? _.nw.mergeArrays([max], adjustedDomain) : [max];
         }
 
         if (max == null) {
@@ -28,7 +28,7 @@
             return adjustedDomain;
         }
 
-        return _.nw.merge([min, max], yMax);
+        return _.nw.mergeArrays([min, max], yMax);
     }
 
     var __super = _.nw.axes.YAxis.prototype;
