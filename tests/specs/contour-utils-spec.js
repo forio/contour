@@ -732,4 +732,14 @@ describe('utils', function () {
 
 
     });
+
+    describe('defaults', function () {
+        it('should copy properties that resolve to undefined in target', function () {
+            expect(_.nw.defaults({a: 1}, {a: 3, b: 2})).toEqual({ a: 1, b: 2 });
+        });
+
+        it('should skip props that are already set by previous source', function () {
+            expect(_.nw.defaults({ a: 1 }, {a: 3, b: 2}, { b: 4 })).toEqual({ a: 1, b: 2 });
+        });
+    });
 });

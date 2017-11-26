@@ -506,8 +506,8 @@
 
             if (renderer.defaults) {
                 var defaults = renderer.defaults;
-                options = _.defaults(options || {}, defaults);
-                this.options = _.defaults(this.options, defaults);
+                options = _.nw.defaults(options || {}, defaults);
+                this.options = _.nw.defaults(this.options, defaults);
             }
         },
 

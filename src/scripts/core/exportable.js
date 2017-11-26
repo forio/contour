@@ -462,7 +462,7 @@
 
             // merge configuration options with defaults
             options = options || {};
-            _.defaults(options, defaultParams);
+            _.nw.defaults(options, defaultParams);
 
             var svgNode = container.select('svg').node();
             // get bounds from original SVG, and proportion them based on specified options

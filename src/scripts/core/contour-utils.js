@@ -227,6 +227,27 @@
             }
 
             return target;
+        },
+
+        defaults: function (target /* ...sources */) {
+            var sources = new Array(arguments.length-1);
+            for (var i = 1; i < arguments.length; ++i) {
+              sources[i-1] = arguments[i];
+            }
+
+            if (!target) return null;
+
+            for (var j=0; j<sources.length; j++) {
+                var src = sources[j];
+                Object.keys(src).forEach(function (key) {
+                    var val = target[key];
+                    if (val === undefined) {
+                        target[key] = src[key];
+                    }
+                });
+            }
+
+            return target;
         }
     };
 
@@ -672,12 +693,15 @@
                 });
             }
 
-            return lodashFns.uniq(_.sortBy(tickValues));
+            tickValues.sort(function (a, b) { return a - b; });
+
+            return lodashFns.uniq(tickValues);
         },
 
         calcXLabelsWidths: function (ticks) {
             var padding = 8;
-            return _.compact(ticks).map(String).map(function (d) {
+            var compact = function (e) { return !!e; }
+            return ticks.filter(compact).map(String).map(function (d) {
                 if (!d) {
                     return padding * 2;
                 }
