@@ -742,4 +742,21 @@ describe('utils', function () {
             expect(_.nw.defaults({ a: 1 }, {a: 3, b: 2}, { b: 4 })).toEqual({ a: 1, b: 2 });
         });
     });
+
+    describe('omit', function () {
+        it('should return a copy of the original object', function () {
+            var a = { x: 1, y: 2 };
+            expect(_.nw.omit(a, ['x'])).not.toBe(a);
+        });
+
+        it('should omit the props in the props array param', function () {
+            var a = { x: 1, y: 2 };
+            expect(_.nw.omit(a, ['y'])).toEqual({ x: 1 });
+        });
+
+        it('should accept a single string as a props array param', function () {
+            var a = { x: 1, y: 2 };
+            expect(_.nw.omit(a, 'y')).toEqual({ x: 1 });
+        });
+    })
 });

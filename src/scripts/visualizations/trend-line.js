@@ -1,7 +1,7 @@
 (function () {
 
     function normalizeDataSet(dataSet) {
-        var all = _.nw.flatten(_.pluck(dataSet, 'data'));
+        var all = _.nw.flatten(dataSet.map(function (set) { return set.data; }));
         var isLinear = all.length && _.nw.isNumber(all[0].x);
         var normalizer = function (d, i) { return { x: i, y: d.y }; };
 

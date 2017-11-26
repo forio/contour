@@ -200,7 +200,7 @@
             }
 
             // extend the --instance-- we don't want all charts to be overriden...
-            Object.assign(this, _.omit(functionality, 'init'));
+            Object.assign(this, _.nw.omit(functionality, 'init'));
 
             if(functionality.init) {
                 functionality.init.call(this, this.originalOptions);

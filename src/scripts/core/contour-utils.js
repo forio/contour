@@ -248,6 +248,25 @@
             }
 
             return target;
+        },
+
+        omit: function (src, props) {
+            if (!src || Object.prototype.toString.call(src) !== '[object Object]') {
+                return src;
+            }
+
+            var index = [].concat(props).reduce(function (acc, prop) {
+                return acc[prop] = true, acc;
+            }, {});
+
+            var res = {};
+            Object.keys(src).forEach(function (prop) {
+                if (!index[prop]) {
+                    res[prop] = src[prop];
+                }
+            });
+
+            return res;
         }
     };
 
