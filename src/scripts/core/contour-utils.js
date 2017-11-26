@@ -193,9 +193,6 @@
               args[i] = arguments[i];
             }
 
-            var isObjectLike = function (prop) { return typeof prop === 'object' && prop != null; };
-            var isArrayLike = function (prop) { return prop && !!prop.length; };
-            var isArrayLikeObject = function (prop) { return isObjectLike(prop) && isArrayLike(prop); };
             var isMergable = function (prop) { return prop && Object.prototype.toString.call(prop) === '[object Object]'; };
             var cloneIfNeeded = function (val) { return val && Object.prototype.toString.call(val) === '[object Object]' ? lodashFns.merge({}, val) : val; };
 
@@ -208,6 +205,7 @@
             }
 
             var target = a;
+            /*jshint loopfunc: true */
             for (var j=1, src = args[1]; j<args.length; j++, src=args[j]) {
                 Object.keys(src).forEach(function (key) {
                     if (target[key]) {
@@ -237,6 +235,7 @@
 
             if (!target) return null;
 
+            /*jshint loopfunc: true */
             for (var j=0; j<sources.length; j++) {
                 var src = sources[j];
                 Object.keys(src).forEach(function (key) {
@@ -719,7 +718,7 @@
 
         calcXLabelsWidths: function (ticks) {
             var padding = 8;
-            var compact = function (e) { return !!e; }
+            var compact = function (e) { return !!e; };
             return ticks.filter(compact).map(String).map(function (d) {
                 if (!d) {
                     return padding * 2;
