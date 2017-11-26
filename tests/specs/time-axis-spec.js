@@ -9,7 +9,7 @@ describe('time Axis', function () {
     });
 
     function createinstance(options) {
-        options = _.extend({ el: el }, options);
+        options = Object.assign({ el: el }, options);
         instance = new Contour(options).cartesian();
         return instance;
     }

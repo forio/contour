@@ -6,7 +6,7 @@ describe('Visualizations', function () {
 
     function createContour(options) {
         $el.empty();
-        options = _.extend({ el: el, chart: { animations: false } }, options);
+        options = Object.assign({ el: el, chart: { animations: false } }, options);
         var contour = new Contour(options).cartesian();
         return contour;
     }
@@ -153,7 +153,9 @@ describe('Visualizations', function () {
                         var g = $el.find('g[vis-id="1"] .tooltip-trackers');
                         var seriesClasses = ['s-1', 'series', '1'];
                         var classes = d3.select(g[0]).attr('class').split(' ');
-                        expect(_.every(seriesClasses.map(_.partial(_.includes, classes)))).toBe(true);
+
+                        // expect(_.every(seriesClasses.map(_.partial(_.includes, classes)))).toBe(true);
+                        expect(seriesClasses.every(function (s) { s.includes(classes); })).toBe(true);
                     });
 
 

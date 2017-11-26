@@ -7,7 +7,7 @@ describe('Bar chart', function () {
     });
 
     function createinstance(options) {
-        options = _.extend({ el: el, chart: { animations: false } }, options);
+        options = Object.assign({ el: el, chart: { animations: false } }, options);
         var instance = new Contour(options).cartesian().horizontal();
         return instance;
     }
@@ -164,7 +164,7 @@ describe('Bar chart', function () {
         });
 
         it('should behave correctly', function () {
-            var rects = _.filter($el.find('rect.bar'), function (r) { return +$(r).attr('width') > 0; });
+            var rects = $el.find('rect.bar').filter(function (r) { return +$(r).attr('width') > 0; });
             expect(rects.length).toBe(7);
         });
 

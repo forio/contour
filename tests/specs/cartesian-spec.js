@@ -11,7 +11,7 @@ describe('Cartesian frame', function () {
     function createinstance(options) {
         $el = $('<div>');
         el = $el.get(0);
-        options = _.extend({ el: el, chart: { animations: { enable: false } } }, options);
+        options = Object.assign({ el: el, chart: { animations: { enable: false } } }, options);
 
         instance = new Contour(options).cartesian();
         return instance;

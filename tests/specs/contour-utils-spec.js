@@ -134,7 +134,7 @@ describe('utils', function () {
         beforeEach(function () {
             var isSeriesSorted = function (actual) {
                 var isSorted = true;
-                _.each(actual, function (series) {
+                actual.forEach(function (series) {
                     if (!series.data.length || !isSorted) return;
                     var prev = series.data[0].x;
                     for (var j=1, len=series.data.length; j<len; j++) {
@@ -173,7 +173,7 @@ describe('utils', function () {
 
                             if(!actual.hasOwnProperty('name')) missing.push('series name (name)');
                             if(!actual.hasOwnProperty('data')) missing.push('series data (data)');
-                            if(!_.every(actual.data, function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
+                            if(!actual.data.every(function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
 
                             message = function () { return 'Expected object' + notText + ' to be normalize series and is missing: ' + missing.join(', '); };
 

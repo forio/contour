@@ -8,7 +8,7 @@ describe('Column chart', function () {
     });
 
     function createinstance(options) {
-        options = _.extend({ el: el, chart: { animations: false } }, options);
+        options = Object.assign({ el: el, chart: { animations: false } }, options);
         var instance = new Contour(options).cartesian();
         return instance;
     }

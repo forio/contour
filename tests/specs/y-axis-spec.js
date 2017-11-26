@@ -20,7 +20,7 @@ describe('default yAxis', function () {
     });
 
     function createinstance(options) {
-        options = _.extend({ el: el, chart: { animations: false } }, options);
+        options = Object.assign({ el: el, chart: { animations: false } }, options);
         instance = new Contour(options).cartesian();
         return instance;
     }
@@ -74,7 +74,7 @@ describe('default yAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.every(ticks, function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
+        expect(ticks.every(function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
     });
 
     it('should align the middle of the label to the tick when set middle in options', function () {
@@ -82,7 +82,7 @@ describe('default yAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.every(ticks, function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
+        expect(ticks.every(function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
     });
 
     it('should be place the label above the tick when set top in options', function () {
@@ -90,7 +90,7 @@ describe('default yAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.every(ticks, function (t) { return $(t).attr('dy').contains('.8em'); })).toBe(true);
+        expect(ticks.every(function (t) { return $(t).attr('dy').contains('.8em'); })).toBe(true);
     });
 
     it('should be place the label below the tick when set top in options', function () {
@@ -98,7 +98,7 @@ describe('default yAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
-        expect(_.every(ticks, function (t) { return $(t).attr('dy') === '0'; })).toBe(true);
+        expect(ticks.every(function (t) { return $(t).attr('dy') === '0'; })).toBe(true);
     });
 
     describe('with smart y axis', function () {
@@ -145,7 +145,7 @@ describe('default yAxis', function () {
                 dataSet.push(Math.random() * 100);
             }
 
-            _.times(length, pushRandomVal);
+            new Array(length).fill(true).map(pushRandomVal);
             return dataSet;
         };
 
@@ -158,7 +158,7 @@ describe('default yAxis', function () {
             var lastTicks = $el.find('.y.axis .tick text').last();
 
             expect(+firstTicks.text()).toBeLessThan(d3.min(dataSet));
-            expect(+lastTicks.text()).toBeGreaterThan(d3.max(dataSet)); 
+            expect(+lastTicks.text()).toBeGreaterThan(d3.max(dataSet));
         });
 
         it('should display all data points for large data set', function () {
@@ -170,7 +170,7 @@ describe('default yAxis', function () {
             var lastTicks = $el.find('.y.axis .tick text').last();
 
             expect(+firstTicks.text()).toBeLessThan(d3.min(dataSet));
-            expect(+lastTicks.text()).toBeGreaterThan(d3.max(dataSet)); 
+            expect(+lastTicks.text()).toBeGreaterThan(d3.max(dataSet));
         });
 
         it('should not use a zero anchor with a high value, low variance data set', function () {
