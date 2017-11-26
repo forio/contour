@@ -35,21 +35,21 @@
                 .tickSize(options.innerTickSize, options.outerTickSize)
                 .tickPadding(options.tickPadding)
                 .tickFormat(function (d) {
-                    return _.nw.isDate(d) ? d.getDate() : formatLabel(d);
+                    return nwt.isDate(d) ? d.getDate() : formatLabel(d);
                 });
 
             var ticks = axis.scale().ticks();
-            var labelsFit = _.nw.doXLabelsFit(ticks, formatLabel, this.options);
+            var labelsFit = nwt.doXLabelsFit(ticks, formatLabel, this.options);
 
             if (options.firstAndLast) {
                 // show only first and last tick
-                axis.tickValues(_.nw.firstAndLast(this._domain));
+                axis.tickValues(nwt.firstAndLast(this._domain));
             } else if (options.tickValues) {
                 axis.tickValues(options.tickValues);
             } else if (options.ticks != null) {
                 axis.ticks(options.ticks);
             } else if (!labelsFit) {
-                var finalTicks = _.nw.getTicksThatFit(ticks, formatLabel, this.options);
+                var finalTicks = nwt.getTicksThatFit(ticks, formatLabel, this.options);
                 axis.tickValues(finalTicks);
                 axis.ticks(finalTicks.length);
 
@@ -104,6 +104,6 @@
         }
     };
 
-    _.nw.addAxis('LinearScale', LinearScale );
+    nwt.addAxis('LinearScale', LinearScale );
 
 })();

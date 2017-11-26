@@ -14,7 +14,7 @@
                 size: 3,
                 animationDelay: null
             },
-            preprocess: _.nw.minMaxFilter(1000)
+            preprocess: nwt.minMaxFilter(1000)
         }
     };
 
@@ -75,7 +75,7 @@
         animationDirection = options.line.animationDirection || 'left-to-right';
         duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
         // jshint eqnull:true
-        var data = options.line.preprocess(_.nw.cleanNullValues()(rawData));
+        var data = options.line.preprocess(nwt.cleanNullValues()(rawData));
 
         data = options.line.stacked ? d3.layout.stack().values(function (d) { return d.data; })(data) : data;
 
@@ -87,7 +87,7 @@
         if (options.tooltip && options.tooltip.enable)
             renderTooltipTrackers();
 
-        function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + _.nw.seriesNameToClass(d.name); }; }
+        function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + nwt.seriesNameToClass(d.name); }; }
 
         function renderPaths() {
             var startLine = d3.svg.line()
@@ -113,7 +113,7 @@
             if (shouldAnimate) {
                 var startLineFn = animationDirection === 'left-to-right' ? line : startLine;
                 el.attr('d', function(d) { return startLineFn(d.data); })
-                    .call(_.nw.partial(animFn.enter, line));
+                    .call(nwt.partial(animFn.enter, line));
             } else {
                 el.attr('d', function (d) { return line(d.data); });
             }
@@ -124,7 +124,7 @@
                 .select('.line');
 
             if (shouldAnimate) {
-                el.call(_.nw.partial(animFn.update, line));
+                el.call(nwt.partial(animFn.update, line));
             } else  {
                 el.attr('d', function (d) { return line(d.data); });
             }

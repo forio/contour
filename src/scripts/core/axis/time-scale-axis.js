@@ -58,11 +58,11 @@
             } else if (this.options.xAxis.maxTicks != null && this.options.xAxis.maxTicks < this._domain.length) {
                 // override the tickValues with custom array based on number of ticks
                 // we don't use D3 ticks() because you cannot force it to show a specific number of ticks
-                axis.tickValues(_.nw.maxTickValues(options.maxTicks, this._domain));
+                axis.tickValues(nwt.maxTickValues(options.maxTicks, this._domain));
 
             } else if (this.options.xAxis.firstAndLast) {
                 // show only first and last tick
-                axis.tickValues(_.nw.firstAndLast(this._domain));
+                axis.tickValues(nwt.firstAndLast(this._domain));
             }
 
             return axis;
@@ -121,12 +121,12 @@
             var size = this.options.chart.rotatedFrame ? this.options.chart.plotHeight : this.options.chart.plotWidth;
 
             if(this.options.xAxis.linearDomain) {
-                return _.nw.range(0, size, size / (domain.length - 1)).concat([size]);
+                return nwt.range(0, size, size / (domain.length - 1)).concat([size]);
             }
 
             return [0, size];
         }
     };
 
-    _.nw.addAxis('TimeScale', TimeScale );
+    nwt.addAxis('TimeScale', TimeScale );
 })();

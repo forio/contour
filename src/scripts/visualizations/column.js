@@ -23,9 +23,9 @@
         var x = function (v) { return Math.round(_this.xScale(v)) + 0.5; };
         var y = function (v) { return Math.round(_this.yScale(v)) - 0.5; };
         var dataKey = function (d) { return d.data; };
-        var chartOffset = _.nw.getValue(opt.offset, 0, this);
-        var rangeBand = _.nw.getValue(opt.columnWidth, this.rangeBand, this);
-        var enter = _.nw.partialRight((options.column.stacked ? stacked : grouped), true);
+        var chartOffset = nwt.getValue(opt.offset, 0, this);
+        var rangeBand = nwt.getValue(opt.columnWidth, this.rangeBand, this);
+        var enter = nwt.partialRight((options.column.stacked ? stacked : grouped), true);
         var update = options.column.stacked ? stacked : grouped;
         var filteredData = data.map(function (series, j) {
             return {
@@ -36,7 +36,7 @@
             };
         });
 
-        var stack = _.nw.stackLayout();
+        var stack = nwt.stackLayout();
         var series = layer.selectAll('g.series')
                 .data(stack(filteredData));
 

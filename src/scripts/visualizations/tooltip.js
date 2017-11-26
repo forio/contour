@@ -32,7 +32,7 @@
 
         var positionTooltip = function (d) {
             var pointOrCentroid = function () {
-                return d3.event.target.tagName === 'path' ? _.nw.getCentroid(d3.event.target) : d3.mouse(this.container.node());
+                return d3.event.target.tagName === 'path' ? nwt.getCentroid(d3.event.target) : d3.mouse(this.container.node());
             };
             var xScale = this.xScale;
             var yScale = this.yScale;
@@ -118,17 +118,17 @@
                 var list = params[0];
                 var rest = params.slice(1);
 
-                var response = list.map(function(fn) { return fn.apply(this, rest); }).concat([_.noop]);
+                var response = list.map(function(fn) { return fn.apply(this, rest); }).concat([nwt.noop]);
 
                 return response.filter(function (a) { return a; })[0];
             }
 
             var options = this.options.tooltip;
             var formatters = [
-                function (d) { return options.formatter ? _.nw.partial(options.formatter, d, allPoints) : null; },
-                function (d) { return d.hasOwnProperty('x') ? _.nw.partial(function (d) { return d.series + '<br>' + d.x + '<br>' + d.y; }, d) : null; },
-                function (d) { return d.data && d.data.hasOwnProperty('x') ? _.nw.partial(function (d) { return d.series + '<br>' +  d.x + '<br>' + d.y; }, d.data) : null; },
-                function (d) { return d.hasOwnProperty('value') ? _.nw.partial(function (d) { return d.value; }, d) : null;  },
+                function (d) { return options.formatter ? nwt.partial(options.formatter, d, allPoints) : null; },
+                function (d) { return d.hasOwnProperty('x') ? nwt.partial(function (d) { return d.series + '<br>' + d.x + '<br>' + d.y; }, d) : null; },
+                function (d) { return d.data && d.data.hasOwnProperty('x') ? nwt.partial(function (d) { return d.series + '<br>' +  d.x + '<br>' + d.y; }, d.data) : null; },
+                function (d) { return d.hasOwnProperty('value') ? nwt.partial(function (d) { return d.value; }, d) : null;  },
                 function () { return function () { return 'NA'; }; }
             ];
 

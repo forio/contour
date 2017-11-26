@@ -1,1 +1,1 @@
-Contour.export('nullVis', _.noop);
+Contour.export('nullVis', nwt.noop);

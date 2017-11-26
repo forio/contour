@@ -341,7 +341,7 @@ describe('Contour', function () {
         });
 
         it('should call visualizations to render!', function () {
-            var mock = createVisMock('something', _.noop);
+            var mock = createVisMock('something', nwt.noop);
 
             createContour().something().render();
 

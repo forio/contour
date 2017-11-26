@@ -1,8 +1,8 @@
 (function () {
 
     function normalizeDataSet(dataSet) {
-        var all = _.nw.flatten(dataSet.map(function (set) { return set.data; }));
-        var isLinear = all.length && _.nw.isNumber(all[0].x);
+        var all = nwt.flatten(dataSet.map(function (set) { return set.data; }));
+        var isLinear = all.length && nwt.isNumber(all[0].x);
         var normalizer = function (d, i) { return { x: i, y: d.y }; };
 
         return isLinear ? all : all.map(normalizer);
@@ -15,7 +15,7 @@
         var shouldAnimate = options.chart.animations && options.chart.animations.enable;
         var x = function(d) { return this.xScale(d) + this.rangeBand / 2; }.bind(this);
         var y = function(d) { return this.yScale(d); }.bind(this);
-        var regression = _.nw.linearRegression(data);
+        var regression = nwt.linearRegression(data);
         var domain = d3.extent(this.xScale.domain());
         var numericDomain = d3.extent(data, function(p) { return p.x; });
         var lineY = function (x) { return regression.intercept + regression.slope * x; };

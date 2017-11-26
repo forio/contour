@@ -80,14 +80,14 @@ describe('Visualizations', function () {
                 it('should default to linear x scale', function () {
                     var chart = createContour();
                     chart.line([1,2,3]).render();
-                    expect(chart.xScaleGenerator instanceof _.nw.axes.LinearScale).toBeTruthy();
+                    expect(chart.xScaleGenerator instanceof nwt.axes.LinearScale).toBeTruthy();
                 });
 
 
                 it('should render as ordinal scale if categorical data is passed in', function () {
                     var chart = createContour();
                     chart.line([{x: 'a', y: 1}, {x: 'b', y: 2}]).render();
-                    expect(chart.xScaleGenerator instanceof _.nw.axes.OrdinalScale).toBeTruthy();
+                    expect(chart.xScaleGenerator instanceof nwt.axes.OrdinalScale).toBeTruthy();
                 });
 
                 it('should add a group with the visualization id', function () {
@@ -154,8 +154,8 @@ describe('Visualizations', function () {
                         var seriesClasses = ['s-1', 'series', '1'];
                         var classes = d3.select(g[0]).attr('class').split(' ');
 
-                        // expect(_.every(seriesClasses.map(_.partial(_.includes, classes)))).toBe(true);
-                        expect(seriesClasses.every(function (s) { s.includes(classes); })).toBe(true);
+                        var inter = nwt.intersection(classes, seriesClasses);
+                        expect(inter).toEqual(seriesClasses);
                     });
 
 

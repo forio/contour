@@ -164,7 +164,7 @@ describe('Bar chart', function () {
         });
 
         it('should behave correctly', function () {
-            var rects = $el.find('rect.bar').filter(function (r) { return +$(r).attr('width') > 0; });
+            var rects = [].filter.call($el.find('rect.bar'), function (r) { return +$(r).attr('width') > 0; });
             expect(rects.length).toBe(7);
         });
 

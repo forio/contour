@@ -17,7 +17,7 @@
 
     /*jshint eqnull:true */
     var _stackedExtent = function (data) {
-        var stack = _.nw.stackLayout();
+        var stack = nwt.stackLayout();
         var dataSets = stack(data);
         var ext = [];
         dataSets.forEach(function (set) {
@@ -30,8 +30,8 @@
         return [Math.min.apply(null, ext), Math.max.apply(null, ext)];
     };
 
-    var _xExtent = _.nw.partialRight(_extent, 'x');
-    var _yExtent = _.nw.partialRight(_extent, 'y');
+    var _xExtent = nwt.partialRight(_extent, 'x');
+    var _yExtent = nwt.partialRight(_extent, 'y');
 
     function VisInstanceContainer(data, vizOptions, type, renderer, context) {
         this.type = type;
@@ -70,7 +70,7 @@
 
 
         normalizeData: function (options) {
-            var normal = (this.ctx || {}).dataNormalizer || _.nw.normalizeSeries;
+            var normal = (this.ctx || {}).dataNormalizer || nwt.normalizeSeries;
             var categories = (options.xAxis || {}).categories;
             this.data = normal(this.rawData, categories);
             this._updateDomain(options);
@@ -81,10 +81,10 @@
         _updateDomain: function (options) {
             if(!options[this.type]) throw new Error('Set the options before calling setData or _updateDomain');
 
-            var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
+            var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || nwt.isSupportedDataFormat;
 
             if (isSupportedFormat(this.data)) {
-                this.xDomain = _.nw.flatten(this.data.map(function (set) { return set.data.map(function (d) { return d.x; }); }));
+                this.xDomain = nwt.flatten(this.data.map(function (set) { return set.data.map(function (d) { return d.x; }); }));
                 this.xExtent = _xExtent(this.data, 'x');
                 this.yExtent = options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);
             }
