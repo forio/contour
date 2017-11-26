@@ -23,7 +23,6 @@
     "type": "git"
   },
   "dependencies": {
-    "lodash": "~4.17.2",
     "d3": "~3.5.10"
   },
   "devDependencies": {

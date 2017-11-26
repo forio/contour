@@ -195,7 +195,6 @@ module.exports = function (grunt) {
                     vendor: [
                         'examples/js/vendor/d3.min.js',
                         'examples/js/vendor/jquery.js',
-                        'examples/js/vendor/lodash.js'
                     ],
                     specs: [
                         'tests/specs/**/*-spec.js'
