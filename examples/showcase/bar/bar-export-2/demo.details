@@ -1,0 +1,7 @@
+---
+ name: Bar Chart with custom data labels
+ description: Here we've created a custom visualization that puts the data labels at the right edge of the chart align with each bar, or at the end of the bar.
+ authors:
+   - Forio
+ normalize_css: no
+ ...
