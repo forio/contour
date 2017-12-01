@@ -11,7 +11,7 @@ describe('Legend Visualization', function () {
     function createinstance(options) {
         $el = $('<div>');
         el = $el.get(0);
-        options = _.extend({ el: el }, options);
+        options = Object.assign({ el: el }, options);
 
         instance = new Contour(options).cartesian();
         return instance;

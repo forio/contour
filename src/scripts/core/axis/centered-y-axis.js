@@ -8,8 +8,8 @@
         this.NUM_DECIMALS = 1;
     };
 
-    var __super = _.nw.axes.YAxis.prototype;
-    CenteredYAxis.prototype = _.extend({}, __super, {
+    var __super = nwt.axes.YAxis.prototype;
+    CenteredYAxis.prototype = Object.assign({}, __super, {
         axis: function () {
             var options = this.options.yAxis;
             this.domain = this._scale.domain();
@@ -55,10 +55,10 @@
                 tickValues.push(d3.round(currentTick, this.NUM_DECIMALS));
             }
             tickValues.push(tickMax);
-            
+
             return tickValues;
         }
     });
 
-    _.nw.addAxis('CenteredYAxis', CenteredYAxis);
+    nwt.addAxis('CenteredYAxis', CenteredYAxis);
 })();

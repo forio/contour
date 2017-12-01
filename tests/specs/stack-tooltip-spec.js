@@ -9,7 +9,7 @@ describe('Stacked Tooltip', function () {
     });
 
     function createContour(options) {
-        options = _.extend({ el: el }, options);
+        options = Object.assign({ el: el }, options);
         contour = new Contour(options).cartesian();
         return contour;
     }

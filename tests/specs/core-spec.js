@@ -8,7 +8,7 @@ describe('Contour', function () {
     });
 
     function createContour(options) {
-        options = _.extend({ el: el }, options);
+        options = Object.assign({ el: el }, options);
         contour = new Contour(options);
         return contour;
     }
@@ -24,9 +24,9 @@ describe('Contour', function () {
         });
 
         it('should throw if passed and invalid constructor', function () {
-            expect(_.bind(Contour.export, contour, 'some', 'thing')).toThrow();
-            expect(_.bind(Contour.export, contour, 'some')).toThrow();
-            expect(_.bind(Contour.export, contour, 'some', exportedVisRenderer)).not.toThrow();
+            expect(Contour.export.bind(contour, 'some', 'thing')).toThrow();
+            expect(Contour.export.bind(contour, 'some')).toThrow();
+            expect(Contour.export.bind(contour, 'some', exportedVisRenderer)).not.toThrow();
         });
 
         it('should add functionality to Narwal\'s prototype', function () {
@@ -341,7 +341,7 @@ describe('Contour', function () {
         });
 
         it('should call visualizations to render!', function () {
-            var mock = createVisMock('something', _.noop);
+            var mock = createVisMock('something', nwt.noop);
 
             createContour().something().render();
 

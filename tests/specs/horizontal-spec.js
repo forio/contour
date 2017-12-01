@@ -8,7 +8,7 @@ describe('Horizontal frame', function () {
     });
 
     function createContour(options) {
-        options = _.extend({ el: el }, options);
+        options = Object.assign({ el: el }, options);
         contour = new Contour(options);
         return contour;
     }
@@ -63,7 +63,7 @@ describe('Horizontal frame', function () {
             it('should render the horizontal axis titles below the axis labels', function () {
                 contour.render();
 
-                var textBounds = _.nw.textBounds('ABC', '.y.tick');
+                var textBounds = nwt.textBounds('ABC', '.y.tick');
                 var title = $el.find('.y.axis-title');
                 expect(+title.attr('y')).toBeGreaterThan(textBounds.height);
             });
@@ -74,7 +74,7 @@ describe('Horizontal frame', function () {
             it('should render the vertical axis titles to the left of the axis labels', function () {
                 contour.render();
 
-                var textBounds = _.nw.textBounds('ABC', '.x.tick');
+                var textBounds = nwt.textBounds('ABC', '.x.tick');
                 var title = $el.find('.x.axis-title');
                 expect(+title.attr('x')).toBeLessThan(textBounds.width);
             });

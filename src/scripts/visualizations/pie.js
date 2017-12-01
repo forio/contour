@@ -28,7 +28,7 @@
     };
 
     function normalizePadding(options) {
-        if (_.isNumber(options.pie.piePadding)) {
+        if (nwt.isNumber(options.pie.piePadding)) {
             return {
                 top: options.pie.piePadding,
                 left: options.pie.piePadding,
@@ -42,10 +42,10 @@
 
     function clampBounds(bounds, maxWidth, maxHeight) {
         return {
-            top: _.nw.clamp(bounds.top, 0, maxHeight),
-            bottom: _.nw.clamp(bounds.bottom, 0, maxHeight),
-            left: _.nw.clamp(bounds.left, 0, maxWidth),
-            right: _.nw.clamp(bounds.right, 0, maxWidth)
+            top: nwt.clamp(bounds.top, 0, maxHeight),
+            bottom: nwt.clamp(bounds.bottom, 0, maxHeight),
+            left: nwt.clamp(bounds.left, 0, maxWidth),
+            right: nwt.clamp(bounds.right, 0, maxWidth)
         };
     }
 
@@ -83,8 +83,8 @@
         var numSeries = data.length;
         var style = options.pie.style;
         var _this = this;
-        var shouldCenterX = _.every([options.pie.piePadding.left, options.pie.piePadding.right], function (d) { return d == null; });
-        var shouldCenterY = _.every([options.pie.piePadding.top, options.pie.piePadding.bottom], function (d) { return d == null; });
+        var shouldCenterX = [options.pie.piePadding.left, options.pie.piePadding.right].every(function (d) { return d == null; });
+        var shouldCenterY = [options.pie.piePadding.top, options.pie.piePadding.bottom].every(function (d) { return d == null; });
         var pixelPadding = resolvePaddingUnits(padding, w, h);
         // the reference size is the min between with and height of the container
         var referenceSize = Math.min(w, h);
@@ -92,9 +92,9 @@
         // for auto radius we need to take the min between the available with or height adjusted by padding and num series
         var totalPadding = pixelPadding.left + (pixelPadding.right + pixelPadding.left) * (numSeries - 1) + pixelPadding.right;
         var proposedRadius = Math.min(((w - totalPadding) / numSeries) / 2, (h - pixelPadding.top - pixelPadding.bottom) / 2);
-        var radius = resolveValueUnits(_.nw.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius, referenceSize), referenceSize);
+        var radius = resolveValueUnits(nwt.getValue(options.pie.outerRadius, proposedRadius, this, proposedRadius, referenceSize), referenceSize);
         // inner radius is a pixel value or % of the radius
-        var innerRadius = resolveValueUnits(_.nw.getValue(options.pie.innerRadius, 0, this, radius), radius);
+        var innerRadius = resolveValueUnits(nwt.getValue(options.pie.innerRadius, 0, this, radius), radius);
         var pieData = d3.layout.pie().value(function (d) { return d.y; }).sort(null);
         var totalWidth = totalPadding + radius * numSeries * 2;
         var outerPaddingLeft = shouldCenterX ? (w - totalWidth) / 2 : pixelPadding.left;

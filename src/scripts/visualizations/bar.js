@@ -23,11 +23,11 @@
         var style = opt.style;
         var x = function (d) { return _this.xScale(d) - 0.5; };
         var y = function (d) { return _this.yScale(d) + 0.5; };
-        var chartOffset = _.nw.getValue(opt.offset, 0, this);
-        var rangeBand = _.nw.getValue(opt.barWidth, this.rangeBand, this);
-        var stack = _.nw.stackLayout();
+        var chartOffset = nwt.getValue(opt.offset, 0, this);
+        var rangeBand = nwt.getValue(opt.barWidth, this.rangeBand, this);
+        var stack = nwt.stackLayout();
         var update = options.bar.stacked ? stacked : grouped;
-        var enter = _.partialRight(update, true);
+        var enter = nwt.partialRight(update, true);
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
 
         data = options.bar.preprocess(data);

@@ -112,10 +112,10 @@
             if(!data || !data.length) return [];
 
             if(data[0].data) {
-                _.each(data, sortSeries);
+                data.forEach(sortSeries);
             }
 
-            var shouldSort = _.isObject(data[0]) && _.isDate(data[0].x);
+            var shouldSort = nwt.isObject(data[0]) && nwt.isDate(data[0].x);
             var sortFunc = function (a, b) { return a.x - b.x; };
             if(shouldSort) {
                 data.sort(sortFunc);
@@ -200,7 +200,7 @@
             }
 
             // extend the --instance-- we don't want all charts to be overriden...
-            _.extend(this, _.omit(functionality, 'init'));
+            Object.assign(this, nwt.omit(functionality, 'init'));
 
             if(functionality.init) {
                 functionality.init.call(this, this.originalOptions);
@@ -218,7 +218,7 @@
         return this;
     };
 
-    Contour.prototype = _.extend(Contour.prototype, {
+    Contour.prototype = Object.assign(Contour.prototype, {
         _visualizations: undefined,
 
         _extraOptions: undefined,
@@ -242,9 +242,9 @@
         calculateWidth: function () {
 
             // assume all in pixel units and border-box box-sizing
-            var outerWidth = parseInt(_.nw.getStyle(this.options.el, 'width') || 0, 10);
-            var paddingLeft = parseInt(_.nw.getStyle(this.options.el, 'padding-left') || 0, 10);
-            var paddingRight = parseInt(_.nw.getStyle(this.options.el, 'padding-right') || 0, 10);
+            var outerWidth = parseInt(nwt.getStyle(this.options.el, 'width') || 0, 10);
+            var paddingLeft = parseInt(nwt.getStyle(this.options.el, 'padding-left') || 0, 10);
+            var paddingRight = parseInt(nwt.getStyle(this.options.el, 'padding-right') || 0, 10);
 
             var width = outerWidth - paddingRight - paddingLeft;
 
@@ -253,9 +253,9 @@
 
         calculateHeight: function () {
             // assume all in pixel units and border-box box-sizing
-            var outerHeight = parseInt(_.nw.getStyle(this.options.el, 'height') || 0, 10);
-            var paddingTop = parseInt(_.nw.getStyle(this.options.el, 'padding-top') || 0, 10);
-            var paddingBottom = parseInt(_.nw.getStyle(this.options.el, 'padding-bottom') || 0, 10);
+            var outerHeight = parseInt(nwt.getStyle(this.options.el, 'height') || 0, 10);
+            var paddingTop = parseInt(nwt.getStyle(this.options.el, 'padding-top') || 0, 10);
+            var paddingBottom = parseInt(nwt.getStyle(this.options.el, 'padding-bottom') || 0, 10);
             var height = outerHeight - paddingTop - paddingBottom;
 
             var containerHeight = this.options.el ? height : undefined;
@@ -275,7 +275,7 @@
             options.chart.width = options.chart.width || this.calculateWidth();
             options.chart.height = options.chart.height || this.calculateHeight();
 
-            this.options = _.merge(options, {
+            this.options = nwt.merge(options, {
                 chart: {
                     plotWidth: options.chart.width - options.chart.margin.left - options.chart.margin.right - options.chart.internalPadding.left - options.chart.padding.right,
                     plotHeight: options.chart.height - options.chart.margin.top - options.chart.margin.bottom - options.chart.padding.top - options.chart.internalPadding.bottom,
@@ -308,17 +308,17 @@
         },
 
         composeOptions: function () {
-            var allDefaults = _.merge({}, defaults);
-            var mergeExtraOptions = function (opt) { _.merge(allDefaults, opt); };
-            var mergeDefaults = function (vis) { _.merge(allDefaults, vis.renderer.defaults); };
+            var allDefaults = nwt.merge({}, defaults);
+            var mergeExtraOptions = function (opt) { nwt.merge(allDefaults, opt); };
+            var mergeDefaults = function (vis) { nwt.merge(allDefaults, vis.renderer.defaults); };
 
-            _.each(this._extraOptions, mergeExtraOptions);
-            _.each(this._visualizations, mergeDefaults);
+            this._extraOptions.forEach(mergeExtraOptions);
+            this._visualizations.forEach(mergeDefaults);
 
-            var opt = _.extend({}, this.originalOptions);
+            var opt = nwt.materialize(this.originalOptions, this, { skipMatch: /formatter/ });
 
             // compose the final list of options right before start rendering
-            this.options = _.merge(opt, _.merge({}, allDefaults, opt));
+            this.options = nwt.merge(opt, nwt.merge({}, allDefaults, opt));
         },
 
         /**
@@ -458,10 +458,10 @@
 
         renderVisualizations: function () {
 
-            _.each(this._visualizations, function (visualization, index) {
+            this._visualizations.forEach(function (visualization, index) {
                 var id = index + 1;
                 var layer = visualization.layer || this.createVisualizationLayer(visualization, id);
-                var opt = _.merge({}, this.options, visualization.options);
+                var opt = nwt.merge({}, this.options, visualization.options);
 
                 layer.attr('transform', 'translate(' + this.options.chart.internalPadding.left + ',' + (this.options.chart.padding.top || 0) + ')');
                 visualization.layer = layer;
@@ -484,11 +484,11 @@
         *
         */
         checkDependencies: function (listOfDependencies) {
-            listOfDependencies = _.isArray(listOfDependencies) ? listOfDependencies : [listOfDependencies];
+            listOfDependencies = Array.isArray(listOfDependencies) ? listOfDependencies : [listOfDependencies];
             var _this = this;
             var missing = [];
 
-            _.each(listOfDependencies, function (dep) {
+            listOfDependencies.forEach(function (dep) {
                 if (_this._exposed.indexOf(dep) === -1) {
                     missing.push(dep);
                 }
@@ -500,14 +500,14 @@
         },
 
         ensureDefaults: function (options, renderer) {
-            if (_.isString(renderer)) {
+            if (nwt.isString(renderer)) {
                 renderer = this[renderer].renderer;
             }
 
             if (renderer.defaults) {
                 var defaults = renderer.defaults;
-                options = _.defaults(options || {}, defaults);
-                this.options = _.defaults(this.options, defaults);
+                options = nwt.defaults(options || {}, defaults);
+                this.options = nwt.defaults(this.options, defaults);
             }
         },
 
@@ -531,7 +531,9 @@
         *
         */
         setData: function (data) {
-            _.invokeMap(this._visualizations, 'setData', data);
+            this._visualizations.forEach(function (v) {
+                v.setData(data);
+            });
 
             return this;
         },
@@ -562,9 +564,9 @@
 
         },
 
-        dataNormalizer: _.nw.normalizeSeries,
+        dataNormalizer: nwt.normalizeSeries,
 
-        isSupportedDataFormat: _.nw.isSupportedDataFormat
+        isSupportedDataFormat: nwt.isSupportedDataFormat
     });
 
     // exports for commonJS and requireJS styles

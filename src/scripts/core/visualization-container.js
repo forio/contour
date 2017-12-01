@@ -1,9 +1,9 @@
 (function () {
     var _extent = function (series, field) {
         var maxs = [], mins = [];
-        _.each(series, function (d) {
+        series.forEach(function (d) {
             if(!d.data.length) return;
-            var values = _.map(d.data, field);
+            var values = d.data.map(function (d) { return d[field]; });
             maxs.push(d3.max(values));
             mins.push(d3.min(values));
         });
@@ -11,27 +11,27 @@
         //
         if(!mins.length || !maxs.length) return [];
 
-        return [_.min(mins), _.max(maxs)];
+        return [Math.min.apply(null, mins), Math.max.apply(null, maxs)];
     };
 
 
     /*jshint eqnull:true */
     var _stackedExtent = function (data) {
-        var stack = _.nw.stackLayout();
+        var stack = nwt.stackLayout();
         var dataSets = stack(data);
         var ext = [];
-        _.each(dataSets, function (set) {
-            _.each(set.data, function (d, i) {
+        dataSets.forEach(function (set) {
+            set.data.forEach(function (d, i) {
                 var cur = ext[i] || 0;
                 ext[i] = cur + d.y;
             });
         });
 
-        return [_.min(ext), _.max(ext)];
+        return [Math.min.apply(null, ext), Math.max.apply(null, ext)];
     };
 
-    var _xExtent = _.partialRight(_extent, 'x');
-    var _yExtent = _.partialRight(_extent, 'y');
+    var _xExtent = nwt.partialRight(_extent, 'x');
+    var _yExtent = nwt.partialRight(_extent, 'y');
 
     function VisInstanceContainer(data, vizOptions, type, renderer, context) {
         this.type = type;
@@ -70,7 +70,7 @@
 
 
         normalizeData: function (options) {
-            var normal = (this.ctx || {}).dataNormalizer || _.nw.normalizeSeries;
+            var normal = (this.ctx || {}).dataNormalizer || nwt.normalizeSeries;
             var categories = (options.xAxis || {}).categories;
             this.data = normal(this.rawData, categories);
             this._updateDomain(options);
@@ -81,10 +81,10 @@
         _updateDomain: function (options) {
             if(!options[this.type]) throw new Error('Set the options before calling setData or _updateDomain');
 
-            var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || _.nw.isSupportedDataFormat;
+            var isSupportedFormat = (this.ctx || {}).isSupportedDataFormat || nwt.isSupportedDataFormat;
 
             if (isSupportedFormat(this.data)) {
-                this.xDomain = _.flatten(_.map(this.data, function (set) { return _.map(set.data, 'x'); }));
+                this.xDomain = nwt.flatten(this.data.map(function (set) { return set.data.map(function (d) { return d.x; }); }));
                 this.xExtent = _xExtent(this.data, 'x');
                 this.yExtent = options[this.type].stacked ? _stackedExtent(this.data) : _yExtent(this.data);
             }

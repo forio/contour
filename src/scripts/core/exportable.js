@@ -325,7 +325,7 @@
                 // compare computed styles at this node and apply the differences directly
                 applyStyles(sourceNode, newNode);
 
-                _.each(sourceNode.childNodes, function (childNode) {
+                [].forEach.call(sourceNode.childNodes, function (childNode) {
                     // clone each child node and apply styles
                     cloneNodes(childNode, newNode);
                 });
@@ -409,7 +409,7 @@
 
                 var entriesDivs = containerDiv.selectAll('.contour-legend-entry');
 
-                _.each(entriesDivs[0], function (entryDivNode) {
+                entriesDivs[0].forEach(function (entryDivNode) {
                     var entryDiv = d3.select(entryDivNode);
 
                     var enter = containerSvg.append('g');
@@ -462,7 +462,7 @@
 
             // merge configuration options with defaults
             options = options || {};
-            _.defaults(options, defaultParams);
+            nwt.defaults(options, defaultParams);
 
             var svgNode = container.select('svg').node();
             // get bounds from original SVG, and proportion them based on specified options
@@ -706,7 +706,7 @@
                 'canvg.js'
             ];
             var remaining = scripts.length;
-            _.each(scripts, function (src) {
+            scripts.forEach(function (src) {
                 var script = document.createElement('script');
                 script.type = 'text/javascript';
                 script.onload = function () {

@@ -15,7 +15,7 @@ describe('Exportable extension', function () {
     });
 
     function createinstance(options) {
-        options = _.extend({
+        options = Object.assign({
             el: el,
             chart: {
                 animations: false

@@ -101,14 +101,14 @@
 
                 this.options = options || {};
 
-                _.merge(this.options, readOnlyProps);
+                nwt.merge(this.options, readOnlyProps);
 
                 var extraPadding = {};
                 if (!this.options.xAxis || !this.options.xAxis.firstAndLast) {
                     extraPadding = { chart : { padding: { right: 15 }}};
                 }
 
-                this._extraOptions.push(_.merge({}, defaults, extraPadding));
+                this._extraOptions.push(nwt.merge({}, defaults, extraPadding));
 
                 return this;
             },
@@ -138,7 +138,7 @@
                     return d3.extent(domain);
                 }
 
-                return _.nw.extractScaleDomain(domain, min, opts.max, opts.ticks);
+                return nwt.extractScaleDomain(domain, min, opts.max, opts.ticks);
             },
 
             /*jshint eqnull:true */
@@ -172,11 +172,11 @@
                 if (options.ticks !== 0) {
                     var xLabels = this.xDomain;
                     var xAxisText = xLabels.join('<br>');
-                    var xLabelBounds = _.nw.textBounds(xAxisText, '.x.axis');
-                    var regularXBounds = _.nw.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
+                    var xLabelBounds = nwt.textBounds(xAxisText, '.x.axis');
+                    var regularXBounds = nwt.textBounds('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890', '.x.axis');
                     var em = regularXBounds.height;
                     var ang = options.labels && options.labels.rotation ? options.labels.rotation % 360 : 0;
-                    var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(_.nw.degToRad(ang))) + em / 5) ;
+                    var xLabelHeightUsed = ang === 0 ? regularXBounds.height : Math.ceil(Math.abs(xLabelBounds.width * Math.sin(nwt.degToRad(ang))) + em / 5) ;
                     return maxTickSize(options) + (options.tickPadding || 0) +
                         xLabelHeightUsed;
                 } else {
@@ -190,8 +190,8 @@
                 var yLabels = tmpScale.ticks(options.ticks);
 
                 var format = options.labels.formatter || d3.format(options.labels.format || ',.0f');
-                var yAxisText = _.map(yLabels, format).join('<br>');
-                var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
+                var yAxisText = yLabels.map(format).join('<br>');
+                var yLabelBounds = nwt.textBounds(yAxisText, '.y.axis');
                 return maxTickSize(this.options.yAxis) + (this.options.yAxis.tickPadding || 0) +
                     yLabelBounds.width;
             },
@@ -204,12 +204,12 @@
                 var titleBounds;
                 if (this.options.xAxis.title || this.options.yAxis.title) {
                     if(this.options.xAxis.title) {
-                        titleBounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                        titleBounds = nwt.textBounds(this.options.xAxis.title, '.x.axis-title');
                         this.options.chart.internalPadding.bottom += titleBounds.height + this.options.xAxis.titlePadding;
                     }
 
                     if(this.options.yAxis.title) {
-                        titleBounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                        titleBounds = nwt.textBounds(this.options.yAxis.title, '.y.axis-title');
                         this.options.chart.internalPadding.left += titleBounds.height + this.options.yAxis.titlePadding;
                     }
                 }
@@ -219,7 +219,7 @@
                 if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
                 if(!this.xScale) {
-                    this.xScaleGenerator = _.nw.xScaleFactory(this.dataSrc, this.options);
+                    this.xScaleGenerator = nwt.xScaleFactory(this.dataSrc, this.options);
                     this.xScale = this.xScaleGenerator.scale(this.xDomain);
                     this.rangeBand = this.xScaleGenerator.rangeBand();
                 } else {
@@ -234,7 +234,7 @@
                 var yScaleDomain = this._getYScaledDomain(this.yDomain, this.options);
 
                 if(!this.yScale) {
-                    this.yScaleGenerator = _.nw.yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
+                    this.yScaleGenerator = nwt.yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
                     this.yScale = this.yScaleGenerator.scale(yScaleDomain);
                 } else {
                     this.yScaleGenerator.update(yScaleDomain, this.dataSrc);
@@ -391,7 +391,7 @@
                 var el;
 
                 if (this.options.xAxis.title) {
-                    bounds = _.nw.textBounds(this.options.xAxis.title, '.x.axis-title');
+                    bounds = nwt.textBounds(this.options.xAxis.title, '.x.axis-title');
                     y = this.options.chart.internalPadding.bottom;
                     x = 0;
                     el = this._xAxisGroup.selectAll('.x.axis-title').data([1]);
@@ -409,7 +409,7 @@
                 }
 
                 if (this.options.yAxis.title) {
-                    bounds = _.nw.textBounds(this.options.yAxis.title, '.y.axis-title');
+                    bounds = nwt.textBounds(this.options.yAxis.title, '.y.axis-title');
                     y = -this.options.chart.internalPadding.left + bounds.height * adjustFactor;
                     x = 0;
                     el = this._yAxisGroup.selectAll('.y.axis-title').data([1]);
@@ -555,12 +555,12 @@
             },
 
             datum: function (d, index) {
-                if(_.isObject(d) && _.isArray(d.data))
-                    return _.map(d.data, _.bind(this.datum, this));
+                if(nwt.isObject(d) && Array.isArray(d.data))
+                    return d.data.map(this.datum.bind(this));
 
                 return {
-                    y: _.isObject(d) ? d.y : d,
-                    x: _.isObject(d) ? d.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
+                    y: nwt.isObject(d) ? d.y : d,
+                    x: nwt.isObject(d) ? d.x : this.options.xAxis.categories ? this.options.xAxis.categories[index] : index
                 };
             },
 
@@ -576,18 +576,18 @@
 
             _adjustXDomain: function (extents) {
                 this.xDomain = this.getXDomain();
-                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                this.dataSrc = _.flatten(
-                    _.map(dataVis, function (v) {
-                        return _.flatten(_.map(v.data, _.bind(this.datum, this)));
+                var dataVis = this._visualizations.filter(function (v) { return nwt.isSupportedDataFormat(v.data); });
+                this.dataSrc = nwt.flatten(
+                    dataVis.map(function (v) {
+                        return nwt.flatten(v.data.map(this.datum.bind(this)));
                     }.bind(this))
                 );
 
-                // _.every() on empty array returns true, so we guard against it
-                var isCategoricalData = this.dataSrc.length && _.every(this.dataSrc, function (d) { return +d.x !== d.x; });
-                var dataSrcCategories = _.uniq(_.map(this.dataSrc, 'x'));
+                // every() on empty array returns true, so we guard against it
+                var isCategoricalData = this.dataSrc.length && this.dataSrc.every(function (d) { return +d.x !== d.x; });
+                var dataSrcCategories = nwt.uniq(this.dataSrc.map(function (d) { return d.x; }));
                 var sameCats = this.options.xAxis.categories ?
-                    this.options.xAxis.categories.length === dataSrcCategories.length && _.intersection(this.options.xAxis.categories, dataSrcCategories).length === dataSrcCategories.length :
+                    this.options.xAxis.categories.length === dataSrcCategories.length && nwt.intersection(this.options.xAxis.categories, dataSrcCategories).length === dataSrcCategories.length :
                     false;
 
                 if (isCategoricalData && !(this.options.xAxis.categories && sameCats)) {
@@ -604,21 +604,21 @@
             _normalizeData: function () {
                 var opt = this.options;
                 this._visualizations.forEach(function (viz) {
-                    var vizOpt = _.merge({}, opt, viz.options);
+                    var vizOpt = nwt.merge({}, opt, viz.options);
                     viz.normalizeData(vizOpt);
                 });
             },
 
             getExtents: function (axis) {
                 var field = axis && axis === 'x' ? 'xExtent' : 'yExtent';
-                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                var all = _.flatten(_.map(dataVis, field));
+                var dataVis = this._visualizations.filter(function (v) { return nwt.isSupportedDataFormat(v.data); });
+                var all = nwt.flatten(dataVis.map(function (d) { return d[field]; }));
                 return all.length ? d3.extent(all) : [];
             },
 
             getXDomain: function () {
-                var dataVis = _.filter(this._visualizations, function (v) { return _.nw.isSupportedDataFormat(v.data); });
-                var all = _.nw.uniq(_.flatten(_.map(dataVis, 'xDomain')));
+                var dataVis = this._visualizations.filter(function (v) { return nwt.isSupportedDataFormat(v.data); });
+                var all = nwt.uniq(nwt.flatten(dataVis.map(function (d) { return d.xDomain; })));
 
                 return all;
             }

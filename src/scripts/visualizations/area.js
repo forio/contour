@@ -7,7 +7,7 @@
         area: {
             stacked: true,
             areaBase: undefined,
-            preprocess: _.nw.minMaxFilter(1000)
+            preprocess: nwt.minMaxFilter(1000)
         }
     };
 
@@ -15,8 +15,8 @@
     function renderer(data, layer, options) {
         this.checkDependencies('cartesian');
         var duration = options.chart.animations.duration != null ? options.chart.animations.duration : 400;
-        var x = _.bind(function (val) { return this.xScale(val) + this.rangeBand / 2 + 0.5; }, this);
-        var y = _.bind(function (val) { return this.yScale(val) + 0.5; }, this);
+        var x = function (val) { return this.xScale(val) + this.rangeBand / 2 + 0.5; }.bind(this);
+        var y = function (val) { return this.yScale(val) + 0.5; }.bind(this);
         var h = options.chart.plotHeight;
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
         var stack = d3.layout.stack().values(function (d) { return d.data; });

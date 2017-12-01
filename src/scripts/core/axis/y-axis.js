@@ -18,7 +18,7 @@
             var options = this.options.yAxis;
             var domain = this.domain;
             var zeroAnchor = (options.zeroAnchor != null) ? options.zeroAnchor : options.scaling.options.zeroAnchor;
-            var tickValues = options.tickValues || _.nw.niceTicks(options.min, options.max, options.ticks, zeroAnchor, domain);
+            var tickValues = options.tickValues || nwt.niceTicks(options.min, options.max, options.ticks, zeroAnchor, domain);
             var numTicks = this.numTicks(domain, options.min, options.max);
             var format = options.labels.formatter || d3.format(options.labels.format);
 
@@ -63,6 +63,6 @@
         }
     };
 
-    _.nw.addAxis('YAxis', YAxis);
+    nwt.addAxis('YAxis', YAxis);
 
 })();

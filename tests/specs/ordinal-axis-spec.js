@@ -17,21 +17,21 @@ describe('Ordinal xAxis', function () {
     };
 
     function createinstance(options) {
-        options = _.extend({ el: el }, options);
+        options = Object.assign({ el: el }, options);
         instance = new Contour(options).cartesian();
         return instance;
     }
 
 
     function createAxis(options) {
-        return new _.nw.axes.OrdinalScale(data, $.extend(true, {}, defaults, options));
+        return new nwt.axes.OrdinalScale(data, $.extend(true, {}, defaults, options));
     }
 
     beforeEach(function () {
         $el = $('<div>');
         el = $el.get(0);
         instance = createinstance();
-        data = _.range(10).map(function (n) { return 100 * n; });
+        data = [1,1,1,1,1,1,1,1,1,1].map(function (n) { return 100 * n; });
     });
 
 
@@ -39,7 +39,7 @@ describe('Ordinal xAxis', function () {
         instance.nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.x.axis ');
-        expect(_.every(ticks.find('.tick line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '6'; })).toBe(true);
+        expect([].every.call(ticks.find('.tick line'), function (t) { return $(t).attr('x2') === '0' && $(t).attr('y2') === '6'; })).toBe(true);
         expect(ticks.find('.domain').attr('d')).toContain('M0');
     });
 

@@ -1,14 +1,273 @@
+// jshint eqnull:true
 (function () {
     // cheap trick to add decimals without hitting javascript issues
     // note that this fails for very large numbers
-    var multiplier = function (x) { var dig = _.nw.decDigits(x); return dig === 0 ? 1 : Math.pow(10, dig); };
+    var multiplier = function (x) { var dig = nwt.decDigits(x); return dig === 0 ? 1 : Math.pow(10, dig); };
     var maxMultiplier = function (a,b) { return Math.max(multiplier(a), multiplier(b)); };
     var addFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return (aa + bb) / factor; };
     var subFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return (aa - bb) / factor; };
     var mulFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return (aa * bb) / (factor*factor); };
     var divFloat = function (a,b) { var factor = maxMultiplier(a,b), aa = Math.round(a * factor), bb = Math.round(b * factor); return aa / bb; };
 
+    var root = this;
+
     var noop = function () {};
+
+    var objectProto = Object.prototype;
+    var hasOwnProperty = objectProto.hasOwnProperty;
+    var toString = objectProto.toString;
+
+    // jshint undef:false
+    var symToStringTag = typeof Symbol !== 'undefined' ? Symbol.toStringTag : undefined;
+
+    function baseGetTag(value) {
+        if (value == null) {
+          return value === undefined ? '[object Undefined]' : '[object Null]';
+        }
+
+        if (!(symToStringTag && symToStringTag in Object(value))) {
+          return toString.call(value);
+        }
+
+        var isOwn = hasOwnProperty.call(value, symToStringTag);
+        var tag = value[symToStringTag];
+        var unmasked = false;
+
+        try {
+          value[symToStringTag] = undefined;
+          unmasked = true;
+        } catch (e) {}
+
+        var result = toString.call(value);
+        if (unmasked) {
+          if (isOwn) {
+            value[symToStringTag] = tag;
+          } else {
+            delete value[symToStringTag];
+          }
+        }
+        return result;
+      }
+
+    var lodashFns = {
+        partial: function (fn /*args*/) {
+            // prevent leaking arguments object outside of the current scope
+            // https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#32-leaking-arguments
+            var args = new Array (arguments.length -1);
+            for (var i = 1; i < arguments.length; ++i) {
+              args[i-1] = arguments[i];
+            }
+
+            return function () {
+                var newArgs = new Array(arguments.length);
+                for (var i = 0; i < arguments.length; ++i) {
+                    newArgs[i] = arguments[i];
+                }
+
+                var fullArgs = args.concat(newArgs);
+                return fn.apply(this, fullArgs);
+            };
+        },
+
+        partialRight: function (fn /*, args */) {
+            // prevent leaking arguments object outside of the current scope
+            // https://github.com/petkaantonov/bluebird/wiki/Optimization-killers#32-leaking-arguments
+            var args = new Array (arguments.length -1);
+            for (var i = 1; i < arguments.length; ++i) {
+              args[i-1] = arguments[i];
+            }
+
+            return function () {
+                var newArgs = new Array(arguments.length);
+                for (var i = 0; i < arguments.length; ++i) {
+                    newArgs[i] = arguments[i];
+                }
+
+                var fullArgs = newArgs.concat(args);
+                return fn.apply(this, fullArgs);
+            };
+        },
+
+        isObject: function  (value) {
+            var type = typeof value;
+            return value != null && (type === 'object' || type === 'function');
+        },
+
+        isObjectLike: function (value) {
+            return typeof value === 'object' && value !== null;
+        },
+
+        isDate: function (value) {
+            return lodashFns.isObjectLike(value) && baseGetTag(value) === '[object Date]';
+        },
+
+        isNumber: function (value) {
+            return typeof value === 'number' ||
+                (lodashFns.isObjectLike(value) && baseGetTag(value) === '[object Number]');
+        },
+
+        isString: function (value) {
+            return typeof value === 'string' || value instanceof String;
+        },
+
+        range: function (start, end, step) {
+            if (arguments.length === 1) {
+                var t = start;
+                start = 0;
+                end = t;
+            }
+
+            step = step || (end >= start ? 1 : -1);
+            var index = -1;
+            var length = Math.max(Math.ceil((end - start) / (step || 1)), 0);
+            var result = new Array(length);
+
+            while (length--) {
+              result[++index] = start;
+              start += step;
+            }
+            return result;
+        },
+
+        uniq: function (value) {
+            if (value == null || !value.length) return [];
+            var set = {};
+            for (var j=0; j<value.length; j++) set[value[j]] = true;
+
+            var res = [];
+            for (j=0; j<value.length; j++) {
+                if (set[value[j]]) {
+                    res.push(value[j]);
+                    delete set[value[j]];
+                }
+            }
+
+            return res;
+        },
+
+        flatten: function (array) {
+            if (!array || !array.length) {
+                return [];
+            }
+
+            return array.reduce(function (acc, cur) {
+                return acc.concat(Array.isArray(cur) ? lodashFns.flatten(cur) : cur);
+            }, []);
+        },
+
+        compact: function (array) {
+            if (!array || !array.length) {
+                return [];
+            }
+
+            return array.reduce(function (acc, cur) {
+                if (cur) {
+                    acc.push(cur);
+                }
+                return acc;
+            }, []);
+        },
+
+        intersection: function (a, b) {
+            if (!a || !b) return [];
+            if (!a.length || !b.length) return [];
+
+            var map = b.reduce(function (acc, cur) {
+                acc[cur] = true;
+                return acc;
+            }, {});
+
+            return a.reduce(function (acc, cur) {
+                if (map[cur]) {
+                    acc.push(cur);
+                    delete map[cur];
+                }
+
+                return acc;
+            }, []);
+        },
+
+        merge: function (a, b) {
+            var args = new Array(arguments.length);
+            for (var i = 0; i < arguments.length; ++i) {
+              args[i] = arguments[i];
+            }
+
+            var isMergable = function (prop) { return prop && Object.prototype.toString.call(prop) === '[object Object]'; };
+            var cloneIfNeeded = function (val) { return val && Object.prototype.toString.call(val) === '[object Object]' ? lodashFns.merge({}, val) : val; };
+
+            if (!isMergable(a)) {
+                return b;
+            }
+
+            if (!b) {
+                return a;
+            }
+
+            var target = a;
+            /*jshint loopfunc: true */
+            for (var j=1, src = args[1]; j<args.length; j++, src=args[j]) {
+                Object.keys(src).forEach(function (key) {
+                    if (target[key]) {
+                        if (Array.isArray(target[key]) && Array.isArray(src[key])) {
+                            target[key] = target[key].map(function (el, i) {
+                                return lodashFns.merge(el, src[key][i]);
+                            });
+                        } else if (isMergable(target[key]) && isMergable(src[key])) {
+                            target[key] = lodashFns.merge(target[key], src[key]);
+                        } else if (src[key] != null) {
+                            target[key] = src[key];
+                        }
+                    } else {
+                        target[key] = cloneIfNeeded(src[key]);
+                    }
+                });
+            }
+
+            return target;
+        },
+
+        defaults: function (target /* ...sources */) {
+            var sources = new Array(arguments.length-1);
+            for (var i = 1; i < arguments.length; ++i) {
+              sources[i-1] = arguments[i];
+            }
+
+            if (!target) return null;
+
+            /*jshint loopfunc: true */
+            for (var j=0; j<sources.length; j++) {
+                var src = sources[j];
+                Object.keys(src).forEach(function (key) {
+                    var val = target[key];
+                    if (val === undefined) {
+                        target[key] = src[key];
+                    }
+                });
+            }
+
+            return target;
+        },
+
+        omit: function (src, props) {
+            if (!src || Object.prototype.toString.call(src) !== '[object Object]') {
+                return src;
+            }
+
+            var index = [].concat(props).reduce(function (acc, prop) {
+                return acc[prop] = true, acc;
+            }, {});
+
+            var res = {};
+            Object.keys(src).forEach(function (prop) {
+                if (!index[prop]) {
+                    res[prop] = src[prop];
+                }
+            });
+
+            return res;
+        }
+    };
 
     var generalHelpers = {
         // the src is a function returns the function evaluated
@@ -22,8 +281,10 @@
             return name || '';
         },
 
-        materialize: function (object, ctx) {
+        materialize: function (object, ctx, options, curPath) {
             var isDom = function (obj) { return obj && typeof obj === 'object' && obj.nodeType === 1 && typeof obj.style === 'object' && typeof obj.ownerDocument === 'object'; };
+            var skipList = (options || {}).skip || [];
+            var skipMatch = (options || {}).skipMatch;
             if ( object == null ) {
                 return object;
             } else if (Array.isArray(object)) {
@@ -34,7 +295,16 @@
                 return generalHelpers.getValue(object, null, ctx);
             } else if (typeof object === 'object') {
                 return Object.keys(object).reduce(function (prev, key) {
-                    prev[key] = generalHelpers.materialize(object[key], ctx);
+                    var curKeyPath = curPath ? curPath + '.' + key : key;
+                    var notInSkipList =  skipList.indexOf(curKeyPath) === -1;
+                    var notSkipMatch = (skipMatch && skipMatch.test ? !skipMatch.test(curKeyPath) : true);
+                    var expectsParam = /(function)?\s?\(.+\)\s*({|=>)/.test((object[key] || '').toString());
+                    var shouldMaterialize = notInSkipList && notSkipMatch && !expectsParam;
+                    if (shouldMaterialize) {
+                        prev[key] = generalHelpers.materialize(object[key], ctx, options, curKeyPath);
+                    } else {
+                        prev[key] = object[key];
+                    }
                     return prev;
                 }, {});
             } else {
@@ -47,9 +317,9 @@
 
         cleanNullValues: function () {
             return function (series) {
-                return _.map(series, function (s) {
-                    return _.extend(s, {
-                        data: _.reduce(s.data, function (acum, datum) {
+                return series.map(function (s) {
+                    return Object.assign(s, {
+                        data: s.data.reduce(function (acum, datum) {
                             if (datum.y != null) {
                                 acum.push(datum);
                             }
@@ -226,18 +496,18 @@
             // var digits = Math.floor(Math.log(val) / Math.LN10) + 1;
             // var fac = Math.pow(10, digits);
 
-            // if(val < 1) return _.nw.roundToNearest(val, 1);
+            // if(val < 1) return nwt.roundToNearest(val, 1);
 
-            // if(val < fac / 2) return _.nw.roundToNearest(val, fac / 2);
+            // if(val < fac / 2) return nwt.roundToNearest(val, fac / 2);
 
-            // return _.nw.roundToNearest(val, fac);
+            // return nwt.roundToNearest(val, fac);
         }
     };
 
     var axisHelpers = {
         addAxis: function (name, axisCtor) {
-            _.nw.axes = _.nw.axes || {};
-            _.nw.axes[name] = axisCtor;
+            nwt.axes = nwt.axes || {};
+            nwt.axes[name] = axisCtor;
         },
 
         roundToNextTick: function (num) {
@@ -245,7 +515,7 @@
             var sign = abs === num ? 1 : -1;
             var mag, step;
             if (abs >= 1) {
-                mag = Math.floor(_.nw.log10(abs));
+                mag = Math.floor(nwt.log10(abs));
                 step = mag <= 1 ? 2 : Math.pow(10, mag - 1);
             } else {
 
@@ -254,7 +524,7 @@
                 step = mulFloat((mag === 1 ? 2 : 10), Math.pow(10, -mag));
             }
 
-            var raw = _.nw.roundToNearest(abs, step);
+            var raw = nwt.roundToNearest(abs, step);
             return sign * raw;
         },
 
@@ -281,7 +551,7 @@
             ticks = ticks == null ? 2 : Math.max(1, ticks);
             // if ticks is an array, use that as order of preferred ticks; otherwise return a
             // variable number of ticks in order to keep values round
-            if (_.isNumber(ticks)) {
+            if (lodashFns.isNumber(ticks)) {
                 // for 1, check [1]
                 // for 2, check [2, 1]
                 // for 3, check [3, 2]
@@ -292,8 +562,8 @@
                 // for 8, check [8, 9, 10, 7, 6]
                 // for 9, check [9, 10, 11, 8, 7, 6]
                 // for 10, check [10, 11, 12, 9, 8, 7]
-                ticks = _.range(ticks, ticks * 1.28)
-                    .concat(_.range(ticks - 1, (ticks - 1) * 0.72, -1));
+                ticks = lodashFns.range(ticks, ticks * 1.28)
+                    .concat(lodashFns.range(ticks - 1, (ticks - 1) * 0.72, -1));
             }
 
             if (startAtZero == null) {
@@ -340,7 +610,7 @@
                     var dig = numberHelpers.digits(inter);
                     var roundToDigits;
                     if (inter > 0) {
-                        roundToDigits =  -Math.floor(_.nw.log10(inter));
+                        roundToDigits =  -Math.floor(nwt.log10(inter));
                     } else {
                         roundToDigits = (Math.max(1, Math.abs(dig-2)));
                     }
@@ -381,10 +651,10 @@
             var defaultMinMax;
             var minMax;
 
-            var foundSomethingRound = _.some(ticks, function (ticks) {
+            var foundSomethingRound = ticks.some(function (ticks) {
                 minMax = nice(ticks);
                 defaultMinMax = defaultMinMax || minMax;
-                return _.every(minMax.tickValues, function (tick) {
+                return minMax.tickValues.every(function (tick) {
                     return tick === Math.round(tick);
                 });
             });
@@ -393,8 +663,8 @@
 
         /*jshint eqnull:true */
         extractScaleDomain: function (domain, min, max, ticks, zeroAnchor) {
-            var dataMin = min != null ? min : _.min(domain);
-            var dataMax = max != null ? max : _.max(domain);
+            var dataMin = min != null ? min : Math.min.apply(null, domain);
+            var dataMax = max != null ? max : Math.max.apply(null, domain);
             ticks = ticks == null ? 5 : ticks;
 
             var niceMinMax = axisHelpers.niceMinMax(dataMin, dataMax, ticks, zeroAnchor);
@@ -441,23 +711,26 @@
                 });
             }
 
-            return _.uniq(_.sortBy(tickValues));
+            tickValues.sort(function (a, b) { return a - b; });
+
+            return lodashFns.uniq(tickValues);
         },
 
         calcXLabelsWidths: function (ticks) {
             var padding = 8;
-            return _.compact(ticks).map(String).map(function (d) {
+            var compact = function (e) { return !!e; };
+            return ticks.filter(compact).map(String).map(function (d) {
                 if (!d) {
                     return padding * 2;
                 }
-                return _.nw.textBounds(d, '.x.axis text').width + (padding * 2);
+                return nwt.textBounds(d, '.x.axis text').width + (padding * 2);
             });
         },
 
         doXLabelsFit: function (ticks, labelFormatter, options) {
-            var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
+            var tickWidths = nwt.calcXLabelsWidths(ticks.map(labelFormatter));
             var availableWidthForLabels = (options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
-            var axisLabelsWidth = _.nw.sum(tickWidths);
+            var axisLabelsWidth = nwt.sum(tickWidths);
             return axisLabelsWidth <= availableWidthForLabels;
         },
 
@@ -465,16 +738,16 @@
             // reduce the number of ticks incrementally by taking every 2nd, then every 3th, and so on
             // until we find a set of ticks that fits the available space
             function reduceTicksByMod() {
-                var tickWidths = _.nw.calcXLabelsWidths(ticks.map(labelFormatter));
-                var axisLabelsWidth = _.nw.sum(tickWidths);
+                var tickWidths = nwt.calcXLabelsWidths(ticks.map(labelFormatter));
+                var axisLabelsWidth = nwt.sum(tickWidths);
                 var availableWidthForLabels = (options.chart.plotWidth + tickWidths[0] / 2 + tickWidths[ticks.length - 1] / 2);
                 var iter = 1;
                 var filterMod = function (d, i) { return (i % iter) === 0; };
                 var finalTicks = ticks;
                 while(axisLabelsWidth > availableWidthForLabels && finalTicks.length !== 0) {
                     iter++;
-                    finalTicks = _.filter(ticks, filterMod);
-                    axisLabelsWidth = _.nw.sum(_.nw.calcXLabelsWidths(finalTicks.map(labelFormatter)));
+                    finalTicks = ticks.filter(filterMod);
+                    axisLabelsWidth = nwt.sum(nwt.calcXLabelsWidths(finalTicks.map(labelFormatter)));
                 }
 
                 return finalTicks;
@@ -531,7 +804,7 @@
     var arrayHelpers = {
         // concatenate and sort two arrays to the resulting array
         // is sorted ie. merge [2,4,6] and [1,3,5] = [1,2,3,4,5,6]
-        merge: function (array1, array2) {
+        mergeArrays: function (array1, array2) {
             if(typeof(array1) === 'number') array1 = [array1];
             if(typeof(array2) === 'number') array2 = [array2];
             if(!array1 || !array1.length) return array2;
@@ -541,13 +814,17 @@
         },
 
         isCorrectDataFormat: function (dataArray) {
-            return _.isArray(dataArray) && _.every(dataArray, function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
+            return Array.isArray(dataArray) && dataArray.every(function (p) { return p.hasOwnProperty('x') && p.hasOwnProperty('y'); });
         },
 
         isCorrectSeriesFormat: function (data) {
-            var isArrayOfObjects = _.isArray(data) && _.isObject(data[0]);
-            var hasDataArrayPerSeries = _.every(data, function (d) { return d.hasOwnProperty('data'); });
-            var hasSeriesNamePerSeries = _.every(data, function (d) { return d.hasOwnProperty('name'); });
+            var isArrayOfObjects = Array.isArray(data) && lodashFns.isObject(data[0]);
+            if (!isArrayOfObjects) {
+                return false;
+            }
+
+            var hasDataArrayPerSeries = data.every(function (d) { return d.hasOwnProperty('data'); });
+            var hasSeriesNamePerSeries = data.every(function (d) { return d.hasOwnProperty('name'); });
             var datumInCorrectFormat = isArrayOfObjects && hasDataArrayPerSeries && arrayHelpers.isCorrectDataFormat(data[0].data);
 
             return isArrayOfObjects && hasDataArrayPerSeries && hasSeriesNamePerSeries && datumInCorrectFormat;
@@ -556,17 +833,17 @@
         /*jshint eqnull:true */
         // we are using != null to get null & undefined but not 0
         normalizeSeries: function (data, categories) {
-            var hasCategories = !!(categories && _.isArray(categories));
+            var hasCategories = !!(categories && Array.isArray(categories));
             function sortFn(a, b) { return a.x - b.x; }
             function normal(set, name) {
                 var d = {
                     name: name,
-                    data: _.map(set, function (d, i) {
+                    data: set.map(function (d, i) {
                         var hasX = d != null && d.hasOwnProperty('x');
                         var val = function (v) { return v != null ? v : null; };
                         // make sure we return a valid category and not cast nulls as string
                         var categoryAt = function (i) { return !hasCategories ? i : categories[i] == null ? null : categories[i] + ''; };
-                        return hasX ? _.extend(d, { x: d.x, y: val(d.y) }) : { x: categoryAt(i), y: val(d) };
+                        return hasX ? Object.assign(d, { x: d.x, y: val(d.y) }) : { x: categoryAt(i), y: val(d) };
                     })
                 };
 
@@ -592,10 +869,10 @@
             }
 
             // for the rest of the cases we need to normalize to the full format of the series
-            if (_.isArray(data)) {
-                if ((_.isObject(data[0]) && data[0].hasOwnProperty('data')) || _.isArray(data[0])) {
+            if (Array.isArray(data)) {
+                if ((lodashFns.isObject(data[0]) && data[0].hasOwnProperty('data')) || Array.isArray(data[0])) {
                     // this would be the shape for multiple series
-                    return _.map(data, function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
+                    return data.map(function (d, i) { return normal(d.data ? d.data : d, d.name ? d.name : 'series ' + (i+1)); });
                 } else {
                     // this is just the shape [1,2,3,4] or [{x:0, y:1}, { x: 1, y:2}...]
                     return [normal(data, 'series 1')];
@@ -649,7 +926,7 @@
         },
 
         sum: function (array) {
-            return _.reduce(array, function (acc, cur) { return acc += cur; }, 0);
+            return array.reduce(function (acc, cur) { return acc += cur; }, 0);
         },
 
         maxTickValues: function (max, domain) {
@@ -674,9 +951,9 @@
             // this covers all supported formats so far:
             // [ {data: [...] }, ... ]
             // [ [...], [...] ]
-            return _.isArray(data) &&
-                (_.isObject(data[0]) && data[0].hasOwnProperty('data') && _.isArray(data[0].data)) ||
-                _.isArray(data[0]);
+            return Array.isArray(data) &&
+                (lodashFns.isObject(data[0]) && data[0].hasOwnProperty('data') && Array.isArray(data[0].data)) ||
+                Array.isArray(data[0]);
         }
 
     };
@@ -726,11 +1003,8 @@
         }
     };
 
-    _.nw = _.extend({}, _.nw, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
-        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters);
+    root.nwt = Object.assign({}, root.nwt, numberHelpers, arrayHelpers, stringHelpers, dateHelpers,
+        axisHelpers, debuggingHelpers, domHelpers, generalHelpers, logging, dataFilters, lodashFns);
 
-    if (!_.noop) {
-        _.noop = noop;
-    }
-
+    root.nwt.noop = noop;
 })();

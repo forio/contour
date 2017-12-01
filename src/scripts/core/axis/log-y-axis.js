@@ -11,8 +11,8 @@
         return scale.range(range);
     }
 
-    var __super = _.nw.axes.YAxis.prototype;
-    LogYAxis.prototype = _.extend({}, __super, {
+    var __super = nwt.axes.YAxis.prototype;
+    LogYAxis.prototype = Object.assign({}, __super, {
         axis: function () {
             var options = this.options.yAxis;
             var domain = this._scale.domain();
@@ -55,6 +55,6 @@
         },
     });
 
-    _.nw.addAxis('LogYAxis', LogYAxis );
+    nwt.addAxis('LogYAxis', LogYAxis );
 
 })();
