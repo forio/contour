@@ -1,6 +1,8 @@
 {
+    "esversion": 6,
     "browser": true,
     "browserify": true,
+    "node": true,
     "curly": false,
     "devel": true,
     "eqeqeq": true,
@@ -25,10 +27,7 @@
     "sub": true,
     "globals": {
         "nwt": true,
-        "Contour": true,
         "d3": true,
-        "module": true,
-        "define": true,
         "canvg": true
     }
 }

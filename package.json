@@ -13,7 +13,7 @@
   "scripts": {
     "prepush": "npm run lint && npm test",
     "prepublish": "npm run build",
-    "build": "grunt production",
+    "build": "webpack",
     "start": "grunt",
     "test": "grunt test",
     "lint": "jshint ./src/scripts"
@@ -27,6 +27,10 @@
   },
   "devDependencies": {
     "async": "1.5.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
     "glob": "6.0.1",
     "grunt": "0.4.5",
     "grunt-bumpup": "0.6.2",
@@ -41,6 +45,7 @@
     "husky": "^0.14.3",
     "jasmine-node": "^1.14.5",
     "jsdom": "^11.3.0",
+    "jshint": "^2.9.5",
     "markdox": "0.1.10",
     "shelljs": "0.5.3",
     "underscore": "1.8.3",

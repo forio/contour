@@ -82,3 +82,5 @@ bower_components/
 /documentation/
 examples/demo.html
 dist/contour.js.map
+dist/
+dist-webpack/
