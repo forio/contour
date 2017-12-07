@@ -310,6 +310,10 @@
                     var expectsParam = (typeof object[key] === 'function' && !!object[key].length);
                     var shouldMaterialize = !shouldSkip(curKeyPath) && !expectsParam;
 
+                    if (expectsParam && !shouldSkip(curKeyPath)) {
+                        console.warn('The funciton "' + curKeyPath + '" expects parameters and will not be resolved to a value before the render starts. It is assumed to be used inside a visualization. Add this function to the "skip" list to remove this message.');
+                    }
+
                     if (shouldMaterialize) {
                         prev[key] = generalHelpers.materialize(object[key], ctx, options, curKeyPath);
                     } else {
