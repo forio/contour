@@ -315,7 +315,8 @@
             this._extraOptions.forEach(mergeExtraOptions);
             this._visualizations.forEach(mergeDefaults);
 
-            var opt = nwt.materialize(this.originalOptions, this, { skipMatch: /formatter/ });
+            var forceSkip = ['skip', /formatter/, 'el'];
+            var opt = nwt.materialize(this.originalOptions, this, { skip: forceSkip.concat(this.originalOptions.skip) });
 
             // compose the final list of options right before start rendering
             this.options = nwt.merge(opt, nwt.merge({}, allDefaults, opt));

@@ -38,11 +38,11 @@ Each configuration option can be:
 
 		columnWidth: function() { return this.rangeBand/3 * 2; }
 
-	__Note__ Function parameters will be invoked just before each render happens or in the within the render cycle with the corresponding data point in the following cases:
-	* function expects a parameter (ie. `function (d) { return d.x; }`)
-	* parameter path is in the `options.skip`
-	* parameter path matches the RegExp `options.skipMatch`
+	__Note__ In general, function parameters will be invoked just before the render cycle happens except when:
+	* the function expects 1 or more parameters (ie. `function (d) { return d.x; }`) or
+	* the parameter path matches or is in  the `options.skip` array. The `options.skip` array can have string with a full path to skip or a RegExp to match a path. For example `['line.marker.enable', /formatter/i]` would skip the options `line.marker.enable` and any options called `formatter`.
 
+This allows functions to be used for things like formatters that need to be called for each point in the data set.
 
 <% if(notes) { %><%= notes %><% } %>
 
