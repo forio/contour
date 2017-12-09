@@ -15,7 +15,7 @@
     "prepublish": "npm run build",
     "build": "webpack",
     "start": "grunt",
-    "test": "grunt test",
+    "test": "jasmine JASMINE_CONFIG_PATH=tests/jasmine.json",
     "lint": "jshint ./src/scripts"
   },
   "repository": {
@@ -31,6 +31,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
     "glob": "6.0.1",
     "grunt": "0.4.5",
     "grunt-bumpup": "0.6.2",
@@ -43,8 +44,10 @@
     "grunt-contrib-watch": "0.6.1",
     "grunt-tagrelease": "0.3.3",
     "husky": "^0.14.3",
+    "jasmine": "^2.8.0",
     "jasmine-node": "^1.14.5",
-    "jsdom": "^11.3.0",
+    "jquery": "^3.2.1",
+    "jsdom": "^10.1.0",
     "jshint": "^2.9.5",
     "markdox": "0.1.10",
     "shelljs": "0.5.3",

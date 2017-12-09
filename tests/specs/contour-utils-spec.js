@@ -1,3 +1,6 @@
+import d3 from 'd3';
+import * as nwt from '../../src/scripts/utils/contour-utils';
+
 describe('utils', function () {
     describe('dateDiff', function () {
         it('should return the difference in days of two dates', function () {
@@ -149,33 +152,31 @@ describe('utils', function () {
             };
 
             jasmine.addMatchers({
-                toBeNormalizedDataPoint: function () {
-                    return function (actual, expected) {
-
-                        var notText = this.isNot ? ' not' : '';
-                        var message = function () {
-                            return 'Expected ' + actual + notText + ' to be normalized data point and is not';
-                        };
-
-                        return {
-                            pass: actual.hasOwnProperty('x') && actual.hasOwnProperty('y'),
-                            message: message()
-                        };
-
-                    };
-                },
-
                 toBeNormalizedSeries: function () {
                     return {
                         compare: function (actual, expected) {
-                            var notText = this.isNot ? ' not' : '';
                             var missing = [];
 
                             if(!actual.hasOwnProperty('name')) missing.push('series name (name)');
                             if(!actual.hasOwnProperty('data')) missing.push('series data (data)');
                             if(!actual.data.every(function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
 
-                            message = function () { return 'Expected object' + notText + ' to be normalize series and is missing: ' + missing.join(', '); };
+                            const message = function () { return 'Expected object to be normalize series and is missing: ' + missing.join(', '); };
+
+                            return {
+                                pass: !missing.length,
+                                message: message()
+                            };
+                        },
+
+                        negativeCompare: function (actual, expected) {
+                            var missing = [];
+
+                            if(!actual.hasOwnProperty('name')) missing.push('series name (name)');
+                            if(!actual.hasOwnProperty('data')) missing.push('series data (data)');
+                            if(!actual.data.every(function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
+
+                            const message = function () { return 'Expected object NOT to be normalize series and is missing: ' + missing.join(', '); };
 
                             return {
                                 pass: !missing.length,

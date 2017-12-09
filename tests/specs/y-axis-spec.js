@@ -1,3 +1,9 @@
+import $ from 'jquery';
+import d3 from 'd3';
+import Contour from '../../src/scripts/core/contour';
+import '../../src/scripts/core/cartesian';
+import '../../src/scripts/visualizations/null';
+
 describe('default yAxis', function () {
     var $el, el;
     var instance;
@@ -114,7 +120,7 @@ describe('default yAxis', function () {
 
         describe('calling setYDomain', function () {
             it('should recalculate yAxis and ticks with new domain', function () {
-                nw = createinstance({yAxis: {scaling: {type: 'smart'}}}).nullVis([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
+                const nw = createinstance({yAxis: {scaling: {type: 'smart'}}}).nullVis([{data: [1,2,3,4]}, {data: [5,6,2,4]}]).render();
 
                 // note that the max needs to be 5% away from 50
                 nw.setData([1,2,3,46]).render();
@@ -154,7 +160,6 @@ describe('default yAxis', function () {
             var dataSet = randomDataSet(10);
             createinstance({yAxis: {scaling: {type: 'centered'}}}).nullVis(dataSet).render();
 
-            d3.timer.flush();
             var firstTicks = $el.find('.y.axis .tick text').first();
             var lastTicks = $el.find('.y.axis .tick text').last();
 
@@ -166,7 +171,6 @@ describe('default yAxis', function () {
             var dataSet = randomDataSet(100);
             createinstance({yAxis: {scaling: {type: 'centered'}}}).nullVis(dataSet).render();
 
-            d3.timer.flush();
             var firstTicks = $el.find('.y.axis .tick text').first();
             var lastTicks = $el.find('.y.axis .tick text').last();
 
@@ -178,7 +182,6 @@ describe('default yAxis', function () {
             var highLow = [26.1, 26.3, 26.5, 26.7];
             createinstance({yAxis: {scaling: {type: 'centered'}}}).nullVis(highLow).render();
 
-            d3.timer.flush();
             var firstTicks = $el.find('.y.axis .tick text').first();
 
             expect(firstTicks.text()).not.toBe('0');
@@ -188,7 +191,6 @@ describe('default yAxis', function () {
             var lowHigh = [26, 100, 1000, 45, 45.89, 99];
             createinstance({yAxis: {scaling: {type: 'centered'}}}).nullVis(lowHigh).render();
 
-            d3.timer.flush();
             var firstTicks = $el.find('.y.axis .tick text').first();
 
             expect(firstTicks.text()).not.toBe('0');

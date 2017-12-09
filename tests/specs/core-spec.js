@@ -1,3 +1,8 @@
+import $ from 'jquery';
+import d3 from 'd3';
+import Contour from '../../src/scripts/core/contour';
+import * as nwt from '../../src/scripts/utils/contour-utils';
+
 describe('Contour', function () {
     var $el, el;
     var contour;
@@ -42,6 +47,7 @@ describe('Contour', function () {
         });
 
         describe('data', function () {
+            let dataParam;
 
             it('should always bind normalized data if data is array', function () {
                 var dataParam;
@@ -141,7 +147,7 @@ describe('Contour', function () {
             render.defaults = { vis: { xyz: 10} };
             Contour.export('vis', render);
 
-            nw = new Contour({}).vis().render();
+            const nw = new Contour({}).vis().render();
             expect(nw.options.vis).toBeDefined();
             expect(nw.options.vis.xyz).toBe(10);
         });
@@ -151,7 +157,7 @@ describe('Contour', function () {
             render.defaults = { vis: { xyz: 10} };
             Contour.export('vis', render);
 
-            nw = new Contour({ vis: { xyz: 30 } }).vis().render();
+            const nw = new Contour({ vis: { xyz: 30 } }).vis().render();
             expect(nw.options.vis).toBeDefined();
             expect(nw.options.vis.xyz).toBe(30);
         });
@@ -168,7 +174,7 @@ describe('Contour', function () {
 
             Contour.export('vis', render);
 
-            nw = new Contour({})
+            const nw = new Contour({})
                 .vis([{name: 's1', data: [1]}], { option1: 10 })
                 .vis([{name: 's2', data:[2]}], { option1: 20 })
                 .render();
@@ -182,16 +188,6 @@ describe('Contour', function () {
 
         });
     });
-
-    describe('constructor', function () {
-        // this is no longer valid, the visualizations array is a provate var now
-        xit('should provide a visualizations array in the options', function () {
-
-            createContour();
-            expect(Contour.visualizations).toBeDefined();
-        });
-    });
-
 
     describe('expose', function () {
         it('should not expose passed in object, until the constructor is called', function () {
@@ -291,7 +287,7 @@ describe('Contour', function () {
         });
 
         it('should get the container height if it has it', function () {
-            $el.css({width: '120px', height: '30px '});
+            $el.css({width: '120px', height: '30px'});
             createContour().render();
 
             var bounds = getBounds();

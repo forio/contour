@@ -1,0 +1,30 @@
+{
+  "spec_dir": "tests/specs",
+  "spec_files": [
+    "axis-ticks-spec.js",
+    "contour-utils-spec.js",
+    "core-spec.js",
+    "exportable-spec.js",
+    "cartesian-spec.js",
+    "horizontal-spec.js",
+    "visualization-container-spec.js",
+
+    "y-axis-spec.js",
+    "linear-axis-spec.js",
+    "ordinal-axis-spec.js",
+    "time-axis-spec.js",
+
+    "chart-bar-spec.js",
+    "chart-column-spec.js",
+    "chart-line-spec.js",
+    "legend-spec.js",
+    "stack-tooltip-spec.js",
+    "tooltip-spec.js"
+  ],
+  "helpers": [
+    "../../node_modules/babel-core/register.js",
+    "../lib/setup.js"
+  ],
+  "stopSpecOnExpectationFailure": false,
+  "random": false
+}

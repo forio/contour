@@ -1,6 +1,7 @@
 {
     "esversion": 6,
     "browser": true,
+    "jasmine": true,
     "browserify": true,
     "node": true,
     "curly": false,

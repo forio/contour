@@ -1,3 +1,6 @@
+import Contour from '../../src/scripts/core/contour';
+import '../../src/scripts/core/exportable';
+
 describe('Exportable extension', function () {
     var $el, el;
     var data = [1, 2];

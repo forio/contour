@@ -1,5 +1,10 @@
-describe('time Axis', function () {
+import $ from 'jquery';
+import d3 from 'd3';
+import Contour from '../../src/scripts/core/contour';
+import '../../src/scripts/core/cartesian';
+import '../../src/scripts/visualizations/null';
 
+describe('time Axis', function () {
     var $el, el;
     var instance;
 
@@ -13,9 +18,6 @@ describe('time Axis', function () {
         instance = new Contour(options).cartesian();
         return instance;
     }
-
-
-
 
     it('should show all tick labels by ', function () {
         instance = createinstance({ xAxis: { firstAndLast: undefined }})
