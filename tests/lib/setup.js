@@ -4,3 +4,4 @@ const dom = new jsdom.JSDOM('<html><body></body></html>', { pretendToBeVisual: t
 
 global.document = dom.window.document;
 global.window = dom.window;
+global.VERSION = 'test';
