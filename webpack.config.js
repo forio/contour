@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const pkg = require('./package.json');
 
 module.exports = {
   entry: {
@@ -13,7 +14,9 @@ module.exports = {
     libraryTarget: 'umd'
   },
   externals: {
-    d3: 'd3'
+    d3: 'd3',
+    $: 'jQuery',
+    _: 'lodash'
   },
   module: {
     rules: [
@@ -27,7 +30,11 @@ module.exports = {
       compress: { warnings: false },
       output: { comments: false, beautify: false },
       sourceMap: true,
+    }),
+    new webpack.DefinePlugin({
+      VERSION: JSON.stringify(pkg.version)
     })
+
   ],
   devtool: 'source-map',
 };

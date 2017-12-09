@@ -83,9 +83,7 @@ export default function Contour (options) {
 
     return this;
 }
-
-Contour.nwt = nwt;
-
+Contour.version = VERSION;
 Contour.xScaleFactory = xScaleFactory;
 Contour.yScaleFactory = yScaleFactory;
 
