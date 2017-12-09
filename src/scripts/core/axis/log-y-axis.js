@@ -1,10 +1,11 @@
 import nwt from '../../utils/contour-utils';
 import d3 from 'd3';
+import YAxis from './y-axis';
 
-var LogYAxis = function (data, options) {
+function LogYAxis(data, options) {
     this.data = data;
     this.options = options;
-};
+}
 
 function setRange(scale, options) {
     var rangeSize = options.chart.rotatedFrame ? options.chart.plotWidth : options.chart.plotHeight;
@@ -12,7 +13,7 @@ function setRange(scale, options) {
     return scale.range(range);
 }
 
-var __super = nwt.axes.YAxis.prototype;
+var __super = YAxis.prototype;
 LogYAxis.prototype = Object.assign({}, __super, {
     axis: function () {
         var options = this.options.yAxis;
@@ -56,4 +57,4 @@ LogYAxis.prototype = Object.assign({}, __super, {
     },
 });
 
-nwt.addAxis('LogYAxis', LogYAxis );
+export default LogYAxis;

@@ -40,6 +40,7 @@ LinearScale.prototype = {
             });
 
         var ticks = axis.scale().ticks();
+
         var labelsFit = nwt.doXLabelsFit(ticks, formatLabel, this.options);
 
         if (options.firstAndLast) {
@@ -105,4 +106,4 @@ LinearScale.prototype = {
     }
 };
 
-nwt.addAxis('LinearScale', LinearScale );
+export default LinearScale;

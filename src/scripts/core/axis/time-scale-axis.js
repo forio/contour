@@ -129,4 +129,4 @@ TimeScale.prototype = {
     }
 };
 
-nwt.addAxis('TimeScale', TimeScale );
+export default TimeScale;

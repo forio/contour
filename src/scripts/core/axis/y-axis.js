@@ -1,11 +1,16 @@
 import nwt from '../../utils/contour-utils';
 import d3 from 'd3';
 
-var YAxis = function (data, options, domain) {
+function YAxis(data, options, domain) {
     this.data = data;
-    this.options = options;
-    this.domain = domain;
-};
+    this.options = options || {
+        yAxis: {
+            scaling: { options: {} },
+            labels: { format: 's' }
+        }
+    };
+    this.domain = domain || [0, 1];
+}
 
 function setRange(scale, options) {
     var rangeSize = options.chart.rotatedFrame ? options.chart.plotWidth : options.chart.plotHeight;
@@ -15,7 +20,6 @@ function setRange(scale, options) {
 
 YAxis.prototype = {
     axis: function () {
-        /*jshint eqnull:true */
         var options = this.options.yAxis;
         var domain = this.domain;
         var zeroAnchor = (options.zeroAnchor != null) ? options.zeroAnchor : options.scaling.options.zeroAnchor;
@@ -54,7 +58,6 @@ YAxis.prototype = {
         this.scale();
     },
 
-    /*jshint eqnull:true*/
     numTicks: function () {
         return this.options.yAxis.ticks != null ? this.options.yAxis.ticks : undefined;
     },
@@ -64,4 +67,4 @@ YAxis.prototype = {
     }
 };
 
-nwt.addAxis('YAxis', YAxis);
+export default YAxis;

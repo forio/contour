@@ -1,15 +1,15 @@
 import nwt from '../../utils/contour-utils';
 import d3 from 'd3';
+import YAxis from './y-axis';
 
-var SmartYAxis = function (data, options, domain) {
+function SmartYAxis(data, options, domain) {
     this.data = data;
     this.options = options;
     this.yMax = domain[0];
     this.yMin = domain[1];
     this.dataMax = d3.max(data.map(function (d) { return d.y; }));
-};
+}
 
-/* jshint eqnull: true */
 function _extractYTickValues(domain, min, max, yMin, yMax, dataMax) {
     var adjustedDomain = nwt.uniq(nwt.mergeArrays(nwt.mergeArrays(domain, yMax), dataMax));
     // we want to be able to remove parameters with default values
@@ -32,7 +32,7 @@ function _extractYTickValues(domain, min, max, yMin, yMax, dataMax) {
     return nwt.mergeArrays([min, max], yMax);
 }
 
-var __super = nwt.axes.YAxis.prototype;
+var __super = YAxis.prototype;
 SmartYAxis.prototype = Object.assign({}, __super, {
     axis: function () {
         var options = this.options.yAxis;
@@ -71,4 +71,4 @@ SmartYAxis.prototype = Object.assign({}, __super, {
     }
 });
 
-nwt.addAxis('SmartYAxis', SmartYAxis );
+export default SmartYAxis;

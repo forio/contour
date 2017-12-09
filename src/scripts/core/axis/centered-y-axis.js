@@ -1,16 +1,17 @@
 import nwt from '../../utils/contour-utils';
 import d3 from 'd3';
+import YAxis from './y-axis';
 
 // focus on vertically centering data - zero anchor is ignored
-var CenteredYAxis = function (data, options, domain) {
+function CenteredYAxis(data, options, domain) {
     this.data = data;
     this.options = options;
     this.yMax = domain[0];
     this.yMin = domain[1];
     this.NUM_DECIMALS = 1;
-};
+}
 
-var __super = nwt.axes.YAxis.prototype;
+const __super = YAxis.prototype;
 CenteredYAxis.prototype = Object.assign({}, __super, {
     axis: function () {
         var options = this.options.yAxis;
@@ -62,4 +63,4 @@ CenteredYAxis.prototype = Object.assign({}, __super, {
     }
 });
 
-nwt.addAxis('CenteredYAxis', CenteredYAxis);
+export default CenteredYAxis;

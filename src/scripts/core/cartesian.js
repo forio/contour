@@ -1,5 +1,6 @@
 import d3 from 'd3';
 import Contour from './contour';
+import { xScaleFactory, yScaleFactory } from './axis/axis-scale-factory';
 
 var defaults = {
     chart: {
@@ -220,7 +221,7 @@ var cartesian = function () {
             if (!this.xDomain) throw new Error('You are trying to render without setting data (xDomain).');
 
             if(!this.xScale) {
-                this.xScaleGenerator = nwt.xScaleFactory(this.dataSrc, this.options);
+                this.xScaleGenerator = xScaleFactory(this.dataSrc, this.options);
                 this.xScale = this.xScaleGenerator.scale(this.xDomain);
                 this.rangeBand = this.xScaleGenerator.rangeBand();
             } else {
@@ -235,7 +236,7 @@ var cartesian = function () {
             var yScaleDomain = this._getYScaledDomain(this.yDomain, this.options);
 
             if(!this.yScale) {
-                this.yScaleGenerator = nwt.yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
+                this.yScaleGenerator = yScaleFactory(this.dataSrc, this.options, this.options.yAxis.type, this.yDomain);
                 this.yScale = this.yScaleGenerator.scale(yScaleDomain);
             } else {
                 this.yScaleGenerator.update(yScaleDomain, this.dataSrc);

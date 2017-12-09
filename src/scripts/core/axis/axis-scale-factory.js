@@ -1,6 +1,19 @@
 import nwt from '../../utils/contour-utils';
+import YAxis from  './y-axis';
+import CenteredYAxis from './centered-y-axis';
+import LinearScale from './linear-scale-axis';
+import LogYAxis from './log-y-axis';
+import OrdinalScale from './ordinal-scale-axis';
+import SmartYAxis from './smart-y-axis';
+import TimeScale from './time-scale-axis';
 
-nwt.xScaleFactory = function (data, options) {
+
+export const axes = {};
+export const addAxis = (name, axisCtor) => {
+    axes[name] = axisCtor;
+};
+
+export const xScaleFactory = function (data, options) {
     // if we have dates in the x field of the data points
     // we need a time scale, otherwise is an oridinal
     // two ways to shape the data for time scale:
@@ -13,22 +26,22 @@ nwt.xScaleFactory = function (data, options) {
 
 
     if (isTimeData && options.xAxis.type !== 'ordinal') {
-        return new nwt.axes.TimeScale(data, options);
+        return new TimeScale(data, options);
     }
 
     if (!options.xAxis.categories && options.xAxis.type === 'linear') {
-        return new nwt.axes.LinearScale(data, options);
+        return new LinearScale(data, options);
     }
 
-    return new nwt.axes.OrdinalScale(data, options);
+    return new OrdinalScale(data, options);
 };
 
-nwt.yScaleFactory = function (data, options, axisType, domain) {
+export const yScaleFactory = function (data, options, axisType, domain) {
     var map = {
-        'log': nwt.axes.LogYAxis,
-        'smart': nwt.axes.SmartYAxis,
-        'linear': nwt.axes.YAxis,
-        'centered': nwt.axes.CenteredYAxis
+        'log': LogYAxis,
+        'smart': SmartYAxis,
+        'linear': YAxis,
+        'centered': CenteredYAxis
     };
 
     if (!axisType) {
@@ -48,8 +61,8 @@ nwt.yScaleFactory = function (data, options, axisType, domain) {
     }
 
     // try by namespace
-    if (nwt.axes[axisType]) {
-        return new nwt.axes[axisType](data, options, domain);
+    if (axisType in axes) {
+        return new axes[axisType](data, options, domain);
     }
 
     throw new Error('Unknown axis type: "' + axisType + '"');

@@ -144,4 +144,4 @@ OrdinalScale.prototype = {
     }
 };
 
-nwt.addAxis('OrdinalScale', OrdinalScale );
+export default OrdinalScale;
