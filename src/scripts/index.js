@@ -26,4 +26,6 @@ import './visualizations/stack-tooltip';
 import './visualizations/tooltip';
 import './visualizations/trend-line';
 
+import '../styles/contour.less';
+
 module.exports = Contour;
