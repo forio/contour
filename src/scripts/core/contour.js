@@ -1,6 +1,6 @@
 import d3 from 'd3';
 import VisualizationContainer from '../utils/visualization-container';
-import nwt from '../utils/contour-utils';
+import * as nwt from '../utils/contour-utils';
 import { xScaleFactory, yScaleFactory } from './axis/axis-scale-factory';
 
 var defaults = {

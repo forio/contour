@@ -1,4 +1,5 @@
 import d3 from 'd3';
+import * as nwt from '../utils/contour-utils';
 import Contour from './contour';
 import { xScaleFactory, yScaleFactory } from './axis/axis-scale-factory';
 

@@ -1,4 +1,3 @@
-import nwt from '../../utils/contour-utils';
 import d3 from 'd3';
 import YAxis from './y-axis';
 

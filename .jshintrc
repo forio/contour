@@ -26,8 +26,6 @@
     "eqnull": true,
     "sub": true,
     "globals": {
-        "nwt": true,
-        "d3": true,
         "canvg": true
     }
 }

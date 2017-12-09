@@ -1,4 +1,4 @@
-import nwt from '../../utils/contour-utils';
+import * as nwt from '../../utils/contour-utils';
 import YAxis from  './y-axis';
 import CenteredYAxis from './centered-y-axis';
 import LinearScale from './linear-scale-axis';

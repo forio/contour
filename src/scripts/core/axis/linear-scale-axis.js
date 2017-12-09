@@ -1,5 +1,5 @@
-import nwt from '../../utils/contour-utils';
 import d3 from 'd3';
+import * as nwt from '../../utils/contour-utils';
 
 function LinearScale(data, options) {
     this.options = options;

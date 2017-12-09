@@ -457,7 +457,10 @@ describe('utils', function () {
             var passCtx;
             var expectedContext = {};
             var input;
+            let prevWarn;
             beforeEach(function () {
+                prevWarn = console.warn;
+                console.warn = () => {};
                 input = {
                     a: 1,
                     b: 'hello',
@@ -482,6 +485,10 @@ describe('utils', function () {
                 });
             });
 
+            afterEach(function () {
+                console.warn = prevWarn;
+            });
+
             it('should materialize all props that are functions', function () {
                 expect(res.c).toBe(2);
             });
@@ -497,15 +504,6 @@ describe('utils', function () {
 
             it('should pass the correct context to the functions', function () {
                 expect(passCtx).toBe(expectedContext);
-            });
-
-            it('should skip the skip list', function () {
-                expect(res.x).toEqual(input.x);
-                expect(res.d.x).toEqual(input.d.x);
-            });
-
-            it('should skip the skipMatch', function () {
-                expect(res.d.zzz).toEqual(input.d.zzz);
             });
 
             it('should skip functions that expect parameters', function () {

@@ -1,5 +1,5 @@
-import nwt from '../../utils/contour-utils';
 import d3 from 'd3';
+import * as nwt from '../../utils/contour-utils';
 import YAxis from './y-axis';
 
 // focus on vertically centering data - zero anchor is ignored

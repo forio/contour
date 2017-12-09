@@ -1,4 +1,5 @@
 import Contour from './contour';
+import * as nwt from '../utils/contour-utils';
 
 var defaults = {
     chart: {
