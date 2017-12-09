@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const pkg = require('./package.json');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const extractLess = new ExtractTextPlugin({
     filename: '[name].css',
@@ -48,7 +49,10 @@ module.exports = {
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(pkg.version)
     }),
-    extractLess
+    extractLess,
+    new CopyWebpackPlugin([
+      { from: 'src/webcomponents', to: 'webcomponents' },
+    ])
   ],
   devtool: 'source-map',
 };
