@@ -321,11 +321,11 @@ Contour.prototype = Object.assign(Contour.prototype, {
         this._extraOptions.forEach(mergeExtraOptions);
         this._visualizations.forEach(mergeDefaults);
 
-        var forceSkip = ['skip', /formatter/, 'el'];
-        var opt = nwt.materialize(this.originalOptions, this, { skip: forceSkip.concat(this.originalOptions.skip) });
+        var forceSkip = ['skip', /formatter/, 'el', /preprocess/];
 
         // compose the final list of options right before start rendering
-        this.options = nwt.merge(opt, nwt.merge({}, allDefaults, opt));
+        var opt = nwt.merge({}, allDefaults, this.originalOptions);
+        this.options = nwt.materialize(opt, this, { skip: forceSkip.concat(this.originalOptions.skip) });
     },
 
     /**
