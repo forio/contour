@@ -39,8 +39,10 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': '"production"'
+    }),
     new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
       include: /\.min\.(js|css)$/,
       compress: { warnings: false },
       output: { comments: false, beautify: false },

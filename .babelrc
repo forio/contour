@@ -1,3 +1,9 @@
 {
-  "presets": ["env"]
+  "presets": [
+    ["env", {
+      "targets": {
+        "browsers": ["ie 11", "> 1%", "Firefox ESR"]
+      }
+    }]
+    ]
 }
