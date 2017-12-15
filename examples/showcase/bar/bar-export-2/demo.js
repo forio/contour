@@ -9,7 +9,6 @@ $(function () {
         var x = this.xScale;
         var y = pinToBar ? this.yScale : function () { return options.chart.plotWidth; };
         var duration = options.chart.animations.duration || 0;
-        var em = _.nw.textBounds('123456789', '.label-text').height;
         var classFn = function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; };
 
         var dy = function (d, n, i) {

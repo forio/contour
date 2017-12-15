@@ -8,7 +8,15 @@ import SmartYAxis from './smart-y-axis';
 import TimeScale from './time-scale-axis';
 
 
-export const axes = {};
+export const axes = {
+    'log': LogYAxis,
+    'smart': SmartYAxis,
+    'linear': YAxis,
+    'centered': CenteredYAxis,
+    'ordinal': OrdinalScale,
+    'time': TimeScale,
+    'xLinear': LinearScale
+};
 export const addAxis = (name, axisCtor) => {
     axes[name] = axisCtor;
 };
@@ -56,11 +64,6 @@ export const yScaleFactory = function (data, options, axisType, domain) {
         axisType = 'centered';
     }
 
-    if (map[axisType]) {
-        return new map[axisType](data, options, domain);
-    }
-
-    // try by namespace
     if (axisType in axes) {
         return new axes[axisType](data, options, domain);
     }

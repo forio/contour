@@ -1,7 +1,7 @@
 import d3 from 'd3';
 import VisualizationContainer from '../utils/visualization-container';
 import * as nwt from '../utils/contour-utils';
-import { xScaleFactory, yScaleFactory } from './axis/axis-scale-factory';
+import { xScaleFactory, yScaleFactory, addAxis, axes } from './axis/axis-scale-factory';
 
 var defaults = {
     chart: {
@@ -86,6 +86,9 @@ export default function Contour (options) {
 Contour.version = VERSION;
 Contour.xScaleFactory = xScaleFactory;
 Contour.yScaleFactory = yScaleFactory;
+Contour.utils = nwt;
+Contour.addAxis = addAxis;
+Contour.axes = axes;
 
 /**
 * Adds a new kind of visualization to the core Contour object.

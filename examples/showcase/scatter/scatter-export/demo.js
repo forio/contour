@@ -1,5 +1,5 @@
 $(function () {
-    series = [];
+    var series = [];
     // series defined as 3x100 array of random (x,y,z) pairs
     // we'll plot the points (x,y) and scale the point size by z
     for(var j=0; j<3; j++) {
@@ -15,6 +15,7 @@ $(function () {
 
     new Contour({
             el: '.scatter-export',
+            skip: [/radius/],
             xAxis: {
                 title: 'Value'
             },
@@ -24,7 +25,7 @@ $(function () {
             scatter: {
                 // argument d is the element of the data series
                 // that is currently being added to the visualization
-                radius: function(d) { return (d.z) }
+                radius: function(d) { return (d.z); }
             }
         })
         .cartesian()

@@ -46,7 +46,7 @@
 
             this.axes = _.map(this.yDomainByAxis, function (domain, index) {
                 var type = this.options.multiAxes[index].type || 'linear';
-                return _.nw.yScaleFactory(this.dataSrc, this.options, type, domain);
+                return Contour.yScaleFactory(this.dataSrc, this.options, type, domain);
             }.bind(this));
 
             this.scales = _.map(this.axes, function (axis, index) {
@@ -58,7 +58,7 @@
 
         _adjustYDomain: function () {
             var dataVis = _.filter(this._visualizations, function (v) {
-                return v.ownData && _.nw.isSupportedDataFormat(v.data);
+                return v.ownData && Contour.utils.isSupportedDataFormat(v.data);
             });
             var byAxis = _.groupBy(dataVis, function (vis) { return vis.options[vis.type].axis || 0; });
             var extents = _.map(byAxis, function (vis, index) {
@@ -89,7 +89,7 @@
                 var pos = (this.options.multiAxes[index] || {}).position || 'left';
                 var optOffset = (this.options.multiAxes[index] || {}).offset;
                 var offsetFactor =  optOffset != null ? optOffset : 1;
-                var axisOffset = offsetFactor * _.nw.sum(this.axesWidths[pos].slice(0, pos === 'left' ? l++ : r++));
+                var axisOffset = offsetFactor * Contour.utils.sum(this.axesWidths[pos].slice(0, pos === 'left' ? l++ : r++));
 
                 if (pos === 'right') {
                     axisOffset = -(axisOffset + this.options.chart.plotWidth);
@@ -117,7 +117,7 @@
 
             var format = yOptions.labels.formatter || d3.format(yOptions.labels.format || ',.0f');
             var yAxisText = _.map(yLabels, format).join('<br>');
-            var yLabelBounds = _.nw.textBounds(yAxisText, '.y.axis');
+            var yLabelBounds = Contour.utils.textBounds(yAxisText, '.y.axis');
             return maxTickSize(yOptions) + (yOptions.tickPadding || 0) +
                 yLabelBounds.width + interAxisPadding;
         },
@@ -135,7 +135,7 @@
                 return this._calcAxisWidth.call(this, domain, options);
             }.bind(this));
 
-            return _.nw.sum(this.axesWidths.left);
+            return Contour.utils.sum(this.axesWidths.left);
         },
 
         _getAdjustedRightPadding: function () {
@@ -149,7 +149,7 @@
                 return this._calcAxisWidth.call(this, domain, options);
             }.bind(this));
 
-            return _.nw.sum(this.axesWidths.right);
+            return Contour.utils.sum(this.axesWidths.right);
         },
 
         renderVisualizations: function () {
@@ -176,7 +176,7 @@
 
     });
 
-    _.nw.addAxis('MyCustomAxis', _.nw.axes.LogYAxis);
+    Contour.addAxis('MyCustomAxis', Contour.axes.log);
 
     var chart = new Contour({
             el: '.chart',
