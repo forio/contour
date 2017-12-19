@@ -321,7 +321,7 @@ Contour.prototype = Object.assign(Contour.prototype, {
         this._extraOptions.forEach(mergeExtraOptions);
         this._visualizations.forEach(mergeDefaults);
 
-        var forceSkip = ['skip', /formatter/, 'el', /preprocess/];
+        var forceSkip = ['skip', /formatter/, 'el', /preprocess/, 'column.style', 'bar.style', 'pie.style', /barClass/, /sliceClass/, /sliceClass/, /columnClass/];
 
         // compose the final list of options right before start rendering
         var opt = nwt.merge({}, allDefaults, this.originalOptions);
