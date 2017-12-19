@@ -1,4 +1,6 @@
 import d3 from 'd3';
+export { default as defaults } from 'lodash.defaults';
+export { default as merge } from 'lodash.merge';
 
 // cheap trick to add decimals without hitting javascript issues
 // note that this fails for very large numbers
@@ -189,73 +191,6 @@ export const intersection = function (a, b) {
 
         return acc;
     }, []);
-};
-
-export const merge = function (a, b) {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < arguments.length; ++i) {
-        args[i] = arguments[i];
-    }
-
-    var isMergable = function (prop) { return prop && Object.prototype.toString.call(prop) === '[object Object]'; };
-    var cloneIfNeeded = function (val) { return val && Object.prototype.toString.call(val) === '[object Object]' ? merge({}, val) : val; };
-
-    if (a == null) {
-        return a;
-    }
-
-    if (!isMergable(a)) {
-        return b;
-    }
-
-    if (!b) {
-        return a;
-    }
-
-    var target = a;
-    /*jshint loopfunc: true */
-    for (var j=1, src = args[1]; j<args.length; j++, src=args[j]) {
-        if (src == null) continue;
-        Object.keys(src).forEach(function (key) {
-            if (target[key]) {
-                if (Array.isArray(target[key]) && Array.isArray(src[key])) {
-                    target[key] = target[key].map(function (el, i) {
-                        return merge(el, src[key][i]);
-                    });
-                } else if (isMergable(target[key]) && isMergable(src[key])) {
-                    target[key] = merge(target[key], src[key]);
-                } else if (src[key] != null) {
-                    target[key] = src[key];
-                }
-            } else {
-                target[key] = cloneIfNeeded(src[key]);
-            }
-        });
-    }
-
-    return target;
-};
-
-export const defaults = function (target /* ...sources */) {
-    var sources = new Array(arguments.length-1);
-    for (var i = 1; i < arguments.length; ++i) {
-        sources[i-1] = arguments[i];
-    }
-
-    if (!target) return null;
-
-    /*jshint loopfunc: true */
-    for (var j=0; j<sources.length; j++) {
-        var src = sources[j];
-        Object.keys(src).forEach(function (key) {
-            var val = target[key];
-            if (val === undefined) {
-                target[key] = src[key];
-            }
-        });
-    }
-
-    return target;
 };
 
 export const omit = function (src, props) {
