@@ -395,4 +395,45 @@ describe('Contour', function () {
         });
     });
 
+    describe('updateOptions', function () {
+        let instance;
+        beforeEach(function () {
+            instance = createContour({
+                width: 300,
+                viz: {
+                    format: 'a',
+                    a: 1,
+                    b: {
+                        x: 10,
+                        y: 20
+                    }
+                }
+            })
+        });
+
+        it('should update the original options object', function () {
+            instance.updateOptions({ width: 500 });
+            expect(instance.originalOptions.width).toEqual(500);
+        });
+
+        it('should deep merge the updated options', function () {
+            instance.updateOptions({
+                viz: {
+                    a: 100,
+                    b: {
+                        x: 50
+                    }
+                }
+            });
+            expect(instance.originalOptions.viz).toEqual({
+                a: 100,
+                format: 'a',
+                b: {
+                    x: 50,
+                    y: 20
+                }
+            });
+        });
+    });
+
 });

@@ -345,10 +345,10 @@ Contour.prototype = Object.assign(Contour.prototype, {
      *
      *
      * @param {object} options - Options object to be merged with current options.
-     * @function updateConfig
+     * @function updateOptions
      */
     updateOptions: function (options) {
-        this.originalOptions = Object.assign({}, this.originalOptions, options);
+        this.originalOptions = nwt.merge({}, this.originalOptions, options);
         return this;
     },
 
