@@ -1,3 +1,9 @@
+import $ from 'jquery';
+import Contour from '../../src/scripts/core/contour';
+import '../../src/scripts/core/cartesian';
+import '../../src/scripts/visualizations/null';
+import '../../src/scripts/visualizations/column';
+
 describe('Column chart', function () {
 
     var el, $el;
@@ -38,8 +44,6 @@ describe('Column chart', function () {
         });
 
         describe('stacked', function () {
-
-
             it('should move the columns by \'offset\' if specified', function () {
                 var offset = 50;
                 var nw = createinstance({
@@ -88,8 +92,6 @@ describe('Column chart', function () {
         });
 
         describe('grouped', function () {
-
-
             it('should move the columns by \'offset\' if specified', function () {
                 var offset = 50;
                 var nw = createinstance({

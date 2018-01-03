@@ -1,9 +1,17 @@
+import $ from 'jquery';
+import d3 from 'd3';
+import Contour from '../../src/scripts/core/contour';
+import { intersection } from '../../src/scripts/utils/contour-utils';
+import '../../src/scripts/core/cartesian';
+import '../../src/scripts/visualizations/null';
+import '../../src/scripts/visualizations/line';
+import LinearScale from '../../src/scripts/core/axis/linear-scale-axis';
+import OrdinalScale from '../../src/scripts/core/axis/ordinal-scale-axis';
+
 describe('Visualizations', function () {
     var nw;
     var el, $el;
     var data = [1,2,3];
-
-
     function createContour(options) {
         $el.empty();
         options = Object.assign({ el: el, chart: { animations: false } }, options);
@@ -80,14 +88,13 @@ describe('Visualizations', function () {
                 it('should default to linear x scale', function () {
                     var chart = createContour();
                     chart.line([1,2,3]).render();
-                    expect(chart.xScaleGenerator instanceof nwt.axes.LinearScale).toBeTruthy();
+                    expect(chart.xScaleGenerator instanceof LinearScale).toBeTruthy();
                 });
-
 
                 it('should render as ordinal scale if categorical data is passed in', function () {
                     var chart = createContour();
                     chart.line([{x: 'a', y: 1}, {x: 'b', y: 2}]).render();
-                    expect(chart.xScaleGenerator instanceof nwt.axes.OrdinalScale).toBeTruthy();
+                    expect(chart.xScaleGenerator instanceof OrdinalScale).toBeTruthy();
                 });
 
                 it('should add a group with the visualization id', function () {
@@ -154,7 +161,7 @@ describe('Visualizations', function () {
                         var seriesClasses = ['s-1', 'series', '1'];
                         var classes = d3.select(g[0]).attr('class').split(' ');
 
-                        var inter = nwt.intersection(classes, seriesClasses);
+                        var inter = intersection(classes, seriesClasses);
                         expect(inter).toEqual(seriesClasses);
                     });
 

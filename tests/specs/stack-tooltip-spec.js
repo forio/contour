@@ -1,7 +1,9 @@
-
+import $ from 'jquery';
+import Contour from '../../src/scripts/core/contour';
+import '../../src/scripts/core/cartesian';
+import '../../src/scripts/visualizations/stack-tooltip';
 
 describe('Stacked Tooltip', function () {
-
     var el, $el, nw;
     beforeEach(function () {
         $el = $('<div>');
@@ -10,10 +12,8 @@ describe('Stacked Tooltip', function () {
 
     function createContour(options) {
         options = Object.assign({ el: el }, options);
-        contour = new Contour(options).cartesian();
-        return contour;
+        return new Contour(options).cartesian();
     }
-
 
     xit('should not render null values', function () {
         var tooltip = $('<div>');

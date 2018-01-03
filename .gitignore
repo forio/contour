@@ -54,10 +54,11 @@ npm-debug.log
 node_modules/
 
 
-# Sublime specific #
+# IDE specific #
 ####################
 sftp-config*
 *.sublime-*
+.vscode
 
 # Simulate #
 ############
@@ -81,4 +82,4 @@ Cakefile
 bower_components/
 /documentation/
 examples/demo.html
-dist/contour.js.map
+dist/

@@ -1,5 +1,11 @@
-describe('Bar chart', function () {
+import $ from 'jquery';
+import Contour from '../../src/scripts/core/contour';
+import '../../src/scripts/core/cartesian';
+import '../../src/scripts/core/horizontal-frame';
+import '../../src/scripts/visualizations/null';
+import '../../src/scripts/visualizations/bar';
 
+describe('Bar chart', function () {
     var el, $el, nw;
     beforeEach(function () {
         $el = $('<div>');
@@ -64,10 +70,9 @@ describe('Bar chart', function () {
                 toHaveUniqeYCoord: function (util, tester) {
                     return {
                         compare: function (actual, expected) {
-                            var notText = this.isNot ? '(not) ' : '';
-                            this.message = function () { return 'Expected '+ notText + expected + ' uniq Y corrdinates and got ' + uniq.length + ' different ones: [' + uniq.join() +']'; };
-                            var yCoords = {};
                             var uniq = [];
+                            // const message = function () { return 'Expected ' + expected + ' uniq Y corrdinates and got ' + uniq.length + ' different ones: [' + uniq.join() +']'; };
+                            var yCoords = {};
                             actual.each(function () {
                                 var key = $(this).attr('y');
                                 if(!yCoords[key]) {
@@ -80,8 +85,29 @@ describe('Bar chart', function () {
 
                             return {
                                 pass: passed,
-                                message: 'Expected ' + actual + (passed ? '' : ' not') + ' to equal ' + expected
+                                message: 'Expected ' + actual + ' to equal ' + expected
                             };
+                        },
+
+                        negativeCompare: function (actual, expected) {
+                            var uniq = [];
+                            // this.message = function () { return 'Expected NOT ' + expected + ' uniq Y corrdinates and got ' + uniq.length + ' different ones: [' + uniq.join() +']'; };
+                            var yCoords = {};
+                            actual.each(function () {
+                                var key = $(this).attr('y');
+                                if(!yCoords[key]) {
+                                    yCoords[key] = true;
+                                    uniq.push(key);
+                                }
+                            });
+
+                            var passed = uniq.length === expected;
+
+                            return {
+                                pass: passed,
+                                message: 'Expected ' + actual + ' not to equal ' + expected
+                            };
+
                         }
                     };
 
@@ -90,8 +116,25 @@ describe('Bar chart', function () {
                 toAllHaveDifferentYCoord: function () {
                     return {
                         compare: function (actual, expected) {
-                            var notText = this.isNot ? ' not' : '';
-                            message = function () { return 'Expected all to' + notText + ' have different Y coordinates'; };
+                            const message = function () { return 'Expected all to have different Y coordinates'; };
+                            var yCoords = {};
+                            var correct = true;
+                            actual.each(function () {
+                                var key = $(this).attr('y');
+                                if(!yCoords[key])
+                                    yCoords[key] = true;
+                                else
+                                    correct = false;
+                            });
+
+                            return {
+                                pass: correct,
+                                message: message()
+                            };
+                        },
+
+                        negativeCompare: function (actual, expected) {
+                            const message = function () { return 'Expected all to NOT have different Y coordinates'; };
                             var yCoords = {};
                             var correct = true;
                             actual.each(function () {
@@ -169,6 +212,4 @@ describe('Bar chart', function () {
         });
 
     });
-
-
 });

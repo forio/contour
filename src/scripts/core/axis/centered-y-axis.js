@@ -1,64 +1,66 @@
-(function () {
-    // focus on vertically centering data - zero anchor is ignored
-    var CenteredYAxis = function (data, options, domain) {
-        this.data = data;
-        this.options = options;
-        this.yMax = domain[0];
-        this.yMin = domain[1];
-        this.NUM_DECIMALS = 1;
-    };
+import d3 from 'd3';
+import * as nwt from '../../utils/contour-utils';
+import YAxis from './y-axis';
 
-    var __super = nwt.axes.YAxis.prototype;
-    CenteredYAxis.prototype = Object.assign({}, __super, {
-        axis: function () {
-            var options = this.options.yAxis;
-            this.domain = this._scale.domain();
-            var numTicks = options.ticks || 5;
-            var axis = __super.axis.call(this);
-            var tickValues = this._extractYTickValues(options.min, options.max, numTicks);
+// focus on vertically centering data - zero anchor is ignored
+function CenteredYAxis(data, options, domain) {
+    this.data = data;
+    this.options = options;
+    this.yMax = domain[0];
+    this.yMin = domain[1];
+    this.NUM_DECIMALS = 1;
+}
 
-            return axis.ticks(numTicks)
-                .tickValues(tickValues)
-                .tickFormat(undefined);
-        },
+const __super = YAxis.prototype;
+CenteredYAxis.prototype = Object.assign({}, __super, {
+    axis: function () {
+        var options = this.options.yAxis;
+        this.domain = this._scale.domain();
+        var numTicks = options.ticks || 5;
+        var axis = __super.axis.call(this);
+        var tickValues = this._extractYTickValues(options.min, options.max, numTicks);
 
-        setDomain: function (domain) {
-            var scaledDomain = this._getScaledDomain(domain);
+        return axis.ticks(numTicks)
+            .tickValues(tickValues)
+            .tickFormat(undefined);
+    },
 
-            this.yMin = scaledDomain[0];
-            this.yMax = scaledDomain[1];
-            this._scale.domain(scaledDomain);
-        },
+    setDomain: function (domain) {
+        var scaledDomain = this._getScaledDomain(domain);
 
-        _getScaledDomain: function(domain) {
-            var extent = d3.extent(domain);
-            var dataRange = extent[1] - extent[0];
-            var domainPadding = dataRange * 0.1;
+        this.yMin = scaledDomain[0];
+        this.yMax = scaledDomain[1];
+        this._scale.domain(scaledDomain);
+    },
 
-            var scaledMin = d3.round(extent[0] - domainPadding, this.NUM_DECIMALS);
-            var scaledMax = d3.round(extent[1] + domainPadding, this.NUM_DECIMALS);
+    _getScaledDomain: function(domain) {
+        var extent = d3.extent(domain);
+        var dataRange = extent[1] - extent[0];
+        var domainPadding = dataRange * 0.1;
 
-            return [scaledMin, scaledMax];
-        },
+        var scaledMin = d3.round(extent[0] - domainPadding, this.NUM_DECIMALS);
+        var scaledMax = d3.round(extent[1] + domainPadding, this.NUM_DECIMALS);
 
-         _extractYTickValues:  function(min, max, numTicks) {
-            var tickMin = min != null ? min : this.yMin;
-            var tickMax = max != null ? max : this.yMax;
+        return [scaledMin, scaledMax];
+    },
 
-            var tickRange = tickMax - tickMin;
-            var tickSpacing = tickRange / numTicks;
+        _extractYTickValues:  function(min, max, numTicks) {
+        var tickMin = min != null ? min : this.yMin;
+        var tickMax = max != null ? max : this.yMax;
 
-            var currentTick = tickMin;
-            var tickValues = [tickMin];
-            while (currentTick < tickMax) {
-                currentTick += tickSpacing;
-                tickValues.push(d3.round(currentTick, this.NUM_DECIMALS));
-            }
-            tickValues.push(tickMax);
+        var tickRange = tickMax - tickMin;
+        var tickSpacing = tickRange / numTicks;
 
-            return tickValues;
+        var currentTick = tickMin;
+        var tickValues = [tickMin];
+        while (currentTick < tickMax) {
+            currentTick += tickSpacing;
+            tickValues.push(d3.round(currentTick, this.NUM_DECIMALS));
         }
-    });
+        tickValues.push(tickMax);
 
-    nwt.addAxis('CenteredYAxis', CenteredYAxis);
-})();
+        return tickValues;
+    }
+});
+
+export default CenteredYAxis;

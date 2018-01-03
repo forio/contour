@@ -1,6 +1,6 @@
+import * as nwt from '../../src/scripts/utils/contour-utils';
+
 describe('contour-utils niceMinMax', function () {
-
-
     it('should use increment of 2 when min=0, max=10, ticks=5', function () {
         var nice = nwt.niceMinMax(0, 10, 5);
 

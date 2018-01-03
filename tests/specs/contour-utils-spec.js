@@ -1,3 +1,6 @@
+import d3 from 'd3';
+import * as nwt from '../../src/scripts/utils/contour-utils';
+
 describe('utils', function () {
     describe('dateDiff', function () {
         it('should return the difference in days of two dates', function () {
@@ -149,33 +152,31 @@ describe('utils', function () {
             };
 
             jasmine.addMatchers({
-                toBeNormalizedDataPoint: function () {
-                    return function (actual, expected) {
-
-                        var notText = this.isNot ? ' not' : '';
-                        var message = function () {
-                            return 'Expected ' + actual + notText + ' to be normalized data point and is not';
-                        };
-
-                        return {
-                            pass: actual.hasOwnProperty('x') && actual.hasOwnProperty('y'),
-                            message: message()
-                        };
-
-                    };
-                },
-
                 toBeNormalizedSeries: function () {
                     return {
                         compare: function (actual, expected) {
-                            var notText = this.isNot ? ' not' : '';
                             var missing = [];
 
                             if(!actual.hasOwnProperty('name')) missing.push('series name (name)');
                             if(!actual.hasOwnProperty('data')) missing.push('series data (data)');
                             if(!actual.data.every(function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
 
-                            message = function () { return 'Expected object' + notText + ' to be normalize series and is missing: ' + missing.join(', '); };
+                            const message = function () { return 'Expected object to be normalize series and is missing: ' + missing.join(', '); };
+
+                            return {
+                                pass: !missing.length,
+                                message: message()
+                            };
+                        },
+
+                        negativeCompare: function (actual, expected) {
+                            var missing = [];
+
+                            if(!actual.hasOwnProperty('name')) missing.push('series name (name)');
+                            if(!actual.hasOwnProperty('data')) missing.push('series data (data)');
+                            if(!actual.data.every(function (d) { return d.hasOwnProperty('x') && d.hasOwnProperty('y'); })) missing.push('not all data points have x & y fields');
+
+                            const message = function () { return 'Expected object NOT to be normalize series and is missing: ' + missing.join(', '); };
 
                             return {
                                 pass: !missing.length,
@@ -457,7 +458,10 @@ describe('utils', function () {
             var passCtx;
             var expectedContext = {};
             var input;
+            let prevWarn;
             beforeEach(function () {
+                prevWarn = console.warn;
+                console.warn = () => {};
                 input = {
                     a: 1,
                     b: 'hello',
@@ -482,6 +486,10 @@ describe('utils', function () {
                 });
             });
 
+            afterEach(function () {
+                console.warn = prevWarn;
+            });
+
             it('should materialize all props that are functions', function () {
                 expect(res.c).toBe(2);
             });
@@ -497,15 +505,6 @@ describe('utils', function () {
 
             it('should pass the correct context to the functions', function () {
                 expect(passCtx).toBe(expectedContext);
-            });
-
-            it('should skip the skip list', function () {
-                expect(res.x).toEqual(input.x);
-                expect(res.d.x).toEqual(input.d.x);
-            });
-
-            it('should skip the skipMatch', function () {
-                expect(res.d.zzz).toEqual(input.d.zzz);
             });
 
             it('should skip functions that expect parameters', function () {
@@ -684,8 +683,8 @@ describe('utils', function () {
             expect(nwt.merge(object, other)).toEqual({ 'a': [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }] });
         });
 
-        it('for both value types just pass the second one back', function () {
-            expect(nwt.merge(5, 6)).toEqual(6);
+        it('for both value types just pass the first one back', function () {
+            expect(nwt.merge(5, 6)).toEqual(5);
         });
 
         it('should mutate first object', function () {

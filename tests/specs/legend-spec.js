@@ -1,3 +1,8 @@
+import $ from 'jquery';
+import Contour from '../../src/scripts/core/contour';
+import '../../src/scripts/core/cartesian';
+import '../../src/scripts/visualizations/legend';
+
 describe('Legend Visualization', function () {
     var $el, el;
     var instance;

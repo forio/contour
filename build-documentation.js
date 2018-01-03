@@ -86,7 +86,7 @@ function copyFile(source, target, cb) {
 function getSourceFileList(srcSpec) {
     var allFiles = [];
     srcSpec.forEach(function (spec) {
-        glob(spec, { sync: true, nosort: true }, function (er, files) {
+        glob(spec, { sync: false, nosort: true }, function (er, files) {
             allFiles = _.union(allFiles, files);
         });
     });

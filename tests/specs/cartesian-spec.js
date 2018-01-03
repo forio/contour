@@ -1,16 +1,21 @@
+import $ from 'jquery';
+import d3 from 'd3';
+import Contour from '../../src/scripts/core/contour';
+import '../../src/scripts/core/cartesian';
+import '../../src/scripts/visualizations/null';
+
 describe('Cartesian frame', function () {
     var $el, el;
     var instance;
 
-
     beforeEach(function () {
-        $el = $('<div>');
-        el = $el.get(0);
+        el = document.createElement('div');
+        $el = $(el);
     });
 
     function createinstance(options) {
-        $el = $('<div>');
-        el = $el.get(0);
+        el = document.createElement('div');
+        $el = $(el);
         options = Object.assign({ el: el, chart: { animations: { enable: false } } }, options);
 
         instance = new Contour(options).cartesian();
@@ -46,7 +51,8 @@ describe('Cartesian frame', function () {
     }
 
     it('without data should provide default axis', function () {
-        var instance = createinstance().render();
+        var instance = createinstance();
+        instance.render();
         // default y Axis goes from 0 to 10
         assert_hasDefaultEmptyYScale(instance, 10);
     });
@@ -102,7 +108,6 @@ describe('Cartesian frame', function () {
         });
     });
 
-
     describe('default xScale', function () {
         beforeEach(function () {
             instance = createinstance();
@@ -124,8 +129,6 @@ describe('Cartesian frame', function () {
             expect(instance.xScale(9)).toEqual(instance.xScale(8) + dist);
         });
     });
-
-
 
     describe('default yScale', function () {
         beforeEach(function () {
@@ -193,15 +196,12 @@ describe('Cartesian frame', function () {
         });
     });
 
-
-
-
     describe('default', function () {
         describe('yAxis title', function () {
             it('should be included if specificed in the options', function () {
                 instance = createinstance({ yAxis: { title: 'yAxis' } });
                 instance.nullVis([1,2,3]).render();
-                titles = $el.find('.y.axis-title');
+                const titles = $el.find('.y.axis-title');
                 expect(titles.length).toBe(1);
                 expect(titles.text()).toBe('yAxis');
             });
@@ -209,7 +209,7 @@ describe('Cartesian frame', function () {
             it('should NOT be included if NOT specificed in the options', function () {
                 instance = createinstance({ yAxis: { title: '' } });
                 instance.nullVis([1,2,3]).render();
-                titles = $el.find('.axis-title');
+                const titles = $el.find('.axis-title');
                 expect(titles.length).toBe(0);
             });
 
@@ -399,5 +399,4 @@ describe('Cartesian frame', function () {
             expect($el.find('.x.axis .grid-line').length).toBe(8);
         });
     });
-
 });
