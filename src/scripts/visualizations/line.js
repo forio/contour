@@ -67,7 +67,6 @@ var animationsMap = {
 };
 
 
-/* jshint eqnull: true */
 function render(rawData, layer, options, id) {
     this.checkDependencies('cartesian');
 
@@ -83,11 +82,9 @@ function render(rawData, layer, options, id) {
 
     renderPaths();
 
-    if (options.line.marker.enable)
-        renderMarkers();
+    renderMarkers(options.line.marker.enable);
 
-    if (options.tooltip && options.tooltip.enable)
-        renderTooltipTrackers();
+    renderTooltipTrackers(options.tooltip && options.tooltip.enable);
 
     function seriesClassName(extras) { return function (d, i) { return (extras||'') + ' s-' +(i+1) + ' ' + nwt.seriesNameToClass(d.name); }; }
 
@@ -140,10 +137,10 @@ function render(rawData, layer, options, id) {
         }
     }
 
-    function renderMarkers() {
+    function renderMarkers(enabled) {
         var animationDelay = (options.line.marker.animationDelay == null) ? duration : options.line.marker.animationDelay;
         var markers = layer.selectAll('.line-chart-markers')
-            .data(data, function (d) { return d.name; });
+            .data(enabled ? data : [], function (d) { return d.name; });
 
         markers.enter().append('g')
             .attr('class', seriesClassName('line-chart-markers markers'));
@@ -178,10 +175,10 @@ function render(rawData, layer, options, id) {
 
     }
 
-    function renderTooltipTrackers() {
+    function renderTooltipTrackers(enabled) {
         var trackerSize = 10;
         var markers = layer.selectAll('.tooltip-trackers')
-            .data(data, function (d) { return d.name; });
+            .data(enabled ? data : [], function (d) { return d.name; });
 
         markers.enter().append('g')
             .attr('class', seriesClassName('tooltip-trackers'));
