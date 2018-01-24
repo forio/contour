@@ -109,6 +109,7 @@ function render(rawData, layer, options, id) {
         // enter
         var el = series.enter().append('svg:g')
             .attr('class',seriesClassName('series'))
+            .attr('clip-path', 'url(#clip)')
             .append('path')
                 .attr('class', 'line');
 

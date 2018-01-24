@@ -6,6 +6,9 @@ import { xScaleFactory, yScaleFactory } from './axis/axis-scale-factory';
 var defaults = {
     chart: {
         gridlines: 'none',
+        // not clipping the plot area could be a performance gain
+        // but by default we clip to be safe
+        clipPlotArea: true,
         padding: {
             top: 6,
             right: 5,
@@ -537,6 +540,30 @@ var cartesian = function () {
             return this;
         },
 
+        renderClipArea: function () {
+            const data = this.options.chart.clipPlotArea ? [null] : [];
+            const defs = this.svg.selectAll('defs').data(data);
+            defs.enter().append('defs');
+
+            const clip = defs.selectAll('clipPath').data(data);
+            clip.enter().append('clipPath').attr('id', 'clip');
+
+            const rect = clip.selectAll('rect').data(data);
+            rect.enter().append('rect');
+
+            const w = this.options.chart.plotWidth;
+            const h = this.options.chart.plotHeight;
+
+            rect.attr('width', w)
+                .attr('height', h);
+
+            rect.exit().remove();
+            clip.exit().remove();
+            defs.exit().remove();
+
+            return this;
+        },
+
         render: function () {
 
             this.composeOptions();
@@ -547,6 +574,7 @@ var cartesian = function () {
             this.baseRender();
 
             this
+                .renderClipArea()
                 .renderBackground()
                 .renderXAxis()
                 .renderYAxis()
