@@ -113,8 +113,9 @@ OrdinalScale.prototype = {
             });
     },
 
-    update: function (domain, data) {
+    update: function (domain, data, options) {
         this.data = data;
+        this.options = options || this.options;
         this.scale(domain);
     },
 

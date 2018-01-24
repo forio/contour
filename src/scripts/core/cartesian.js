@@ -226,7 +226,7 @@ var cartesian = function () {
                 this.xScale = this.xScaleGenerator.scale(this.xDomain);
                 this.rangeBand = this.xScaleGenerator.rangeBand();
             } else {
-                this.xScaleGenerator.update(this.xDomain, this.dataSrc);
+                this.xScaleGenerator.update(this.xDomain, this.dataSrc, this.options);
                 this.rangeBand = this.xScaleGenerator.rangeBand();
             }
         },

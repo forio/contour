@@ -69,8 +69,9 @@ TimeScale.prototype = {
         return axis;
     },
 
-    update: function (domain, data) {
+    update: function (domain, data, options) {
         this.data = data;
+        this.options = options || this.options;
         this.setDomain(domain);
         this.scale();
     },
