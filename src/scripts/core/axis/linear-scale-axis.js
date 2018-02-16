@@ -13,7 +13,6 @@ LinearScale.prototype = {
         delete this._scale;
     },
 
-    /*jshint eqnull:true*/
     scale: function (domain) {
         this._domain = domain ? this._getAxisDomain(domain) : this._getAxisDomain(this.data);
         this._scale = this._scale || d3.scale.linear();
@@ -54,14 +53,14 @@ LinearScale.prototype = {
             var finalTicks = nwt.getTicksThatFit(ticks, formatLabel, this.options);
             axis.tickValues(finalTicks);
             axis.ticks(finalTicks.length);
-
         }
 
         return axis;
     },
 
-    update: function (domain, dataSrc) {
+    update: function (domain, dataSrc, options) {
         this.data = dataSrc;
+        this.options = options || this.options;
         this.scale(domain);
     },
 
@@ -80,7 +79,6 @@ LinearScale.prototype = {
     },
 
     _getAxisDomain: function (domain) {
-        /*jshint eqnull: true*/
         var optMin = this.options.xAxis.min;
         var optMax = this.options.xAxis.max;
         var extents = d3.extent(domain);

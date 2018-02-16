@@ -97,4 +97,15 @@ describe('Linear axis scale', function () {
         ax.scale();
         expect(ax.axis().ticks()[0]).toBe(2);
     });
+
+    describe('update', function () {
+        it('should accept new options values whe updating scale', function () {
+            const ax = createAxis({ xAxis: { min: 5 }});
+            ax.scale();
+            expect(ax.scale().domain()).toEqual([5, 300]);
+
+            ax.update([100,300], data, { chart: {}, xAxis: { min: 3 }});
+            expect(ax.scale().domain()).toEqual([3, 300]);
+        });
+    });
 });
