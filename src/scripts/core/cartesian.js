@@ -44,6 +44,8 @@ var defaults = {
             formatter: undefined
         },
         linearDomain: false,     // specify if a time domain should be treated linearly or ....
+        // should the xAxis be rendered at y=0 or at the bottom of the chart regardless of where y = 0 is
+        zeroPlane: false,
     },
 
     yAxis: {
@@ -331,9 +333,27 @@ var cartesian = function () {
         },
 
         renderXAxis: function () {
-            var xAxis = this.xAxis();
-            var y = this.options.chart.plotHeight + this.options.chart.padding.top;
-            var x = this.options.chart.internalPadding.left;
+            const xAxis = this.xAxis();
+            const plotHeight = this.options.chart.plotHeight;
+            const paddingTop = this.options.chart.internalPadding.top;
+            const x = this.options.chart.internalPadding.left;
+            const animOpt = this.options.chart.animations;
+            let y = this.options.chart.padding.top;
+            const t = d3.transition().duration(this._animationDuration());
+
+            const adjustTickLabels = () => (selection) => {
+                if (this.options.xAxis.zeroPlane) {
+                    const adj = plotHeight - y + paddingTop;
+                    const textSel = selection.selectAll('.x.axis text');
+                    textSel.attr('transform', 'translate(0, ' + (adj) + ')');
+                }
+            };
+
+            if (this.options.xAxis.zeroPlane) {
+                y += this.yScale(0);
+            } else {
+                y += plotHeight;
+            }
 
             this._xAxisGroup = this.svg.selectAll('.x.axis')
                 .data([1]);
@@ -342,16 +362,27 @@ var cartesian = function () {
                 this._xAxisGroup.enter()
                     .append('g')
                     .attr('transform', 'translate(' + x + ',' + y + ')')
-                    .attr('class', 'x axis');
+                    .attr('class', 'x axis')
+                    .call(xAxis)
+                    .call(adjustTickLabels());
             } else {
-                d3.select(this._xAxisGroup.node())
-                    .attr('transform', 'translate(' + x + ',' + y + ')');
-            }
+                const opt = this.options.chart.animations;
 
-
+                if (opt && opt.enable) {
+                    // we can't attached the transition an not configure it so
+                    // we need to repeat this both with and without transition
+                    this._xAxisGroup
+                        .transition(t)
+                        .attr('transform', 'translate(' + x + ',' + y + ')')
+                        .call(xAxis)
+                        .call(adjustTickLabels());
+                } else {
             this._xAxisGroup
-                .transition().duration(this._animationDuration())
-                .call(xAxis);
+                        .attr('transform', 'translate(' + x + ',' + y + ')')
+                .call(xAxis)
+                        .call(adjustTickLabels(true));
+                }
+            }
 
             this.xScaleGenerator.postProcessAxis(this._xAxisGroup);
 
@@ -381,14 +412,22 @@ var cartesian = function () {
         },
 
         _renderYAxisElement: function () {
-            var options = this.options.yAxis;
-            var alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
+            const options = this.options.yAxis;
+            const alignmentOffset = { bottom: '.8em', middle: '.35em', top: '0' };
+            const animOpt = this.options.chart.animations;
 
-            this._yAxisGroup
-                .transition().duration(this._animationDuration())
-                .call(this.yAxis())
-                .selectAll('.tick text')
-                    .attr('dy', alignmentOffset[options.labels.verticalAlign]);
+            if (animOpt && animOpt.enable) {
+                this._yAxisGroup
+                    .transition().duration(this._animationDuration())
+                    .call(this.yAxis())
+                    .selectAll('.tick text')
+                        .attr('dy', alignmentOffset[options.labels.verticalAlign]);
+            } else {
+                this._yAxisGroup
+                    .call(this.yAxis())
+                    .selectAll('.tick text')
+                        .attr('dy', alignmentOffset[options.labels.verticalAlign]);
+            }
         },
 
         renderAxisLabels: function () {

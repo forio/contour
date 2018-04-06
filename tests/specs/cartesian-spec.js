@@ -14,10 +14,7 @@ describe('Cartesian frame', function () {
     });
 
     function createinstance(options) {
-        el = document.createElement('div');
-        $el = $(el);
         options = Object.assign({ el: el, chart: { animations: { enable: false } } }, options);
-
         instance = new Contour(options).cartesian();
         return instance;
     }
@@ -109,12 +106,15 @@ describe('Cartesian frame', function () {
     });
 
     describe('default xScale', function () {
-        beforeEach(function () {
-            instance = createinstance();
-        });
-
         it('should be an ordinal/linear scaling', function () {
-            instance = createinstance({chart: { width: 131 } , xAxis: { innerRangePadding: 0, outerRangePadding: 0 }});
+            var instance = createinstance({
+                chart: { width: 131 },
+                xAxis: {
+                    innerRangePadding: 0,
+                    outerRangePadding: 0
+                }
+            });
+
             instance.nullVis([0,1,2,3,4,5,6,7,8,9]).render();
 
             // this distance should be constant for all
