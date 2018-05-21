@@ -18,7 +18,6 @@ describe('default yAxis', function () {
         $el = $('<div>');
         el = $el.get(0);
         jasmine.clock().install();
-        instance = createinstance();
     });
 
     afterEach(function() {
@@ -26,13 +25,13 @@ describe('default yAxis', function () {
     });
 
     function createinstance(options) {
-        options = Object.assign({ el: el, chart: { animations: false } }, options);
+        options = Object.assign({ el: el, chart: { animations: { enable: false } } }, options);
         instance = new Contour(options).cartesian();
         return instance;
     }
 
     it('should have outer Tick marks (ticks at the begining and end of the axis line)', function () {
-        instance.nullVis([0,10,20,30]).render();
+        createinstance().nullVis([0,10,20,30]).render();
         // the actual axis path should start at -6 (the default outerTickSize)
         d3.timer.flush();
         expect($el.find('.y.axis .domain').attr('d')).toContain('M-6');
@@ -77,7 +76,7 @@ describe('default yAxis', function () {
     });
 
     it('should align the middle of the label to the tick by default', function () {
-        instance.nullVis([0,10,20,30]).render();
+        createinstance().nullVis([0,10,20,30]).render();
         d3.timer.flush();
         var ticks = $el.find('.y.axis .tick text');
         expect([].every.call(ticks, function (t) { return $(t).attr('dy').contains('.35em'); })).toBe(true);
@@ -131,10 +130,17 @@ describe('default yAxis', function () {
 
         describe('with label formatter function set', function () {
             it('should use the function to format tick labels', function () {
-                var text = 'format';
-                instance = createinstance({yAxis:  { scaling: {type: 'smart'}, labels: {
-                    formatter: function () { return text; }
-                }}});
+                const text = 'format';
+                const instance = createinstance({
+                    yAxis: {
+                        scaling: {
+                            type: 'smart'
+                        },
+                        labels: {
+                            formatter: function () { return text; }
+                        }
+                    }
+                });
 
                 instance.nullVis([1,2,3]).render();
                 expect($el.find('.y.axis .tick text').eq(0).text()).toBe(text);
