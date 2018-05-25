@@ -522,9 +522,9 @@
                 this.background = this.background || this.createVisualizationLayer('background', 0);
                 var g = this.background.selectAll('.plot-area-background').data([null]);
 
-                g.enter().append('rect')
-                    .attr('class', 'plot-area-background')
-                    .attr('x', options.internalPadding.left)
+                g.enter().append('rect').attr('class', 'plot-area-background');
+
+                g.attr('x', options.internalPadding.left)
                     .attr('y', options.internalPadding.top)
                     .attr('width', options.plotWidth)
                     .attr('height', options.plotHeight);
