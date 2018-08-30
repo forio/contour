@@ -70,7 +70,7 @@ var defaults = {
         labels: {
             // top, middle, bottom
             verticalAlign: 'middle',
-            format: 's', // d3 formats
+            format: 'n', // d3 formats
             formatter: undefined // a function that formats each value ie. function (datum) { return 'x: ' + datum.x + ', y:' + datum.y }
         }
     }

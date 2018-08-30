@@ -24,7 +24,7 @@ var defaults = {
 
         // outer radius as function will recieve the proposed maximum radius for a pie
         // passing a value between 0 and 1 (non-inclusing), this value is interpreted as % of width
-        // the default behavior is 50% of the mininum between with and height of the container (adjusted for padding)
+        // the default behavior is 50% of the mininum between width and height of the container (adjusted for padding)
         outerRadius: null
     }
 };
