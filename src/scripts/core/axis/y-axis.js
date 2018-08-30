@@ -6,7 +6,7 @@ function YAxis(data, options, domain) {
     this.options = options || {
         yAxis: {
             scaling: { options: {} },
-            labels: { format: 's' }
+            labels: { format: 'n' }
         }
     };
     this.domain = domain || [0, 1];
