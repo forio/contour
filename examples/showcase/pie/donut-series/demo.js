@@ -45,6 +45,11 @@ $(function () {
                 hAlign: 'center',
                 vAlign: 'bottom',
                 direction: 'horizontal'
+            },
+            tooltip: {
+                formatter: function(d) {
+                    return d.data.x + ': ' + d.data.y;
+                }
             }
         })
         .pie(data)
