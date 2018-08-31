@@ -25,7 +25,8 @@
         <? } ?>
 
         <? if (comment.see) { ?>
-          See: <?= comment.see ?>
+            <?var matches = comment.see.match(/{(.*?)}(.*)/)?>
+          See: <a href="#<?= matches[1] ?>"><?= matches[2] ?></a>
         <? } ?>
 
       <? if (comment.paramTags.length > 0) { ?>

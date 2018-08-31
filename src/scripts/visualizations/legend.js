@@ -141,6 +141,7 @@ Legend.defaults = defaults;
 * @param {object|array} data The _data series_ for which to create a legend. This can be in any of the supported formats.
 * @param {object} [options] Configuration options particular to this visualization that override the defaults.
 * @api public
+* @see {core_config/config.legend} legend options
 *
 */
 

@@ -25,7 +25,7 @@ However, the [`smartAxis`](#config_config.yAxis.smartAxis) configuration option 
 
 To remove the tick mark at the end of the range, set [`outerTickSize`](#config_config.yAxis.outerTickSize) to `0`.
 
-See also: [`smartAxis`](#config_config.yAxis.smartAxis), [`min`](#config_config.yAxis.min), [`max`](#config_config.yAxis.max), [`nicing`](#config_config.yAxis.nicing), [`ticks`](#config_config.yAxis.ticks).
+See also: [`smartAxis`](#config_config.yAxis.smartAxis), [`min`](#config_config.yAxis.min), [`max`](#config_config.yAxis.max), [`ticks`](#config_config.yAxis.ticks).
 
 <% if(notes) { %><%= notes %><% } %>
 

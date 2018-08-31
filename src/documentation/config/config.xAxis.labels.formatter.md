@@ -10,10 +10,10 @@ The general form of a specifier is `[​[fill]align][sign][symbol][0][width][,][
 
     new Contour({
         el: '.myLineChart',
-        xAxis: { 
-            labels : 
-                { formatter: 
-                    function (datum) { '$' + datum }
+        xAxis: {
+            labels :
+                { formatter:
+                    function (datum) { return '$' + datum }
                 }
         },
         yAxis: {min: 10, max: 30}
@@ -26,4 +26,3 @@ The general form of a specifier is `[​[fill]align][sign][symbol][0][width][,][
 *[Try it.](<%= jsFiddleLink %>)*
 
 <% if(notes) { %><%= notes %><% } %>
-
