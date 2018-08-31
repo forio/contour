@@ -5,7 +5,7 @@
 When `smartAxis` is `true`, tick marks are drawn for:
 
 * the minimum value of the axis (defaults to 0, but can be specified with [`min`](#config_config.yAxis.min))
-* the maximum value of the axis (either the largest y-value, or the largest y-value rounded up, based on [`nicing`](#config_config.yAxis.nicing), or as specified based on [`max`](#config_config.yAxis.max))
+* the maximum value of the axis (either the largest y-value, or the largest y-value rounded up, based on or as specified based on [`max`](#config_config.yAxis.max))
 * the y-value of the data point with the largest y-value (but only if [`max`](#config_config.yAxis.max) is not specified) 
 
 When `smartAxis` is `false`, tick marks are drawn for:
@@ -33,7 +33,7 @@ The `smartAxis` configuration option has the highest precedence in specifying lo
 
 To remove the tick mark at the end of the range, set [`outerTickSize`](#config_config.yAxis.outerTickSize) to `0`.
 
-See also: [`min`](#config_config.yAxis.min), [`max`](#config_config.yAxis.max), [`nicing`](#config_config.yAxis.nicing), [`tickValues`](#config_config.yAxis.tickValues), [`ticks`](#config_config.yAxis.ticks).
+See also: [`min`](#config_config.yAxis.min), [`max`](#config_config.yAxis.max), [`tickValues`](#config_config.yAxis.tickValues), [`ticks`](#config_config.yAxis.ticks).
 
 <% if(notes) { %><%= notes %><% } %>
 
