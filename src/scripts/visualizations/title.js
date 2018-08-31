@@ -38,6 +38,11 @@ function title(data, layer, options) {
             textAnchor = "start";
             break;
     }
+
+    // Because the title isn't dependent on data, this takes the place of the d3 exit
+    if (d3.select('.title-text')[0][0]) {
+        svg.remove('.title-text');
+    }
     svg.append('text')
         .attr('x', xVal)
         .attr('y', yVal)
