@@ -9,9 +9,10 @@ var defaults = {
     area: {
         stacked: true,
         areaBase: undefined,
-        preprocess: nwt.minMaxFilter(1000)
     }
 };
+
+defaults.area.preprocess = nwt.minMaxFilter(1000);
 
 function renderer(data, layer, options) {
     this.checkDependencies('cartesian');

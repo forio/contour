@@ -16,10 +16,10 @@ var defaults = {
             size: 3,
             animationDelay: null
         },
-        preprocess: nwt.minMaxFilter(1000)
     }
 };
 
+defaults.line.preprocess = nwt.minMaxFilter(1000);
 var duration;
 var animationDirection;
 var animationsMap = {
