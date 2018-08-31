@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Contour Test</title>
+    <link rel="stylesheet" href="https://forio.com/app/lcooper/contour-test/contour.min.css">
+    <script src="https://code.jquery.com/jquery-1.10.0.min.js" charset="utf-8"></script>
+    <script charset="utf-8" src="https://d3js.org/d3.v3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
+    <script src="https://forio.com/app/lcooper/contour-test/contour.js"></script>
+</head>
+
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(event) {
+            new Contour({
+                el: '.myChart',
+                title: {
+                        text: 'Chart',
+                    }
+                })
+                .cartesian()
+                .line([1, 1, 2, 3, 5, 7])
+                .title()
+                .render();
+        });
+    </script>
+    <div class="myChart"></div>
+</body>
+
+</html>
