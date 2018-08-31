@@ -86,9 +86,8 @@ function copyFile(source, target, cb) {
 function getSourceFileList(srcSpec) {
     var allFiles = [];
     srcSpec.forEach(function (spec) {
-        glob(spec, { sync: false, nosort: true }, function (er, files) {
-            allFiles = _.union(allFiles, files);
-        });
+        var files = glob.sync(spec, { sync: false, nosort: true });
+        allFiles = allFiles.concat(files);
     });
 
     return allFiles;
@@ -221,6 +220,3 @@ function bfs(root, rootContext, visitor) {
         }
     }
 }
-
-
-

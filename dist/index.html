@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Contour Test</title>
+        <link rel="stylesheet" href="https://forio.com/tools/contour/contour.min.css">
+        <script src="https://code.jquery.com/jquery-1.10.0.min.js" charset="utf-8"></script>
+        <script charset="utf-8" src="https://d3js.org/d3.v3.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.js"></script>
+        <script src="https://forio.com/app/lcooper/contour-test/contour.js"></script>
+    </head>
+    <body>
+        <script>
+            window.data = [];
+            for (let i = 0; i < 100; i++) {
+                window.data.push(Math.floor(Math.random() * Math.floor(8)));
+            }
+
+            document.addEventListener('DOMContentLoaded', function(event) {
+                console.log(window.data);
+
+                graph = new Contour({
+                    el: '#contour',
+                    yAxis: {
+                        labels: {
+                            format: 's'
+                        },
+                        // min: 2000,
+                        max: 6,
+                        // smartAxis: false,
+                        // nicing: false,
+                    }
+                })
+                .cartesian()
+                .line(window.data)
+                .legend()
+                .render();
+            });
+
+
+        </script>
+        <div id="contour"></div>
+    </body>
+</html>

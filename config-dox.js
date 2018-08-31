@@ -84,7 +84,11 @@ var getConfigObject = function (js, options) {
     if(!isSafeForEval(text)) throw new SyntaxError('Can\'t parse config object');
 
     // aaaahhhh!!! people are going to die with this!!!
-    return eval('(' + text + ')');
+    try {
+        return eval('(' + text + ')');
+    } catch (e) {
+        return '';
+    }
 };
 
 var res = {
