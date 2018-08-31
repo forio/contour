@@ -47,8 +47,10 @@ function title(data, layer, options) {
 }
 
 title.defaults = {
-    text: '',
-    position: 'left'
+    title: {
+        text: '',
+        position: 'left'
+    }
 };
 
 /**
@@ -61,9 +63,9 @@ title.defaults = {
 *
 * ### Example:
 *
-*        new Contour({el: '.myChart', title: { text}})
+*        new Contour({el: '.myChart', title: { text: 'First Seven Fibonacci Numbers', position: 'left' }})
 *           .cartesian()
-*           .trendLine([2,4,3,5,7])
+*           .trendLine([1, 1, 2, 3, 5, 7, 12])
 *           .title()
 *           .render();
 *
