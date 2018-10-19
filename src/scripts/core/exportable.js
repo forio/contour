@@ -1,4 +1,5 @@
 import Contour from './contour';
+import * as nwt from '../utils/contour-utils';
 
 var root = typeof window === 'undefined' ? this : window;
 
@@ -701,19 +702,19 @@ function checkBrowser() {
     // Canvg shim, for IE9-11 and Safari
     function setupCanvgShim(done) {
         var scripts = [
-            'rgbcolor.js',
-            'StackBlur.js',
-            'canvg.js'
+            'https://cdnjs.cloudflare.com/ajax/libs/canvg/1.4/rgbcolor.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/stackblur-canvas/1.4.1/stackblur.min.js',
+            'https://cdn.jsdelivr.net/npm/canvg/dist/browser/canvg.min.js'
         ];
         var remaining = scripts.length;
-        scripts.forEach(function (src) {
+        scripts.forEach(function (srcURL) {
             var script = document.createElement('script');
             script.type = 'text/javascript';
             script.onload = function () {
                 remaining--;
                 if (remaining === 0) done();
             };
-            script.src = '//canvg.googlecode.com/svn/trunk/' + src;
+            script.src = srcURL;
             document.head.appendChild(script);
         });
     }
