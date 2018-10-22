@@ -52,11 +52,11 @@ function renderer(data, layer, options) {
 
         series.enter()
             .append('svg:g')
-            .attr('class', classFn)
             .append('path').datum(function (d) { return d.data; })
                 .attr('class', 'area')
                 .attr('d', startArea);
 
+        series.attr('class', classFn);
         series.exit().remove();
 
         if (options.chart.animations && options.chart.animations.enable) {

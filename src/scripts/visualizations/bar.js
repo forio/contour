@@ -36,9 +36,8 @@ function barRender(data, layer, options) {
     var series = layer.selectAll('g.series')
         .data(stack(data));
 
-    series.enter().append('svg:g')
-        .attr('class', classFn);
-
+    series.enter().append('svg:g');
+    series.attr('class', classFn);
     series.exit().remove();
 
     var bars = series.selectAll('.bar')

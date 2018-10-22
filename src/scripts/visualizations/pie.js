@@ -154,12 +154,12 @@ function renderer(data, layer, options) {
 
         pie.enter()
             .append('path')
-            .attr('class', classFn)
             .attr('d', function (d) { return startArc(d); })
             .attr('style', style)
             .each(function (d) { this._current = { startAngle: d.startAngle, endAngle: d.startAngle }; });
 
-
+        pie.attr('class', classFn);
+        
         if (shouldAnimate) {
             pie.exit()
                 .remove();

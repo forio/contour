@@ -37,17 +37,17 @@ function render(data, layer, options) {
             })
         };
     });
+    var classFn = function(d, i) {
+        return d.name + " series s-" + (i + 1) + ' ' + d.name;;
+    };
 
     var stack = nwt.stackLayout();
     var series = layer.selectAll('g.series')
             .data(stack(filteredData));
 
-    series.enter()
-        .append('g')
-        .attr('class', function (d, i) { return 'series s-' + (i+1) + ' ' + d.name; });
-
-    series.exit()
-        .remove();
+    series.enter().append('g');
+    series.attr("class", classFn);
+    series.exit().remove();
 
     var cols = series.selectAll('.column')
             .data(dataKey, function (d) { return d.x || d; });

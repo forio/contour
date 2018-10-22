@@ -30,11 +30,10 @@ function ScatterPlot(data, layer, options) {
     var series = layer.selectAll('.series')
         .data(data);
 
-    series.attr('class', classFn);
-
     series.enter().append('svg:g')
         .attr('class', classFn);
-
+        
+    series.attr('class', classFn);
     series.exit().remove();
 
     var dots = series.selectAll('.dot')
