@@ -38,7 +38,7 @@ function render(data, layer, options) {
         };
     });
     var classFn = function(d, i) {
-        return d.name + " series s-" + (i + 1) + ' ' + d.name;;
+        return d.name + " series s-" + (i + 1) + ' ' + d.name;
     };
 
     var stack = nwt.stackLayout();

@@ -2620,6 +2620,8 @@ __webpack_require__(31);
 
 __webpack_require__(32);
 
+__webpack_require__(33);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 module.exports = _contour2.default;
@@ -6259,6 +6261,12 @@ var _contour = __webpack_require__(2);
 
 var _contour2 = _interopRequireDefault(_contour);
 
+var _contourUtils = __webpack_require__(0);
+
+var nwt = _interopRequireWildcard(_contourUtils);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var root = typeof window === 'undefined' ? undefined : window;
@@ -6938,16 +6946,16 @@ function checkBrowser() {
 
     // Canvg shim, for IE9-11 and Safari
     function setupCanvgShim(done) {
-        var scripts = ['rgbcolor.js', 'StackBlur.js', 'canvg.js'];
+        var scripts = ['https://cdnjs.cloudflare.com/ajax/libs/canvg/1.4/rgbcolor.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/stackblur-canvas/1.4.1/stackblur.min.js', 'https://cdn.jsdelivr.net/npm/canvg/dist/browser/canvg.min.js'];
         var remaining = scripts.length;
-        scripts.forEach(function (src) {
+        scripts.forEach(function (srcURL) {
             var script = document.createElement('script');
             script.type = 'text/javascript';
             script.onload = function () {
                 remaining--;
                 if (remaining === 0) done();
             };
-            script.src = '//canvg.googlecode.com/svn/trunk/' + src;
+            script.src = srcURL;
             document.head.appendChild(script);
         });
     }
@@ -6984,10 +6992,11 @@ var defaults = {
     },
     area: {
         stacked: true,
-        areaBase: undefined,
-        preprocess: nwt.minMaxFilter(1000)
+        areaBase: undefined
     }
 };
+
+defaults.area.preprocess = nwt.minMaxFilter(1000);
 
 function renderer(data, layer, options) {
     this.checkDependencies('cartesian');
@@ -7037,10 +7046,11 @@ function renderer(data, layer, options) {
 
         var series = layer.selectAll('g.series').data(stack(data));
 
-        series.enter().append('svg:g').attr('class', classFn).append('path').datum(function (d) {
+        series.enter().append('svg:g').append('path').datum(function (d) {
             return d.data;
         }).attr('class', 'area').attr('d', startArea);
 
+        series.attr('class', classFn);
         series.exit().remove();
 
         if (options.chart.animations && options.chart.animations.enable) {
@@ -7175,8 +7185,8 @@ function barRender(data, layer, options) {
     data = options.bar.preprocess(data);
     var series = layer.selectAll('g.series').data(stack(data));
 
-    series.enter().append('svg:g').attr('class', classFn);
-
+    series.enter().append('svg:g');
+    series.attr('class', classFn);
     series.exit().remove();
 
     var bars = series.selectAll('.bar').data(function (d) {
@@ -7337,14 +7347,15 @@ function render(data, layer, options) {
             })
         };
     });
+    var classFn = function classFn(d, i) {
+        return d.name + " series s-" + (i + 1) + ' ' + d.name;
+    };
 
     var stack = nwt.stackLayout();
     var series = layer.selectAll('g.series').data(stack(filteredData));
 
-    series.enter().append('g').attr('class', function (d, i) {
-        return 'series s-' + (i + 1) + ' ' + d.name;
-    });
-
+    series.enter().append('g');
+    series.attr("class", classFn);
     series.exit().remove();
 
     var cols = series.selectAll('.column').data(dataKey, function (d) {
@@ -7623,6 +7634,7 @@ Legend.defaults = defaults;
 * @param {object|array} data The _data series_ for which to create a legend. This can be in any of the supported formats.
 * @param {object} [options] Configuration options particular to this visualization that override the defaults.
 * @api public
+* @see {core_config/config.legend} legend options
 *
 */
 
@@ -7664,11 +7676,11 @@ var defaults = {
             enable: true,
             size: 3,
             animationDelay: null
-        },
-        preprocess: nwt.minMaxFilter(1000)
+        }
     }
 };
 
+defaults.line.preprocess = nwt.minMaxFilter(1000);
 var duration;
 var animationDirection;
 var animationsMap = {
@@ -7783,12 +7795,7 @@ function render(rawData, layer, options, id) {
             });
         }
 
-        // remove
-        if (shouldAnimate) {
-            series.exit().remove();
-        } else {
-            series.exit().remove();
-        }
+        series.exit().remove();
     }
 
     function renderMarkers(enabled) {
@@ -7796,10 +7803,9 @@ function render(rawData, layer, options, id) {
         var markers = layer.selectAll('.line-chart-markers').data(enabled ? data : [], function (d) {
             return d.name;
         });
-        markers.enter().append('g').attr('class', seriesClassName('line-chart-markers markers'));
 
+        markers.enter().append('g');
         markers.attr('class', seriesClassName('line-chart-markers markers'));
-
         markers.exit().remove();
 
         var dots = markers.selectAll('.dot').data(function (d) {
@@ -7825,8 +7831,8 @@ function render(rawData, layer, options, id) {
             return d.name;
         });
 
-        markers.enter().append('g').attr('class', seriesClassName('tooltip-trackers'));
-
+        markers.enter().append('g');
+        markers.attr('class', seriesClassName('tooltip-trackers'));
         markers.exit().remove();
 
         var dots = markers.selectAll('.tooltip-tracker').data(function (d) {
@@ -8063,11 +8069,13 @@ function renderer(data, layer, options) {
             return d.data.x;
         });
 
-        pie.enter().append('path').attr('class', classFn).attr('d', function (d) {
+        pie.enter().append('path').attr('d', function (d) {
             return startArc(d);
         }).attr('style', style).each(function (d) {
             this._current = { startAngle: d.startAngle, endAngle: d.startAngle };
         });
+
+        pie.attr('class', classFn);
 
         if (shouldAnimate) {
             pie.exit().remove();
@@ -8167,10 +8175,9 @@ function ScatterPlot(data, layer, options) {
 
     var series = layer.selectAll('.series').data(data);
 
-    series.attr('class', classFn);
-
     series.enter().append('svg:g').attr('class', classFn);
 
+    series.attr('class', classFn);
     series.exit().remove();
 
     var dots = series.selectAll('.dot').data(function (d) {
@@ -8301,6 +8308,105 @@ _contour2.default.export('stackTooltip', stackTooltip);
 
 /***/ }),
 /* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _d = __webpack_require__(1);
+
+var _d2 = _interopRequireDefault(_d);
+
+var _contourUtils = __webpack_require__(0);
+
+var nwt = _interopRequireWildcard(_contourUtils);
+
+var _contour = __webpack_require__(2);
+
+var _contour2 = _interopRequireDefault(_contour);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function pxToNumber(pixels) {
+    // removes 'px' from end of padding -- padding is always translated into px
+    return Number(pixels.slice(0, -2));
+}
+
+function title(data, layer, options) {
+    var svg = _d2.default.select(this.container[0][0].firstChild);
+    var height = pxToNumber(svg.style('height'));
+    var width = pxToNumber(svg.style('width'));
+    var paddingTop = svg.style('padding-top');
+
+    if (paddingTop === '0px') {
+        svg.style('padding-top', '2rem');
+        paddingTop = '32px';
+    }
+
+    paddingTop = pxToNumber(paddingTop);
+
+    var textAnchor;
+    var xVal;
+    var yVal = -paddingTop / 2;
+
+    switch (options.title.position) {
+        case 'center':
+            xVal = width / 2;
+            textAnchor = "middle";
+            break;
+        case 'right':
+            xVal = width;
+            textAnchor = "end";
+            break;
+        default:
+            xVal = 0;
+            textAnchor = "start";
+            break;
+    }
+
+    // Because the title isn't dependent on data, this takes the place of the d3 exit
+    if (_d2.default.select('.title-text')[0][0]) {
+        svg.remove('.title-text');
+    }
+    svg.append('text').attr('x', xVal).attr('y', yVal).classed('chart-title', true).style('text-anchor', textAnchor).text(options.title.text);
+}
+
+title.defaults = {
+    title: {
+        text: '',
+        position: 'left'
+    }
+};
+
+/**
+* Adds a title to the Contour chart. By default, this will also add some padding to the top of the chart to make room for the title.
+* If the chart already has padding, or if the user wants to style the text with CSS, they may have to style this themselves.
+* The title can be accessed with the CSS class `chart-title`.
+*
+*
+* **Note:** This chart will appear in images generated by `exportable`.
+*
+* ### Example:
+*
+*        new Contour({el: '.myChart', title: { text: 'First Seven Fibonacci Numbers', position: 'left' }})
+*           .cartesian()
+*           .trendLine([1, 1, 2, 3, 5, 7, 12])
+*           .title()
+*           .render();
+*
+* @name title(text, position, styles)
+* @param {object|array} data Ignored!
+* @param {object} options Configuration options particular to this visualization that override the defaults.
+* @api public
+*
+*/
+
+_contour2.default.export('title', title);
+
+/***/ }),
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8533,7 +8639,7 @@ render.defaults = defaults;
 _contour2.default.export('tooltip', render);
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8627,7 +8733,7 @@ ctor.defaults = {};
 _contour2.default.export('trendLine', ctor);
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
