@@ -23,6 +23,7 @@ import './visualizations/null';
 import './visualizations/pie';
 import './visualizations/scatter';
 import './visualizations/stack-tooltip';
+import './visualizations/title';
 import './visualizations/tooltip';
 import './visualizations/trend-line';
 
