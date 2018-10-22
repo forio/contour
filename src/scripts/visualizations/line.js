@@ -143,9 +143,14 @@ function render(rawData, layer, options, id) {
         var markers = layer.selectAll('.line-chart-markers')
             .data(enabled ? data : [], function (d) { return d.name; });
 
+        //enter
         markers.enter().append('g')
             .attr('class', seriesClassName('line-chart-markers markers'));
 
+        // update
+        markers.attr('class', seriesClassName('line-chart-markers markers'));
+
+        // exit
         markers.exit().remove();
 
         var dots = markers.selectAll('.dot')
