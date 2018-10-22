@@ -105,7 +105,6 @@ function render(rawData, layer, options, id) {
 
         // enter
         var el = series.enter().append('svg:g')
-            .attr('class',seriesClassName('series'))
             .attr('clip-path', 'url(#clip)')
             .append('path')
                 .attr('class', 'line');
@@ -129,13 +128,7 @@ function render(rawData, layer, options, id) {
             el.attr('d', function (d) { return line(d.data); });
         }
 
-        // remove
-        if (shouldAnimate) {
-            series.exit()
-                .remove();
-        } else  {
-            series.exit().remove();
-        }
+        series.exit().remove();
     }
 
     function renderMarkers(enabled) {
@@ -143,14 +136,8 @@ function render(rawData, layer, options, id) {
         var markers = layer.selectAll('.line-chart-markers')
             .data(enabled ? data : [], function (d) { return d.name; });
 
-        //enter
-        markers.enter().append('g')
-            .attr('class', seriesClassName('line-chart-markers markers'));
-
-        // update
+        markers.enter().append('g');
         markers.attr('class', seriesClassName('line-chart-markers markers'));
-
-        // exit
         markers.exit().remove();
 
         var dots = markers.selectAll('.dot')
@@ -186,9 +173,8 @@ function render(rawData, layer, options, id) {
         var markers = layer.selectAll('.tooltip-trackers')
             .data(enabled ? data : [], function (d) { return d.name; });
 
-        markers.enter().append('g')
-            .attr('class', seriesClassName('tooltip-trackers'));
-
+        markers.enter().append('g');
+        markers.attr('class', seriesClassName('tooltip-trackers'));
         markers.exit().remove();
 
         var dots = markers.selectAll('.tooltip-tracker')
