@@ -24,7 +24,10 @@ function barRender(data, layer, options) {
     var rectClass = opt.barClass;
     var style = opt.style;
     var x = function (d) { return _this.xScale(d) - 0.5; };
-    var y = function (d) { return _this.yScale(d) + 0.5; };
+    var y = function (d) { 
+        const yScale =  _this.yScale(d) + 0.5; 
+        return yScale;
+    };
     var chartOffset = nwt.getValue(opt.offset, 0, this);
     var rangeBand = nwt.getValue(opt.barWidth, this.rangeBand, this);
     var stack = nwt.stackLayout();
@@ -84,15 +87,18 @@ function barRender(data, layer, options) {
 
     function grouped(bar, enter) {
         var numSeries = data.length;
-        var height = function () { return rangeBand / numSeries - options.bar.groupPadding + 0.5; };
+        var height = function () { 
+            const h = rangeBand / numSeries - options.bar.groupPadding + 0.5; 
+            return h;
+        };
         var offset = function (d, i) { return rangeBand / numSeries * i + 0.5; };
 
         bar.attr('y', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
-            .attr('x', y(0))
             .attr('height', height);
 
         if (enter) {
             return bar
+                .attr('x', y(0))
                 .attr('width', function (d) { return 0.5; });
         } else {
             return bar
