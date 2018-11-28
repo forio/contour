@@ -5449,7 +5449,7 @@ var defaults = {
         gridlines: 'none',
         // not clipping the plot area could be a performance gain
         // but by default we clip to be safe
-        clipPlotArea: true,
+        clipPlotArea: false,
         padding: {
             top: 6,
             right: 5,
