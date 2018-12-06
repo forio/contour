@@ -7148,9 +7148,7 @@ var defaults = {
         style: null,
         stacked: false,
         groupPadding: 2, // two px between same group bars
-        barWidth: function barWidth() {
-            return this.rangeBand;
-        },
+        barWidth: null,
         offset: function offset() {
             return 0;
         },
@@ -7311,9 +7309,7 @@ var defaults = {
         style: null,
         stacked: false,
         groupPadding: 1,
-        columnWidth: function columnWidth() {
-            return this.rangeBand;
-        },
+        columnWidth: null,
         offset: function offset() {
             return 0;
         }

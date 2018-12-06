@@ -8,7 +8,7 @@ var defaults = {
         style: null,
         stacked: false,
         groupPadding: 2,      // two px between same group bars
-        barWidth: function() { return this.rangeBand; },
+        barWidth: null,
         offset: function() { return 0; },
         preprocess: function(data) {
             return data;

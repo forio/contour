@@ -9,7 +9,7 @@ var defaults = {
         style: null,
         stacked: false,
         groupPadding: 1,
-        columnWidth: function() { return this.rangeBand; },
+        columnWidth: null,
         offset: function() { return 0; }
     }
 };
@@ -99,8 +99,9 @@ function render(data, layer, options) {
         var offset = function (d, i) { return rangeBand / data.length * i + 0.5; };
         var base = y(0);
 
-        col.attr('x', function (d, i, j) { return x(d.x) + offset(d, j) + chartOffset; })
-            .attr('width', width);
+        col.attr('x', function (d, i, j) { 
+            return x(d.x) + offset(d, j) + chartOffset; 
+        }).attr('width', width);
 
         if (enter) {
             col.attr('y', base)
