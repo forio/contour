@@ -4009,18 +4009,18 @@
             };
             var show = function(d) {
                 clearHideTimer.call(this);
-                var dataPoints = findOriginalDataPoint(d);
+                var dataPoints = collectMatchingDataPoints(d);
                 this.tooltipElement.select(".text").html(getTooltipText.call(this, d || dataPoints[0], dataPoints));
                 var pos = positionTooltip.call(this, d);
                 this.tooltipElement.style("top", pos.y + "px").style("left", pos.x + "px");
                 changeOpacity.call(this, this.options.tooltip.opacity, this.options.tooltip.showTime);
             };
-            function findOriginalDataPoint(d) {
+            function collectMatchingDataPoints(d) {
                 var res = [];
                 _.each(data, function(series, seriesIndex) {
                     var name = series.name;
                     _.each(series.data, function(point) {
-                        if (point.x === d.x && d.y === point.y) {
+                        if (point.x === d.x && d.y === point.y && d.z === point.z) {
                             res.push(_.extend(point, {
                                 series: name,
                                 seriesIndex: seriesIndex
