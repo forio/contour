@@ -1,4 +1,4 @@
-/*! Contour - v1.0.1 - 2017-01-20 */
+/*! Contour - v1.0.2 - 2020-03-30 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -1102,7 +1102,7 @@
                 /*jshint eqnull:true */
                 var options = this.options.yAxis;
                 var domain = this.domain;
-                var zeroAnchor = options.zeroAnchor != undefined ? options.zeroAnchor : options.scaling.options.zeroAnchor;
+                var zeroAnchor = options.zeroAnchor !== undefined ? options.zeroAnchor : options.scaling.options.zeroAnchor;
                 var tickValues = options.tickValues || _.nw.niceTicks(options.min, options.max, options.ticks, zeroAnchor, domain);
                 var numTicks = this.numTicks(domain, options.min, options.max);
                 var format = options.labels.formatter || d3.format(options.labels.format);
@@ -1252,7 +1252,7 @@
                 yDomain: [],
                 _getYScaledDomain: function(domain, options) {
                     var opts = this.options.yAxis;
-                    var zeroAnchor = opts.zeroAnchor != undefined ? opts.zeroAnchor : opts.scaling.options.zeroAnchor;
+                    var zeroAnchor = opts.zeroAnchor !== undefined ? opts.zeroAnchor : opts.scaling.options.zeroAnchor;
                     var absMin = zeroAnchor && domain && domain[0] > 0 ? 0 : undefined;
                     var min = opts.min != null ? opts.min : absMin;
                     if (opts.tickValues) {
@@ -1547,7 +1547,8 @@
                     var options = this.options.chart;
                     this.background = this.background || this.createVisualizationLayer("background", 0);
                     var g = this.background.selectAll(".plot-area-background").data([ null ]);
-                    g.enter().append("rect").attr("class", "plot-area-background").attr("x", options.internalPadding.left).attr("y", options.internalPadding.top).attr("width", options.plotWidth).attr("height", options.plotHeight);
+                    g.enter().append("rect").attr("class", "plot-area-background");
+                    g.attr("x", options.internalPadding.left).attr("y", options.internalPadding.top).attr("width", options.plotWidth).attr("height", options.plotHeight);
                     g.exit().remove();
                     return this;
                 },
@@ -2889,7 +2890,11 @@
             },
             setVisibility: function(visible) {
                 var node = this.layer.node();
-                visible ? $(node).show() : $(node).hide();
+                if (visible) {
+                    node.style.display = "block";
+                } else {
+                    node.style.display = "none";
+                }
             },
             _updateDomain: function() {
                 if (!this.options[this.type]) throw new Error("Set the options before calling setData or _updateDomain");

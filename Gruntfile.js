@@ -204,11 +204,11 @@ module.exports = function (grunt) {
     // Default task.
     grunt.registerTask('default', ['uglify:concatenate', 'uglify:dev', 'less:dev', 'copy', 'watch', 'jshint', 'jasmine']);
 
-    grunt.registerTask('production', ['jshint', 'jasmine', 'ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'copy', 'releaseNotes']);
+    grunt.registerTask('production', ['jshint', 'ver', 'uglify:concatenate', 'uglify:minify',  'less:production', 'less:uncompressed', 'copy', 'releaseNotes']);
 
     grunt.registerTask('release', function (type) {
         type = type ? type : 'patch';
-        ['jshint','jasmine', 'bumpup:' + type, 'ver', 'uglify:concatenate', 'uglify:minify', 'less:production', 'less:uncompressed', 'copy', 'releaseNotes', 'tagrelease'].forEach(function (task) {
+        ['jshint', 'bumpup:' + type, 'ver', 'uglify:concatenate', 'uglify:minify', 'less:production', 'less:uncompressed', 'copy', 'releaseNotes', 'tagrelease'].forEach(function (task) {
             grunt.task.run(task);
         });
     });

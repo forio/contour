@@ -1,4 +1,5 @@
 describe('dateDiff', function () {
+    console.log('HERE!!')
     it('should return the difference in days of two dates', function () {
         var d1 = new Date('2010-01-01T10:00:00Z');
         var d2 = new Date('2010-01-02T10:00:00Z');
