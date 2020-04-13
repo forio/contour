@@ -1,4 +1,4 @@
-/*! Contour - v1.0.3 - 2020-03-30 */
+/*! Contour - v1.0.3 - 2020-04-13 */
 (function(exports, global) {
     (function(undefined) {
         var root = this;
@@ -2220,7 +2220,7 @@
         }
         Contour.expose("exportable", exportable);
     })();
-    Contour.version = "1.0.2";
+    Contour.version = "1.0.3";
     (function() {
         var helpers = {
             xScaleFactory: function(data, options) {
