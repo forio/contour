@@ -522,7 +522,7 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
             exponent = log10(Math.abs(max));
         }
     } else {
-        if(startAtZero) {
+        if(startAtZero && Math.abs(max) > 0) {
             exponent = log10(Math.abs(max)) - 0.5;
         } else {
             exponent = log10(max-min) - 0.5;
@@ -549,7 +549,7 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
             : excelRoundUp(max + negativeMinAmount,defaultRounding);
 
         var iMin = 0;
-        if (!startAtZero && min !== max) {
+        if ((!startAtZero && min !== max) || max === 0) {
             var inter = min + negativeMinAmount;
             var dig = digits(inter);
             var roundToDigits;
