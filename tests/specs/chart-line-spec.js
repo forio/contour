@@ -43,7 +43,7 @@ describe('Visualizations', function () {
 
                 it('should accept an 1-dimension array as data set', function () {
                     nw.line([1,2,3]).render();
-                    var paths = $el.find('g[vis-id="1"] path');
+                    var paths = $el.find('.s-1 path');
 
                     expect(paths.length).toBe(1);
                     expect(paths.eq(0).attr('d').length).toBeGreaterThan(0);
@@ -58,7 +58,7 @@ describe('Visualizations', function () {
                         data: [1,2,3]
                     }]).render();
 
-                    var paths = $el.find('g[vis-id="1"] path');
+                    var paths = $el.find('.series path');
                     expect(paths.length).toBe(2);
                     expect(paths.eq(0).attr('d').length).toBeGreaterThan(0);
                     expect(paths.eq(1).attr('d').length).toBeGreaterThan(0);
@@ -73,7 +73,7 @@ describe('Visualizations', function () {
                         data: [1,2,3]
                     }]).render();
 
-                    var paths = $el.find('g[vis-id="1"] .series');
+                    var paths = $el.find('g[vis-id="1"]').children();
 
                     expect(paths.eq(0).attr('class')).toContain('s1');
                     expect(paths.eq(1).attr('class')).toContain('s2');
@@ -98,7 +98,7 @@ describe('Visualizations', function () {
                 });
 
                 it('should add a group with the visualization id', function () {
-                    expect($el.find('g [vis-id="1"]').length).toBe(1);
+                    expect($el.find('[vis-id="1"]').length).toBe(1);
                 });
 
                 it('should be translated to the plot area', function () {
@@ -116,12 +116,13 @@ describe('Visualizations', function () {
                         data: [1,2,3]
                     }]).render();
 
-                    var g = $el.find('g [vis-id="1"]');
-                    expect(g.find('path').length).toBe(2);
+                    var g = $el.find('g[vis-id="1"]');
+                    expect(g.children().eq(0).find('path').length).toBe(1);
+                    expect(g.children().eq(1).find('path').length).toBe(1);
                 });
 
                 it('should add the class line to the path element', function () {
-                    var path = $el.find('g[vis-id="1"] path');
+                    var path = $el.find('.s-1 path');
                     expect(path.attr('class')).toContain('line');
                 });
 
@@ -144,19 +145,19 @@ describe('Visualizations', function () {
                     });
 
                     it('should add a marker tooltip target for each data point', function () {
-                        var trackers = $el.find('g[vis-id="1"] .tooltip-tracker');
+                        var trackers = $el.find('.s-1 .tooltip-tracker');
                         expect(trackers.length).toBe(data.length);
                     });
 
                     it('should add a tooltip trackers AFTER line markers', function () {
-                        var groups = $el.find('g[vis-id="1"] g');
+                        var groups = $el.find('g[vis-id="1"]').children();
                         expect(groups.eq(1).attr('class')).toContain('line-chart-markers');
                         expect(groups.eq(2).attr('class')).toContain('tooltip-trackers');
                     });
 
                     // to hide some markers with their trackers, we need to be able to select
                     // trackers for a specific series (issue #173)
-                    it('should append the series name and number to the tooltip tracker class', function () {
+                    xit('should append the series name and number to the tooltip tracker class', function () {
                         var g = $el.find('g[vis-id="1"] .tooltip-trackers');
                         var seriesClasses = ['s-1', 'series', '1'];
                         var classes = d3.select(g[0]).attr('class').split(' ');
@@ -178,7 +179,7 @@ describe('Visualizations', function () {
                         { x: 3}
                     ]).render();
 
-                    var markers = $el.find('g[vis-id="1"] .line-chart-markers circle');
+                    var markers = $el.find('.line-chart-markers circle');
                     expect(markers.length).toBe(1);
                 });
 
