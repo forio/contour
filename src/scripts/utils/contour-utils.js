@@ -831,7 +831,7 @@ export const stackLayout = function () {
         return function (d, y0, y) {
             d.y0 = y0s[d.x] != null ? y0s[d.x] : 0;
             d.y = y;
-            y0s[d.x] = (y0s[d.x] || 0) + y;
+            y0s[d.x] = (y0s[d.x] || 0) + (y || 0);
         };
     };
 
