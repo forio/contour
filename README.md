@@ -8,7 +8,7 @@ Forio Contour uses the popular [D3](http://d3js.org) engine and adds a set of in
 Want to learn more? goto [Forio Contour](http://forio.com/contour)
 
 ### Prequisites
-Use NodeJs 16
+Built with NodeJs 12.  Other versions should also work.
 
 Start by doing the following
 
