@@ -511,6 +511,13 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
     if (startAtZero == null) {
         startAtZero = min === 0 || origMax < 0;
     }
+    
+    // if min and max are both above/below 0 and startAtZero is true, set the min or max to 0
+    if (startAtZero && max < 0) {
+        max = 0;
+    } else if (startAtZero && min > 0) {
+        min = 0;
+    }
 
     var exponent;
     if (min === max) {
@@ -542,22 +549,17 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
         var intermediateMax = min === max ? max === 0 ? 1 : excelRoundUp(max + negativeMinAmount, defaultRounding)
             : excelRoundUp(max + negativeMinAmount, defaultRounding);
 
-        var iMin = 0;
-        if ((!startAtZero && min !== max) || max === 0 || Math.abs(min) > Math.abs(max)) {
-            var inter = min + negativeMinAmount;
-            var dig = digits(inter);
-            var roundToDigits;
-            if (inter > 0) {
-                roundToDigits = -Math.floor(log10(inter));
-            } else {
-                roundToDigits = Math.max(1, Math.abs(dig - 2));
-            }
-
-            iMin = -roundTo(-inter, roundToDigits);
-            iMin = iMin === 0 ? 0 : iMin;
+        var intermediateMin = 0;
+        var inter = min + negativeMinAmount;
+        var dig = digits(inter);
+        var roundToDigits;
+        if (inter > 0) {
+            roundToDigits = -Math.floor(log10(inter));
+        } else {
+            roundToDigits = Math.max(1, Math.abs(dig - 2));
         }
 
-        var intermediateMin = iMin;
+        intermediateMin = -roundTo(-inter, roundToDigits);
 
         var interval = excelRoundUp(divFloat(subFloat(intermediateMax, intermediateMin), ticks), defaultRounding);
         var finalMin = subFloat(intermediateMin, negativeMinAmount);
@@ -594,6 +596,7 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
         });
     });
 
+    console.log("Returning", foundSomethingRound ? minMax : defaultMinMax);
     return foundSomethingRound ? minMax : defaultMinMax;
 };
 
