@@ -473,14 +473,12 @@ export const roundToNextTick = function (num) {
 };
 
 export const niceMinMax = function (min, max, ticks, startAtZero) {
-    // return divFloat(Math.ceil(mulFloat(value, Math.pow(10, digits))), Math.pow(10, digits));
-
     // check for errors... min cannot be > max
     if (min > max) {
         return {
             min: min,
             max: min,
-            tickValues: []
+            tickValues: [],
         };
     }
 
@@ -517,24 +515,20 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
     var exponent;
     if (min === max) {
         if (max === 0) {
-            exponent = -1.0;
+            exponent = -1;
         } else {
             exponent = log10(Math.abs(max));
         }
     } else {
-        if(startAtZero && Math.abs(max) > 0) {
-            exponent = log10(Math.abs(max)) - 0.5;
+        var absMax = Math.max(Math.abs(max), Math.abs(min));
+        if (startAtZero && absMax > 0) {
+            exponent = log10(absMax) - 0.5;
         } else {
-            exponent = log10(max-min) - 0.5;
+            exponent = log10(max - min) - 0.5;
         }
     }
 
     var defaultRounding = -(exponent >= 0 ? trunc(exponent) : Math.floor(exponent));
-
-    // var defaultRounding = -trunc((min === max ?
-    //     max === 0 ? -1.0 : log10(Math.abs(max)) :
-    //     startAtZero ? log10(Math.abs(max)) : log10(max-min)
-    // ) - 0.5);
 
     var excelRoundUp = function (value, up) {
         up = up != null ? up : 0;
@@ -546,36 +540,33 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
         var negativeMinAmount = excelRoundUp(Math.max(0, -min) / ticks, defaultRounding - 1);
 
         var intermediateMax = min === max ? max === 0 ? 1 : excelRoundUp(max + negativeMinAmount, defaultRounding)
-            : excelRoundUp(max + negativeMinAmount,defaultRounding);
+            : excelRoundUp(max + negativeMinAmount, defaultRounding);
 
         var iMin = 0;
-        if ((!startAtZero && min !== max) || max === 0) {
+        if ((!startAtZero && min !== max) || max === 0 || Math.abs(min) > Math.abs(max)) {
             var inter = min + negativeMinAmount;
             var dig = digits(inter);
             var roundToDigits;
             if (inter > 0) {
-                roundToDigits =  -Math.floor(log10(inter));
+                roundToDigits = -Math.floor(log10(inter));
             } else {
-                roundToDigits = (Math.max(1, Math.abs(dig-2)));
+                roundToDigits = Math.max(1, Math.abs(dig - 2));
             }
 
             iMin = -roundTo(-inter, roundToDigits);
             iMin = iMin === 0 ? 0 : iMin;
-            // old version:
-            // iMin = excelRound(min + negativeMinAmount, defaultRounding + (min < 0 ? 1 : 0))
         }
 
         var intermediateMin = iMin;
 
-        var interval = excelRoundUp(divFloat(subFloat(intermediateMax, intermediateMin),ticks), defaultRounding);
+        var interval = excelRoundUp(divFloat(subFloat(intermediateMax, intermediateMin), ticks), defaultRounding);
         var finalMin = subFloat(intermediateMin, negativeMinAmount);
         var finalMax = addFloat(finalMin, mulFloat(ticks, interval));
         var ticksValues = [finalMin];
         var prevTick = finalMin;
 
-        for (var j=1; j < ticks; j++) {
+        for (var j = 1; j < ticks; j++) {
             var newTick = addFloat(prevTick, interval);
-
             ticksValues.push(newTick);
             prevTick = newTick;
         }
@@ -588,7 +579,7 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
         return {
             min: swap ? -finalMax : finalMin,
             max: swap ? -finalMin : finalMax,
-            tickValues: ticksValues.map(function (a) { return swap ? -a : a; })
+            tickValues: ticksValues.map(function (a) { return swap ? -a : a; }),
         };
     };
 
@@ -602,6 +593,7 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
             return tick === Math.round(tick);
         });
     });
+
     return foundSomethingRound ? minMax : defaultMinMax;
 };
 
