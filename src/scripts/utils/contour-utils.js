@@ -596,7 +596,6 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
         });
     });
 
-    console.log("Returning", foundSomethingRound ? minMax : defaultMinMax);
     return foundSomethingRound ? minMax : defaultMinMax;
 };
 
