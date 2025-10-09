@@ -269,21 +269,39 @@ export const materialize = function (object, ctx, options, curPath) {
     }
 };
 
-export const cleanNullValues = function () {
+/**
+* Checks if a value is valid for charting purposes.
+* Filters out null, undefined, NaN, Infinity, and very large sentinel values
+* (e.g., Vensim uses very large negative numbers like -1e38 to represent NaN).
+*
+* @param {*} value The value to check
+* @return {boolean} True if the value is valid for charting
+*/
+export const isValidDataValue = function (value) {
+    return value != null && isFinite(value) && Math.abs(value) < 1e30;
+};
+
+/**
+* Filters out data points with invalid y values from series data.
+* This removes null, undefined, NaN, Infinity, and sentinel values used by
+* simulation tools like Vensim to represent missing data.
+*
+* @return {Function} A function that takes series data and returns filtered series
+*/
+export const filterInvalidDataPoints = function () {
     return function (series) {
         return series.map(function (s) {
             return Object.assign(s, {
-                data: s.data.reduce(function (acum, datum) {
-                    if (datum.y != null) {
-                        acum.push(datum);
-                    }
-
-                    return acum;
-                }, [])
+                data: s.data.filter(function (datum) {
+                    return isValidDataValue(datum.y);
+                })
             });
         });
     };
 };
+
+// Legacy alias for backwards compatibility
+export const cleanNullValues = filterInvalidDataPoints;
 
 export const minMaxFilter = function (desiredLen) {
     return function(data) {
@@ -511,7 +529,7 @@ export const niceMinMax = function (min, max, ticks, startAtZero) {
     if (startAtZero == null) {
         startAtZero = min === 0 || origMax < 0;
     }
-    
+
     // if min and max are both above/below 0 and startAtZero is true, set the min or max to 0
     if (startAtZero && max < 0) {
         max = 0;

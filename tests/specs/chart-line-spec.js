@@ -183,6 +183,67 @@ describe('Visualizations', function () {
                     expect(markers.length).toBe(1);
                 });
 
+                it('should not render markers when the data Y is NaN', function () {
+                    nw = createContour().line([
+                        { x: 1, y: 10},
+                        { x: 2, y: NaN},
+                        { x: 3, y: 20}
+                    ]).render();
+
+                    var markers = $el.find('.line-chart-markers circle');
+                    expect(markers.length).toBe(2);
+                });
+
+                it('should not render markers when the data Y is Infinity', function () {
+                    nw = createContour().line([
+                        { x: 1, y: 10},
+                        { x: 2, y: Infinity},
+                        { x: 3, y: -Infinity},
+                        { x: 4, y: 20}
+                    ]).render();
+
+                    var markers = $el.find('.line-chart-markers circle');
+                    expect(markers.length).toBe(2);
+                });
+
+                it('should not render markers when the data Y is a very large negative number (Vensim NaN)', function () {
+                    nw = createContour().line([
+                        { x: 1, y: 10},
+                        { x: 2, y: -1e38},
+                        { x: 3, y: 20}
+                    ]).render();
+
+                    var markers = $el.find('.line-chart-markers circle');
+                    expect(markers.length).toBe(2);
+                });
+
+                it('should handle mixed series with different data ranges', function () {
+                    nw = createContour().line([{
+                        name: 'historical',
+                        data: [
+                            { x: 0, y: 10},
+                            { x: 5, y: 15},
+                            { x: 10, y: 20},
+                            { x: 15, y: NaN},
+                            { x: 20, y: NaN}
+                        ]
+                    },{
+                        name: 'simulated',
+                        data: [
+                            { x: 0, y: 8},
+                            { x: 5, y: 12},
+                            { x: 10, y: 18},
+                            { x: 15, y: 22},
+                            { x: 20, y: 25}
+                        ]
+                    }]).render();
+
+                    var series1Markers = $el.find('.historical.markers circle');
+                    var series2Markers = $el.find('.simulated.markers circle');
+
+                    expect(series1Markers.length).toBe(3);
+                    expect(series2Markers.length).toBe(5);
+                });
             });
 
         });
