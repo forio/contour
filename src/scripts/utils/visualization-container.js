@@ -5,9 +5,13 @@ var _extent = function (series, field) {
     var maxs = [], mins = [];
     series.forEach(function (d) {
         if(!d.data.length) return;
-        var values = d.data.map(function (d) { return d[field]; });
-        maxs.push(d3.max(values));
-        mins.push(d3.min(values));
+        var values = d.data
+            .map(function (d) { return d[field]; })
+            .filter(nwt.isValidDataValue);
+        if (values.length) {
+            maxs.push(d3.max(values));
+            mins.push(d3.min(values));
+        }
     });
 
     //
@@ -22,10 +26,15 @@ var _stackedExtent = function (data) {
     var ext = [];
     dataSets.forEach(function (set) {
         set.data.forEach(function (d, i) {
-            var cur = ext[i] || 0;
-            ext[i] = cur + d.y;
+            if (nwt.isValidDataValue(d.y)) {
+                var cur = ext[i] || 0;
+                ext[i] = cur + d.y;
+            }
         });
     });
+
+    ext = ext.filter(nwt.isValidDataValue);
+    if (!ext.length) return [];
 
     return [Math.min.apply(null, ext), Math.max.apply(null, ext)];
 };
