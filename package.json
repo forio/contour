@@ -47,7 +47,7 @@
     "jquery": "^3.2.1",
     "jsdom": "^10.1.0",
     "jshint": "^2.9.5",
-    "less": "^2.7.3",
+    "less": "^4.2.0",
     "less-loader": "^4.0.5",
     "markdox": "0.1.10",
     "shelljs": "0.5.3",
